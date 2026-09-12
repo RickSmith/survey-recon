@@ -1,0 +1,72 @@
+# Renders the slide deck from markdown into a web page and a PDF.
+#
+# This does not publish anything by itself. It hands the two rendered files to
+# whoever asked for them - which in practice is always docs.yml, the workflow
+# that publishes the site. Keeping it separate means the deck can be re-rendered
+# and checked on its own.
+
+name: Render the slides
+
+on:
+  # "workflow_call" means another workflow can run this one. docs.yml does.
+  workflow_call:
+  # "workflow_dispatch" puts a Run button on the Actions tab, for a human.
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# The renderer, pinned to an exact version. An unpinned tool can change under
+# you overnight and re-typeset the deck the morning of the talk.
+env:
+  MARP_IMAGE: marpteam/marp-cli:v4.5.1
+  DECK: docs/slides/beyond-the-prompt.md
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Fetch the repo
+        uses: actions/checkout@v4
+
+      # Marp runs in a container that already carries a browser inside it,
+      # which is what draws the PDF. Nobody has to install anything.
+      #
+      #   --theme-set  : where the type sizes and colours are defined
+      #   --html       : allow plain HTML tags inside a slide
+      #   --output     : the file to write. Marp picks the format from the
+      #                  extension, so .html gives a web page and .pdf a PDF
+      #   MARP_USER    : makes the files belong to us, not to the container
+      - name: Render the deck to a web page
+        run: |
+          mkdir -p _slides
+          docker run --rm --init \
+            --volume "$PWD:/home/marp/app" \
+            --env MARP_USER="$(id -u):$(id -g)" \
+            "$MARP_IMAGE" \
+            "$DECK" --theme-set docs/slides/themes --html \
+            --output _slides/deck.html
+
+      - name: Render the deck to a PDF
+        run: |
+          docker run --rm --init \
+            --volume "$PWD:/home/marp/app" \
+            --env MARP_USER="$(id -u):$(id -g)" \
+            "$MARP_IMAGE" \
+            "$DECK" --theme-set docs/slides/themes --html --pdf \
+            --output _slides/beyond-the-prompt.pdf
+
+      - name: Check both files actually exist
+        run: |
+          ls -lh _slides
+          test -s _slides/deck.html
+          test -s _slides/beyond-the-prompt.pdf
+
+      # Hands the two files to the publishing workflow.
+      - name: Hand the rendered deck over
+        uses: actions/upload-artifact@v4
+        with:
+          name: slides
+          path: _slides
+          if-no-files-found: error

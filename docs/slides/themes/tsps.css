@@ -1,0 +1,102 @@
+/* @theme tsps */
+
+/*
+  Slides for a ballroom, not a laptop.
+
+  The canvas is 1920 x 1080 - the size the projector runs at - so a size in
+  points written here is the size the back row actually sees. Nothing on a
+  slide drops below 28pt.
+
+  This builds on Marp's built-in "default" theme and overrides the sizes and
+  the colours. The line below is what pulls that built-in theme in.
+*/
+@import 'default';
+
+section {
+  width: 1920px;
+  height: 1080px;
+  padding: 90px 120px;
+
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 34pt;
+  line-height: 1.45;
+  color: #14281d;
+  background-color: #ffffff;
+
+  justify-content: flex-start;
+}
+
+section h1 {
+  font-size: 66pt;
+  line-height: 1.15;
+  margin: 0 0 0.55em 0;
+  color: #0b3d2e;
+}
+
+section h2 {
+  font-size: 44pt;
+  line-height: 1.25;
+  margin: 0 0 0.5em 0;
+  color: #0b3d2e;
+}
+
+section h3 {
+  font-size: 36pt;
+  margin: 0 0 0.4em 0;
+  color: #0b3d2e;
+}
+
+section ul,
+section ol {
+  margin: 0;
+  padding-left: 1.1em;
+}
+
+section li {
+  margin-bottom: 0.5em;
+}
+
+section strong {
+  color: #0b3d2e;
+}
+
+section code {
+  font-size: 0.85em;
+  background-color: #eef2ef;
+}
+
+/* The page number, bottom right. Still 28pt - everything is. */
+section::after {
+  font-size: 28pt;
+  color: #7a8a80;
+}
+
+/*
+  The opening slide. Add "<!-- _class: title -->" to a slide to get this:
+  reversed out of the dark green, centred, and no page number.
+*/
+section.title {
+  justify-content: center;
+  background-color: #0b3d2e;
+  color: #ffffff;
+}
+
+section.title h1 {
+  color: #ffffff;
+  font-size: 84pt;
+  margin-bottom: 0.3em;
+}
+
+section.title h2 {
+  color: #bfe3d1;
+  font-size: 40pt;
+  font-weight: 400;
+}
+
+section.title strong {
+  color: #ffffff;
+}
+
+section.title::after {
+  display: none;
+}

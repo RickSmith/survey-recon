@@ -8,6 +8,9 @@ venv/
 # MkDocs
 site/
 
+# Marp - locally rendered slides
+_slides/
+
 # Node (present only for maintainers, not attendees)
 node_modules/
 

@@ -1,0 +1,10 @@
+# What the documentation site needs in order to build.
+#
+# Only maintainers install these. Nothing an attendee does requires them -
+# the site is already published, and reading it needs a browser and nothing else.
+#
+# mkdocs-material brings MkDocs itself along with it, so this is the whole list.
+# The version range says "any 9.x" - patch and feature updates are welcome,
+# a version 10 with breaking changes is not, until somebody checks it.
+
+mkdocs-material>=9.5,<10
