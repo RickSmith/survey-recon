@@ -1,45 +1,76 @@
-# Issue tracker: GitHub
+# Where the work orders live
 
-Issues and specs for this repo live as GitHub issues. Use the `gh` CLI for all operations.
+Work orders for this repo are GitHub issues. `CONTEXT.md` translates *issue* as *work order*, and that is exactly what one is: a single job, written down, before anybody starts it.
 
-## Conventions
+Everything below is how an agent reads and writes them. It all goes through `gh`, GitHub's own command line tool. Run inside a clone, `gh` works out which repo it is in by itself, from `git remote -v`. You never tell it.
 
-- **Create an issue**: `gh issue create --title "..." --body "..."`. Use a heredoc for multi-line bodies.
-- **Read an issue**: `gh issue view <number> --comments`, filtering comments by `jq` and also fetching labels.
-- **List issues**: `gh issue list --state open --json number,title,body,labels,comments --jq '[.[] | {number, title, body, labels: [.labels[].name], comments: [.comments[].body]}]'` with appropriate `--label` and `--state` filters.
-- **Comment on an issue**: `gh issue comment <number> --body "..."`
-- **Apply / remove labels**: `gh issue edit <number> --add-label "..."` / `--remove-label "..."`
-- **Close**: `gh issue close <number> --comment "..."`
+## The everyday commands
 
-Infer the repo from `git remote -v` — `gh` does this automatically when run inside a clone.
+| To do this | Run |
+| --- | --- |
+| Open a work order | `gh issue create --title "..." --body "..."` |
+| Read one, with its comments | `gh issue view <number> --comments` |
+| Comment on one | `gh issue comment <number> --body "..."` |
+| Add or remove a label | `gh issue edit <number> --add-label "..."` / `--remove-label "..."` |
+| Close one | `gh issue close <number> --comment "..."` |
 
-## Pull requests as a triage surface
+For a body longer than a line or two, write it to a file first and pass `--body-file`. Quoting a long message directly on the command line will bite you eventually.
 
-**PRs as a request surface: no.** _(Set to `yes` if this repo treats external PRs as feature requests; `/triage` reads this flag.)_
+To list them:
 
-When set to `yes`, PRs run through the same labels and states as issues, using the `gh pr` equivalents:
+```
+gh issue list --state open --json number,title,body,labels,comments --jq '[.[] | {number, title, body, labels: [.labels[].name], comments: [.comments[].body]}]'
+```
 
-- **Read a PR**: `gh pr view <number> --comments` and `gh pr diff <number>` for the diff.
-- **List external PRs for triage**: `gh pr list --state open --json number,title,body,labels,author,authorAssociation,comments` then keep only `authorAssociation` of `CONTRIBUTOR`, `FIRST_TIME_CONTRIBUTOR`, or `NONE` (drop `OWNER`/`MEMBER`/`COLLABORATOR`).
-- **Comment / label / close**: `gh pr comment`, `gh pr edit --add-label`/`--remove-label`, `gh pr close`.
+Narrow it with `--label` and `--state`.
 
-GitHub shares one number space across issues and PRs, so a bare `#42` may be either — resolve with `gh pr view 42` and fall back to `gh issue view 42`.
+## Two phrases the skills use
 
-## When a skill says "publish to the issue tracker"
+The skills are written to work on any repo, so they say general things like "publish to the issue tracker." Here is what those mean here.
 
-Create a GitHub issue.
+- **"Publish to the issue tracker"** — create a GitHub issue.
+- **"Fetch the relevant ticket"** — run `gh issue view <number> --comments`.
 
-## When a skill says "fetch the relevant ticket"
+## Pull requests as a way of asking for work
 
-Run `gh issue view <number> --comments`.
+**PRs as a request surface: no.**
 
-## Wayfinding operations
+That line is a switch, and `/triage` reads it. Leave it at `no` unless this repo starts treating pull requests from outsiders as feature requests.
 
-Used by `/wayfinder`. The **map** is a single issue with **child** issues as tickets.
+A pull request is the check print you redline. Flip this to `yes` and those redlines join the same queue as work orders, running through the same labels and the same states, using the `gh pr` versions of the commands above:
 
-- **Map**: a single issue labelled `wayfinder:map`, holding the Notes / Decisions-so-far / Fog body. `gh issue create --label wayfinder:map`.
-- **Child ticket**: an issue linked to the map as a GitHub sub-issue (`gh api` on the sub-issues endpoint). Where sub-issues aren't enabled, add the child to a task list in the map body and put `Part of #<map>` at the top of the child body. Labels: `wayfinder:<type>` (`research`/`prototype`/`grilling`/`task`). Once claimed, the ticket is assigned to the driving dev.
-- **Blocking**: GitHub's **native issue dependencies** — the canonical, UI-visible representation. Add an edge with `gh api --method POST repos/<owner>/<repo>/issues/<child>/dependencies/blocked_by -F issue_id=<blocker-db-id>`, where `<blocker-db-id>` is the blocker's numeric **database id** (`gh api repos/<owner>/<repo>/issues/<n> --jq .id`, _not_ the `#number` or `node_id`). GitHub reports `issue_dependencies_summary.blocked_by` (open blockers only — the live gate). Where dependencies aren't available, fall back to a `Blocked by: #<n>, #<n>` line at the top of the child body. A ticket is unblocked when every blocker is closed.
-- **Frontier query**: list the map's open children (`gh issue list --state open`, scoped to the map's sub-issues / task list), drop any with an open blocker (`issue_dependencies_summary.blocked_by > 0`, or an open issue in the `Blocked by` line) or an assignee; first in map order wins.
-- **Claim**: `gh issue edit <n> --add-assignee @me` — the session's first write.
-- **Resolve**: `gh issue comment <n> --body "<answer>"`, then `gh issue close <n>`, then append a context pointer (gist + link) to the map's Decisions-so-far.
+- Read one: `gh pr view <number> --comments`, and `gh pr diff <number>` for the changes themselves
+- List the outside ones: `gh pr list --state open --json number,title,body,labels,author,authorAssociation,comments`, then keep only those whose `authorAssociation` is `CONTRIBUTOR`, `FIRST_TIME_CONTRIBUTOR` or `NONE`. Drop `OWNER`, `MEMBER` and `COLLABORATOR` — those are us
+- Comment, label, close: `gh pr comment`, `gh pr edit --add-label` / `--remove-label`, `gh pr close`
+
+One trap worth knowing. GitHub numbers issues and pull requests out of the same pot, so a bare `#42` might be either one. Resolve it with `gh pr view 42`, and fall back to `gh issue view 42` when that comes back empty.
+
+## Wayfinding
+
+`/wayfinder` runs a large piece of work as a **map** — one issue holding the notes, the decisions so far, and the fog — with **child** issues hanging off it as individual jobs. Think of the map as the project file and the children as the jobs on it.
+
+**The map** is an issue labelled `wayfinder:map`. Create it with `gh issue create --label wayfinder:map`.
+
+**A child** is an issue linked to the map as a GitHub sub-issue, through `gh api` on the sub-issues endpoint. Where sub-issues are not switched on, put the child in a task list in the map body instead, and put `Part of #<map>` at the top of the child. Label it `wayfinder:<type>` — one of `research`, `prototype`, `grilling` or `task`. Once somebody takes it, assign it to them.
+
+**Blocking** uses GitHub's native issue dependencies. Prefer these: they show up in the web page, so a human can see what is waiting on what without reading any body text.
+
+```
+gh api --method POST repos/<owner>/<repo>/issues/<child>/dependencies/blocked_by -F issue_id=<blocker-db-id>
+```
+
+`<blocker-db-id>` is the blocker's numeric **database id**. It is not the `#number` you see on the page, and it is not the `node_id`. Read it with:
+
+```
+gh api repos/<owner>/<repo>/issues/<n> --jq .id
+```
+
+Pass the wrong one and the call either fails or quietly links the wrong issue.
+
+GitHub then reports `issue_dependencies_summary.blocked_by` — a count of blockers still open. That count is the live gate. Where dependencies are not available, fall back to a `Blocked by: #<n>, #<n>` line at the top of the child body. Either way the rule is the same: a job is unblocked when every one of its blockers is closed.
+
+**Finding what is actually workable.** List the map's open children. Drop any with an open blocker — `issue_dependencies_summary.blocked_by > 0`, or an open issue named in the `Blocked by` line. Drop any that already has somebody assigned. First one left in map order wins.
+
+**Taking it**: `gh issue edit <n> --add-assignee @me`. That is the first thing written in a session, so two people never start the same job.
+
+**Finishing it**: `gh issue comment <n> --body "<answer>"`, then `gh issue close <n>`, then add a pointer to the answer in the map's decisions-so-far. The map is only useful if it stays current.

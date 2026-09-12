@@ -1,15 +1,31 @@
-# Triage Labels
+# What the labels mean
 
-The skills speak in terms of five canonical triage roles. This file maps those roles to the actual label strings used in this repo's issue tracker.
+The skills talk about five states a work order can be in. This table says what each one is called on this repo.
 
-| Label in mattpocock/skills | Label in our tracker | Meaning                                  |
-| -------------------------- | -------------------- | ---------------------------------------- |
-| `needs-triage`             | `needs-triage`       | Maintainer needs to evaluate this issue  |
-| `needs-info`               | `needs-info`         | Waiting on reporter for more information |
-| `ready-for-agent`          | `ready-for-agent`    | Fully specified, ready for an AFK agent  |
-| `ready-for-human`          | `ready-for-human`    | Requires human implementation            |
-| `wontfix`                  | `wontfix`            | Will not be actioned                     |
+Right now the names match exactly. That is deliberate — one less thing to hold in your head.
 
-When a skill mentions a role (e.g. "apply the AFK-ready triage label"), use the corresponding label string from this table.
+| What the skills call it | What we call it | What it means |
+| --- | --- | --- |
+| `needs-triage` | `needs-triage` | Nobody has looked at this yet |
+| `needs-info` | `needs-info` | Waiting on whoever raised it to say more |
+| `ready-for-agent` | `ready-for-agent` | Fully specified. An agent can pick it up with nobody watching |
+| `ready-for-human` | `ready-for-human` | A person has to do this one |
+| `wontfix` | `wontfix` | Decided against. Not happening |
 
-Edit the right-hand column to match whatever vocabulary you actually use.
+When a skill names one of these states, use the label in the middle column.
+
+**If this repo ever renames them, change the middle column only.** The left column is the skills' own vocabulary, and it is not ours to edit. Rename it and the skills stop finding anything.
+
+## A note on `ready-for-agent`
+
+Some skills apply `ready-for-agent` to everything they create, on the reasoning that a properly written work order is agent-ready by construction.
+
+That is not always true here. "Recruit a surveyor to walk the repo cold" is a job for a person. So is standing up in front of a room for two hours. Labelling those `ready-for-agent` makes the list lie about itself, and a list that lies is worse than no list.
+
+Use `ready-for-human` when a person has to do it. Having two labels is only worth anything if the second one gets used.
+
+## The one that already existed
+
+`wontfix` was on this repo before any of this was set up — GitHub creates it with every new repo. The other four were added by hand.
+
+Worth knowing, because the setup skill writes this vocabulary into a document but does not create the labels themselves. If a label in the middle column does not exist on the repo, `gh issue create --label` fails, and it fails at the moment you are trying to publish a batch of work orders.

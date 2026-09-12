@@ -1,51 +1,48 @@
-# Domain Docs
+# What to read before you start
 
-How the engineering skills should consume this repo's domain documentation when exploring the codebase.
+A new hire reads the project file before driving to site. Same rule here.
 
-## Before exploring, read these
+## Read these first, every time
 
-- **`CONTEXT.md`** at the repo root, or
-- **`CONTEXT-MAP.md`** at the repo root if it exists — it points at one `CONTEXT.md` per context. Read each one relevant to the topic.
-- **`docs/adr/`** — read ADRs that touch the area you're about to work in. In multi-context repos, also check `src/<context>/docs/adr/` for context-scoped decisions.
+- **`CONTEXT.md`** at the repo root. The shared vocabulary — surveying, geodetic, TxDOT and project terms. If you catch yourself guessing what a word means, that word belongs in there.
+- **`docs/adr/`**, when it exists. An **ADR** is an architecture decision record: one short file saying that a decision got made, what it was, and why. It is a field book entry for a decision instead of for a measurement. Read the ones touching whatever you are about to change.
 
-If any of these files don't exist, **proceed silently**. Don't flag their absence; don't suggest creating them upfront. The `/domain-modeling` skill (reached via `/grill-with-docs` and `/improve-codebase-architecture`) creates them lazily when terms or decisions actually get resolved.
+If either is missing, **carry on quietly.** Do not point out that they are absent, and do not offer to create them up front. `/domain-modeling` writes them when a term or a decision actually gets settled — which is the only moment anyone knows what to put in one.
 
-## File structure
+## Where they live
 
-Single-context repo (most repos):
+This repo is single-context: one glossary, one decision folder, both at the root.
 
 ```
 /
 ├── CONTEXT.md
 ├── docs/adr/
-│   ├── 0001-event-sourced-orders.md
-│   └── 0002-postgres-for-write-model.md
-└── src/
+│   ├── 0001-....md
+│   └── 0002-....md
+└── ...
 ```
 
-Multi-context repo (presence of `CONTEXT-MAP.md` at the root):
+A much larger repo can be split into several contexts, each with its own glossary. You would know, because a `CONTEXT-MAP.md` would sit at the root pointing at each one. In that case, read every `CONTEXT.md` relevant to what you are doing, and check `src/<context>/docs/adr/` as well as the root `docs/adr/` — a decision can be scoped to one context rather than to the whole repo.
 
-```
-/
-├── CONTEXT-MAP.md
-├── docs/adr/                          ← system-wide decisions
-└── src/
-    ├── ordering/
-    │   ├── CONTEXT.md
-    │   └── docs/adr/                  ← context-specific decisions
-    └── billing/
-        ├── CONTEXT.md
-        └── docs/adr/
-```
+That is not this repo. Adding that structure here would be cost with nothing bought.
 
-## Use the glossary's vocabulary
+## Use the words in the glossary
 
-When your output names a domain concept (in an issue title, a refactor proposal, a hypothesis, a test name), use the term as defined in `CONTEXT.md`. Don't drift to synonyms the glossary explicitly avoids.
+When you name something — in a work order title, a proposal, a test name, a commit message — use the word `CONTEXT.md` uses. Do not drift to a synonym you happen to prefer.
 
-If the concept you need isn't in the glossary yet, that's a signal — either you're inventing language the project doesn't use (reconsider) or there's a real gap (note it for `/domain-modeling`).
+This matters more here than in most repos, because the readers are licensed surveyors. Calling a monument a "marker", or recovery "finding it again", reads as somebody who has not done the work. Once a reader clocks that, they stop trusting the rest of the page, and they are right to.
 
-## Flag ADR conflicts
+If the idea you need is not in the glossary yet, stop and work out which of two things is happening:
 
-If your output contradicts an existing ADR, surface it explicitly rather than silently overriding:
+- You are inventing language this project does not use. Reconsider.
+- There is a real gap. That is a note for `/domain-modeling`.
 
-> _Contradicts ADR-0007 (event-sourced orders) — but worth reopening because…_
+## Say so when you contradict a decision
+
+If what you are about to do goes against a recorded decision, say so out loud rather than quietly working around it:
+
+> Contradicts ADR-0007 (event-sourced orders) — but worth reopening because…
+
+Overriding a decision is allowed. Overriding one silently is not.
+
+This repo's own history gets shown on stage. A decision that was reversed without a word is exactly the thing that history is meant to make visible.
