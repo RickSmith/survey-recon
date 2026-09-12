@@ -1,0 +1,119 @@
+# This file is the whole configuration for the documentation site.
+#
+# If you have never opened a configuration file before: it is a plain text file
+# that answers questions. The word before each colon is the question, and what
+# follows is the answer. Indentation matters - things indented under a line
+# belong to that line. Anything after a "#" is a note to a human and is ignored.
+#
+# You can read it top to bottom. Nothing here is hidden anywhere else.
+
+
+# ---------------------------------------------------------------------------
+# What the site is called, and where it lives
+# ---------------------------------------------------------------------------
+
+site_name: survey-recon
+site_description: Reconnaissance for survey work, with an AI agent doing the legwork.
+site_author: Rick Smith
+site_url: https://ricksmith.github.io/survey-recon/
+
+repo_url: https://github.com/RickSmith/survey-recon
+repo_name: RickSmith/survey-recon
+
+# Puts an "edit this page" pencil on every page, pointing at the real file.
+edit_uri: edit/main/docs/
+
+copyright: Built for TSPS 2026 &middot; public data only
+
+
+# ---------------------------------------------------------------------------
+# The menu down the left-hand side
+# ---------------------------------------------------------------------------
+#
+# Each line is: the words a reader sees, then the file those words open.
+# The order here is the order on the page. Change a line, the menu changes.
+
+nav:
+  - Home: index.md
+  - Day 0 - Setup: day-0/index.md
+  - For principals: for-principals/index.md
+  - Vocabulary: vocabulary/index.md
+  - Managing your agent: managing-your-agent/index.md
+  - The worked example - SH16: scenarios/sh16/index.md
+  - Data sources: data-sources/index.md
+  - Toolkit: toolkit/index.md
+  - Governance: governance/index.md
+  - Going further: going-further/index.md
+  - Slides: slides/index.md
+  - How this repo was built:
+      - Plan of record: plan-of-record.md
+      - TxDOT research: txdot-research.md
+      - Where the work orders live: agents/issue-tracker.md
+      - What the labels mean: agents/triage-labels.md
+      - Where the domain notes live: agents/domain.md
+
+
+# ---------------------------------------------------------------------------
+# How the site looks
+# ---------------------------------------------------------------------------
+
+theme:
+  name: material
+
+  features:
+    - navigation.top         # a "back to top" button
+    - navigation.footer      # previous / next links at the bottom
+    - content.action.edit    # the edit pencil
+    - search.highlight       # highlight the words you searched for
+    - toc.follow             # the right-hand outline tracks where you are
+
+  # Two colour schemes and a switch in the header to move between them.
+  palette:
+    - scheme: default
+      primary: teal
+      accent: amber
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - scheme: slate
+      primary: teal
+      accent: amber
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+
+  icon:
+    repo: fontawesome/brands/github
+
+plugins:
+  - search                   # the search box in the header
+
+
+# ---------------------------------------------------------------------------
+# Extra markdown features these pages use
+# ---------------------------------------------------------------------------
+#
+# Plain markdown does not know about coloured note boxes or buttons.
+# Each line below switches one of those on.
+
+markdown_extensions:
+  - admonition               # the "!!! note" boxes
+  - attr_list                # lets a link be styled as a button
+  - md_in_html               # lets markdown work inside a <div>, for the card grid
+  - pymdownx.details         # collapsible boxes
+  - pymdownx.superfences     # better code blocks
+  - toc:
+      permalink: true        # a clickable anchor beside every heading
+
+
+# ---------------------------------------------------------------------------
+# Files inside docs/ that are NOT pages of this site
+# ---------------------------------------------------------------------------
+#
+# The slide deck is markdown too, but it is built by a different tool (Marp)
+# into docs/slides/deck.html. Listing it here keeps the site builder from
+# also rendering it as an ordinary page.
+
+exclude_docs: |
+  slides/beyond-the-prompt.md
+  slides/themes/
