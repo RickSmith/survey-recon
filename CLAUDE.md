@@ -15,6 +15,8 @@ This is not ceremony. This repo's own git history is a teaching artifact that ge
 - Write commit messages that explain **why**, not what — the diff already says what
 - When a review sends something back, fix it in a new commit rather than amending. The correction is part of the record
 
+**This rule has been broken once**, on 2026-09-12, deliberately and with Rick's approval, fifteen minutes after the repo was created. The account is `docs/managing-your-agent/the-force-push.md`. Read it before you propose a second time — it is a record of a decision, not a precedent.
+
 ## Audience rules
 
 Readers are expert surveyors with little programming background. So:
