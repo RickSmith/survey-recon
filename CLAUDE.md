@@ -54,3 +54,17 @@ Attendees must be able to run this. Prerequisites are **git, a GitHub account, a
 The session's thesis is that an agent is a capable new employee who is sometimes confidently wrong, and that the licensed human remains accountable. Documentation should sound like that: **enthusiastic about the capability, unembarrassed about the limits, and absolutely clear about who signs.**
 
 Do not oversell. A surveyor who tries something on Monday because this repo promised too much is a worse outcome than one who never tries at all.
+
+## Agent skills
+
+### Issue tracker
+
+Issues live as GitHub issues on `RickSmith/survey-recon`, driven by the `gh` CLI. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+The five canonical triage roles, each label string equal to its name. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context — `CONTEXT.md` at the root, ADRs in `docs/adr/`. See `docs/agents/domain.md`.
