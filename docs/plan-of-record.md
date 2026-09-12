@@ -55,7 +55,7 @@ That last clause is the failure beat, already paid for.
 **What this requires:**
 - Every piece of work goes through an issue first, even when it's faster not to
 - Every agent change lands as a PR that is actually reviewed, with comments visible
-- Don't squash the history clean — the messy parts are the curriculum
+- Don't squash the history clean — the messy parts are the curriculum. Broken once on day one, knowingly; the account is [The rule we broke on day one](managing-your-agent/the-force-push.md)
 - Tag two or three PRs `teaching-moment` as you go
 
 Directing is also cheaper than building, which is how this survives a day job.

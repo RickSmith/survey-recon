@@ -97,3 +97,5 @@ They are buyers and risk-owners. They are not going to install things themselves
 | Merge | You sign and seal |
 | Spec | Scope of work |
 | Code review | Checking the work before it goes out the door |
+| Rewriting history | Going back and altering field book entries already made |
+| Force push | Tearing a page out of the field book and writing a new one in its place |

@@ -38,7 +38,9 @@ nav:
   - Day 0 - Setup: day-0/index.md
   - For principals: for-principals/index.md
   - Vocabulary: vocabulary/index.md
-  - Managing your agent: managing-your-agent/index.md
+  - Managing your agent:
+      - managing-your-agent/index.md
+      - The rule we broke on day one: managing-your-agent/the-force-push.md
   - The worked example - SH16: scenarios/sh16/index.md
   - Data sources: data-sources/index.md
   - Toolkit: toolkit/index.md
