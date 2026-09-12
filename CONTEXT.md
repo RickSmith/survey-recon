@@ -1,0 +1,99 @@
+# CONTEXT
+
+Shared vocabulary for this repo. Read before doing anything here. If you find yourself guessing what a term means, it belongs in this file — add it.
+
+---
+
+## What we are building
+
+A public teaching repo, `survey-recon`, that accompanies a two-hour TSPS 2026 convention session on October 8, 2026. It has two jobs and they pull in different directions, so keep both in mind:
+
+1. **A curriculum** — teach licensed surveyors enough software-development management discipline to supervise an AI agent.
+2. **A working tool** — actually estimate a TxDOT right-of-way survey job from public data.
+
+When the two conflict, **clarity for a beginner wins.** An elegant abstraction that a surveyor cannot read is a failure here, not a success.
+
+## Who reads this
+
+**Texas land surveyors, mostly firm owners and principals.** Assume: deeply expert in surveying, geodesy, and Texas land law. Assume: little or no programming background, and no patience for being condescended to about it. Many have never opened a terminal. Most have never used git.
+
+They are buyers and risk-owners. They are not going to install things themselves — they are deciding whether to point someone in their firm at this.
+
+---
+
+## Surveying vocabulary
+
+| Term | Meaning |
+|---|---|
+| **RPLS** | Registered Professional Land Surveyor — the Texas license. An RPLS signs and seals, and carries the liability |
+| **LSLS** | Licensed State Land Surveyor — a separate, rarer license for work on Texas state lands. Has stronger statutory access rights than an RPLS |
+| **TBPELS** | Texas Board of Professional Engineers and Land Surveyors — the licensing board |
+| **TSPS** | Texas Society of Professional Surveyors — the professional association hosting the session |
+| **Seal** | The surveyor's stamp. To seal a document is to take personal professional responsibility for it |
+| **Responsible charge** | The doctrine that the sealing surveyor is accountable for work done under their supervision — regardless of who or what performed it |
+| **Recon** | Desktop reconnaissance before pricing a job. The repo is named for this |
+| **Retracement** | Re-establishing a boundary that was surveyed before, from records and recovered monuments |
+| **Monument** | A physical marker of a surveyed point — a disk, a rod, a capped rebar |
+| **Recovery** | Finding a monument that already exists. Cheaper than setting a new one, which is why recovery-vs-set drives estimates |
+| **Control** | Points of known position that everything else is measured from. Primary control is the project backbone; secondary densifies it |
+| **Intervisible** | Two monuments you can see from one another. TxDOT requires primary control in intervisible pairs |
+| **Closure** | The error you get when a traverse doesn't return exactly to its start. A quality measure |
+| **Metes and bounds** | A boundary described as a sequence of bearings and distances |
+| **Party chief** | The person running a field crew |
+
+## Geodetic vocabulary
+
+| Term | Meaning |
+|---|---|
+| **NSRS** | National Spatial Reference System — the national coordinate framework, maintained by NGS |
+| **NGS** | National Geodetic Survey (NOAA). Publishes survey marks and their datasheets |
+| **PID** | Permanent Identifier — an NGS mark's unique ID, e.g. `AY0713` |
+| **Datasheet** | NGS's record for a mark: position, datum, stamping, condition, recovery history |
+| **CORS** | Continuously Operating Reference Station — a permanent GNSS station |
+| **OPUS** | NGS's Online Positioning User Service — submit GNSS observations, get a position back |
+| **NAD 83 / NAVD 88** | The current horizontal and vertical datums TxDOT requires |
+| **SPCS** | State Plane Coordinate System. Texas has multiple zones; Bexar County is Texas South Central |
+| **Grid vs surface** | Grid coordinates live on the map projection; surface coordinates are scaled to real ground distance. TxDOT requires **both** |
+| **Scale factor** | The number converting between grid and surface. TxDOT publishes these per county |
+| **NATRF2022 / NAPGD2022 / SPCS2022** | The modernized replacements for NAD 83, NAVD 88 and SPCS. **TxDOT's April 2026 Survey Manual does not mention any of them.** See the datum-gap note in `docs/txdot-research.md` |
+
+## TxDOT vocabulary
+
+| Term | Meaning |
+|---|---|
+| **ROW** | Right of way — the land corridor a highway occupies |
+| **ROE** | Right of Entry — written landowner permission to enter property. **Not a statutory right in Texas** |
+| **CSJ** | Control-Section-Job number — TxDOT's project identifier, e.g. `2552-04-041` |
+| **Control section** | A numbered segment of a highway. SH16 through Bexar spans 0291-09, 0291-10, 0613-01 |
+| **DFO** | Distance From Origin — TxDOT's linear referencing measure along a route |
+| **ROW map sheet** | The historical record drawing of a right of way. SH16 in Bexar has 27, dating 1937–1998 |
+| **ORD** | OpenRoads Designer — the MicroStation product TxDOT requires for design survey graphics |
+| **ProjectWise / OnBase** | TxDOT's document systems. Design surveys go to ProjectWise; final ROW maps to OnBase |
+| **TMUTCD** | Texas Manual on Uniform Traffic Control Devices. The 2025 edition took effect January 18, 2026 |
+| **TCP** | Traffic Control Plan. TCP(S-1)-08A is the standard sheet for surveying operations |
+| **TMA** | Truck-Mounted Attenuator — the crash cushion on a shadow vehicle. Needing one changes the crew cost |
+
+## Project vocabulary
+
+| Term | Meaning |
+|---|---|
+| **The worked example** | SH16 (Bandera Rd), Loop 410 → Gibeaut Rd, Bexar County |
+| **Corridor screening** | Buffer an alignment, query public services, emit a flagged parcel list with lead times. The tool this repo is named for |
+| **Flagged parcel** | A tract with something that costs time — school, cemetery, railroad, pipeline, gated access, livestock |
+| **Lead time** | Statutory or procedural delay before you can enter. Railroad 30–45 days, cemetery 14 days, Texas 811 48 hours |
+| **Crew-day build-up** | The hours estimate, shown as arguable math rather than a single number |
+| **The grilling** | `/grill-with-docs` — the agent interviewing you about scope before it touches anything. The session's centerpiece |
+| **The failure beat** | A deliberate, scripted moment showing the agent being confidently wrong |
+| **The recursion** | This repo is built the way the session tells attendees to work, so its git history is itself a teaching artifact |
+
+## Translation table — used throughout the docs
+
+| Software term | Survey term |
+|---|---|
+| Issue | Work order |
+| Branch | A working copy nobody else is affected by |
+| Commit | A field book entry |
+| Pull request | The check print you redline |
+| Merge | You sign and seal |
+| Spec | Scope of work |
+| Code review | Checking the work before it goes out the door |

@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+
+# MkDocs
+site/
+
+# Node (present only for maintainers, not attendees)
+node_modules/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editors
+.vscode/
+.idea/
+
+# Agent scratch — never commit secrets or client data
+.claude/settings.local.json
+scratch/
+*.local.*
