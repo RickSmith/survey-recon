@@ -42,6 +42,7 @@ nav:
       - managing-your-agent/index.md
       - The rule we broke on day one: managing-your-agent/the-force-push.md
   - The worked example - SH16: scenarios/sh16/index.md
+  - Corridor screening: corridor-screen/spec.md
   - Data sources: data-sources/index.md
   - Toolkit: toolkit/index.md
   - Governance: governance/index.md
@@ -50,6 +51,7 @@ nav:
   - How this repo was built:
       - Plan of record: plan-of-record.md
       - TxDOT research: txdot-research.md
+      - Decision 0001 - sanity checks warn: adr/0001-sanity-checks-warn-dead-services-stop.md
       - Where the work orders live: agents/issue-tracker.md
       - What the labels mean: agents/triage-labels.md
       - Where the domain notes live: agents/domain.md
