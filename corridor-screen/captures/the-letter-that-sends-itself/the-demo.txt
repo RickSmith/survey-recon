@@ -1,0 +1,43 @@
+  The letter that sends itself
+  ===========================
+
+  Right of entry is not a statutory right in Texas. You have to ask,
+  and when nobody answers you have to ask again. TxDOT ships a second
+  request letter template because non-response is the ordinary case.
+
+  The tract, read out of project-sh16/screening.json
+    parcel        15664-003-0040
+    owner         EPISCOPAL CHURCH CORP IN WEST TEXAS
+    on it         cemetery (on)
+    longest wait  14 calendar days (cemetery)
+
+  Where day 21 comes from
+    No published right-of-entry turn-around was found in any TxDOT
+    manual this repo read, so there is no number to quote. The
+    interval is derived from the checked-in lead-time table instead:
+
+      longest confirmed wait, counted in calendar days   45 days
+        set by the railroad row, cited to https://www.up.com/real-estate/tempuse/procedures
+      half of it, so letter two has the window letter one had   22 days
+      rounded down to whole weeks, because a letter moves in weeks   21 days (3 weeks)
+
+    Change the table and this day changes. There is no 21 written anywhere in the tool.
+
+    The railroad row sets it, and no railroad was found on this corridor.
+    That is deliberate. The interval is how long a letter may sit
+    before you ask again, not what is on this one tract -- so it
+    comes from the longest wait the firm plans against anywhere.
+
+  The clock, with nobody watching it
+    2026-09-13   day 0   request 1 of 2 written
+    2026-10-03   day 20  nothing due
+    2026-10-04   day 21  request 2 of 2 written -- no human action
+
+  21 days is 3 whole weeks, so letter two falls on the same weekday as letter one. Both
+  land on a Sunday. The clock counts calendar days and knows nothing about weekends or
+  holidays. It writes the letter; a person still sends it.
+
+  What this does not do
+    It does not mail anything. It has no address and no authority.
+    An RPLS signs the letter and remains accountable for it --
+    22 Tex. Admin. Code 131.2(38).

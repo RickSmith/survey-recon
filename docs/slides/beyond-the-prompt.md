@@ -881,20 +881,31 @@ Build it so it survives being reduced to a recorded teaser. See #34.
 
 # The letter nobody remembers to send
 
-- Right of entry is not a statutory right in Texas. You have to ask
+- Right of entry is not a statutory right. You have to ask
 - A denied RPLS *may seek* a court order; an LSLS *is entitled to* one
-- Day 21 comes out of the lead-time math, not out of a hard-coded number
-- Nothing in it touches client data
+- TxDOT ships **two** templates. Non-response is the ordinary case
 
-Tex. Occ. Code §§ 1071.3585 and 1071.358 · lead times in the repo, each cited
+**Day 21 is derived, not typed.** Longest confirmed wait in the table, 45
+calendar days — halved, 22 — rounded down to whole weeks, **21**.
 
-> **To be written** — #34
+Tex. Occ. Code §§ 1071.3585 and 1071.358 · nothing in it touches client data
 
 <!--
 1:48–1:54 · 6 min · Hermes
 
+Live: `python -m corridor_screen.roe --show` from the corridor-screen folder.
+It reads from disk and makes no network call.
+
 If the live demo is cut, play the recording and say plainly that it is a
-recording. Its own work order asks for one.
+recording -- corridor-screen/captures/the-letter-that-sends-itself/the-demo.txt.
+Its own work order asked for one.
+
+The question from the room is "there is no railroad on that corridor." Correct.
+The interval is how long a letter may sit before you ask again, which is firm
+policy, so it comes from the longest wait the firm plans against anywhere. The
+demo prints that sentence on screen.
+
+Do not claim it mails anything. It writes a file. An RPLS signs and sends.
 -->
 
 ---

@@ -22,7 +22,7 @@ page is what was on the screen in the room.
 
 !!! note "It is a frame, not a talk"
     The deck is **46 slides** — one section break for every block of the two
-    hours, and outline slides under each. **23 of them are still placeholders**,
+    hours, and outline slides under each. **22 of them are still placeholders**,
     and each of those says so on its face and names the work order that will
     fill it.
 
@@ -30,17 +30,18 @@ page is what was on the screen in the room.
     session.
 
     The skeleton was built under
-    [issue #12](https://github.com/RickSmith/survey-recon/issues/12). Three
+    [issue #12](https://github.com/RickSmith/survey-recon/issues/12). Four
     pieces of content have landed, each checked against its own source on every
     test run: the money slide under
     [#32](https://github.com/RickSmith/survey-recon/issues/32), its figures read
     out of the crew-day build-up; the datum gap under
     [#33](https://github.com/RickSmith/survey-recon/issues/33), its counts read
-    out of the SH16 run; and the concept slides under
+    out of the SH16 run; the concept slides under
     [#31](https://github.com/RickSmith/survey-recon/issues/31), held to the
-    translation table in `CONTEXT.md`. The rest lands under
-    [#34](https://github.com/RickSmith/survey-recon/issues/34)
-    (Hermes), and [#81](https://github.com/RickSmith/survey-recon/issues/81)
+    translation table in `CONTEXT.md`; and Hermes under
+    [#34](https://github.com/RickSmith/survey-recon/issues/34), whose day 21 is
+    derived from the lead-time table rather than written on the slide. The rest
+    lands under [#81](https://github.com/RickSmith/survey-recon/issues/81)
     through [#86](https://github.com/RickSmith/survey-recon/issues/86) (the cold
     open, the three Acts, the failure beat and the close).
 

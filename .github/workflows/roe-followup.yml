@@ -1,0 +1,90 @@
+# The clock that writes the second right-of-entry letter, with nobody watching.
+#
+# This is the honest half of issue #34. A demo that fires because a presenter
+# typed a command has proved that a command works. The claim the segment makes
+# is stronger than that: the day arrives whether or not a person is looking.
+#
+# So the same command runs on a schedule, here, in public, where a run either
+# happened or did not. If the second letter turns up in this workflow's summary
+# on 4 October 2026 and nobody started it, the segment proved itself four days
+# before the session opened.
+#
+# ----
+#
+# What it deliberately does not do
+#
+#   It does not mail anything. There is no mail server, no address book and no
+#   secret. CLAUDE.md is blunt that anything needing an API key does not belong
+#   in the attendee path, and an attendee has to be able to read this file and
+#   see that there is nothing behind it.
+#
+#   It does not commit. Every change in this repo lands as a pull request a
+#   human reviews -- CLAUDE.md's first rule, and a workflow that pushed a file
+#   to main would break it on a schedule. The letter goes into the run summary
+#   and into an artifact, and a person decides what happens next.
+#
+#   It does not fail when nothing is due. Before day 21 there is one letter and
+#   a line saying the second is not due yet. That is the correct answer, not an
+#   error, and a red tick for it would teach everybody to ignore red ticks.
+
+name: The right-of-entry follow-up clock
+
+on:
+  schedule:
+    # 12:00 UTC daily -- early morning in Texas, so a day that has arrived in
+    # Texas has arrived here too. Daily rather than weekly because the whole
+    # claim is about a specific day, and a weekly check can miss it by six.
+    - cron: '0 12 * * *'
+  workflow_dispatch:
+
+# Read the code. Nothing else -- this workflow publishes nothing and needs no
+# more permission than a person cloning the repo would have.
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Fetch the repo
+        uses: actions/checkout@v4
+
+      # 3.11 for the same reason tests.yml says: it is the first version that
+      # reads TOML without a library, and the lead-time table is TOML.
+      - name: Install Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      # No install step. The tool has no dependencies, and this file is one of
+      # the places somebody will check whether that is really true.
+      - name: Read the clock
+        working-directory: corridor-screen
+        run: python -m corridor_screen.roe --write ../project-sh16/roe
+
+      # The letters as they stood at the moment the clock was read. `git
+      # status --short` is what says whether the run wrote anything new: a
+      # clean tree means nothing was due, and `roe-letter-2.md` appearing is
+      # the whole point of the workflow.
+      - name: Say what was due
+        run: |
+          {
+            echo '## The right-of-entry clock, read on '"$(date -u +%Y-%m-%d)"
+            echo
+            echo 'What changed in `project-sh16/roe/`:'
+            echo
+            echo '```'
+            git status --short project-sh16/roe/ || true
+            echo '```'
+            echo
+            echo 'Nothing was committed and nothing was mailed. An RPLS signs a'
+            echo 'real letter and remains accountable for it.'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Keep whatever was due
+        uses: actions/upload-artifact@v4
+        with:
+          name: roe-letters
+          path: project-sh16/roe/*.md
+          if-no-files-found: error

@@ -24,7 +24,7 @@ moment you need it.
 | 1:36–1:48 | Beat 1 — the superseded manual | `python -m corridor_screen.manual_links --show` · `corridor-screen/captures/superseded-manual/the-beat.txt` | Both URLs, what each one serves, and the revision the agent cited. The `.txt` is the same beat for a podium where Python will not start |
 | 1:36–1:48 | Beat 2 — the silent `NoData` | `python -m corridor_screen.elevation_trap --show` · `corridor-screen/captures/silent-nodata/the-beat.txt` | One question asked twice, one word apart, answered in feet and then in meters with no error either time |
 | 1:36–1:48 | Beat 3 — the error in our own work order | `corridor-screen/captures/the-work-order/issue-7.txt` · `docs/governance/seal-and-responsible-charge.md` | Acceptance criterion 4, then the comment that refused it. The governance page carries what PAO 71 actually says, so the opinion needs no network either |
-| 1:48–1:54 | Hermes — the letter that sends itself | not recorded — #34 | The demo. It is first on the cut line, and its own work order asks for a recording |
+| 1:48–1:54 | Hermes — the letter that sends itself | `python -m corridor_screen.roe --show` · `corridor-screen/captures/the-letter-that-sends-itself/the-demo.txt` | The tract, the three steps that derive day 21 from the lead-time table, and the clock writing the second letter on its own. The `.txt` is the same demo for a podium where Python will not start |
 | 1:54–2:00 | Accountability, Monday morning, the live issue | `.github/ISSUE_TEMPLATE/introduce-yourself.yml` | The form you would have opened, on screen. It cannot collect a single reply without GitHub, so ask the room to do it from their seats. **The short link and the QR code are not made yet** — #10, then #38. Until they are, this row is a form nobody can reach |
 
 ## How to use it
@@ -47,12 +47,17 @@ repo, on the laptop, in a folder. None of them is a link.
 
 ## What has no fallback yet, and why
 
-**4 blocks have nothing to reach for**, and three pieces of work would close
-them — the deck accounts for two of the four blocks on its own.
+**3 blocks have nothing to reach for**, and two pieces of work would close
+them — the deck accounts for two of the three blocks on its own.
 
-All three are waiting on something that does not exist yet, so an audit can do
-nothing but name them: the deck (#12, then #31), the money slide (#32) and the
-Hermes demo (#34).
+Both are waiting on something that does not exist yet, so an audit can do
+nothing but name them: the deck (#12, then #31) and the money slide (#32).
+
+**Hermes used to be on this list and is not any more.** The demo was built
+under #34 and the recording its own work order asked for is committed at
+`corridor-screen/captures/the-letter-that-sends-itself/the-demo.txt`. That
+mattered more than for most rows: the segment is **first on the cut line**, so
+it is the block most likely to be played from a file rather than run.
 
 **Act I used to be on this list and is not any more.** The grilling that wrote
 the corridor-screening spec really happened on 12 September 2026, and the

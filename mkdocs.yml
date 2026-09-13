@@ -51,6 +51,7 @@ nav:
   - Corridor screening:
       - corridor-screen/spec.md
       - Lead times and their sources: corridor-screen/lead-times.md
+      - The right-of-entry letters: corridor-screen/roe-letters.md
   - Data sources:
       - data-sources/index.md
       - TxDOT Roadways - the centerline: data-sources/txdot-roadways.md
