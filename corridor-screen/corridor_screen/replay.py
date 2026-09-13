@@ -9,6 +9,14 @@ able to check, not one the tool gets to assert about itself.
 This file is that check. Point it at two screening files and it says whether
 they found the same things.
 
+Issue #19 asked that the two match; it did not ask for a command, and the
+review on [PR #58](https://github.com/RickSmith/survey-recon/pull/58) was right
+to call that scope creep and put it to Rick rather than let it in quietly. He
+accepted it on 2026-09-13, for the reason it was built: a criterion that says
+two things *match* needs something runnable to keep proving it, or it is true
+on the day somebody checks by hand and unverified every day after.
+Specification section 3.6 now names it.
+
 ----
 
 What "the same" has to mean, and why it is not "identical"
