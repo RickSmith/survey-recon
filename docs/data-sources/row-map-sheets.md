@@ -203,8 +203,8 @@ is what [spec section 10](../corridor-screen/spec.md) asks for.
 | `total_pages` | `TOTL_MAP_PAGE_QTY` | `1` on every SH16 sheet |
 | `limit_from`, `limit_to` | `MAP_LMT_FROM_DSCR`, `MAP_LMT_TO_DSCR` | TxDOT's own words for where the sheet starts and stops |
 
-!!! note "Two differences from the specification, raised rather than patched over"
-    [Spec section 10](../corridor-screen/spec.md) names this block as
+!!! note "Two differences from the specification, amended 2026-09-13 on [PR #56](https://github.com/RickSmith/survey-recon/pull/56)"
+    Until then [spec section 10](../corridor-screen/spec.md) named this block as
     `sheet_count · date_range · control_sections · sheets`, each sheet
     "carrying `MAP_NM`, `ROW_MAP_ID`, `CTRL_SECT_NBR`, `CSJ_NBR`, `MAP_FROM_DT`
     and `MAP_TO_DT`."
@@ -216,19 +216,20 @@ is what [spec section 10](../corridor-screen/spec.md) asks for.
     records which name went where.
 
     **There are more keys than four.** `by_route`, `sheets_without_a_shape` and
-    `notes`. None of them contradicts section 10; they are a superset of it.
+    `notes`. Neither contradicts section 10; both are a superset of it.
 
-    Also raised, because it is a judgement about what a reader will quote
-    rather than a fact: `sheet_count` and `date_range` cover **every** route
-    reaching the corridor, so on SH16 they read 69 and 1900–2005 while the
-    corridor's own route reads 15 and 1944–1998 inside `by_route`.
+    Settled on the same ruling, because it is a judgement about what a reader
+    will quote rather than a fact: `sheet_count` and `date_range` cover
+    **every** route reaching the corridor and stay that way, so on SH16 they
+    read 69 and 1900–2005 while the corridor's own route reads 15 and
+    1944–1998 inside `by_route`.
 
     Amending a settled specification is not the agent's call — the precedent is
     `AcctNumb` on [PR #52](https://github.com/RickSmith/survey-recon/pull/52),
     `NPMS` on [PR #53](https://github.com/RickSmith/survey-recon/pull/53) and
     the `not-screened` control blocks on
     [PR #54](https://github.com/RickSmith/survey-recon/pull/54). All three were
-    raised on the pull request and ruled on by Rick. So is this.
+    raised on the pull request and ruled on by Rick. So was this.
 
 The layer also publishes `ORIG_CTRL_SECT_NBR`, `CURR_CTRL_SECT_NBR`, `RTE_NM2`,
 `RTE_NM3`, `MAP_LOCN_DSCR`, `DIST_NBR` and the usual create and edit stamps. On

@@ -333,9 +333,26 @@ The same is true of the NGS marks, which are asked about a box drawn around the 
 
 ### `row_maps`
 
-`sheet_count` · `date_range` · `control_sections` · `sheets`, each carrying `MAP_NM`, `ROW_MAP_ID`, `CTRL_SECT_NBR`, `CSJ_NBR`, `MAP_FROM_DT` and `MAP_TO_DT`.
+`sheet_count` · `date_range` · `control_sections` · `by_route` · `sheets_without_a_shape` · `notes` · `sheets`, each sheet carrying `map_name`, `row_map_id`, `control_section`, `csj`, `map_from_date` and `map_to_date` — and, like `control`, a `not-screened` block instead when the service was never asked.
 
-**No field in this service gives a direct PDF link.** You get the sheet count and the identifiers. The drawings still come through the ROW Division or the RPAM viewer. The output says so rather than leaving a blank.
+**`sheet_count` and `date_range` cover every route that reaches the corridor**, not the corridor's own route alone. The right of way at an interchange is drawn on the crossing route's sheets, and those are records a crew still has to pull. `by_route` is what keeps the corridor's own route readable on its own. On SH16 the pair reads 69 and 1900–2005, where SH16 alone reads 15 and 1944–1998.
+
+**No field in this service gives a direct PDF link.** You get the sheet count and the identifiers. The drawings come through **RPAM**, TxDOT's Real Property Asset Map, and a map not available there is obtained by Open Records Request ([TxDOT, Real Property Asset Map](https://www.txdot.gov/data-maps/right-of-way-maps/real-property-asset-map.html)). The output says so rather than leaving a blank.
+
+!!! note "Amended 2026-09-13, on [PR #56](https://github.com/RickSmith/survey-recon/pull/56)"
+    Until then this section read "`sheet_count` · `date_range` · `control_sections` · `sheets`, each carrying **`MAP_NM`, `ROW_MAP_ID`, `CTRL_SECT_NBR`, `CSJ_NBR`, `MAP_FROM_DT` and `MAP_TO_DT`**."
+
+    Two things differed once it was built under [#16](https://github.com/RickSmith/survey-recon/issues/16), and neither contradicted the section — both were a superset of it.
+
+    **The service's field names are not the output's field names.** Every field this section asked for is present and none is dropped, but each is written the way this tool writes every other output field. The parcels already do this with `Geo_id` → `id`, and the NGS marks with `LAST_COND` → `condition`; asking a reader to hold two spellings of one field is asking them to eventually read the wrong one. `sources.ROW_MAP_FIELDS` records which name went where, the same way `BEXAR_PARCEL_FIELDS` and `NGS_MARK_FIELDS` do.
+
+    **There are more keys than four.** `by_route` splits the count by which route each sheet draws, `sheets_without_a_shape` counts what could not be placed in the corridor or out of it, and `notes` carries the three things a reader has to know before quoting these numbers — including that `1900-01-01` may be a stand-in for no date at all, which [the ROW map sheets page](../data-sources/row-map-sheets.md) works through and could not confirm.
+
+    A doubt kept somewhere else is a doubt nobody reads at the moment they are about to quote it, which is why `notes` is in the file rather than only on that page.
+
+    Also settled here, because it is a judgement about what a reader will quote rather than a fact: the headline pair stays the corridor total across every route, with the notes saying what it covers. Ruling now was the cheap moment — [#22](https://github.com/RickSmith/survey-recon/issues/22), [#23](https://github.com/RickSmith/survey-recon/issues/23) and [#24](https://github.com/RickSmith/survey-recon/issues/24) all read this file field by field and none of them is built yet.
+
+    Raised on the pull request rather than patched over, the same as `AcctNumb` on [PR #52](https://github.com/RickSmith/survey-recon/pull/52), `NPMS` on [PR #53](https://github.com/RickSmith/survey-recon/pull/53) and the `not-screened` control blocks on [PR #54](https://github.com/RickSmith/survey-recon/pull/54). Rick ruled on 2026-09-13.
 
 ### `parcels` — the rows
 

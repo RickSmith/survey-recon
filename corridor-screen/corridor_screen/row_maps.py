@@ -302,10 +302,10 @@ def block(sheets, detail=None, without_shape=0):
     Two differences from the specification, recorded rather than quietly made
     ========================================================================
 
-    Specification section 10 names this block as ``sheet_count`` ·
-    ``date_range`` · ``control_sections`` · ``sheets``, with each sheet
-    "carrying ``MAP_NM``, ``ROW_MAP_ID``, ``CTRL_SECT_NBR``, ``CSJ_NBR``,
-    ``MAP_FROM_DT`` and ``MAP_TO_DT``." Here it differs twice.
+    Until 2026-09-13, specification section 10 named this block as
+    ``sheet_count`` · ``date_range`` · ``control_sections`` · ``sheets``, with
+    each sheet "carrying ``MAP_NM``, ``ROW_MAP_ID``, ``CTRL_SECT_NBR``,
+    ``CSJ_NBR``, ``MAP_FROM_DT`` and ``MAP_TO_DT``." Here it differed twice.
 
     **The service's field names are not used as output names.** Every field
     section 10 asks for is present and none is dropped, but each is written the
@@ -318,20 +318,22 @@ def block(sheets, detail=None, without_shape=0):
     **There are more keys than four.** ``by_route`` splits the count by which
     route each sheet draws, ``sheets_without_a_shape`` counts what could not be
     placed, and ``notes`` carries the three things a reader has to know before
-    quoting these numbers. None of them contradicts section 10; they are a
-    superset of it.
+    quoting these numbers. Neither contradicts section 10; both are a superset
+    of it.
 
-    Whether a superset still needs the specification amended is not the agent's
-    call -- the precedent is ``AcctNumb`` on PR #52, ``NPMS`` on PR #53 and the
-    ``not-screened`` control blocks on PR #54, all raised rather than patched
-    over. This is raised on the pull request for issue #16.
+    Amending a settled specification is not the agent's call -- the precedent
+    is ``AcctNumb`` on PR #52, ``NPMS`` on PR #53 and the ``not-screened``
+    control blocks on PR #54, all raised rather than patched over. This was
+    raised on [PR #56](https://github.com/RickSmith/survey-recon/pull/56), and
+    Rick ruled on 2026-09-13. Section 10 now names the keys and spellings this
+    block actually writes, with a note recording the amendment, so this code
+    and the specification agree again.
 
-    Raised on the same pull request, because it is a judgement about what a
-    reader will quote rather than a fact: ``sheet_count`` and ``date_range``
-    cover **every** route reaching the corridor, so on SH16 they read 69 and
-    1900-01-01 to 2005-04-30 while the corridor's own route reads 15 and
-    1944-01-01 to 1998-03-06 inside ``by_route``. The notes say so. Whether the
-    headline pair should instead be the corridor's own route is Rick's call.
+    Settled on the same ruling, because it is a judgement about what a reader
+    will quote rather than a fact: ``sheet_count`` and ``date_range`` cover
+    **every** route reaching the corridor and stay that way, so on SH16 they
+    read 69 and 1900-01-01 to 2005-04-30 while the corridor's own route reads
+    15 and 1944-01-01 to 1998-03-06 inside ``by_route``. The notes say so.
     """
     if sheets is None:
         return not_screened(detail or "the TxDOT ROW map service was not called")
