@@ -99,16 +99,19 @@ There is a second command, and it is a check rather than a screening run. It com
 python -m corridor_screen.replay one-run/screening.json another-run/screening.json
 ```
 
-One per rendering, reading the screening file rather than the services — section 2's "one fetch, many renderings." Two of the three are built:
+One per rendering, reading the screening file rather than the services — section 2's "one fetch, many renderings." All three are built:
 
 ```bash
 python -m corridor_screen.bid_memo --out project-sh16/
 python -m corridor_screen.parcel_table --out project-sh16/
+python -m corridor_screen.crew_day --out project-sh16/
 ```
 
 The parcel table writes **two files from one run**: `flagged-parcels.md`, and `flagged-parcels.svg` for the projector. Section 9's reasoning for SVG is why — a Markdown file cannot promise a type size, and [#23](https://github.com/RickSmith/survey-recon/issues/23) asks for something readable from the back of a room.
 
-And a third, which is the one genuinely live call — the plan of record's "one live moment proves it isn't a movie," kept as its own act rather than folded into a run that must not fail:
+The crew-day build-up writes two as well: `crew-day.md`, and `crew-day.txt` as the plain-text fallback for a podium where Python will not start. [#24](https://github.com/RickSmith/survey-recon/issues/24) asks for "a fallback capture recorded as the work happens," so both are written on every run rather than behind a flag.
+
+And one more, which is the one genuinely live call — the plan of record's "one live moment proves it isn't a movie," kept as its own act rather than folded into a run that must not fail:
 
 ```bash
 python -m corridor_screen.live_check --out project-sh16/
@@ -707,9 +710,21 @@ project-sh16/cache/
 
 ## 15. Not settled here
 
-- The crew-day build-up. A separate work order reading this file.
+- ~~The crew-day build-up. A separate work order reading this file.~~
 
-    The bid memo and the flagged parcel table were on this list until 2026-09-13. Both are built, under [#22](https://github.com/RickSmith/survey-recon/issues/22) and [#23](https://github.com/RickSmith/survey-recon/issues/23), and their commands are in section 3.6. Each was settled by its own work order rather than by this specification, which is what this entry always meant and still means for the third. Rick ruled on 2026-09-13.
+    **Settled 2026-09-13, by [#24](https://github.com/RickSmith/survey-recon/issues/24).** All three renderings are now built — the bid memo under [#22](https://github.com/RickSmith/survey-recon/issues/22), the flagged parcel table under [#23](https://github.com/RickSmith/survey-recon/issues/23), and the crew-day build-up under #24. Their commands are in section 3.6. Each was settled by its own work order rather than by this specification, which is what this entry always meant.
+
+    The entry is struck through rather than deleted, the same way section 3.6's cache rule was amended rather than rewritten. This specification is read on stage as a record of what was decided and when, and a list that quietly loses its items cannot be read that way.
+
+    **What #24 settled that this specification did not anticipate:** the rates are their own checked-in data file, `corridor_screen/crew_rates.toml`, on the same reasoning section 13 gives for `lead_times.toml`. Every row is an assumption — **TxDOT publishes no production rates** — and the loader refuses a row whose `source` names TxDOT without a URL somebody opened and the date they opened it. That is CLAUDE.md's "never invent a TxDOT requirement" enforced by code rather than remembered by whoever edits next.
 - Any county but Bexar.
 - Elevation and topography. USGS 3DEP timed out on three attempts of four, and returned a silent wrong answer on the fourth. It stays off the critical path.
-- TCP(S-1)-08A. The host blocks automated fetch, so it must be pulled by hand. It is the crew-time document, and the traffic-control cost cliff is real: a twenty-minute shot on a 55 mph highway turns a two-person crew into a crew plus a shadow truck with an attenuator.
+- ~~TCP(S-1)-08A. The host blocks automated fetch, so it must be pulled by hand. It is the crew-time document, and the traffic-control cost cliff is real: a twenty-minute shot on a 55 mph highway turns a two-person crew into a crew plus a shadow truck with an attenuator.~~
+
+    **Settled 2026-09-13, and the second sentence was wrong.** The sheet was pulled by hand under [#11](https://github.com/RickSmith/survey-recon/issues/11) and is committed at `project-sh16/manual-pulls/tcp-s-1-08a.pdf`. It says nothing of the kind. The duration line for a survey crew is **one hour**, not twenty minutes; crossing it restores a sign and a run of channelizing devices (Notes 1 and 2), which is billable time rather than a second vehicle; and on TCP(S-1) the shadow vehicle with a truck mounted attenuator is a permitted **substitute** for the work vehicle under Note 4, not an addition to the crew.
+
+    **No posted speed anywhere in the six-sheet TCP(S-\*) family triggers a shadow truck.** 55 mph is an ordinary row in every spacing table. The claim was read across from the mobile-operations standard TCP(3-1) at a time when TCP(S-1) could not be fetched, and it is corrected here rather than deleted because how it got in is the lesson. The full account is in `project-sh16/manual-pulls/tcp-s-1-08a.md` and `tcp-s-family.md`.
+
+    Duration *can* put a shadow truck on a job — on **TCP(S-2b)** and **TCP(S-3)**, which draw one, and where the permission to substitute an ordinary work vehicle is granted only for short duration work. That is driven by **where the work is**, not by how fast traffic is moving. The crew-day build-up says so on its face.
+
+    **`docs/txdot-research.md` still carries the original wording**, and correcting it is [#70](https://github.com/RickSmith/survey-recon/issues/70) rather than this specification's job.

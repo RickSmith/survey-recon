@@ -1,0 +1,248 @@
+# Crew rates -- how long each thing takes.
+#
+# This is checked-in data, not code, for the same reason `lead_times.toml` is:
+# a number somebody is accountable for should be editable without touching a
+# line of Python, and should show a readable diff when it changes.
+#
+# ----
+#
+# THE ONE THING TO KNOW ABOUT THIS FILE
+#
+# **Every number below is an assumption. TxDOT publishes none of them.**
+#
+# There is no TxDOT production rate for recovering a monument, retracing a ROW
+# sheet or setting a control pair. The standard sheets say what devices go on
+# the road and what has to be worn; they do not say how long anything takes.
+# So every row here carries `assumption = true`, and every row carries a
+# `disagree_with` line naming the specific thing a surveyor should push back
+# on. That is the point of the build-up: a room of firm owners is supposed to
+# argue with these, one row at a time.
+#
+# The loader enforces three rules, in `crew_day._check`:
+#
+#   * Every row carries `label`, `unit`, `kind`, `source` and `why`.
+#   * A row marked `assumption = true` carries `disagree_with`.
+#   * **A row whose `source` names TxDOT or a TCP sheet may not be an
+#     assumption, and must carry `url` and `verified_on`.** That is CLAUDE.md's
+#     "never invent a TxDOT requirement" made structural. `source` names who
+#     published the number. A sheet mentioned in `why` is context; a sheet
+#     named in `source` is a claim, and a claim needs a link.
+#
+# `kind` is one of:
+#
+#   field      hours a crew spends on the road. These become crew-days.
+#   office     hours somebody spends at a desk. These never become crew-days.
+#   day        how many hours make one day of the kind above.
+#   condition  a stated condition of the estimate, not a multiplier.
+#
+# These values are a starting point for the SH16 worked example, not a rate
+# card. Replace them with your firm's own before quoting anything.
+
+schema_version = "1.0.0"
+
+
+# -- Field: control ----------------------------------------------------------
+
+[hours_per_mark_recovery_attempt]
+label = "Recovery attempt per published mark"
+value = 0.75
+unit = "hours per mark"
+kind = "field"
+assumption = true
+source = "Assumption. No published figure was used."
+why = """
+Time to drive to a published position, search it, and write up what was or was
+not found. Charged on every mark in the corridor, including the ones already
+recorded MARK NOT FOUND -- a crew that does not look cannot report.
+"""
+disagree_with = """
+A firm that accepts NGS's own MARK NOT FOUND and does not go looking sets this
+to zero for those marks. That is a defensible call and it is not this tool's
+to make.
+"""
+
+[control_pairs_per_mile]
+label = "New control pairs to set, per mile"
+value = 0.5
+unit = "pairs per mile"
+kind = "field"
+assumption = true
+source = "Assumption. No published figure was used."
+why = """
+A pair roughly every two miles, intervisible, so the corridor can be run
+without relying on marks that are not there. Driven by the run's own finding
+that every published NGS mark in this corridor is recorded MARK NOT FOUND.
+"""
+disagree_with = """
+Spacing is a methodology choice, not a fact. A firm working RTK off a network
+may set far fewer; a firm running conventional traverse may set more.
+"""
+
+[hours_per_control_pair]
+label = "Hours to set and occupy one control pair"
+value = 3.0
+unit = "hours per pair"
+kind = "field"
+assumption = true
+source = "Assumption. No published figure was used."
+why = """
+Monumenting two points and holding a static occupation long enough to submit
+them. Does not include the office time to process or to submit to NGS.
+"""
+disagree_with = """
+Occupation length is the argument here. Shorten the session and this halves;
+require an OPUS-shareable solution and it grows.
+"""
+
+
+# -- Field: tracts -----------------------------------------------------------
+
+[hours_per_tract_corner_recovery]
+label = "Corner recovery per tract the corridor touches"
+value = 0.5
+unit = "hours per tract"
+kind = "field"
+assumption = true
+source = "Assumption. No published figure was used."
+why = """
+Charged against every tract the corridor touches. On SH16 that is 524 tracts,
+which makes this by a wide margin the largest line in the build-up.
+"""
+disagree_with = """
+Start here. This assumes the crew works every tract the corridor clips. On an
+urban arterial most are small lots whose corners fall out of one setup, and
+some are already in TxDOT's hands. Halve this number and the field estimate
+moves more than any other change on the page.
+"""
+
+[hours_per_flagged_tract_access]
+label = "Extra time per flagged tract"
+value = 2.0
+unit = "hours per tract"
+kind = "field"
+assumption = true
+source = "Assumption. No published figure was used."
+why = """
+A tract carrying a cemetery, a school, a pipeline or a railroad costs time the
+ordinary tract does not: an escort to meet, a gate to be let through, a window
+somebody else sets. On top of the ordinary recovery time, not instead of it.
+"""
+disagree_with = """
+This is a field-hours figure only. The notice period before the crew may go at
+all is a separate thing entirely, is measured in days rather than hours, and
+lives in the flagged parcel table beside this file.
+"""
+
+
+# -- Field: traffic control --------------------------------------------------
+
+[hours_per_road_occupation]
+label = "Set up and take down traffic control, per occupation"
+value = 1.25
+unit = "hours per occupation"
+kind = "field"
+assumption = true
+source = "Assumption. No published figure was used."
+why = """
+Placing advance signing and channelizing devices, working, then retrieving all
+of it. TCP(S-1)-08A Notes 1 and 2 say which sign and which devices come back
+once the work passes one hour at a location, and Note 3 says the devices stand
+whatever the duration where line of sight will not let the work vehicle park
+where it protects the crew. The sheet says what goes on the road. It does not
+publish a time to put it there.
+"""
+disagree_with = """
+The quantity, not the rate. This is multiplied by the number of road
+occupations, and nothing in this run counts them — see the manhole and culvert
+lines. The rate itself is one crew setting cones on a conventional road.
+"""
+
+
+# -- Office ------------------------------------------------------------------
+
+[hours_per_row_sheet_retracement]
+label = "Hand retracement per ROW map sheet"
+value = 1.5
+unit = "hours per sheet"
+kind = "office"
+assumption = true
+source = "Assumption. No published figure was used."
+why = """
+Reading a scanned sheet, picking up the baseline and the called monuments, and
+drawing them into a stakeout file by hand. The SH16 sheets run from 1944 to
+1998, and some of the corridor's 69 sheets are older still.
+"""
+disagree_with = """
+Legibility is the whole argument. A clean 1998 sheet is not a 1944 scan, and
+this single rate covers both. Split it by decade if your reader will bear it.
+"""
+
+[office_hours_per_mile_drafting]
+label = "Drafting and deliverable, per mile"
+value = 4.0
+unit = "hours per mile"
+kind = "office"
+assumption = true
+source = "Assumption. No published figure was used."
+why = """
+Turning field work and retraced sheets into the ROW mapping deliverable.
+Charged against corridor length because that is what the run measures.
+"""
+disagree_with = """
+Per mile is the wrong unit and it is the one the run can supply. Drafting
+scales with tract count and sheet count far more than with distance.
+"""
+
+
+# -- How long a day is -------------------------------------------------------
+
+[field_hours_per_crew_day]
+label = "Productive field hours in one crew-day"
+value = 8.0
+unit = "hours per crew-day"
+kind = "day"
+assumption = true
+source = "Assumption. No published figure was used."
+why = """
+Hours actually on the corridor. Not a shift length: mobilization, the drive
+and the tailgate meeting are already taken out.
+"""
+disagree_with = """
+Most firms will say this is high. A long haul to a San Antonio corridor, or
+summer heat, and six is closer. Lowering it raises the day count directly.
+"""
+
+[office_hours_per_day]
+label = "Productive office hours in one day"
+value = 8.0
+unit = "hours per day"
+kind = "day"
+assumption = true
+source = "Assumption. No published figure was used."
+why = "Hours at the desk on this job, not hours in the building."
+disagree_with = """
+Anybody splitting their week across jobs is not giving this one eight hours a
+day, and the office day count below assumes they are.
+"""
+
+
+# -- Stated conditions -------------------------------------------------------
+
+[crew_size]
+label = "People in the field crew"
+value = 2.0
+unit = "people"
+kind = "condition"
+assumption = true
+source = "Assumption. No published figure was used."
+why = """
+Stated so the reader knows what a crew-day buys. The field hours above are for
+a crew of this size, and the build-up does not scale them: putting a third
+person on the truck does not divide the hours by three, and this tool will not
+pretend it does.
+"""
+disagree_with = """
+TCP(S-2c)-10 Note 8 binds a two-person crew on a two-lane road hard — the
+rodman may only enter the roadway accompanied by a flagger. A flagger is a
+third person, and none of the rates above carry one.
+"""
