@@ -286,12 +286,42 @@ class TestEveryFallbackPlaysWithNoNetwork(unittest.TestCase):
 
 
 class TestAGapSaysSoAndNamesTheWorkThatWouldCloseIt(unittest.TestCase):
-    """Blocks of this session with nothing recorded yet are mostly waiting on
-    something that does not exist yet -- the deck, the money slide, Hermes. That
-    is a finding, and the card's job is to say it out loud rather than leave a
-    presenter to discover it at the podium."""
+    """Blocks of this session with nothing recorded yet are waiting on something
+    that does not exist yet -- today, a rendered copy of the deck on the
+    presenter's laptop. That is a finding, and the card's job is to say it out
+    loud rather than leave a presenter to discover it at the podium."""
 
     def test_every_gap_names_a_work_order(self):
+        """A gap points at the work that would close it, by number.
+
+        **This checks the shape of the pointer, not the state of what it points
+        at**, and that is a deliberate limit rather than an oversight. Asked in
+        #96, decided there, and written here because here is where the next
+        person will wonder.
+
+        Reading the state needs one of two things, and neither belongs in this
+        file:
+
+        * **The network.** `.github/workflows/tests.yml` says in writing that
+          this suite needs none, and that a network failure in it is a finding
+          rather than something to retry around. Half of it exists to prove the
+          card works at a podium with the socket closed. A `gh` call here would
+          spend that property to check a fact about GitHub
+        * **A committed list of open issues.** That is a cache of something that
+          changes without the repo changing, so it would go stale silently and
+          the test would pass on stale data. Which is *this* bug -- a stale
+          claim about issue state. A stale cache is not a cure for a stale
+          pointer
+
+        So the check that a gap is still a gap is a reviewer's, on the pull
+        request, and the card says so out loud under *How this page is kept
+        honest*. What this file can do is make sure a presenter is never left
+        with a gap and no idea who is closing it, which is what it does.
+
+        The failure it did not catch: #12, #31 and #32 all closed while three
+        rows still read `not recorded`. Every one of those rows matched
+        `#\\d+` and every one of them was pointing at finished work.
+        """
         for time, block, reach_for, _covers in card_rows():
             if not reach_for.startswith(GAP):
                 continue

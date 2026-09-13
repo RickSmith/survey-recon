@@ -10,10 +10,10 @@ moment you need it.
 | Time | What is on screen | Reach for | What it stands in for |
 |---|---|---|---|
 | 0:00–0:08 | Cold open — the agent takes the SH16 job | `python -m corridor_screen --route SH0016-KG --begin-dfo 347.7 --end-dfo 356.367 --out ../project-sh16 --mode cache-only` | The whole screening run. Fourteen services, every answer off the disk, finishing at `parcels 524`. It makes no network calls at all, not even the reachability ping |
-| 0:08–0:20 | What is an agent | not recorded — #12, then #31 | The deck. There is nothing to fall back to until the slides exist. Export the PDF onto the laptop as soon as they do |
-| 0:20–0:30 | Vocabulary of managing one | not recorded — #12, then #31 | The same deck. The words themselves are in `CONTEXT.md`, which is not a slide and will not save this block |
+| 0:08–0:20 | What is an agent | not recorded — #81 through #86 | The deck. These slides are written. What is missing is a copy of them you can open with the network gone: the rendered deck is built on every push and published with the site, and this card does not send anybody to a website. Export the PDF onto the laptop once the deck is finished |
+| 0:20–0:30 | Vocabulary of managing one | not recorded — #81 through #86 | The same deck, and the same missing export. The words themselves are in `CONTEXT.md`, which is not a slide and will not save this block |
 | 0:30–0:46 | Act I — the grilling | `corridor-screen/captures/the-grilling/README.md` · `corridor-screen/captures/the-grilling/the-grilling.md` · `corridor-screen/captures/the-grilling/the-tickets.md` | The real `/grill-with-docs` run that wrote the spec. The README is Act I on one screen — 19 questions, what the agent recommended, what Rick answered. Open that first; the other two are the full run and the 35 work orders that followed |
-| 0:46–0:52 | The money slide | not recorded — #32 | The slide itself |
+| 0:46–0:52 | The money slide | `project-sh16/crew-day.md` · `docs/for-principals/index.md` | The two money slides, each from the file it was written out of. The build-up carries every figure on the first — 38 crew-days, 18 office days, rate `A4` — because that is where the slide reads them from. The principals brief carries the second, including the TxDOT sentence about a non-compliant survey and its citation |
 | 0:52–0:57 | Stretch and questions | nothing live | Nothing on screen to lose |
 | 0:57–1:18 | Act II — find the control | `docs/scenarios/sh16/capture-note.md` · `project-sh16/screening.json` | Eleven NGS marks, every one `MARK NOT FOUND`; two distinct TxDOT monuments; 69 ROW sheets reaching the corridor, of which 15 are SH16's own. The capture note reads the findings out in the order you need them |
 | 0:57–1:18 | The one genuinely live call | `docs/scenarios/sh16/capture-note.md` | The NGS cross-check as it ran on 2026-09-13 — five marks in both, five conditions agreeing. Losing it costs the live moment and nothing else. Say that out loud and move on |
@@ -47,11 +47,37 @@ repo, on the laptop, in a folder. None of them is a link.
 
 ## What has no fallback yet, and why
 
-**3 blocks have nothing to reach for**, and two pieces of work would close
-them — the deck accounts for two of the three blocks on its own.
+**2 blocks have nothing to reach for**, and both of them are the same piece of
+work: the deck.
 
-Both are waiting on something that does not exist yet, so an audit can do
-nothing but name them: the deck (#12, then #31) and the money slide (#32).
+The slides for those two blocks are written. **That is not the same as having a
+fallback**, and the difference is the whole reason this section exists. What is
+missing is a copy of those slides a presenter can open on a laptop with no
+network, and there are two reasons there is not one.
+
+Nothing rendered is committed. `.github/workflows/slides.yml` builds the web
+page and the PDF on every push, and they are published with the site. The card's
+own rule one heading down is to open a file rather than a website, so a deck
+that only exists on the web is a deck you do not have at the podium.
+
+The deck's **source** is committed and is still not the fallback. Every slide in
+it carries its speaker note, and several of those notes are about handling the
+room rather than about the subject. It is a crib sheet for the presenter, not
+something to put on a projector.
+
+So what is waiting is the export, and the export waits on the whole deck,
+because it is one file. That is **#81 through #86**. Until they land, an audit
+can do nothing but name it.
+
+**The money slide used to be on this list and is not any more**, and nothing had
+to be recorded for it. Both of its slides were written out of files that were
+already committed. The billable-hour math is read out of
+`project-sh16/crew-day.md`, and `corridor-screen/tests/test_money_slide.py`
+fails if the slide and the build-up ever disagree — so the build-up is not a
+stand-in for that slide, it is where that slide came from. The block's own
+speaker note has named it as the fallback all along. This card is what did not
+say so. The rework argument, and the TxDOT sentence that carries it, is on
+`docs/for-principals/index.md` with its citation.
 
 **Hermes used to be on this list and is not any more.** The demo was built
 under #34 and the recording its own work order asked for is committed at
@@ -89,6 +115,21 @@ holds it to all of this:
 Files named in the prose rather than in the table are not checked. There is
 exactly one — the Act I spec — so if that file ever moves, this page will not
 notice and you will.
+
+**A named work order is checked for shape, not for state.** The test reads the
+`#` and the number beside it. It cannot ask GitHub whether that issue is still
+open, because the suite runs with the network taken away on purpose — that is
+what proves the rest of the card works at a podium. So a work order can close
+without the gap closing, and this page goes on pointing at finished work.
+
+That is not hypothetical. It is what these rows did. #12 built the deck
+skeleton, #31 ported the concept slides and #32 built the money slide; all three
+closed, all three rows still read `not recorded`, and a presenter reading down
+the page would have taken the gap as closed along with them. The slides landed.
+The export did not. Written under
+[issue #96](https://github.com/RickSmith/survey-recon/issues/96), and the reason
+the check stays out of the suite is in the test file beside the test it is
+about.
 
 A fallback page that is out of date is worse than no page, because it gets
 followed. This one fails the test suite instead.
