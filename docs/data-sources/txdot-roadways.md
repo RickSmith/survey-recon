@@ -28,12 +28,15 @@ https://services.arcgis.com/KTcxiTD9dsQw4r7Z/arcgis/rest/services/TxDOT_Roadways
 | Last edited | 2026-09-01, per the service's own `editingInfo` |
 | Key or account | none |
 
-**WKID** is Esri's number for a coordinate system. This service stores in Web
-Mercator; the tool asks for `outSR=4326` — longitude and latitude — and TxDOT's
-server does the conversion. No datum transformation happens in this tool, which
-is deliberate: [spec section 3.2](../corridor-screen/spec.md) records that the
-TxDOT Survey Manual will not accept datum transformations for control, and a
-screening tool that quietly reprojects teaches the wrong habit.
+**WKID** is Esri's number for a coordinate system, the way an EPSG code is. This
+service stores in Web Mercator; the tool asks for `outSR=4326` — longitude and
+latitude — and TxDOT's server does the conversion.
+
+No datum transformation happens inside this tool, which is deliberate. The TxDOT
+Survey Manual states that **"TxDOT will not accept any datum transformations for
+control"** ([Survey Manual, Ch. 3](https://www.txdot.gov/manuals/row/ess/index.html)).
+Screening is not control work, but a tool that quietly reprojects teaches the
+wrong habit.
 
 ---
 
@@ -48,7 +51,7 @@ is the **roadbed**. Around SH16 there are eight of them, read live on
 
 | Route name | `RDBD_TYPE` | What it is |
 |---|---|---|
-| `SH0016-KG` | Single Roadbed | **The main carriageway.** What you almost always want |
+| `SH0016-KG` | Single Roadbed | **The main lanes.** What you almost always want |
 | `SH0016-LG` | Left Roadbed | The left side, where the highway is divided |
 | `SH0016-RG` | Right Roadbed | The right side |
 | `SH0016-XG` | Left Frontage | Frontage road, left |
@@ -59,6 +62,17 @@ is the **roadbed**. Around SH16 there are eight of them, read live on
 
 So the route argument for the SH16 corridor is `SH0016-KG`: **state highway 16,
 single roadbed**. Zero-padded to four digits, then the roadbed code.
+
+**Check it yourself.** Neither this table nor the `COUNTY` finding below is in
+the committed capture — the tool only ever asks for the one route it was given —
+so both are reproduced with a query rather than asserted:
+
+```
+POST .../TxDOT_Roadways/FeatureServer/0/query
+where=RTE_NM LIKE 'SH0016%'
+outFields=RTE_NM,RDBD_TYPE,DES_DRCT,COUNTY
+returnGeometry=false
+```
 
 **Why this matters more than a naming quirk.** A tool that answers an unknown
 route name with an empty parcel list, rather than a complaint, would produce a

@@ -6,11 +6,20 @@ wrong answer instead of an error.**
 
 All of it is public data. No client data, ever, and the repo stays public.
 
-Every endpoint on these pages was queried live and returned real results, and
-every response is committed in
+**Every service the tool calls** was queried live and returned real results, and
+every response a run receives is committed in
 [`project-sh16/cache/`](https://github.com/RickSmith/survey-recon/tree/main/project-sh16/cache)
-with its capture date and the exact request beside it. Where something could not
-be confirmed, the page says "not found" and says where we looked.
+with its capture date and the exact request beside it.
+
+Two things are **not** in that cache, and each page says so where it matters.
+Some findings come from queries a run never makes — the roadbed table on
+[TxDOT Roadways](txdot-roadways.md) is one, and it carries the query to
+reproduce it. And the sources on
+[sources we did not use](not-used.md) include two FEMA rows **we never tested at
+all**, carried across from older notes.
+
+Where something could not be confirmed, the page says "not found" and says where
+we looked.
 
 ---
 
@@ -54,6 +63,7 @@ The most expensive kind. No error, no delay, no clue.
   geometry stopped inside Bexar. Asked with an envelope it was correct every
   time — [the flag services](flag-services.md)
 - **A flood layer holding Salem, Massachusetts**, which ranks high in a search —
+  recorded in older notes and **not verified by us** —
   [sources we did not use](not-used.md)
 
 ### It answers, and you asked the wrong thing
@@ -105,8 +115,9 @@ The most expensive kind. No error, no delay, no clue.
 - **`maps.dot.state.tx.us` blocks intermittently.** The same URL failed and then
   succeeded minutes later. It is why the ROW step is deliberately last —
   [ROW map sheets](row-map-sheets.md)
-- **The parcel roll is weekly, and lags the courthouse.** The service says
-  "updated weekly" itself, and publishes the date it was last edited —
+- **The parcel service rebuilds weekly**, says so itself, and publishes the date
+  it was last edited. How fast a transfer reaches the appraisal roll in the first
+  place is a separate question we did not confirm —
   [BCAD parcels](bcad-parcels.md)
 - **USGS records carry the date they were loaded, not the date anybody checked.**
   On the SH16 corridor they run from 2016 to 2025 —

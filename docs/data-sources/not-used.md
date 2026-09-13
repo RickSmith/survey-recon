@@ -37,44 +37,59 @@ returned record is measured against the extent it was supposed to come from.
 
 ### What happened when we re-tested it, on 2026-09-13
 
-**Neither behavior reproduced, and that is worth writing down rather than
-quietly repeating the note.**
+**Read the caveat before the numbers: this was not an exact replication.** The
+research recorded `sr=4326` being ignored. Today's `v1` endpoint does not take
+`sr` at all — it takes `wkid` — so we could not repeat the original request
+against the original endpoint. What follows is what this endpoint does now.
 
-Four attempts at the SH16 corridor midpoint, matching the research's own sample
-size:
-
-| Attempt | Result |
-|---|---|
-| 1 | HTTP 200 in 0.62 s |
-| 2 | HTTP 200 in 0.53 s |
-| 3 | HTTP 200 in 0.44 s |
-| 4 | HTTP 200 in 0.37 s |
-
-Four of four, none over 0.7 seconds, all returning `866.87` feet for
+**It answered every time, and the times varied a lot.** Ten attempts across two
+machines on the same day: six between 0.40 s and 1.29 s, one at 3.20 s and one
+at **16.35 s**. Every one returned HTTP 200 and `866.87` feet for
 `-98.644635, 29.528488` — a plausible elevation for that spot in San Antonio.
 
-And asked with a **mismatched** coordinate system — the same longitude and
-latitude, labeled `wkid=3857` — it did not return a plausible wrong elevation
-either. It returned this, as `HTTP 200`, as plain text rather than JSON:
+So we did **not** reproduce "timed out 3 of 4 attempts." We also did not find a
+service you would want on a critical path: a sixteen-second response is a
+sixteen-second response, and an earlier draft of this page quoted "none over
+0.7 seconds" from four lucky tries. That sentence was wrong the way a small
+sample is always wrong.
+
+**`sr=4326` is silently ignored — which is the original hazard, still here.**
 
 ```
-Call failed.  [Failed cloud operation: Open, Path: /vsimem/_00001EC8.aux.xml]
+?x=-98.644635&y=29.528488&units=Feet&sr=4326   → 866.87 ft
+?x=-98.644635&y=29.528488&units=Feet            → 866.87 ft   (identical)
 ```
 
-**So the hazard has changed shape, not disappeared.** It is still an HTTP 200
-that is not an answer, and a caller that checks only the status code still gets
-nothing useful. But the specific "plausible wrong number" the research recorded
-is **not what this service does today**, and the timeouts did not happen at all.
+Passing the parameter the research named changes nothing, and the service does
+not say so. That is the same shape of failure the research recorded: a parameter
+accepted, ignored, and answered around.
 
-We could not reproduce the original behavior. We are not saying it did not
-happen — it is dated, it is recorded, and services change. We are saying what we
-saw on 2026-09-13, on four tries, from one machine on one network. Somebody
-re-testing from elsewhere may see something different again, and that is rather
-the point of writing down the date beside the finding.
+**A wrong `wkid` gives an HTTP 200 that is not an answer** — plain text, not
+JSON:
+
+```
+?x=-98.644635&y=29.528488&units=Feet&wkid=3857   → Invalid or missing input parameters.
+```
+
+A caller checking only the status code gets a 200 and a body that will not
+parse. Note that **the exact text varies between runs**: an earlier attempt the
+same day returned `Call failed.  [Failed cloud operation: Open, Path:
+/vsimem/_00000376.aux.xml]` instead. Do not match on the message.
+
+### What we are and are not saying
+
+We are saying what this endpoint did on 2026-09-13, from two machines, on one
+network, on ten attempts. We are **not** saying the research was wrong: it is
+dated, it named a different parameter, services change, and a slow network
+somewhere else will see the timeouts we did not.
+
+The hazard has not gone anywhere. It has changed shape — from "a plausible wrong
+number" to "a 200 that will not parse" and "a parameter quietly ignored" — and
+both of those still defeat a caller that only checks the status code.
 
 **The tool still does not call it.** Elevation is not something a corridor
-screening needs, the failure history is on the record whether or not it
-reproduces today, and nothing in the output depends on it.
+screening needs, the failure history is on the record whether or not any
+particular part of it reproduces today, and nothing in the output depends on it.
 
 ---
 
