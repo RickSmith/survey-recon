@@ -12,7 +12,7 @@ moment you need it.
 | 0:00–0:08 | Cold open — the agent takes the SH16 job | `python -m corridor_screen --route SH0016-KG --begin-dfo 347.7 --end-dfo 356.367 --out ../project-sh16 --mode cache-only` | The whole screening run. Fourteen services, every answer off the disk, finishing at `parcels 524`. It makes no network calls at all, not even the reachability ping |
 | 0:08–0:20 | What is an agent | not recorded — #12, then #31 | The deck. There is nothing to fall back to until the slides exist. Export the PDF onto the laptop as soon as they do |
 | 0:20–0:30 | Vocabulary of managing one | not recorded — #12, then #31 | The same deck. The words themselves are in `CONTEXT.md`, which is not a slide and will not save this block |
-| 0:30–0:46 | Act I — the grilling | not recorded — #75 | The live grilling, and the work orders it writes onto the projector. **There is a degraded version** and it is written out below. Read it before the day, not on the day |
+| 0:30–0:46 | Act I — the grilling | `corridor-screen/captures/the-grilling/README.md` · `corridor-screen/captures/the-grilling/the-grilling.md` · `corridor-screen/captures/the-grilling/the-tickets.md` | The real `/grill-with-docs` run that wrote the spec. The README is Act I on one screen — 19 questions, what the agent recommended, what Rick answered. Open that first; the other two are the full run and the 35 work orders that followed |
 | 0:46–0:52 | The money slide | not recorded — #32 | The slide itself |
 | 0:52–0:57 | Stretch and questions | nothing live | Nothing on screen to lose |
 | 0:57–1:18 | Act II — find the control | `docs/scenarios/sh16/capture-note.md` · `project-sh16/screening.json` | Eleven NGS marks, every one `MARK NOT FOUND`; two distinct TxDOT monuments; 69 ROW sheets reaching the corridor, of which 15 are SH16's own. The capture note reads the findings out in the order you need them |
@@ -47,22 +47,23 @@ repo, on the laptop, in a folder. None of them is a link.
 
 ## What has no fallback yet, and why
 
-**5 blocks have nothing to reach for**, and four pieces of work would close
-them — the deck accounts for two of the five blocks on its own.
+**4 blocks have nothing to reach for**, and three pieces of work would close
+them — the deck accounts for two of the four blocks on its own.
 
-Three of the four are waiting on something that does not exist yet, so an audit
-can do nothing but name them: the deck (#12, then #31), the money slide (#32)
-and the Hermes demo (#34).
+All three are waiting on something that does not exist yet, so an audit can do
+nothing but name them: the deck (#12, then #31), the money slide (#32) and the
+Hermes demo (#34).
 
-**Act I is the different one.** The grilling already happened — the spec it
-produced is `docs/corridor-screen/spec.md` and the work orders are on the issue
-tracker. What was never recorded is the *run*: the agent working, and the
-issues appearing. That is sixteen minutes and it is the hinge of the session,
-so it has its own work order, #75, and it is a recording job rather than a
-rehearsal.
+**Act I used to be on this list and is not any more.** The grilling that wrote
+the corridor-screening spec really happened on 12 September 2026, and the
+session it happened in was still on the presenter's machine. It is committed
+now, redacted and cut to the grilling itself, under #75.
 
-If Act I dies on the day and #75 is still open, put the spec on screen and walk
-it. It is the output of the real grilling, so it is honest. It is not the demo.
+Two honest limits on it, both written on the capture. It is a **transcript, not
+a recording** — there is no video of that session and there never was. And that
+run did `/grill-with-docs` and `/to-spec` but never `/to-tickets`, so the work
+orders are captured as a **result** — 35 of them, stamped across 89 seconds —
+rather than as a run.
 
 ## How this page is kept honest
 
