@@ -1,0 +1,18 @@
+# How git is allowed to touch files in this repo.
+#
+# The last rule that matches a file is the one that applies, so the general
+# rule goes first and the exception after it.
+
+# Ordinary text. Git may normalize line endings as usual.
+* text=auto
+
+# Cached service responses are exactly the bytes a server sent, and the whole
+# value of the cache rests on that sentence staying true. Git normally rewrites
+# line endings when it checks a text file out on Windows, which would make a
+# cached response differ from the response. `-text` turns that off: these files
+# come back out of git exactly as they went in.
+#
+# Today's captures happen to arrive as one long line with no line endings to
+# rewrite, so nothing is broken yet. This is here so that a service which starts
+# formatting its JSON cannot quietly break the promise later.
+project-sh16/cache/**/*.json -text

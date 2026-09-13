@@ -1,0 +1,15 @@
+# Provenance record. The response file beside this one is exactly what the
+# server sent and is never edited. Every parameter of the request is listed
+# under [request_params], so the call can be repeated and checked.
+service = "TxDOT_Roadways"
+cache_key = "txdot-roadways/txdot-roadways-layer-0-metadata__1978a3325515"
+request_method = "GET"
+request_url = "https://services.arcgis.com/KTcxiTD9dsQw4r7Z/arcgis/rest/services/TxDOT_Roadways/FeatureServer/0"
+captured_at = 2026-09-12T21:10:12-05:00
+http_status = 200
+response_bytes = 10317
+layer_id = 0
+warnings = []
+
+[request_params]
+f = "json"
