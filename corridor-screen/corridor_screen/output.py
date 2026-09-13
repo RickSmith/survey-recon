@@ -68,11 +68,18 @@ def service_entry(source, ping, status, records, record_count, warnings=(), used
         "captured_at": next((r.get("captured_at") for r in records if r.get("captured_at")), None),
         "cache_files": [r["cache_key"] for r in records],
         "warnings": list(warnings),
-        # For a flag service: how many of the records that came back were
-        # actually used. The services are asked about a box drawn around every
-        # parcel in the corridor, which is wider than the ribbon, so "39
-        # returned, 3 used" is a normal and honest pair of numbers. Hiding the
-        # first one would make the second look like the whole answer.
+        # How many of the records that came back were actually used. Any
+        # service asked about a box gets one, because the box is wider than the
+        # ribbon -- so "39 returned, 3 used" is a normal and honest pair of
+        # numbers. Hiding the first would make the second look like the whole
+        # answer.
+        #
+        # Until 2026-09-13, specification section 10 said "flag services
+        # **only**". Control marks are asked about a box the same way and have
+        # the same gap between returned and used, so the same pair is reported
+        # for them. Raised on PR #54 rather than patched over, and Rick ruled on
+        # 2026-09-13 that the rule belongs to any service asked about a box.
+        # Section 10 now says so.
         "records_used": used,
     }
 
@@ -109,7 +116,7 @@ def skipped_service(source, reason, ping=None):
 def build(run_id, started_at, mode, half_width_ft, adjacent_distance_ft, sanity_margin_ft, tool_version,
           alignment, corridor, services, parcel_rows, warnings,
           status="complete", stopped_at_service=None, corridor_flags=(),
-          screened_for=(), lead_time_table=None):
+          screened_for=(), lead_time_table=None, control=None):
     """Assemble the whole output file."""
     return {
         "schema_version": SCHEMA_VERSION,
@@ -141,8 +148,12 @@ def build(run_id, started_at, mode, half_width_ft, adjacent_distance_ft, sanity_
             "Roadway_Inventory_2023, which this pass does not call"
         ),
         "services": services,
-        "control": not_screened(
-            "NGS marks and TxDOT primary control points are separate work orders"
+        # NGS marks and their condition, from ``control.block``. A run that
+        # never reached the service still gets a block, saying so -- built by
+        # the same function, so a reader never has to work out which shape of
+        # answer this is.
+        "control": control if control is not None else not_screened(
+            "the run did not reach the control step"
         ),
         "row_maps": not_screened(
             "the ROW map sheet index is a separate work order"

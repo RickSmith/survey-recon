@@ -39,6 +39,11 @@ written separately and then drift apart under maintenance.
 """
 
 from . import geometry, lead_times as lead_times_mod
+# Re-exported, not redefined. Reading a field whatever case it came back in is
+# an ArcGIS problem rather than a flag problem, so it moved to ``arcgis.py``
+# when the NGS marks needed it too. Callers that already say
+# ``flags.attribute`` keep working, and there is still only one of it.
+from .arcgis import attribute  # noqa: F401
 from .geometry import FEET_PER_MILE
 from .sources import FLAG_FIELDS
 
@@ -52,28 +57,6 @@ from .sources import FLAG_FIELDS
 # parcels, and it is recorded once at run level because an estimator must not
 # count one pipeline's 48 hours thirty times.
 DEFAULT_CORRIDOR_FLAG_PARCELS = 5
-
-
-def attribute(attributes, name):
-    """Read one field, whatever case the service answered in.
-
-    The trap this exists for is recorded at the bottom of ``sources.py``: the
-    USGS structures layers publish their fields as ``NAME`` and
-    ``PERMANENT_IDENTIFIER`` and then answer a query with ``name`` and
-    ``permanent_identifier``. A plain dictionary lookup finds nothing, raises
-    nothing, and every school comes out unnamed.
-
-    A blank string from a database is an absent value, not an empty answer.
-    """
-    attributes = attributes or {}
-    if name in attributes:
-        value = attributes[name]
-    else:
-        wanted = name.lower()
-        value = next((v for k, v in attributes.items() if k.lower() == wanted), None)
-    if isinstance(value, str):
-        return value.strip() or None
-    return value
 
 
 def _relation(distance_miles, adjacent_distance_ft):

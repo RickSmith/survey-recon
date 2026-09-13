@@ -50,6 +50,7 @@ nav:
       - data-sources/index.md
       - ArcGIS geometry service: data-sources/arcgis-geometry-service.md
       - The flag services: data-sources/flag-services.md
+      - The NGS datasheets service: data-sources/ngs-datasheets.md
   - Toolkit: toolkit/index.md
   - Governance:
       - governance/index.md

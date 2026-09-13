@@ -294,7 +294,7 @@ services   control   row_maps   parcels   corridor_flags   warnings
 | `status` | `ok`, `failed`, `from-cache`, `skipped` |
 | `attempts` | how many times it was tried |
 | `record_count` | how many records came back |
-| `records_used` | flag services only: how many of those were used, and how |
+| `records_used` | any service asked about a box: how many of those were used, and how |
 | `cache_files` | relative paths to the saved responses — one per page, since a capped answer is fetched in several |
 | `captured_at` | when that response was captured |
 | `warnings` | sanity checks that tripped on this service |
@@ -303,9 +303,33 @@ This block is the honesty block. It is what lets somebody else decide whether to
 
 **`records_used` sits beside `record_count` because the two are rarely equal, and the gap is not a fault.** A flag service is asked about a box drawn around every parcel in the corridor, which is wider than the ribbon, so a school at the far corner of that box is a correct answer to the question that was asked and is simply not this corridor's problem. Recording only the six that were used would make six look like the whole world. The honesty block says "39 returned, 6 used" instead.
 
+The same is true of the NGS marks, which are asked about a box drawn around the corridor: "31 returned, 11 in the corridor."
+
+!!! note "Amended 2026-09-13, on [PR #54](https://github.com/RickSmith/survey-recon/pull/54)"
+    Until then this row read "**flag services only**."
+
+    The NGS marks were built under [#14](https://github.com/RickSmith/survey-recon/issues/14) and are asked the same way a flag service is — with an envelope, because a polyline and a distance can be quietly ignored. So they arrive with the same gap between what came back and what was used, and for the same honest reason: the box is wider than the ribbon.
+
+    Reporting a bare 11 there would make 11 look like the whole world, which is the exact thing the original sentence was written to prevent. The rule was right and its scope was too narrow.
+
+    The tool emitted the pair first and the difference was raised on the pull request rather than slipped in. Rick ruled on 2026-09-13 that the rule belongs to any service asked about a box.
+
 ### `control`
 
-`ngs_marks` and `txdot_points`, each an array. **The `condition` field is carried through, never dropped** — a mark stamped `MARK NOT FOUND` is visible recovery risk, and it is the whole reason to look. `recovery_risk` counts them.
+`ngs_marks` and `txdot_points`. **Each is an array when its service was asked, and a `not-screened` block when it was not.**
+
+**The `condition` field is carried through, never dropped** — a mark stamped `MARK NOT FOUND` is visible recovery risk, and it is the whole reason to look. `recovery_risk` counts them.
+
+!!! note "Amended 2026-09-13, on [PR #54](https://github.com/RickSmith/survey-recon/pull/54)"
+    Until then this section read "`ngs_marks` and `txdot_points`, **each an array**."
+
+    An array is right when the service answered — including when it answered and there was nothing there. It is wrong when the service was never asked, which is `txdot_points` on every run until [#15](https://github.com/RickSmith/survey-recon/issues/15) lands, and `ngs_marks` on any run whose host was blocking.
+
+    An empty array in that case reads as "we looked, and this corridor has no control." On a corridor nobody looked at, that is `unknown` reported as `no` — the one distinction [CONTEXT.md](https://github.com/RickSmith/survey-recon/blob/main/CONTEXT.md) is bluntest about, because one of those two words sends a crew somewhere for nothing.
+
+    Same reasoning as `screened_for` in section 11: a flag type that was not looked for is never reported as absent. Control had no equivalent, and now it does.
+
+    Raised on the pull request rather than patched over. Rick ruled on 2026-09-13.
 
 ### `row_maps`
 

@@ -28,7 +28,8 @@ and the flags that hang off it, from
 | Flags — schools, cemeteries, railroads, pipelines | yes |
 | Lead time on every flag, with its citation | yes |
 | The longest wait on a parcel, without arithmetic | yes |
-| Control, ROW map sheets, roadway facts | not yet, separate work orders |
+| NGS marks in the corridor, carrying their condition | yes |
+| TxDOT control points, ROW map sheets, roadway facts | not yet, separate work orders |
 | SVG renderings | not yet |
 
 ## What you need to run it
@@ -71,7 +72,7 @@ than a feature.
 that stopped part-way writes `screening.incomplete.json` instead, so a blocked
 host can never destroy a capture that already worked.
 
-Three parts of it are worth knowing by name.
+Four parts of it are worth knowing by name.
 
 **The wrong-file check** — the corridor length, both end points and a web map
 link, printed before any service is called and recorded in the output. A
@@ -88,6 +89,12 @@ built from the services that actually answered, never from the list of types the
 tool knows about. A flag service that was blocked today leaves its type off this
 list, and no parcel is then reported as clear of it. A parcel that could not be
 checked is `unknown`. It is never `no`.
+
+**`control`** — the NGS marks inside the corridor, each carrying its PID and the
+condition it was last left in, and `recovery_risk` counting the ones stamped
+`MARK NOT FOUND`. A run that never reached the service writes a `not-screened`
+block naming why, rather than an empty list — because "no marks here" and
+"nobody looked" are different answers and only one of them is good news.
 
 ## The cache
 
@@ -122,10 +129,16 @@ with the field list each one is expected to publish.
 | Cemeteries | USGS `structures`, same server | **2** |
 | Railroads | USGS `transportation`, same server | **38** |
 | Pipelines | **TPMS**, Railroad Commission of Texas | 0 |
+| NGS marks | `NGS_Datasheets_Feature_Service` on `services2.arcgis.com` | 1 |
 
 The four flag services each have a quirk worth knowing, and two of them return
 a plausible wrong answer rather than an error. They are written up in
 [the flag services page](../docs/data-sources/flag-services.md).
+
+The NGS datasheets service has a quieter one: the condition field is called
+`LAST_COND` there and `condition` on NGS's other API, and asking for the wrong
+name returns nothing and raises nothing. It is written up on
+[the NGS datasheets page](../docs/data-sources/ngs-datasheets.md).
 
 **Layer numbers are load-bearing.** TxDOT's control points are layer 67 and its
 land parcels are layer 328. A query against layer 0 does not error — it answers
@@ -158,6 +171,17 @@ the centerline. It is slack for a filter that is working, not a second corridor.
 Set the margin to `0` and the check agrees with the CoSA service's own spatial
 filter on all 530 records the SH16 corridor returns. Two independent pieces of
 geometry, same answer.
+
+## How an NGS mark is checked against the corridor
+
+Differently, and on purpose. A mark is a **point**: it is within the half-width
+of the centerline or it is not. No margin and no neighbor distance. A parcel is
+an area and can be clipped by a ribbon; a point cannot.
+
+That strict test is what builds the list rather than what doubts it. The tool
+asks the service about a box around the corridor, then measures every mark
+itself and keeps the ones inside — so the honesty block reports "31 returned, 11
+in the corridor", the same pair of numbers the flag services report.
 
 ## On feet
 
@@ -248,3 +272,29 @@ reader sees "39 returned, 6 used" rather than a bare 6. The flag services are
 asked about a box drawn around every parcel in the corridor, which is wider than
 the ribbon, so the 33 unused schools are a normal answer to the question that was
 asked. Hiding them would make the 6 look like the whole world.
+
+### The control
+
+| | |
+|---|---|
+| NGS marks returned | 31 |
+| Inside the 300 ft corridor | **11** |
+| Of those, `MARK NOT FOUND` | **11** |
+| Of those, condition unknown | 0 |
+
+**Every NGS mark within 300 feet of this centerline is one NGS could not find.**
+The last recovery attempts run from 1995 to 2002. Each row carries a
+`datasheet_url` straight to that mark's full NGS record, because `MARK NOT FOUND`
+starts a decision rather than ending one. A run that reported "11 marks
+in the corridor" and stopped there would have an estimator pricing recovery on
+eleven marks that three decades of looking could not turn up. That is the whole
+reason `condition` is carried through and never dropped.
+
+Two of the twenty marks outside the ribbon are `GOOD`. They are real, and they
+are close — they are simply further from the centerline than the stated
+half-width. Hunting control is a good reason to run again with a wider
+`--half-width`, which is what the number is settable for.
+
+**TxDOT primary control is a separate work order**, issue #15. The output names
+`txdot_points` as `not-screened` rather than leaving it out, so a missing block
+never reads as an empty one.

@@ -53,6 +53,8 @@ They are buyers and risk-owners. They are not going to install things themselves
 | **PID** | Permanent Identifier — an NGS mark's unique ID, e.g. `AY0713` |
 | **Datasheet** | NGS's record for a mark: position, datum, stamping, condition, recovery history |
 | **CORS** | Continuously Operating Reference Station — a permanent GNSS station |
+| **PACS / SACS** | Primary and Secondary Airport Control Stations — the marks tying an airport survey to the national framework. NGS flags them on a datasheet, and the corridor tool carries the flag through as `pacs_sacs` |
+| **MARK NOT FOUND** | The condition NGS records when somebody looked for a mark and could not find it. Not "destroyed" and not "gone" — a report, with a date on it. It is the value that turns a control estimate from recovery into setting new |
 | **OPUS** | NGS's Online Positioning User Service — submit GNSS observations, get a position back |
 | **NAD 83 / NAVD 88** | The current horizontal and vertical datums TxDOT requires |
 | **SPCS** | State Plane Coordinate System. Texas has multiple zones; Bexar County is Texas South Central |
@@ -117,6 +119,8 @@ Settled during the grilling for [issue #5](https://github.com/RickSmith/survey-r
 | **Lead-time table** | The checked-in list of how many days of notice each flag type costs, with a mandatory citation on every row. Data rather than code, so the person accountable for a number can change it without touching Python. Settled in [issue #17](https://github.com/RickSmith/survey-recon/issues/17); the citations are in [`docs/corridor-screen/lead-times.md`](docs/corridor-screen/lead-times.md) |
 | **Not found** | A lead time we looked for and could not confirm from a published source. Written as "not found," never as "does not exist," and always with an account of where we looked. On a parcel it appears as `lead_time_not_found` beside `max_lead_time_days` — because a parcel with no number is unmeasured, not clear. Same distinction as [`unknown` vs `no`](#corridor-screening-vocabulary) |
 | **Lead-time driver** | Which flag on a parcel set its longest wait. Recorded beside the number so nobody has to scan a list of flags to find the one that moves the schedule |
+| **Recovery risk** | An NGS mark in the corridor whose last recorded condition is `MARK NOT FOUND` — somebody looked and did not find it. Counted separately from the marks in the corridor, because a count of marks reads as control you have and this is control you may have to set. Settled in [issue #14](https://github.com/RickSmith/survey-recon/issues/14); the source is on [the NGS datasheets page](docs/data-sources/ngs-datasheets.md) |
+| **Condition unknown** | An NGS mark the service publishes no condition for. Counted apart from recovery risk and never folded in with the marks reported present, for the same reason as [`unknown` vs `no`](#corridor-screening-vocabulary): nobody looking is not the same as somebody looking and failing, and neither is a mark you have |
 
 ## Translation table — used throughout the docs
 

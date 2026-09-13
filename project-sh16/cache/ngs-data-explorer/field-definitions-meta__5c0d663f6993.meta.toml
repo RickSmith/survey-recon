@@ -1,14 +1,13 @@
 # Provenance record. The response file beside this one is exactly what the
 # server sent and is never edited. Every parameter of the request is listed
 # under [request_params], so the call can be repeated and checked.
-service = "ArcGIS_Geometry"
-cache_key = "arcgis-geometry/arcgis-geometry-metadata__c2e700c573a0"
+service = "NGS_Data_Explorer"
+cache_key = "ngs-data-explorer/field-definitions-meta__5c0d663f6993"
 request_method = "GET"
-request_url = "https://utility.arcgisonline.com/arcgis/rest/services/Geometry/GeometryServer"
-captured_at = 2026-09-12T22:43:40-05:00
+request_url = "https://geodesy.noaa.gov/api/nde/meta"
+captured_at = 2026-09-12T22:43:24-05:00
 http_status = 200
-response_bytes = 132
+response_bytes = 3560
 warnings = []
 
 [request_params]
-f = "json"
