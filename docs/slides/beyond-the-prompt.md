@@ -843,54 +843,151 @@ fallback that is just a file on the laptop.
 
 # The bid memo
 
-- What a principal reads before pricing the job, in one page
-- Written by the tool, from the run, with its sources beside every claim
-- It says what it could not check, which is the part that earns trust
+- One page a principal reads before pricing. Written by the tool, from the run
+- **What it could not check comes first**, ahead of anything it found
+- Gated access and livestock: **no public source publishes either one**
+- Right of entry unknown on every tract, deliberately. Refused, an RPLS *may seek* a court order — Tex. Occ. Code § 1071.3585
+- Not a survey. Not a title search. **An RPLS reads it and decides**
 
-> **To be written** — #84
+project-sh16/bid-memo.md
 
 <!--
 1:18–1:36 · 18 min · Act III — The estimate package
 
-Open project-sh16/bid-memo.md on screen. Scroll to the honesty block and stop
-there for a moment.
+Open project-sh16/bid-memo.md on screen and scroll to *What is not known, and
+why*. That section sits above the findings in the file, not below them, and
+that ordering is the whole slide. Say so out loud -- a memo that leads with
+what it could not check is a memo a principal can price against.
+
+**The honesty block is the part that earns trust.** CONTEXT.md calls it that:
+every service called, whether it answered, when the answer was captured, and
+what was doubted about it. It is what lets a reader decide whether to trust the
+rest of the file, and it is the opposite of what a confident tool normally
+ships.
+
+Four gaps are worth naming off the screen, because each one costs somebody a
+phone call: gated access and livestock, which nothing public publishes; the
+existing right-of-way width, which was not read; how much of each tract the
+corridor takes, which was counted but never measured as an acreage; and whether
+TxDOT already owns a tract, which was not checked at all.
+
+**Right of entry is the one with a statute behind it**, so the citation is on
+the slide rather than only here. An RPLS refused permission *may seek* a court
+order; an LSLS acting officially *is entitled to* one, Tex. Occ. Code
+§ 1071.358. Two different verbs, two different licenses. No parcel polygon
+establishes either, and nothing in this screening is permission to enter.
+
+Do not let the room hear this as a disclaimer page. It is the findings section
+of an estimate, written by something that knows the difference between
+*not found* and *not there*.
+
+Fallback: the memo is committed at project-sh16/bid-memo.md, so the fallback
+for this slide is opening the file on the laptop.
 -->
 
 ---
 
 # The flagged parcel table
 
-- Every tract with something on it that costs time
-- Sorted so the one needing a phone call soonest is at the top
-- Statutory lead times, each with a citation you can check
-- Unknown is never written as no. One of those sends a crew to a locked gate
-- Gated access and livestock cannot be screened, and the output says so
+- **8 of 524 tracts** cost time. Soonest phone call at the top
+- `unknown` is never written as `no`. One of those finds a locked gate
+- School, **not found** — 7 of the 8. Unmeasured, so it sorts first
+- Cemetery, **14 calendar days** — Tex. Health & Safety Code § 711.041(c)(2)
+- Gated access and livestock **cannot be screened**, and it says so
 
-> **To be written** — #84
+project-sh16/flagged-parcels.md · statutes.capitol.texas.gov
 
 <!--
 1:18–1:36 · 18 min · Act III — The estimate package
 
-project-sh16/flagged-parcels.svg is the projector drawing, and
-project-sh16/flagged-parcels.md carries the table. The last two bullets are
-the ones a party chief cares about.
+project-sh16/flagged-parcels.svg is the projector drawing and
+project-sh16/flagged-parcels.md carries the table. Put the drawing up and read
+the table off it.
+
+**Sorted by wait, not by parcel number.** The tract needing a phone call
+soonest is the first row. An estimator reads the top of this table and starts
+dialing, which is the only ordering that does any work.
+
+**The unmeasured rows sort above the measured one**, and that is worth saying
+out loud because it looks backwards for a second. A tract whose wait nobody has
+measured needs the call *before* a tract whose wait is a known fourteen days --
+the call is what turns the unknown into a date. Sorting the unknowns to the
+bottom would read, correctly enough for a room at a glance, as "these are the
+easy ones."
+
+**The two words to keep apart are unknown and no.** One of them sends a crew to
+a locked gate. Where a wait says *not found*, this repo looked for a published
+notice period and did not find one -- docs/corridor-screen/lead-times.md records
+exactly where it looked, which is what makes it a finding rather than a shrug.
+It is not a shorter wait. It is an unmeasured one, and somebody has to make the
+call that turns it into a date.
+
+The school row is the honest one and it is seven of the eight. Looked in:
+Tex. Educ. Code § 22.0834, which sets background-check conditions and no notice
+period; the TxDOT Survey Manual (ESS), which does not address school access; and
+TxDOT ROW Preliminary Procedures Ch. 4. District board approval runs on a
+board's own meeting cycle and badging follows approval -- both real, neither
+published as a figure.
+
+**Calendar days and working days are different promises** and this table never
+converts one into the other. The cemetery figure is fourteen calendar days.
+
+The last bullet is the party chief's. Nothing public publishes gate locations or
+livestock, so the output says it could not screen them rather than leaving a
+blank that reads as clear.
+
+Fallback: both files are committed under project-sh16/, so the drawing and the
+table are on the laptop whatever the network does.
 -->
 
 ---
 
 # The crew-day build-up
 
-- The hours estimate shown as arguable math, not as a single number
-- Every rate has a handle, so anybody can point at the one they disagree with
+- The hours as arguable math, not one number you either take or leave
+- Every rate carries a **handle**, `A1` to `A12`. Argue with a row, not a total
+- Start with `A4` — 0.5 hours on every one of 524 tracts
+- **5 of the 12 inputs were never measured.** Those lines show no total, not a zero
 - An estimate you can argue with is an estimate you can defend
 
-> **To be written** — #84
+project-sh16/crew-day.md · these rates are published by nobody
 
 <!--
 1:18–1:36 · 18 min · Act III — The estimate package
 
 Cut 2 of 3. If time is short, show project-sh16/crew-day.md as a finished
 output instead of building it live. The finished file makes the same point.
+
+**A handle is a short name stamped on one rate** so a room can disagree with
+that rate out loud, by name, instead of disagreeing with the total. It is a
+note number on a sheet: you say *note 8*, not *the drawing*. `A1` through `A12`
+are in the build-up's own rate table, each beside the sentence saying what to
+argue with.
+
+Say plainly that none of the twelve is published by TxDOT or by anybody else.
+The standard sheets say what goes on the road, not how long it takes to put it
+there. These are this repo's assumptions and they are meant to be replaced --
+crew_rates.toml is plain text a firm edits without touching any Python.
+
+**A4 is the one this room will reach for**, so offer it first. Half an hour on
+every tract the corridor clips, ranch or quarter-acre lot, and some of those
+tracts are already in TxDOT's hands. Halve it and the field estimate moves more
+than any other single change on the page.
+
+**The five unmeasured inputs are the point of the slide, not a caveat on it.**
+Manholes, culverts, how many times traffic control gets set, how much of the
+retracement falls on the centerline, and the existing right-of-way width. Two
+whole lines of the build-up therefore carry no total at all, and those hours are
+missing from the figures rather than being zero in them. The figures are a
+floor.
+
+The money slide at 0:46 already gave this room the day counts. Do not read them
+out again here -- this slide is about the arithmetic under them, and repeating
+the totals is what makes the block run long.
+
+Fallback: this is the slide to drop first inside the block. The build-up is
+committed at project-sh16/crew-day.md, and project-sh16/crew-day.txt is the same
+thing as the console prints it, in one screen.
 -->
 
 ---

@@ -494,24 +494,40 @@ class TestTheClaimsWithConsequencesCarryTheirSource(unittest.TestCase):
         # and plans a job around it is planning around a sentence they did not
         # read, on a slide that gets photographed and forwarded.
         ("will not accept any datum transformations", "txdot.gov/manuals/row/ess"),
+        # Added with the flagged parcel table, #84. A notice period is the
+        # plainest kind of number with legal consequence there is: a crew that
+        # rolls on day 13 is a crew that trespassed.
+        ("14 calendar days", "711.041"),
     )
 
-    def slide_saying(self, phrase):
-        for slide in slides():
-            if any(phrase.lower() in line.lower() for line in slide.content_lines()):
-                return slide
-        return None
+    def slides_saying(self, phrase):
+        """**Every** slide that states the claim, not the first one found.
+
+        This returned one slide until #84, and that was a hole. Two slides now
+        state the right-of-entry rule -- the bid memo in Act III and the
+        accountability close -- and a check reading whichever came first would
+        have gone on passing while the citation was deleted off the other.
+        `deck_reader.slide_headed` refuses the same ambiguity for the same
+        reason.
+        """
+        return [
+            slide for slide in slides()
+            if any(phrase.lower() in line.lower() for line in slide.content_lines())
+        ]
 
     def test_every_claim_with_consequences_carries_its_citation_on_the_slide(self):
         for phrase, citation in self.CONSEQUENCES:
-            slide = self.slide_saying(phrase)
+            saying = self.slides_saying(phrase)
             with self.subTest(claim=phrase):
-                self.assertIsNotNone(slide, f"no slide says {phrase!r} any more")
-                visible = "\n".join(slide.content_lines())
-                self.assertIn(
-                    citation, visible,
-                    f"slide {slide.number} states {phrase!r} with no source the room can see",
-                )
+                self.assertNotEqual(saying, [], f"no slide says {phrase!r} any more")
+            for slide in saying:
+                with self.subTest(claim=phrase, slide=slide.number):
+                    visible = "\n".join(slide.content_lines())
+                    self.assertIn(
+                        citation, visible,
+                        f"slide {slide.number} states {phrase!r} with no source "
+                        f"the room can see",
+                    )
 
     def test_no_slide_cites_the_superseded_manual_host(self):
         """`CLAUDE.md`: never `onlinemanuals.txdot.gov`. It is a scripted demo
