@@ -6,6 +6,7 @@ document = "TCP(S-4)-08A -- Traffic Control Plan for Surveying Operations (CAD s
 publisher = "Texas Department of Transportation, Traffic Operations Division"
 standard_sheet_index_no = "214"
 cases_drawn = "TCP(S-4a) work off right shoulder of divided roadways; TCP(S-4b) work in median of divided roadways"
+protective_vehicle_drawn = "S-4a: one Work Vehicle. S-4b: two Work Vehicles, reducible to one where a median barrier protects a side (Note 2). No TMA drawn."
 roadway_class = "Conventional Roads Only (footnote on the sign-spacing table)"
 copyright = "(C) TxDOT August 2008"
 format = "MicroStation DGN (V8, OLE2 compound file)"

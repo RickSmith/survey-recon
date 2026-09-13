@@ -49,7 +49,8 @@ publishes, not because anything in this repo reads them.
 
 - [`tcp-s-family.md`](tcp-s-family.md) — what all six require, including when a
   shadow vehicle with a truck-mounted attenuator is forced by the clock. On
-  three of the six sheets it is.
+  TCP(S-2b) and TCP(S-3) it is, past one hour — and on S-3b that is **two** of
+  them.
 - [`tcp-s-1-08a.md`](tcp-s-1-08a.md) — the crew-time reading of S-1 on its own.
 
 ## "Blocked" was not true
@@ -96,6 +97,34 @@ edited away.
 `ftp.txdot.gov/pub/txdot-info/...` and `ftp.dot.state.tx.us/pub/txdot-info/...`.
 Every file here was fetched from both and hashed; all thirteen matched. Cite the
 `txdot.gov` one.
+
+## These are drawings. Look at them.
+
+A TxDOT standard sheet is a **drawing** with notes beside it, and on these
+sheets **the drawing states the requirement while the notes are exceptions to
+it.** Identical note wording means opposite things depending on what is drawn:
+"the Shadow Vehicle may be replaced by a Work Vehicle" is relief from a shadow
+vehicle that is drawn, while "a Shadow Vehicle may be used in lieu of the Work
+Vehicle" is an upgrade from a work truck that is drawn.
+
+Text extraction flattens the legend, the notes and the plan view into one
+stream and loses that distinction entirely. It is how this folder published a
+wrong answer twice — see the closing section of
+[`tcp-s-family.md`](tcp-s-family.md).
+
+So render the page and look at it:
+
+```bash
+pdftoppm -png -r 150 -f 1 -l 1 project-sh16/manual-pulls/tcp-s-3-08.pdf /tmp/s3
+```
+
+`pdftoppm` comes with **poppler**. On Windows: `winget install
+oschwartz10612.Poppler`. Note that Git Bash ships an `xpdf` build of
+`pdftotext` which does *not* include `pdftoppm`, so having `pdftotext` on your
+path is no guarantee.
+
+This is a maintainer tool, not something an attendee needs — nothing in the
+attendee path reads these PDFs.
 
 ## How to add a document
 

@@ -6,6 +6,7 @@ document = "TCP(S-5)-08 -- Traffic Control Plan for Surveying Operations (CAD so
 publisher = "Texas Department of Transportation, Traffic Operations Division"
 standard_sheet_index_no = "215"
 cases_drawn = "TCP(S-5a) work on right shoulder of divided roadways; TCP(S-5b) work on median shoulder of divided roadways"
+protective_vehicle_drawn = "One Work Vehicle per case, drawn WITHOUT a TMA -- but Notes 2 and 3 are written about \"the Shadow Vehicle with TMA.\" The sheet contradicts itself; see tcp-s-family.md."
 roadway_class = "Conventional Roads Only (footnote on the sign-spacing table)"
 copyright = "(C) TxDOT August 2008"
 format = "MicroStation DGN (V8, OLE2 compound file)"

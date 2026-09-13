@@ -24,15 +24,17 @@ surveying-specific trap, because sighting down a line is the job. The shadow
 vehicle with a truck-mounted attenuator (TMA) appears in **Note 4** as a
 permitted **substitute** for the work vehicle — an option, not a penalty the
 clock triggers. **That is true of this sheet and not of the family.** S-1 draws
-an ordinary work vehicle, so the TMA is an upgrade. S-2 and S-3 draw a shadow
-vehicle with TMA, so on those the same clock works the other way. Do not carry
-this paragraph across to another sheet; see
+an ordinary work vehicle, so the TMA is an upgrade. TCP(S-2b) and TCP(S-3) draw
+a shadow vehicle with TMA, so on those the same clock works the other way. Do
+not carry this paragraph across to another sheet; see
 [`tcp-s-family.md`](tcp-s-family.md).
 
 ## The rest of what the sheet says
 
-- Two cases are drawn: **TCP(S-1a) work off shoulder** and **TCP(S-1b) work on
-  shoulder or paved surface**.
+- Two cases are drawn: **TCP(S-1a) work off shoulder or paved surface** and
+  **TCP(S-1b) work on shoulder**. Each shows one ordinary **work vehicle** with
+  high intensity lights — a plain truck, with none of the legend's black TMA
+  chevron on it.
 - Advance sign spacing: **3X where the posted speed is 50 mph or less, 1500 ft
   where it is over 50 mph.** `X` comes from the sheet's own spacing table.
 - Note 5 — the CW20-1D "ROAD WORK AHEAD" sign may be substituted for the
@@ -95,11 +97,13 @@ a divided facility covered by a sheet nobody had read.
 sheets were pulled and read. Divided roadways are covered, by TCP(S-4)-08A and
 TCP(S-5)-08. **No posted speed anywhere in the family triggers a shadow truck** —
 55 mph is an ordinary table row on all six sheets. But **duration does**, on
-three of them: S-2, S-3 and S-5 *draw* a shadow vehicle with TMA, and the
-permission to use an ordinary work vehicle instead is granted only for short
-duration work. Past an hour it lapses.
+**TCP(S-2b)** and **TCP(S-3)**: those *draw* a shadow vehicle with TMA — two of
+them on S-3b, work on centerline — and the permission to use an ordinary work
+vehicle instead is granted only for short duration work. Past an hour it lapses.
 
-TCP(S-1) is not one of those three — see the box below. The full account is in
+**TCP(S-1) is not one of them.** It draws a plain work truck, so everything in
+the crew-time paragraph above holds for this sheet. The full account, including
+a contradiction on S-5 that is left unresolved, is in
 [`tcp-s-family.md`](tcp-s-family.md).
 
 Correcting `docs/txdot-research.md` is
