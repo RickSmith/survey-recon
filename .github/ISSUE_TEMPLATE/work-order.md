@@ -10,7 +10,9 @@ assignees: ''
 
 *What you are writing is called an **issue**. On this repo we call it what it is: a **work order**. One job, described well enough that somebody else — a person or an agent — can do it without coming back to ask what you meant.*
 
-**One rule before you start.** If you state a requirement anywhere below — a TxDOT rule, a statute, an accuracy tolerance, a notice period, a fee — put the citation and its link beside it. This is not bureaucracy. A work order on this repo once stated a rule that was not true, and four pages repeated it before anyone noticed. The account is at [The claim we got wrong](https://ricksmith.github.io/survey-recon/managing-your-agent/the-claim-we-got-wrong/).
+**One rule before you start.** If you state a requirement anywhere below — a TxDOT rule, a statute, an accuracy tolerance, a notice period, a fee — put the citation and its link beside it. If you cannot find one, say you could not confirm it. Write "not found" rather than "does not exist," and say where you looked.
+
+*That second half is not padding. In September 2026 this repo stated, on four pages, that TBPELS had not spoken directly to AI. It had — [PAO 71](https://pels.texas.gov/nm/2024/pao-71-response.pdf), public since 14 November 2024. The claim then got copied into the acceptance criteria of [issue #7](https://github.com/RickSmith/survey-recon/issues/7), which instructed an agent to publish it. The agent went looking for the citation these rules demand, found the opinion instead, and stopped. Nobody can cite an absence, so the sentence that catches this one is always "we could not confirm it." The account is at [The claim we got wrong](https://ricksmith.github.io/survey-recon/managing-your-agent/the-claim-we-got-wrong/).*
 
 ---
 

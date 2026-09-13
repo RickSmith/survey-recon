@@ -7,19 +7,26 @@ body:
       value: |
         ## You are in the right place
 
-        This page is a **form** — a set of boxes somebody wrote out in
-        advance so you do not have to start from an empty page. That is all
-        a **template** is. Fill in the boxes, press the green button at the
-        bottom, and you are done.
+        This page is a **template** — something somebody wrote out in
+        advance so that you do not have to start from an empty page. This
+        one takes the shape of a form. Fill in the boxes, press the green
+        button at the bottom, and you are done.
 
-        What you are making is called an **issue**. On this repo we call it
+        What you are making is called an **issue**. This repo calls it
         what it is: a **work order**. Yours is a short one. It asks who you
-        are and what you would automate.
+        are and what you would automate. ("Repo" is short for repository —
+        the shared folder that holds this project and every change ever made
+        to it.)
 
         Three things worth knowing before you type.
 
-        - **Nothing here breaks.** Filling this in cannot damage anything.
-          You can edit it or delete it afterwards.
+        - **Nothing here breaks.** Filling this in cannot damage
+          anything, and nobody is grading it.
+        - **Assume it is permanent.** You can edit what you wrote and you
+          can close it, but you cannot delete it — only a repository
+          administrator can do that — and every edit keeps a public
+          record of what it replaced. So write it as though it cannot be
+          taken back, because mostly it cannot.
         - **This is public.** Anyone on the internet can read what you
           write, today and years from now. So no client names, no job
           numbers, no tract descriptions, nothing under a non-disclosure
@@ -75,7 +82,7 @@ body:
         in a few sentences. Say what makes it tedious. That part is the
         useful part.
 
-        The replies on this issue pick what gets built next, so be specific.
+        Answers here pick the next worked example, so be specific.
       placeholder: |
         Pulling deed records and plats off the county site before I price a
         retracement. It is about two hours of clicking, and I do it three or
@@ -85,7 +92,7 @@ body:
       required: true
 
   - type: input
-    id: cost
+    id: effort
     attributes:
       label: How long does that job take you now, and how often do you do it?
       description: A rough figure is fine. This is how we tell whether any of this is worth your time.
@@ -115,7 +122,7 @@ body:
       required: false
 
   - type: checkboxes
-    id: public
+    id: no_client_data
     attributes:
       label: Before you post
       options:
