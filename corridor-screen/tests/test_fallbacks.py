@@ -28,6 +28,7 @@ correction would go into only one of them.
 
 import contextlib
 import importlib
+import json
 import re
 import shlex
 import unittest
@@ -395,6 +396,64 @@ class TestTheWorkOrderCaptureHoldsBeatThree(unittest.TestCase):
     def test_it_carries_the_date_that_makes_the_point(self):
         """PAO 71 was public for nearly two years when the work order was written."""
         self.assertIn("14 November 2024", self.captured)
+
+
+class TestTheGrillingCaptureHoldsActI(unittest.TestCase):
+    """The fallback for the hinge of the session, from the run that really happened.
+
+    Two of these are about the honesty of the thing rather than its content.
+    A transcript put on a projector as if it were a recording, or a set of work
+    orders shown as if the session had written them, would be the kind of
+    overclaim this repo keeps apologizing for in `docs/managing-your-agent/`.
+    """
+
+    FOLDER = REPO / "corridor-screen" / "captures" / "the-grilling"
+
+    def test_the_run_it_came_from_is_named_rather_than_implied(self):
+        """Evidence with no provenance is an anecdote."""
+        readme = text_of(self.FOLDER / "README.md")
+        self.assertIn("issues/5", readme, "the work order the grilling ran on")
+        self.assertIn("12 September 2026", readme)
+
+    def test_it_says_out_loud_that_it_is_a_transcript_and_not_a_recording(self):
+        self.assertIn(
+            "transcript, not a recording", text_of(self.FOLDER / "README.md")
+        )
+
+    def test_the_machine_it_ran_on_is_nowhere_in_it(self):
+        """The one that matters. This repo is public and the source was a
+        session store on somebody's laptop, full of paths and one address."""
+        for name in ("README.md", "the-grilling.md", "the-tickets.md"):
+            with self.subTest(file=name):
+                body = text_of(self.FOLDER / name)
+                for leak in ("yodas", "@gmail", "C:\\Users", "OneDrive"):
+                    self.assertNotIn(leak, body, f"{leak} survived into {name}")
+
+    def test_every_row_of_the_ticket_table_is_what_github_returned(self):
+        """The readable table beside the raw capture, held to the raw capture.
+
+        This is not hypothetical. The first draft of that table had `#39`
+        labeled `ready-for-agent` when GitHub says `ready-for-human`, and this
+        check is what found it. One wrong label is exactly the size of error
+        that survives a proofread and then gets read out to a room.
+        """
+        issues = {
+            issue["number"]: issue
+            for issue in json.loads(text_of(self.FOLDER / "the-tickets.json"))
+        }
+        rows = [
+            row for row in table_rows(text_of(self.FOLDER / "the-tickets.md"))
+            if row[0].isdigit()
+        ]
+        self.assertTrue(rows, "the ticket table has no rows")
+        for number, created, state, label, title in rows:
+            issue = issues.get(int(number))
+            with self.subTest(issue=number):
+                self.assertIsNotNone(issue, f"#{number} is not in the capture")
+                self.assertEqual(created, issue["createdAt"][11:19])
+                self.assertEqual(state, issue["state"].lower())
+                self.assertEqual([label], [l["name"] for l in issue["labels"]])
+                self.assertEqual(title, issue["title"])
 
 
 if __name__ == "__main__":
