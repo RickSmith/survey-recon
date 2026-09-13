@@ -49,6 +49,7 @@ python -m corridor_screen --route SH0016-KG --begin-dfo 347.7 --end-dfo 356.367 
 | `--route` | The TxDOT route name, exactly as `TxDOT_Roadways` publishes it |
 | `--begin-dfo`, `--end-dfo` | The two limits, as Distance From Origin in miles. Either order |
 | `--half-width` | How far each side of the centerline counts as inside. Default 300 feet |
+| `--sanity-margin-ft` | How far outside the ribbon any part of a parcel may sit before the run doubts it. Default 500 |
 | `--mode` | `live`, `cache-first` (default) or `cache-only` |
 | `--out` | Where the output file and the cache are written |
 | `--yes` | Never ask about a dead service. Stop instead. Use for unattended runs |
@@ -128,6 +129,23 @@ python -m unittest discover -s tests -t .
 
 They use `unittest` from the standard library rather than a test runner that
 has to be installed, for the same reason as everything else here.
+
+## How a parcel is checked against the corridor
+
+The service is asked which parcels **intersect** the ribbon, and the sanity
+check tests that answer the same way it was asked: does **any part** of the
+parcel come near the corridor. Not its center point — a 189-acre tract clipped
+by a 600-foot ribbon has its frontage on the pavement and its center a quarter
+mile away, and that is the parcel an estimator most needs to see.
+
+The distance is measured from the centerline, against the half-width plus
+`--sanity-margin-ft`, which defaults to 500. At the default half-width that
+means a parcel is doubted only when every part of it is more than 800 ft from
+the centerline. It is slack for a filter that is working, not a second corridor.
+
+Set the margin to `0` and the check agrees with the CoSA service's own spatial
+filter on all 530 records the SH16 corridor returns. Two independent pieces of
+geometry, same answer.
 
 ## On feet
 

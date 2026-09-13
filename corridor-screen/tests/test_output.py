@@ -26,6 +26,7 @@ def a_document(status="complete", parcels=()):
         mode="cache-first",
         half_width_ft=300,
         adjacent_distance_ft=100,
+        sanity_margin_ft=500,
         tool_version="0.1.0",
         alignment=alignment,
         corridor=corridor,
@@ -60,6 +61,7 @@ class TestShape(unittest.TestCase):
         run = a_document()["run"]
         self.assertEqual(run["half_width_ft"], 300)
         self.assertEqual(run["adjacent_distance_ft"], 100)
+        self.assertEqual(run["sanity_margin_ft"], 500)
 
     def test_the_map_link_points_at_the_middle_of_the_corridor(self):
         link = a_document()["run"]["map_link"]

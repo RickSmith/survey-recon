@@ -94,14 +94,18 @@ class TestManyRows(unittest.TestCase):
         self.assertEqual(len(parcels.to_rows([FULL, other])), 2)
 
 
-class TestCentroid(unittest.TestCase):
-    def test_a_center_point_comes_back_in_longitude_latitude_order(self):
-        with_centroid = dict(FULL, centroid={"x": -98.6, "y": 29.5})
-        self.assertEqual(parcels.centroid_of(with_centroid), [-98.6, 29.5])
+class TestOutlines(unittest.TestCase):
+    def test_the_whole_outline_comes_through_not_a_center_point(self):
+        self.assertEqual(parcels.rings_of(FULL), [[[0, 0], [0, 1], [1, 1], [1, 0]]])
 
-    def test_a_missing_center_point_is_nothing_to_check_rather_than_a_failure(self):
-        self.assertIsNone(parcels.centroid_of(FULL))
-        self.assertIsNone(parcels.centroid_of(dict(FULL, centroid={"x": None, "y": None})))
+    def test_a_parcel_with_no_shape_is_nothing_to_check_rather_than_a_failure(self):
+        self.assertEqual(parcels.rings_of({"attributes": {}, "geometry": None}), [])
+        self.assertEqual(parcels.rings_of({"attributes": {}}), [])
+
+    def test_shapes_are_paired_with_the_identifier_a_warning_would_name(self):
+        shapes = parcels.shapes_of([FULL])
+        self.assertEqual(shapes[0][0], "05678-000-0010")
+        self.assertEqual(shapes[0][1], [[[0, 0], [0, 1], [1, 1], [1, 0]]])
 
 
 if __name__ == "__main__":

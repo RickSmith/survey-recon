@@ -16,7 +16,7 @@ warning is written into the output next to the data it doubts. The tool does
 not hide it and does not fix it.
 """
 
-from .geometry import grow_bbox, point_in_bbox
+from .geometry import shape_is_within_miles
 
 # ArcGIS servers cap how many records they will hand over at once. A count that
 # lands exactly on a cap is far more likely to be the cap than a coincidence.
@@ -29,10 +29,16 @@ PAGING_CAPS = (500, 1000, 2000)
 # and returned the county, not to model San Antonio.
 MAX_PARCELS_PER_SQ_MI = 4000
 
-# How far outside the corridor a record's center point may sit before it is
-# doubted. Generous on purpose: a large tract that genuinely clips the ribbon
-# has its center point well outside it. See check_centroids_near_corridor.
-CENTROID_MARGIN_MI = 2.0
+# How far outside the corridor any part of a returned record may sit before the
+# record is doubted, in feet. Settable on the command line with
+# --sanity-margin-ft, because the right slack depends on the corridor.
+#
+# It is measured from the edge of the ribbon, so at the default half-width a
+# parcel is doubted only when every part of it is more than 800 ft from the
+# centerline. This is slack for a filter that is working, not a second corridor.
+DEFAULT_SANITY_MARGIN_FT = 500.0
+
+FEET_PER_MILE = 5280.0
 
 
 class FieldListError(Exception):
@@ -101,32 +107,42 @@ def check_parcel_density(service, record_count, corridor_area_sq_mi):
     return None
 
 
-def check_centroids_near_corridor(service, points, corridor_bbox):
-    """Returned records should be somewhere near the ribbon.
+def check_shapes_near_corridor(service, shapes, alignment_paths, half_width_ft, margin_ft, plane):
+    """Every returned record should touch the ribbon, or very nearly.
 
     The 3DEP failure recorded in ``docs/txdot-research.md`` was a server
     quietly ignoring a parameter and answering anyway. This is the check that
     catches the same shape of failure here: a spatial filter that was not
     applied returns records from all over the county.
 
-    It asks "near", not "inside", and the difference matters. A parcel is a
-    polygon. A 189-acre tract clipped by a 600-foot ribbon is genuinely in the
-    corridor while its center point sits a quarter of a mile outside it, so
-    testing center points against the corridor itself condemns ordinary
-    parcels. Bexar County is about thirty miles across, so a filter that truly
-    failed is still obvious at this margin.
+    **What is measured is any part of the parcel, not its center.** A parcel is
+    a polygon, and the query asked which parcels *intersect* the corridor -- so
+    the honest test of that answer is whether any part of the parcel comes near
+    the corridor. A 189-acre tract clipped by a 600-foot ribbon belongs in the
+    list, and its center point is a quarter of a mile outside. Testing centers
+    would condemn exactly the parcels that matter most to an estimate.
+
+    Distance is measured from the centerline and compared against the
+    half-width plus the margin, which is the same as measuring from the edge of
+    the ribbon outward.
     """
-    if not points or not corridor_bbox:
+    if not shapes or not alignment_paths:
         return None
-    allowed = grow_bbox(corridor_bbox, CENTROID_MARGIN_MI)
-    far = [p for p in points if not point_in_bbox(p, allowed)]
+    limit_ft = float(half_width_ft) + float(margin_ft)
+    limit_miles = limit_ft / FEET_PER_MILE
+    far = [
+        identifier
+        for identifier, rings in shapes
+        if rings and not shape_is_within_miles(rings, alignment_paths, limit_miles, plane)
+    ]
     if not far:
         return None
     return warning(
-        "records fall well outside the corridor",
+        "records fall outside the corridor",
         service,
-        f"{len(far)} of {len(points)} returned records have a center point more "
-        f"than {CENTROID_MARGIN_MI} miles outside the corridor.",
+        f"{len(far)} of {len(shapes)} returned records have no part within "
+        f"{limit_ft:g} ft of the centerline -- the {half_width_ft:g} ft half-width "
+        f"plus a {margin_ft:g} ft margin -- including {far[0]}.",
         "The spatial filter may not have been applied. Compare the record count "
         "against the corridor drawing before using this run.",
     )

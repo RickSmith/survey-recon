@@ -2,12 +2,12 @@
 # server sent and is never edited. Every parameter of the request is listed
 # under [request_params], so the call can be repeated and checked.
 service = "BCAD_Parcels"
-cache_key = "bcad-parcels/parcels-offset-0__f3bad56c7f66"
+cache_key = "bcad-parcels/parcels-offset-0__6ba49c286d84"
 request_method = "POST"
 request_url = "https://services.arcgis.com/g1fRTDLeMgspWrYp/arcgis/rest/services/BCAD_Parcels/FeatureServer/0/query"
-captured_at = 2026-09-12T20:37:25-05:00
+captured_at = 2026-09-12T21:10:29-05:00
 http_status = 200
-response_bytes = 159263
+response_bytes = 740576
 layer_id = 0
 record_count = 530
 warnings = []
@@ -21,8 +21,7 @@ spatialRel = "esriSpatialRelIntersects"
 distance = 300
 units = "esriSRUnit_Foot"
 outFields = "Geo_id,PropID,Situs,Owner_Name,legal_desc,legal_acre,state_cd"
-returnGeometry = "false"
-returnCentroid = "true"
+returnGeometry = "true"
 f = "json"
 resultOffset = 0
 resultRecordCount = 2000

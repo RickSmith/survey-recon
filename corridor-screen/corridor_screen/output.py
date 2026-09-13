@@ -99,7 +99,7 @@ def skipped_service(source, reason, ping=None):
     }
 
 
-def build(run_id, started_at, mode, half_width_ft, adjacent_distance_ft, tool_version,
+def build(run_id, started_at, mode, half_width_ft, adjacent_distance_ft, sanity_margin_ft, tool_version,
           alignment, corridor, services, parcel_rows, warnings,
           status="complete", stopped_at_service=None):
     """Assemble the whole output file."""
@@ -115,6 +115,7 @@ def build(run_id, started_at, mode, half_width_ft, adjacent_distance_ft, tool_ve
             "tool_version": tool_version,
             "half_width_ft": half_width_ft,
             "adjacent_distance_ft": adjacent_distance_ft,
+            "sanity_margin_ft": sanity_margin_ft,
             "area": "texas-bexar",
             "not_screenable": NOT_SCREENABLE,
             "renderings": [],

@@ -59,6 +59,134 @@ def bbox_of(paths):
     return [min(lons), min(lats), max(lons), max(lats)]
 
 
+class LocalPlane:
+    """Longitude and latitude flattened onto a plane measured in miles.
+
+    Everything in this tool happens inside one corridor a few miles long, so a
+    single flat plane fitted at the corridor's own latitude is accurate to far
+    better than anything a screening run decides. Fitting it once and reusing it
+    also means every distance in a run is measured the same way.
+
+    This is not a projection in the surveying sense and must never be used as
+    one. It measures how far apart two things are. It does not produce a
+    coordinate anybody should write down.
+    """
+
+    MILES_PER_DEGREE_LAT = 69.055
+
+    def __init__(self, latitude_deg):
+        self.scale_lon = 69.172 * math.cos(math.radians(latitude_deg))
+        self.scale_lat = self.MILES_PER_DEGREE_LAT
+
+    def xy(self, point):
+        return point[0] * self.scale_lon, point[1] * self.scale_lat
+
+
+def _point_to_segment_miles(plane, point, start, end):
+    """Shortest distance from a point to a line segment, in miles."""
+    px, py = plane.xy(point)
+    ax, ay = plane.xy(start)
+    bx, by = plane.xy(end)
+    dx, dy = bx - ax, by - ay
+    length_squared = dx * dx + dy * dy
+    if length_squared == 0.0:
+        return math.hypot(px - ax, py - ay)
+    # How far along the segment the nearest point sits, clamped to its ends.
+    t = ((px - ax) * dx + (py - ay) * dy) / length_squared
+    t = max(0.0, min(1.0, t))
+    return math.hypot(px - (ax + t * dx), py - (ay + t * dy))
+
+
+def _segments(paths):
+    for path in paths:
+        for i in range(len(path) - 1):
+            yield path[i], path[i + 1]
+
+
+def _bbox_of_points(points):
+    lons = [p[0] for p in points]
+    lats = [p[1] for p in points]
+    return [min(lons), min(lats), max(lons), max(lats)]
+
+
+def _boxes_overlap(a, b):
+    return not (a[2] < b[0] or b[2] < a[0] or a[3] < b[1] or b[3] < a[1])
+
+
+def _side_of(a, b, c):
+    """Which side of the line a-b the point c falls on, by sign."""
+    return (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0])
+
+
+def _segments_cross(p1, p2, p3, p4):
+    """True when two segments properly cross each other.
+
+    Done on the raw longitude and latitude rather than on the local plane,
+    because scaling the axes cannot change whether two lines cross.
+
+    Segments that merely touch end to end, or lie along each other, fall
+    through to the distance tests, which measure them as zero apart anyway.
+    """
+    d1 = _side_of(p3, p4, p1)
+    d2 = _side_of(p3, p4, p2)
+    d3 = _side_of(p1, p2, p3)
+    d4 = _side_of(p1, p2, p4)
+    return ((d1 > 0) != (d2 > 0)) and ((d3 > 0) != (d4 > 0))
+
+
+def shape_is_within_miles(rings, paths, limit_miles, plane):
+    """True when any part of a shape comes within a distance of a line.
+
+    "Any part" means what it says, and there are three ways for it to be true.
+    The line can run through the shape. The line can cross one of its edges.
+    Or the two can pass close without meeting.
+
+    All three are tested because each one alone lets a real parcel through. A
+    check on corners only would call a big ranch far from the road while its
+    fence line ran along the pavement. A check on distance only would miss a
+    tract the highway runs straight down the middle of, because every corner of
+    it is half a mile from the centerline.
+
+    Stops as soon as anything is close enough, so a parcel sitting on the road
+    costs one comparison.
+    """
+    if not rings or not paths:
+        return True
+    shape_points = [pt for ring in rings for pt in ring]
+    if not shape_points:
+        return True
+
+    reach = grow_bbox(_bbox_of_points(shape_points), limit_miles)
+    near_segments = [
+        (start, end)
+        for start, end in _segments(paths)
+        if _boxes_overlap(reach, _bbox_of_points([start, end]))
+    ]
+    if not near_segments:
+        return False
+
+    # The line running through the shape rather than near its edges.
+    for start, end in near_segments:
+        if point_in_rings(start, rings) or point_in_rings(end, rings):
+            return True
+
+    for ring in rings:
+        if len(ring) < 2:
+            continue
+        for i in range(len(ring)):
+            edge_start, edge_end = ring[i], ring[(i + 1) % len(ring)]
+            for start, end in near_segments:
+                if _segments_cross(edge_start, edge_end, start, end):
+                    return True
+                if (
+                    _point_to_segment_miles(plane, edge_start, start, end) <= limit_miles
+                    or _point_to_segment_miles(plane, start, edge_start, edge_end) <= limit_miles
+                    or _point_to_segment_miles(plane, end, edge_start, edge_end) <= limit_miles
+                ):
+                    return True
+    return False
+
+
 def grow_bbox(bbox, miles):
     """The same corner coordinates, pushed out by a stated distance."""
     min_lon, min_lat, max_lon, max_lat = bbox

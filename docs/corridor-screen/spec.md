@@ -1,7 +1,7 @@
 # Corridor screening — specification
 
 **Status:** settled 2026-09-12, from the grilling on [issue #5](https://github.com/RickSmith/survey-recon/issues/5).
-**Amended:** 2026-09-13 — section 10, the parcel field names. See the note there.
+**Amended:** 2026-09-13 — section 8, how a returned record is tested against the corridor; section 10, the parcel field names. See the notes there.
 **Scope of work for:** the `corridor-screen/` tool.
 
 A note on words. A **spec** is a scope of work. A **schema** is an agreed field list — the column headings on a parcel table that everybody uses the same way. An **endpoint** is the web address you ask a question of. A **cache** is a saved copy of an answer you already got. Everything else is in [CONTEXT.md](https://github.com/RickSmith/survey-recon/blob/main/CONTEXT.md).
@@ -154,10 +154,38 @@ The checks are blunt on purpose:
 | Field list confirmed at startup, before any query | the wrong layer — the "layer 67, not 0" trap. **Hard error**, because it is a configuration bug and free to catch |
 | Record count is exactly 500, 1000 or 2000 | a paging cap mistaken for an answer |
 | More parcels than a corridor this long can hold | the distance was ignored and we got the county |
-| Every returned point falls inside the corridor | the spatial filter failed |
+| **Any part** of every returned record falls within the half-width plus a stated margin of the centerline | the spatial filter failed |
 | Impossible values — negative acreage, a recovery date in the future | a coordinate or a unit was misread |
 
 Every warning that trips is written into the output next to the data it doubts. **The tool does not hide it and does not fix it.**
+
+!!! note "Amended 2026-09-13, on [PR #52](https://github.com/RickSmith/survey-recon/pull/52)"
+    That fourth check used to read "every returned **point** falls inside the
+    corridor." A point is the wrong thing to test a parcel against, and the
+    corridor is the wrong thing to test it with.
+
+    A parcel is a polygon, and the query asked which parcels *intersect* the
+    corridor. So the honest test of that answer is whether any part of the
+    parcel comes near the corridor — not where its center point sits. The
+    parcels this gets wrong are exactly the ones that matter most to an
+    estimate: a 189-acre tract clipped by a 600-foot ribbon has its frontage on
+    the pavement and its center point a quarter of a mile away.
+
+    **The margin is stated, not derived**, like the half-width beside it, and
+    it is settable with `--sanity-margin-ft`. It defaults to **500 ft**, so a
+    parcel at the default half-width is doubted only when every part of it is
+    more than 800 ft from the centerline. It is slack for a filter that is
+    working, not a second corridor.
+
+    Run against SH16 with the margin set to **zero**, the check agrees with the
+    CoSA service's own spatial filter on all 530 returned records. That is the
+    strongest thing that can be said for it: two independent pieces of geometry,
+    same answer.
+
+    The strict "inside the corridor" form stays correct for services that return
+    points — NGS marks, TxDOT control — and belongs with the first of those,
+    under [#14](https://github.com/RickSmith/survey-recon/issues/14) or
+    [#15](https://github.com/RickSmith/survey-recon/issues/15).
 
 ## 9. Renderings
 

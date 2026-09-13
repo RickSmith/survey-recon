@@ -41,17 +41,22 @@ def _clean(value):
     return value
 
 
-def centroid_of(feature):
-    """The parcel's center point, as the service reported it.
+def rings_of(feature):
+    """The parcel's outline, as the service drew it.
 
-    Returned as ``[lon, lat]`` to match everything else here. ``None`` when the
-    service did not send one, which the sanity check treats as nothing to
-    check rather than as a failure.
+    A list of rings, each a list of ``[lon, lat]`` corners. Empty when the
+    service sent no shape, which the sanity check treats as nothing to check
+    rather than as a failure.
+
+    The whole outline is kept, not a center point, because the question asked
+    of a parcel is whether any part of it meets the corridor.
     """
-    point = feature.get("centroid")
-    if not point or point.get("x") is None or point.get("y") is None:
-        return None
-    return [point["x"], point["y"]]
+    return ((feature.get("geometry") or {}).get("rings")) or []
+
+
+def shapes_of(features):
+    """Every returned parcel as ``(identifier, rings)``, for the sanity check."""
+    return [(to_row(f)["id"], rings_of(f)) for f in features]
 
 
 def to_row(feature, fields=None):

@@ -3,6 +3,7 @@
 import unittest
 
 from corridor_screen import checks
+from corridor_screen.geometry import LocalPlane
 from corridor_screen.sources import Source
 
 LAYER = Source(
@@ -69,31 +70,56 @@ class TestParcelDensity(unittest.TestCase):
         self.assertIsNone(checks.check_parcel_density("BCAD_Parcels", 55000, 0.0))
 
 
-# A ribbon through Bexar County, roughly the extent of the SH16 corridor.
-CORRIDOR_BBOX = [-98.69, 29.48, -98.60, 29.58]
+# A north-south centerline through Bexar County.
+CENTERLINE = [[[-98.64, 29.48], [-98.64, 29.58]]]
+PLANE = LocalPlane(29.53)
 
 
-def near(service, points):
-    return checks.check_centroids_near_corridor(service, points, CORRIDOR_BBOX)
+def box(west, south, east, north):
+    return [[[west, south], [west, north], [east, north], [east, south]]]
+
+
+def near(service, shapes, margin_ft=500.0):
+    return checks.check_shapes_near_corridor(service, shapes, CENTERLINE, 300.0, margin_ft, PLANE)
 
 
 class TestNearTheCorridor(unittest.TestCase):
-    def test_points_inside_raise_nothing(self):
-        self.assertIsNone(near("x", [[-98.64, 29.52], [-98.62, 29.55]]))
+    def test_parcels_on_the_route_raise_nothing(self):
+        shapes = [
+            ("A", box(-98.641, 29.50, -98.639, 29.51)),
+            ("B", box(-98.645, 29.55, -98.635, 29.56)),
+        ]
+        self.assertIsNone(near("x", shapes))
 
-    def test_a_large_tract_whose_center_sits_just_outside_is_not_doubted(self):
-        """A 189-acre tract clipped by a 600-foot ribbon is genuinely in the
-        corridor while its center point is a quarter mile outside it."""
-        self.assertIsNone(near("x", [[-98.695, 29.47]]))
+    def test_a_big_tract_clipped_by_the_ribbon_is_not_doubted(self):
+        """Its center point is a quarter mile away; its frontage is on the road.
+        This is the parcel that matters most to an estimate."""
+        ranch = [("RANCH", box(-98.6402, 29.50, -98.6000, 29.54))]
+        self.assertIsNone(near("x", ranch))
 
-    def test_records_from_across_the_county_are_counted(self):
-        mixed = [[-98.64, 29.52], [-98.30, 29.30], [-98.25, 29.90]]
-        found = near("x", mixed)
+    def test_parcels_from_across_the_county_are_counted_and_named(self):
+        shapes = [
+            ("NEAR", box(-98.641, 29.50, -98.639, 29.51)),
+            ("FAR1", box(-98.30, 29.20, -98.29, 29.21)),
+            ("FAR2", box(-98.20, 29.90, -98.19, 29.91)),
+        ]
+        found = near("x", shapes)
         self.assertIn("2 of 3", found["detail"])
+        self.assertIn("FAR1", found["detail"])
+
+    def test_the_margin_is_what_decides_a_borderline_parcel(self):
+        borderline = [("EDGE", box(-98.6430, 29.52, -98.6428, 29.53))]
+        self.assertIsNotNone(near("x", borderline, margin_ft=100.0))
+        self.assertIsNone(near("x", borderline, margin_ft=1500.0))
+
+    def test_the_default_margin_is_five_hundred_feet(self):
+        self.assertEqual(checks.DEFAULT_SANITY_MARGIN_FT, 500.0)
 
     def test_nothing_to_check_means_no_opinion(self):
         self.assertIsNone(near("x", []))
-        self.assertIsNone(checks.check_centroids_near_corridor("x", [[0.0, 0.0]], None))
+        self.assertIsNone(
+            checks.check_shapes_near_corridor("x", [("A", box(0, 0, 1, 1))], [], 300.0, 500.0, PLANE)
+        )
 
 
 class TestAcreage(unittest.TestCase):

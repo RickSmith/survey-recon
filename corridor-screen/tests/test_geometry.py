@@ -78,5 +78,58 @@ class TestArea(unittest.TestCase):
         self.assertAlmostEqual(g.polygon_area_sq_miles([left, right]), expected, delta=expected * 0.01)
 
 
+# A north-south centerline through Bexar County, and a plane fitted to it.
+CENTERLINE = [[[-98.64, 29.50], [-98.64, 29.56]]]
+PLANE = g.LocalPlane(29.53)
+FOOT_MI = 1.0 / 5280.0
+
+
+def box(west, south, east, north):
+    return [[[west, south], [west, north], [east, north], [east, south]]]
+
+
+class TestShapeNearALine(unittest.TestCase):
+    def test_a_shape_the_line_runs_through_is_near_it(self):
+        here = box(-98.65, 29.52, -98.63, 29.53)
+        self.assertTrue(g.shape_is_within_miles(here, CENTERLINE, 10 * FOOT_MI, PLANE))
+
+    def test_a_shape_across_the_county_is_not(self):
+        away = box(-98.30, 29.20, -98.28, 29.22)
+        self.assertFalse(g.shape_is_within_miles(away, CENTERLINE, 800 * FOOT_MI, PLANE))
+
+    def test_a_long_edge_running_past_the_line_counts_with_no_corner_near_it(self):
+        """A big tract can have a long fence line along the road with both of
+        its corners a mile away. Testing corners alone would call that parcel
+        far from the corridor."""
+        long_tract = box(-98.6405, 29.40, -98.5000, 29.70)
+        self.assertTrue(g.shape_is_within_miles(long_tract, CENTERLINE, 200 * FOOT_MI, PLANE))
+
+    def test_a_shape_just_outside_the_limit_is_outside_it(self):
+        far = box(-98.6430, 29.52, -98.6428, 29.53)
+        self.assertFalse(g.shape_is_within_miles(far, CENTERLINE, 500 * FOOT_MI, PLANE))
+
+    def test_the_same_shape_is_inside_a_wider_limit(self):
+        far = box(-98.6430, 29.52, -98.6428, 29.53)
+        self.assertTrue(g.shape_is_within_miles(far, CENTERLINE, 1200 * FOOT_MI, PLANE))
+
+    def test_nothing_to_measure_is_not_a_failure(self):
+        self.assertTrue(g.shape_is_within_miles([], CENTERLINE, FOOT_MI, PLANE))
+        self.assertTrue(g.shape_is_within_miles(box(-98.64, 29.5, -98.63, 29.51), [], FOOT_MI, PLANE))
+
+
+class TestLocalPlane(unittest.TestCase):
+    def test_a_degree_of_latitude_is_about_sixty_nine_miles(self):
+        plane = g.LocalPlane(29.5)
+        _, y0 = plane.xy([-98.6, 29.0])
+        _, y1 = plane.xy([-98.6, 30.0])
+        self.assertAlmostEqual(y1 - y0, 69.06, places=1)
+
+    def test_longitude_is_squeezed_by_latitude(self):
+        plane = g.LocalPlane(29.5)
+        x0, _ = plane.xy([-98.6, 29.5])
+        x1, _ = plane.xy([-97.6, 29.5])
+        self.assertAlmostEqual(x1 - x0, 60.2, places=0)
+
+
 if __name__ == "__main__":
     unittest.main()

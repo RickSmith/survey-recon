@@ -27,6 +27,7 @@ from . import __version__, checks, corridor as corridor_mod, output, parcels
 from .alignment import AlignmentError, from_route_features
 from .arcgis import MODES, Fetcher, ServiceDown, ServiceError
 from .cache import Cache, slug
+from .geometry import LocalPlane
 from .sources import GEOMETRY, PARCELS, ROADWAYS
 
 DEFAULT_HALF_WIDTH_FT = 300
@@ -66,6 +67,16 @@ def parse_args(argv=None):
             f"feet. Stated, never derived. Default {DEFAULT_HALF_WIDTH_FT}."
         ),
     )
+    parser.add_argument(
+        "--sanity-margin-ft",
+        type=float,
+        default=checks.DEFAULT_SANITY_MARGIN_FT,
+        help=(
+            "How far outside the ribbon any part of a parcel may sit before the run "
+            "doubts it, in feet. Slack for a filter that is working, not a second "
+            f"corridor. Default {checks.DEFAULT_SANITY_MARGIN_FT:g}."
+        ),
+    )
     parser.add_argument("--mode", choices=MODES, default="cache-first", help="Whether the run may reach the network")
     parser.add_argument("--out", required=True, help="Where the output file and the cache are written")
     parser.add_argument(
@@ -73,7 +84,15 @@ def parse_args(argv=None):
         action="store_true",
         help="Do not ask about a dead service; stop the run instead. Use for unattended runs.",
     )
-    return parser.parse_args(argv)
+    args = parser.parse_args(argv)
+    if args.sanity_margin_ft < 0:
+        # Slack cannot be negative. A margin below zero would make the check
+        # doubt parcels the query was right to return, which is a warning that
+        # teaches the reader to ignore warnings.
+        parser.error("--sanity-margin-ft is slack outside the ribbon and cannot be negative")
+    if args.half_width <= 0:
+        parser.error("--half-width must be greater than zero; there is no corridor otherwise")
+    return args
 
 
 def _say(message=""):
@@ -211,19 +230,30 @@ def run(args):
                     "distance": args.half_width,
                     "units": corridor_mod.QUERY_FOOT_UNITS,
                     "outFields": ",".join(PARCELS.required_fields),
-                    "returnGeometry": "false",
-                    "returnCentroid": "true",
+                    # The outline, not a center point. The sanity check asks
+                    # whether any part of a parcel meets the corridor, which is
+                    # the question the query itself was asked.
+                    "returnGeometry": "true",
                     "f": "json",
                 },
                 readable="parcels",
             ), args.yes)
             rows = parcels.to_rows(parcel_features)
 
-            centroids = [c for c in (parcels.centroid_of(f) for f in parcel_features) if c]
+            # One flat plane fitted at the corridor's own latitude, so every
+            # distance measured in this run is measured the same way.
+            plane = LocalPlane((alignment.bbox[1] + alignment.bbox[3]) / 2)
             parcel_warnings = checks.collect(
                 checks.check_paging_cap(PARCELS.name, len(parcel_features)),
                 checks.check_parcel_density(PARCELS.name, len(parcel_features), corridor.area_sq_mi),
-                checks.check_centroids_near_corridor(PARCELS.name, centroids, corridor.bbox),
+                checks.check_shapes_near_corridor(
+                    PARCELS.name,
+                    parcels.shapes_of(parcel_features),
+                    alignment.flat_paths,
+                    args.half_width,
+                    args.sanity_margin_ft,
+                    plane,
+                ),
                 checks.check_impossible_acres(PARCELS.name, rows),
             )
             warnings.extend(parcel_warnings)
@@ -258,6 +288,7 @@ def run(args):
         mode=args.mode,
         half_width_ft=args.half_width,
         adjacent_distance_ft=DEFAULT_ADJACENT_FT,
+        sanity_margin_ft=args.sanity_margin_ft,
         tool_version=__version__,
         alignment=alignment,
         corridor=corridor,

@@ -5,9 +5,9 @@ The `.meta.toml` file beside each one carries the full request.
 
 | Service | Layer | Captured | Records | Cache key |
 |---|---|---|---|---|
-| ArcGIS_Geometry | - | 2026-09-12 20:38:24-05:00 | - | `arcgis-geometry/arcgis-geometry-metadata__c2e700c573a0` |
-| ArcGIS_Geometry | - | 2026-09-12 20:37:24-05:00 | 1 | `arcgis-geometry/corridor-buffer-300ft__411deacfd794` |
-| BCAD_Parcels | 0 | 2026-09-12 20:38:24-05:00 | - | `bcad-parcels/bcad-parcels-layer-0-metadata__aa18477a9cd5` |
-| BCAD_Parcels | 0 | 2026-09-12 20:37:25-05:00 | 530 | `bcad-parcels/parcels-offset-0__f3bad56c7f66` |
-| TxDOT_Roadways | 0 | 2026-09-12 20:37:24-05:00 | 1 | `txdot-roadways/route-sh0016-kg-offset-0__8b09a7137241` |
-| TxDOT_Roadways | 0 | 2026-09-12 20:38:24-05:00 | - | `txdot-roadways/txdot-roadways-layer-0-metadata__1978a3325515` |
+| ArcGIS_Geometry | - | 2026-09-12 21:10:12-05:00 | - | `arcgis-geometry/arcgis-geometry-metadata__c2e700c573a0` |
+| ArcGIS_Geometry | - | 2026-09-12 21:10:28-05:00 | 1 | `arcgis-geometry/corridor-buffer-300ft__411deacfd794` |
+| BCAD_Parcels | 0 | 2026-09-12 21:10:12-05:00 | - | `bcad-parcels/bcad-parcels-layer-0-metadata__aa18477a9cd5` |
+| BCAD_Parcels | 0 | 2026-09-12 21:10:29-05:00 | 530 | `bcad-parcels/parcels-offset-0__6ba49c286d84` |
+| TxDOT_Roadways | 0 | 2026-09-12 21:10:28-05:00 | 1 | `txdot-roadways/route-sh0016-kg-offset-0__8b09a7137241` |
+| TxDOT_Roadways | 0 | 2026-09-12 21:10:12-05:00 | - | `txdot-roadways/txdot-roadways-layer-0-metadata__1978a3325515` |
