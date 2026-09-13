@@ -1,6 +1,8 @@
 name: Introduce yourself
 description: New here? Say hello, and name the one job you would hand to an agent.
 title: "Hello from "
+labels:
+  - introduction
 body:
   - type: markdown
     attributes:
