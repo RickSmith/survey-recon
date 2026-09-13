@@ -662,6 +662,16 @@ def _report_row_maps(sheets, without_shape, returned):
     if spread["from"]:
         _say(f"    date range        {spread['from']} to {spread['to']}")
         _say(f"    oldest sheet      {spread['oldest_sheet']}")
+        if spread["from"] == row_maps_mod.SUSPECT_DATE:
+            # Said here and not only in the output file, because this is the
+            # line somebody reads off a screen. Whether this date is real or a
+            # stand-in for a blank could not be confirmed, so it is doubted out
+            # loud rather than quietly reported as the oldest drawing.
+            _say(
+                f"      {row_maps_mod.SUSPECT_DATE} is on 368 of this service's 20,276 "
+                "records and may be a stand-in for no date -- unconfirmed, so check it "
+                "against the drawing before quoting it"
+            )
     if spread["sheets_without_a_date"]:
         _say(f"    no date           {spread['sheets_without_a_date']:>4} -- left out of the range above")
     if without_shape:
@@ -670,7 +680,8 @@ def _report_row_maps(sheets, without_shape, returned):
         years = summary["date_range"]
         span = f"{years['from']} to {years['to']}" if years["from"] else "no dated sheet"
         _say(f"      {route:<10} {summary['sheet_count']:>4}  {span}")
-    _say("    drawings          no direct link published -- ROW Division or the RPAM viewer")
+    _say("    drawings          no direct link published -- RPAM, TxDOT's Real Property")
+    _say("                      Asset Map, or an Open Records Request. See the notes")
     _say()
 
 

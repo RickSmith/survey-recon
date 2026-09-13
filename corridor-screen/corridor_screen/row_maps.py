@@ -54,11 +54,11 @@ read in the zone ArcGIS sends them in. There is a test that says so.
 ===============================
 
 It looks like a unique key and it is not. Of the 27 SH16 sheets in Bexar
-County, five different drawings share ``ROW_MAP_ID`` 993, and counting distinct
-identifiers gives 22 rather than 27. ``MAP_NM`` is the name that is one per
-drawing -- including the ``-1`` suffix TxDOT adds when two sheets carry the
-same date. Sheets are counted as records, and ``row_map_id`` is carried through
-as what it is.
+County, **six** different drawings share ``ROW_MAP_ID`` 993, and counting
+distinct identifiers gives 22 rather than 27. ``MAP_NM`` is the name that is
+one per drawing -- including the ``-1`` suffix TxDOT adds when two sheets carry
+the same date. Sheets are counted as records, and ``row_map_id`` is carried
+through as what it is.
 
 Counted on 2026-09-12, on the cross-check response cached at
 ``txdot-row-maps/sh16-bexar-county-wide-cross-check``.
@@ -80,26 +80,47 @@ EPOCH = datetime(1970, 1, 1, tzinfo=timezone.utc)
 # ``control.NO_CONDITION``.
 NO_ROUTE = "(none published)"
 
-# The two things a reader has to know before using these numbers. Kept as
-# constants so the tests name them rather than quoting prose back.
+# The things a reader has to know before using these numbers. Kept as constants
+# so the tests name them rather than quoting prose back.
 NOTE_DRAWINGS = "getting the drawings"
 NOTE_WHAT_IS_COUNTED = "what this count covers"
+NOTE_EARLIEST_DATE = "the oldest date may not be a date"
+
+# The date this service uses often enough to be worth doubting, and never
+# quietly. Whether it is a real date or a stand-in for a blank could not be
+# confirmed -- see `docs/data-sources/row-map-sheets.md` for where we looked.
+SUSPECT_DATE = "1900-01-01"
 
 DRAWINGS_DETAIL = (
     "No field in this service gives a direct link to a PDF. What you get here is "
-    "the sheet count, the dates and the sheet names. The drawings themselves "
-    "still come through the TxDOT ROW Division or the RPAM viewer, quoting the "
-    "MAP_NM values below."
+    "the sheet count, the dates and the sheet names. The drawings come through "
+    "RPAM, TxDOT's Real Property Asset Map -- the online application that "
+    "replaced the paper right-of-way maps -- and TxDOT says a map not available "
+    "there is obtained by Open Records Request, quoting the MAP_NM values below. "
+    "https://www.txdot.gov/data-maps/right-of-way-maps/real-property-asset-map.html"
 )
 
 WHAT_IS_COUNTED_DETAIL = (
     "Every sheet whose own centerline reaches this corridor, whatever route it "
     "belongs to -- because the right of way at an interchange is drawn on the "
-    "crossing route's sheets, not on this one's. Use by_route to read the "
-    "corridor's own route on its own. This is a corridor figure and not a "
-    "whole-route one: SH16 across the whole of Bexar County has 27 sheets over "
-    "three control sections, and this corridor is about eight and a half miles "
-    "inside one of them."
+    "crossing route's sheets, not on this one's. So sheet_count and date_range "
+    "cover every route that reaches the corridor, and are not this route's "
+    "figures on their own: read by_route for that. This is also a corridor "
+    "figure and not a whole-route one -- SH16 across the whole of Bexar County "
+    "has 27 sheets over three control sections, and this corridor is about "
+    "eight and a half miles inside one of them."
+)
+
+EARLIEST_DATE_DETAIL = (
+    "This service publishes " + SUSPECT_DATE + " on 368 of its 20,276 records "
+    "and publishes no empty date at all, which looks like a stand-in for a date "
+    "nobody recorded. We could not confirm that: the same layer holds 501 "
+    "records dated after " + SUSPECT_DATE + " and before 1917, including a "
+    "1900-06-08 sheet, so early dates here are common for reasons we have not "
+    "established. Counted on 2026-09-12 and cached. So the range above is "
+    "reported exactly as the service gave it, and oldest_sheet names the "
+    "drawing it came from. If that date is " + SUSPECT_DATE + ", check it "
+    "against the drawing before quoting it."
 )
 
 
@@ -275,6 +296,42 @@ def block(sheets, detail=None, without_shape=0):
     then succeeding minutes later. A blocked host reported as a count of zero
     would say a corridor has no ROW record at all, which would be the most
     interesting finding in the file and also false.
+
+    ----
+
+    Two differences from the specification, recorded rather than quietly made
+    ========================================================================
+
+    Specification section 10 names this block as ``sheet_count`` ·
+    ``date_range`` · ``control_sections`` · ``sheets``, with each sheet
+    "carrying ``MAP_NM``, ``ROW_MAP_ID``, ``CTRL_SECT_NBR``, ``CSJ_NBR``,
+    ``MAP_FROM_DT`` and ``MAP_TO_DT``." Here it differs twice.
+
+    **The service's field names are not used as output names.** Every field
+    section 10 asks for is present and none is dropped, but each is written the
+    way this tool writes every other output field -- ``map_name``,
+    ``row_map_id``, ``map_from_date``. ``BEXAR_PARCEL_FIELDS`` and
+    ``NGS_MARK_FIELDS`` already do exactly this, and ``sources.ROW_MAP_FIELDS``
+    records which name went where. A reader asked to hold two spellings of one
+    field is a reader who will eventually read the wrong one.
+
+    **There are more keys than four.** ``by_route`` splits the count by which
+    route each sheet draws, ``sheets_without_a_shape`` counts what could not be
+    placed, and ``notes`` carries the three things a reader has to know before
+    quoting these numbers. None of them contradicts section 10; they are a
+    superset of it.
+
+    Whether a superset still needs the specification amended is not the agent's
+    call -- the precedent is ``AcctNumb`` on PR #52, ``NPMS`` on PR #53 and the
+    ``not-screened`` control blocks on PR #54, all raised rather than patched
+    over. This is raised on the pull request for issue #16.
+
+    Raised on the same pull request, because it is a judgement about what a
+    reader will quote rather than a fact: ``sheet_count`` and ``date_range``
+    cover **every** route reaching the corridor, so on SH16 they read 69 and
+    1900-01-01 to 2005-04-30 while the corridor's own route reads 15 and
+    1944-01-01 to 1998-03-06 inside ``by_route``. The notes say so. Whether the
+    headline pair should instead be the corridor's own route is Rick's call.
     """
     if sheets is None:
         return not_screened(detail or "the TxDOT ROW map service was not called")
@@ -286,9 +343,14 @@ def block(sheets, detail=None, without_shape=0):
         # Sheets the service sent with no line on them. Recorded next to the
         # count they are missing from, so the total is readable as what it is.
         "sheets_without_a_shape": without_shape,
+        # What a reader has to know before quoting the two numbers above. The
+        # date caveat is here rather than only in the documentation because the
+        # number it doubts is in this file, and a doubt kept somewhere else is
+        # a doubt nobody reads.
         "notes": [
-            {"topic": NOTE_DRAWINGS, "detail": DRAWINGS_DETAIL},
             {"topic": NOTE_WHAT_IS_COUNTED, "detail": WHAT_IS_COUNTED_DETAIL},
+            {"topic": NOTE_EARLIEST_DATE, "detail": EARLIEST_DATE_DETAIL},
+            {"topic": NOTE_DRAWINGS, "detail": DRAWINGS_DETAIL},
         ],
         "sheets": sheets,
     }

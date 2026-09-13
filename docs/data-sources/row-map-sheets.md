@@ -79,8 +79,9 @@ being read in the time zone ArcGIS sends them in. There is a test on that.
 
 ## Trap two: `ROW_MAP_ID` looks like a key and is not
 
-Five of the 27 SH16 sheets in Bexar County share `ROW_MAP_ID` 993. Counting
-distinct identifiers gives **22**, not 27 — a wrong number that looks right.
+Six of the 27 SH16 sheets in Bexar County share `ROW_MAP_ID` 993, and it is the
+only value in that set that repeats. Counting distinct identifiers gives **22**,
+not 27 — a wrong number that looks right.
 
 `MAP_NM` is the name that is one per drawing, including the `-1` suffix TxDOT
 adds when two sheets carry the same date, as in
@@ -94,15 +95,21 @@ and **no record has a null date at all**. A date column with no nulls and a
 368-record spike on one day looks like a placeholder for "no date recorded."
 
 **We could not confirm that.** Against it: the layer also holds
-`LRD-001801-IH0035-19000608` — a June 1900 date, not the January sentinel — and
-**501 records dated between 1901 and 1917**, which is before the Texas Highway
-Department existed. So early dates are common here for reasons we have not
-established, and `1900-01-01` may be one of them rather than a blank.
+`LRD-001801-IH0035-19000608` — a June 1900 date, not the January one — and
+**501 records dated after `1900-01-01` and before 1917**, which is before the
+Texas Highway Department existed. So early dates are common here for reasons we
+have not established, and `1900-01-01` may be one of them rather than a blank.
 
 Where we looked: the layer's own field metadata, which documents nothing about
-it; and record counts by date, queried live on 2026-09-12. We did not ask the
-ROW Division. Until somebody does, treat a `1900-01-01` sheet as a date you
-should check against the drawing.
+it; and four record counts by date, queried live on 2026-09-12 and cached at
+`txdot-row-maps/date-tally-*` with the exact `where` clause of each in the
+`.meta.toml` beside it. We did not ask the ROW Division. Until somebody does,
+treat a `1900-01-01` sheet as a date you should check against the drawing.
+
+**The output carries this doubt, not just this page.** `row_maps.notes` holds a
+`the oldest date may not be a date` entry, and the tool says the same thing on
+screen when the range starts on `1900-01-01` — because a caveat kept somewhere
+else is a caveat nobody reads at the moment they are about to quote 1900.
 
 **The tool does not guess.** It reports the range the data gives and names the
 sheet each end came from, so `1900-01-01` arrives attached to
@@ -167,9 +174,14 @@ where=CNTY_NM='BEXAR' AND RTE_NM='SH0016'
 ## No field gives you the drawing
 
 There is no PDF link anywhere in this layer. What you get is the sheet count,
-the dates, the control sections and the sheet names. The drawings themselves
-still come through the TxDOT ROW Division or the RPAM viewer, quoting the
-`MAP_NM` values.
+the dates, the control sections and the sheet names.
+
+The drawings come through **RPAM**, TxDOT's Real Property Asset Map — in
+TxDOT's own words, "an online application populated with geo-referenced
+features that represent all real property assets comprising the highway right
+of way and is the replacement for paper right-of-way maps." A map not available
+there is obtained by **Open Records Request**, quoting the `MAP_NM` values.
+([TxDOT, Real Property Asset Map](https://www.txdot.gov/data-maps/right-of-way-maps/real-property-asset-map.html))
 
 The output says so in its own `notes` block rather than leaving a blank, which
 is what [spec section 10](../corridor-screen/spec.md) asks for.
@@ -190,6 +202,33 @@ is what [spec section 10](../corridor-screen/spec.md) asks for.
 | `map_to_date` | `MAP_TO_DT` | Empty on every SH16 sheet |
 | `total_pages` | `TOTL_MAP_PAGE_QTY` | `1` on every SH16 sheet |
 | `limit_from`, `limit_to` | `MAP_LMT_FROM_DSCR`, `MAP_LMT_TO_DSCR` | TxDOT's own words for where the sheet starts and stops |
+
+!!! note "Two differences from the specification, raised rather than patched over"
+    [Spec section 10](../corridor-screen/spec.md) names this block as
+    `sheet_count · date_range · control_sections · sheets`, each sheet
+    "carrying `MAP_NM`, `ROW_MAP_ID`, `CTRL_SECT_NBR`, `CSJ_NBR`, `MAP_FROM_DT`
+    and `MAP_TO_DT`."
+
+    **The service's field names are not used as output names.** Every field is
+    present and none is dropped, but each is written the way this tool writes
+    every other output field — `map_name`, `row_map_id`, `map_from_date`. The
+    parcels and the NGS marks already do exactly this, and the table above
+    records which name went where.
+
+    **There are more keys than four.** `by_route`, `sheets_without_a_shape` and
+    `notes`. None of them contradicts section 10; they are a superset of it.
+
+    Also raised, because it is a judgement about what a reader will quote
+    rather than a fact: `sheet_count` and `date_range` cover **every** route
+    reaching the corridor, so on SH16 they read 69 and 1900–2005 while the
+    corridor's own route reads 15 and 1944–1998 inside `by_route`.
+
+    Amending a settled specification is not the agent's call — the precedent is
+    `AcctNumb` on [PR #52](https://github.com/RickSmith/survey-recon/pull/52),
+    `NPMS` on [PR #53](https://github.com/RickSmith/survey-recon/pull/53) and
+    the `not-screened` control blocks on
+    [PR #54](https://github.com/RickSmith/survey-recon/pull/54). All three were
+    raised on the pull request and ruled on by Rick. So is this.
 
 The layer also publishes `ORIG_CTRL_SECT_NBR`, `CURR_CTRL_SECT_NBR`, `RTE_NM2`,
 `RTE_NM3`, `MAP_LOCN_DSCR`, `DIST_NBR` and the usual create and edit stamps. On

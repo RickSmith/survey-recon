@@ -1,9 +1,9 @@
 {
   "schema_version": "0.1.0",
   "run": {
-    "run_id": "texas-bexar-sh0016-kg-20260912T235217",
-    "started_at": "2026-09-12T23:52:17-05:00",
-    "finished_at": "2026-09-12T23:52:21-05:00",
+    "run_id": "texas-bexar-sh0016-kg-20260912T235647",
+    "started_at": "2026-09-12T23:56:47-05:00",
+    "finished_at": "2026-09-12T23:56:51-05:00",
     "status": "complete",
     "stopped_at_service": null,
     "mode": "cache-first",
@@ -128,7 +128,7 @@
       "layer_id": 0,
       "purpose": "alignment",
       "ping": "ok",
-      "ping_ms": 217,
+      "ping_ms": 311,
       "ping_detail": "",
       "status": "ok",
       "attempts": 0,
@@ -146,7 +146,7 @@
       "layer_id": null,
       "purpose": "buffer",
       "ping": "ok",
-      "ping_ms": 266,
+      "ping_ms": 265,
       "ping_detail": "",
       "status": "ok",
       "attempts": 0,
@@ -164,7 +164,7 @@
       "layer_id": 0,
       "purpose": "parcels",
       "ping": "ok",
-      "ping_ms": 155,
+      "ping_ms": 422,
       "ping_detail": "",
       "status": "ok",
       "attempts": 0,
@@ -182,7 +182,7 @@
       "layer_id": 23,
       "purpose": "flag:school",
       "ping": "ok",
-      "ping_ms": 485,
+      "ping_ms": 530,
       "ping_detail": "",
       "status": "ok",
       "attempts": 0,
@@ -205,7 +205,7 @@
       "layer_id": 2,
       "purpose": "flag:cemetery",
       "ping": "ok",
-      "ping_ms": 421,
+      "ping_ms": 484,
       "ping_detail": "",
       "status": "ok",
       "attempts": 0,
@@ -228,7 +228,7 @@
       "layer_id": 38,
       "purpose": "flag:railroad",
       "ping": "ok",
-      "ping_ms": 359,
+      "ping_ms": 437,
       "ping_detail": "",
       "status": "ok",
       "attempts": 0,
@@ -251,7 +251,7 @@
       "layer_id": 0,
       "purpose": "flag:pipeline",
       "ping": "ok",
-      "ping_ms": 140,
+      "ping_ms": 172,
       "ping_detail": "",
       "status": "ok",
       "attempts": 0,
@@ -274,7 +274,7 @@
       "layer_id": 1,
       "purpose": "control:ngs",
       "ping": "ok",
-      "ping_ms": 250,
+      "ping_ms": 264,
       "ping_detail": "",
       "status": "ok",
       "attempts": 0,
@@ -297,7 +297,7 @@
       "layer_id": 0,
       "purpose": "row-maps",
       "ping": "ok",
-      "ping_ms": 139,
+      "ping_ms": 140,
       "ping_detail": "",
       "status": "ok",
       "attempts": 0,
@@ -706,12 +706,16 @@
     "sheets_without_a_shape": 0,
     "notes": [
       {
-        "topic": "getting the drawings",
-        "detail": "No field in this service gives a direct link to a PDF. What you get here is the sheet count, the dates and the sheet names. The drawings themselves still come through the TxDOT ROW Division or the RPAM viewer, quoting the MAP_NM values below."
+        "topic": "what this count covers",
+        "detail": "Every sheet whose own centerline reaches this corridor, whatever route it belongs to -- because the right of way at an interchange is drawn on the crossing route's sheets, not on this one's. So sheet_count and date_range cover every route that reaches the corridor, and are not this route's figures on their own: read by_route for that. This is also a corridor figure and not a whole-route one -- SH16 across the whole of Bexar County has 27 sheets over three control sections, and this corridor is about eight and a half miles inside one of them."
       },
       {
-        "topic": "what this count covers",
-        "detail": "Every sheet whose own centerline reaches this corridor, whatever route it belongs to -- because the right of way at an interchange is drawn on the crossing route's sheets, not on this one's. Use by_route to read the corridor's own route on its own. This is a corridor figure and not a whole-route one: SH16 across the whole of Bexar County has 27 sheets over three control sections, and this corridor is about eight and a half miles inside one of them."
+        "topic": "the oldest date may not be a date",
+        "detail": "This service publishes 1900-01-01 on 368 of its 20,276 records and publishes no empty date at all, which looks like a stand-in for a date nobody recorded. We could not confirm that: the same layer holds 501 records dated after 1900-01-01 and before 1917, including a 1900-06-08 sheet, so early dates here are common for reasons we have not established. Counted on 2026-09-12 and cached. So the range above is reported exactly as the service gave it, and oldest_sheet names the drawing it came from. If that date is 1900-01-01, check it against the drawing before quoting it."
+      },
+      {
+        "topic": "getting the drawings",
+        "detail": "No field in this service gives a direct link to a PDF. What you get here is the sheet count, the dates and the sheet names. The drawings come through RPAM, TxDOT's Real Property Asset Map -- the online application that replaced the paper right-of-way maps -- and TxDOT says a map not available there is obtained by Open Records Request, quoting the MAP_NM values below. https://www.txdot.gov/data-maps/right-of-way-maps/real-property-asset-map.html"
       }
     ],
     "sheets": [

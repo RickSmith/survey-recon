@@ -26,11 +26,18 @@ from .geometry import (
 
 # ArcGIS servers cap how many records they will hand over at once. A count that
 # lands exactly on a cap is far more likely to be the cap than a coincidence.
+# Specification section 8 names these three.
 #
-# 5,000 is here because TxDOT's ROW map server publishes that as its own
-# maxRecordCount. A cap this list does not know about is a cap this check
-# cannot catch, so a new service means reading its maxRecordCount and adding it.
-PAGING_CAPS = (500, 1000, 2000, 5000)
+# TxDOT's ROW map server publishes a maxRecordCount of 5,000, and an earlier
+# pass of issue #16 added it to this list. It was taken back out, for two
+# reasons. It contradicted the specification's own list, which was not the
+# agent's to amend. And it could never have fired: ``Fetcher.query_all`` always
+# asks for 2,000 records a page, so no answer from any server reaches 5,000 in
+# one page -- while a corridor whose pages happened to total exactly 5,000
+# would have been doubted for no reason. A check that cannot trip teaches a
+# reader to skip checks; one that trips wrongly teaches them to ignore
+# warnings. Both are worse than not having it.
+PAGING_CAPS = (500, 1000, 2000)
 
 # How many parcels a square mile of Bexar County could plausibly hold. At this
 # figure the average parcel is about a sixth of an acre, which is a small city
@@ -192,7 +199,7 @@ def check_records_without_position(service, missing, total):
     if not missing:
         return None
     return warning(
-        "records arrived with no position",
+        "records arrived with no shape",
         service,
         f"{missing} of {total} records came back with no shape on them, so they "
         f"could not be tested against the corridor.",

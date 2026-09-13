@@ -2,14 +2,17 @@
 # server sent and is never edited. Every parameter of the request is listed
 # under [request_params], so the call can be repeated and checked.
 service = "TxDOT_ROW_Maps"
-cache_key = "txdot-row-maps/txdot-row-maps-layer-0-metadata__d79fef6aef10"
-request_method = "GET"
-request_url = "https://maps.dot.state.tx.us/arcgis/rest/services/ROW/ROW_Maps_CL_2017/MapServer/0"
-captured_at = 2026-09-12T23:56:50-05:00
+cache_key = "txdot-row-maps/date-tally-all-records__1368e146b554"
+request_method = "POST"
+request_url = "https://maps.dot.state.tx.us/arcgis/rest/services/ROW/ROW_Maps_CL_2017/MapServer/0/query"
+captured_at = 2026-09-12T23:56:26-05:00
 http_status = 200
-response_bytes = 5922
+response_bytes = 15
 layer_id = 0
+record_count = 20276
 warnings = []
 
 [request_params]
+where = "1=1"
+returnCountOnly = "true"
 f = "json"

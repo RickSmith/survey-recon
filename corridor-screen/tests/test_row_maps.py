@@ -306,6 +306,25 @@ class TestTheBlock(unittest.TestCase):
         topics = [note["topic"] for note in block["notes"]]
         self.assertIn(row_maps.NOTE_WHAT_IS_COUNTED, topics)
 
+    def test_the_block_doubts_the_suspect_date_in_the_file_not_only_in_the_docs(self):
+        """The date this service uses often enough to be worth doubting.
+
+        The doubt has to travel with the number it doubts. A caveat that lives
+        only in a documentation page is a caveat nobody reads at the moment
+        they are about to quote 1900 off a projector.
+        """
+        block = row_maps.block([])
+        note = next(n for n in block["notes"] if n["topic"] == row_maps.NOTE_EARLIEST_DATE)
+        self.assertIn(row_maps.SUSPECT_DATE, note["detail"])
+        self.assertIn("could not confirm", note["detail"])
+
+    def test_the_drawings_note_cites_txdot_rather_than_asserting_the_procedure(self):
+        """A statement about TxDOT's own process carries its source."""
+        block = row_maps.block([])
+        note = next(n for n in block["notes"] if n["topic"] == row_maps.NOTE_DRAWINGS)
+        self.assertIn("txdot.gov", note["detail"])
+        self.assertNotIn("onlinemanuals", note["detail"])
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -382,7 +382,7 @@ NGS_MARK_FIELDS = {
 # `ROW_MAP_ID` looks like a key and is not
 # ========================================
 #
-# Five of the 27 SH16 sheets in Bexar County share `ROW_MAP_ID` 993. `MAP_NM`
+# Six of the 27 SH16 sheets in Bexar County share `ROW_MAP_ID` 993. `MAP_NM`
 # is the one-per-drawing name. Counting distinct identifiers gives 22 rather
 # than 27, and that is the kind of wrong number that looks right.
 #
