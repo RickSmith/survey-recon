@@ -29,6 +29,18 @@ around.
 > **USGS 3DEP `identify` / EPQS elevation.** Timed out 3 of 4 attempts. Keep off
 > the critical path.
 
+!!! warning "Those two paragraphs are quotations, not findings"
+    They are what [the research](../txdot-research.md) recorded on 2026-09-12,
+    and they are quoted here because they are why this service was looked at.
+    **Neither reproduced.** The rest of this section is what we saw ourselves.
+
+    In particular, **no response this repo holds contains the token `NoData`** —
+    not one of those committed in `corridor-screen/captures/silent-nodata/`,
+    and the Gulf of Mexico point that would deserve one answers plain text
+    instead. The account of that description reaching the glossary and then a
+    slide is
+    [the description that outlived its evidence](../managing-your-agent/the-description-that-outlived-its-evidence.md).
+
 That first one is the failure this tool is shaped by. A service that ignores a
 parameter and answers anyway cannot be caught by checking for errors, because
 there is no error. It is why `checks.py` exists at all, why the flag services
@@ -141,6 +153,11 @@ somewhere else will see the timeouts we did not.
 The hazard has not gone anywhere. It has changed shape — from "a plausible wrong
 number" to "a 200 that will not parse" and "a parameter quietly ignored" — and
 both of those still defeat a caller that only checks the status code.
+
+What we are also saying, plainly, is that **we could not confirm the `NoData`**.
+We looked in every response committed for this beat and in the research page that
+is the claim's only source, and it is not in either. That is *not found* rather
+than *it never happened*, and the difference is that somebody looked.
 
 **The tool still does not call it.** Elevation is not something a corridor
 screening needs, the failure history is on the record whether or not any
