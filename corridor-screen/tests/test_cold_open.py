@@ -22,8 +22,8 @@ from pathlib import Path
 
 from corridor_screen.cache import long_path
 
-from .deck_reader import noted
-from .markdown_docs import text_of
+from .deck_reader import noted, with_markup
+from .markdown_docs import flat, text_of
 from .test_deck import slides
 
 REPO = Path(__file__).resolve().parent.parent.parent
@@ -60,9 +60,10 @@ def note():
 
     Notes are hard-wrapped prose. "Undisclosed caching" is two words with a
     newline between them in the file, and a check looking for the phrase
-    verbatim fails on a note that says exactly the right thing.
+    verbatim fails on a note that says exactly the right thing. That is
+    `markdown_docs.flat`'s whole job, on a note instead of on a page.
     """
-    return " ".join(the_slide().note.split())
+    return flat(the_slide().note)
 
 
 class TestEveryFigureOnItIsTheRunS(unittest.TestCase):
