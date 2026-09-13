@@ -1,0 +1,15 @@
+# Provenance record. The response file beside this one is exactly what the
+# server sent and is never edited. Every parameter of the request is listed
+# under [request_params], so the call can be repeated and checked.
+service = "USGS_Transportation_Railroads"
+cache_key = "usgs-transportation-railroads/usgs-transportation-railroads-layer-38-m__450022bc5947"
+request_method = "GET"
+request_url = "https://carto.nationalmap.gov/arcgis/rest/services/transportation/MapServer/38"
+captured_at = 2026-09-12T21:38:13-05:00
+http_status = 200
+response_bytes = 8641
+layer_id = 38
+warnings = []
+
+[request_params]
+f = "json"

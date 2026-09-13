@@ -45,7 +45,7 @@ def not_screened(reason):
     return {"status": "not-screened", "detail": reason}
 
 
-def service_entry(source, ping, status, records, record_count, warnings=()):
+def service_entry(source, ping, status, records, record_count, warnings=(), used=None):
     """One line of the honesty block.
 
     This is what lets somebody else decide whether to trust the file. It says
@@ -68,6 +68,12 @@ def service_entry(source, ping, status, records, record_count, warnings=()):
         "captured_at": next((r.get("captured_at") for r in records if r.get("captured_at")), None),
         "cache_files": [r["cache_key"] for r in records],
         "warnings": list(warnings),
+        # For a flag service: how many of the records that came back were
+        # actually used. The services are asked about a box drawn around every
+        # parcel in the corridor, which is wider than the ribbon, so "39
+        # returned, 3 used" is a normal and honest pair of numbers. Hiding the
+        # first one would make the second look like the whole answer.
+        "records_used": used,
     }
 
 
@@ -96,12 +102,14 @@ def skipped_service(source, reason, ping=None):
         "captured_at": None,
         "cache_files": [],
         "warnings": [],
+        "records_used": None,
     }
 
 
 def build(run_id, started_at, mode, half_width_ft, adjacent_distance_ft, sanity_margin_ft, tool_version,
           alignment, corridor, services, parcel_rows, warnings,
-          status="complete", stopped_at_service=None):
+          status="complete", stopped_at_service=None, corridor_flags=(),
+          screened_for=(), lead_time_table=None):
     """Assemble the whole output file."""
     return {
         "schema_version": SCHEMA_VERSION,
@@ -120,6 +128,11 @@ def build(run_id, started_at, mode, half_width_ft, adjacent_distance_ft, sanity_
             "not_screenable": NOT_SCREENABLE,
             "renderings": [],
             "map_link": map_link(corridor.bbox if corridor else alignment.bbox) if (corridor or alignment) else None,
+            # The flag types this run actually checked for, run-wide. A type
+            # that is not on this list was not looked for, and is never
+            # reported as clear on any parcel.
+            "screened_for": list(screened_for),
+            "lead_times": lead_time_table or {},
         },
         "alignment": alignment.describe() if alignment else None,
         "corridor": corridor.describe() if corridor else None,
@@ -135,7 +148,11 @@ def build(run_id, started_at, mode, half_width_ft, adjacent_distance_ft, sanity_
             "the ROW map sheet index is a separate work order"
         ),
         "parcels": parcel_rows,
-        "corridor_flags": [],
+        # Things that cost time but belong to no single parcel -- a pipeline in
+        # a road right of way no appraisal district taxes, a railway crossing
+        # the route. Recorded against the run so nothing is quietly dropped for
+        # being hard to attach.
+        "corridor_flags": list(corridor_flags),
         "warnings": warnings,
     }
 
@@ -158,5 +175,10 @@ def write(document, out_dir, name=None):
         name = COMPLETE_NAME if document["run"]["status"] == "complete" else INCOMPLETE_NAME
     path = Path(out_dir) / name
     os.makedirs(long_path(path.parent), exist_ok=True)
-    write_text(path, json.dumps(document, indent=2) + "\n")
+    # ensure_ascii=False so a statutory citation reads as "Tex. Health & Safety
+    # Code § 711.041" rather than "Tex. Health & Safety Code § 711.041".
+    # Both are valid JSON and a program cannot tell them apart, but a person
+    # reading this file on a projector can, and this file is meant to be read.
+    # The file is written UTF-8 either way; see cache.write_text.
+    write_text(path, json.dumps(document, indent=2, ensure_ascii=False) + "\n")
     return path

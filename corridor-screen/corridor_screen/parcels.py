@@ -17,8 +17,11 @@ import json
 
 from .sources import BEXAR_PARCEL_FIELDS
 
-# A parcel is never reported as clear of something that was not looked for.
-# Nothing is looked for yet, so this list is empty and every parcel says so.
+# A parcel is never reported as clear of something that was not looked for, so
+# a row starts screened for nothing at all. ``flags.attach`` fills this in from
+# the services that actually answered -- never from the list of flag types the
+# tool knows about. A run that stops before the flag services leaves it empty,
+# which is the honest answer: nothing was checked.
 FLAG_TYPES_SCREENED = []
 
 
@@ -100,6 +103,11 @@ def to_row(feature, fields=None):
         "flags": [],
         "max_lead_time_days": None,
         "lead_time_driver": None,
+        # Flag types on this parcel whose lead time could not be confirmed.
+        # It sits beside max_lead_time_days because a parcel whose only flag is
+        # a school would otherwise show no number and read as clear. It is not
+        # clear. It is unmeasured, which is a different thing.
+        "lead_time_not_found": [],
         "warnings": [],
     }
 

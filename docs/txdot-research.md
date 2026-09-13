@@ -104,7 +104,46 @@ CoSA AGOL also has `RecordedPlat`, `PreliminaryPlat`, `Major_Thoroughfare_Plan__
 /arcgis/rest/services/transportation/MapServer
   38 Railroads
 ```
-Also: Bexar railroads/schools/school-districts MapServers · CoSA Cemetery Steward Program · NPMS pipelines (`services.arcgis.com/G4S1dGvn7PIgYd6Y/.../NPMS_Pipelines_2022`) · USGS TNM Access API for quads.
+Also: Bexar railroads/schools/school-districts MapServers · CoSA Cemetery Steward Program · ~~NPMS pipelines (`services.arcgis.com/G4S1dGvn7PIgYd6Y/.../NPMS_Pipelines_2022`)~~ — **see the correction below** · USGS TNM Access API for quads.
+
+!!! danger "Corrected 2026-09-12, while building [issue #17](https://github.com/RickSmith/survey-recon/issues/17)"
+    **`NPMS_Pipelines_2022` holds no Texas data.** Read live: 543 records in
+    total, **zero** in Texas, zero in Bexar County, and every sample record in
+    **Chester County, Pennsylvania**. The layer's own extent sits around
+    longitude −76, latitude 40.
+
+    A Texas query returns zero records and no error, which reads exactly like
+    "there are no pipelines here."
+
+    This is the same trap recorded three rows below in this very table, for
+    `FEMA_Flood_Zones` on services9 — *"ranks high in search but is Salem, MA
+    only. Easy trap."* This research fell into its own documented trap a second
+    time, and the only reason it was caught is that a corridor with zero
+    pipelines looked odd enough to check the county, and then the state.
+
+    **The source used instead** is the **Texas Pipeline Mapping System (TPMS)**
+    from the Railroad Commission of Texas —
+    `gis.rrc.texas.gov/server/rest/services/rrc_public/tpms/MapServer/0`.
+    490,375 records, 598 within a box around Bexar County, and a genuine zero
+    inside the SH16 corridor. Full write-up in
+    [the flag services page](data-sources/flag-services.md).
+
+    Spec section 6 still names NPMS. Correcting a settled spec is not the
+    agent's call, so it is raised on the pull request for the same ruling the
+    parcel field names got on
+    [PR #52](https://github.com/RickSmith/survey-recon/pull/52).
+
+!!! warning "Also found 2026-09-12 — the USGS structures buffer answers for the wrong county"
+    Asked with the SH16 Bexar **polyline and a distance**, `structures` layer 23
+    returned schools in **Kerrville and Fredericksburg**, sixty miles up SH16,
+    for a query whose geometry stopped inside Bexar County. No error. Thinning
+    the line to 90 vertices did not fix it; an envelope was correct every time.
+
+    That is a third example of the 3DEP failure pattern — a parameter quietly
+    ignored, a plausible answer returned. The corridor tool asks the flag
+    services with an envelope because of it, and checks their answers anyway.
+    Tables and test numbers in
+    [the flag services page](data-sources/flag-services.md).
 
 ### Demo risk
 
@@ -212,6 +251,35 @@ https://www.txdot.gov/manuals/row/ess/surveying_procedures/right_of_entry.html
 | **Church** | No statute; trustee/vestry/diocese authority, monthly meetings | Board cycle |
 | **Federal / tribal** | Special-use permit (USFS, USACE, USFWS, NPS); tribal council + BIA. **Not verified** | Assume months |
 | **Gated / ag** | No statute. HOA codes, escorts, gate protocol, livestock, biosecurity | Scheduling friction only |
+
+!!! success "Every row above read back to its source, 2026-09-12, under [issue #17](https://github.com/RickSmith/survey-recon/issues/17)"
+    The table above was written from research notes. Before those numbers went
+    into a tool that prints them, each was opened and read.
+
+    - **Railroad 30–45 days** now has a public citation it did not have before:
+      Union Pacific's own procedures page says *"The normal turn-around time for
+      processing applications is now running between 30-45 days,"* and confirms
+      the $1,545 application fee —
+      <https://www.up.com/real-estate/tempuse/procedures>
+    - **Cemetery 14 days** confirmed at **§ 711.041(c)(2)** — *"not later than
+      the 14th day before the date the person wishes to visit."* The 10-day
+      county clerk filing confirmed at **§ 711.011(a)**
+    - **Pipeline 48 hours** confirmed at **§ 251.151(a)**, with the weekend and
+      holiday exclusion. The 16-inch excavation definition confirmed at
+      **§ 251.002**
+    - **School** — **§ 22.0834** confirmed, including the six-foot barrier
+      exemption at (a-1)(3). It sets **no number of days**, so the tool records
+      "not found" and says where it looked
+
+    `statutes.capitol.texas.gov` is now a JavaScript application. The URLs still
+    work in a browser, but a plain fetch returns only the app shell — the
+    statute text loads client-side. These readings were done in a browser for
+    that reason. Anything that machine-fetches those URLs and reports "section
+    not found" is wrong about the section, not about the URL.
+
+    The citations and the wording are in
+    [Lead times and their sources](corridor-screen/lead-times.md), and the
+    machine-readable copy is `corridor-screen/corridor_screen/lead_times.toml`.
 
 ### Traffic control — the crew-cost cliff
 **2025 TMUTCD**, effective Jan 18 2026. A conformance revision was in public comment through Sept 13 2026 — TCP requirements are actively changing.

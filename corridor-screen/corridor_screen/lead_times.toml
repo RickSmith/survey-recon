@@ -1,0 +1,203 @@
+# Lead times -- how many days of notice each kind of flag costs.
+#
+# This is checked-in data, not code, and that is deliberate. A number with
+# legal consequence should be editable by the person who is accountable for it
+# without touching a line of Python, and it should show a readable diff when it
+# changes. Specification section 13 asks for exactly this file.
+#
+# TOML is a plain text settings format meant for people to read and edit.
+# Python 3.11 reads it with nothing installed, and it carries comments, which
+# is the part that matters here: every row needs its citation beside it.
+#
+# ----
+#
+# Rules this file is held to, from CLAUDE.md:
+#
+#   * Every row must carry `source` and `url`. The loader refuses to run
+#     without them, the same way the field list check refuses to run against
+#     the wrong layer. A lead time without a citation is a rumor with a
+#     number on it.
+#   * Where a number could not be confirmed, `confirmed = false` and the row
+#     says "not found" and names where it looked. It never says the
+#     requirement does not exist.
+#   * `statutory = true` rows cite the code and section. Everything else is a
+#     published procedure, and says so.
+#
+# Every URL below was opened and read on 2026-09-12, and the quoted language
+# is what the page said on that date.
+
+schema_version = "1.0.0"
+
+
+# -- Confirmed, and statutory -------------------------------------------------
+
+[cemetery]
+label = "Cemetery"
+screenable = true
+confirmed = true
+statutory = true
+lead_time_days = 14
+driver = "written notice to the surrounding landowner, outside owner-set hours"
+source = "Tex. Health & Safety Code § 711.041(c)(2)"
+url = "https://statutes.capitol.texas.gov/Docs/HS/htm/HS.711.htm"
+verified_on = 2026-09-12
+# Read on the date above: access is for visitation during hours the surrounding
+# landowner sets, and at any other time the visitor must give written notice
+# "not later than the 14th day before the date the person wishes to visit."
+#
+# Two limits on this number, both of which the surveyor judges and the tool
+# does not. The section grants access "for purposes usually associated with
+# cemetery visits" -- whether entering to survey is one of those is a legal
+# question, not a geometric one. And subsection (d) says the section does not
+# apply to an unverified cemetery.
+note = """
+14 days of written notice outside the hours the surrounding landowner sets. \
+The statute is written about visiting a cemetery, so whether a survey entry \
+falls under it is the RPLS's call. Discovering a cemetery nobody had recorded \
+starts a separate clock: notice to the county clerk within 10 days, under \
+§ 711.011(a)."""
+
+[pipeline]
+label = "Pipeline"
+screenable = true
+confirmed = true
+statutory = true
+lead_time_days = 2
+driver = "notice to a notification center before excavation -- Texas 811"
+source = "Tex. Util. Code § 251.151(a)"
+url = "https://statutes.capitol.texas.gov/Docs/UT/htm/UT.251.htm"
+verified_on = 2026-09-12
+# Read on the date above: notice "not earlier than the 14th day before the date
+# the excavation is to begin or later than the 48th hour before the time the
+# excavation is to begin, excluding Saturdays, Sundays, and legal holidays."
+#
+# So 48 hours is a floor, not a booking. Two working days is the honest
+# planning figure, and the exclusion of weekends and holidays can make it
+# longer on the calendar than it is on paper.
+#
+# § 251.002 defines excavation as mechanized equipment used "to remove or
+# otherwise disturb soil to a depth of 16 or more inches", which is why a
+# hand-driven monument may fall outside the chapter altogether.
+note = """
+A 48-hour floor, excluding weekends and legal holidays, so two working days is \
+the planning figure. The chapter defines excavation as mechanized equipment \
+disturbing soil 16 inches or deeper, so hand-driven monuments may fall outside \
+it. The surveyor judges the case; this tool records the floor."""
+
+
+# -- Confirmed, but procedure rather than statute -----------------------------
+
+[railroad]
+label = "Railroad"
+screenable = true
+confirmed = true
+statutory = false
+lead_time_days = 45
+lead_time_days_low = 30
+driver = "separate corporate right of entry, insurance and flagging"
+source = "Union Pacific Railroad, Right of Entry / Temporary Use of Railroad Property — Procedures"
+url = "https://www.up.com/real-estate/tempuse/procedures"
+verified_on = 2026-09-12
+# Read on the date above, in Union Pacific's own words: "The normal turn-around
+# time for processing applications is now running between 30-45 days." The same
+# page states a non-refundable application fee of $1,545 and warns that
+# incomplete applications halt processing.
+#
+# The planning figure is the top of that range rather than the bottom, because
+# a bid cannot promise the good end of somebody else's queue.
+#
+# This is one railroad's published procedure. The Bexar County rail lines the
+# USGS layer returns are Union Pacific, BNSF and San Antonio Central. BNSF and
+# the short lines publish their own procedures and were not read.
+note = """
+Union Pacific's own published turn-around for a right of entry, 30 to 45 days, \
+plus a $1,545 non-refundable application fee, Railroad Protective Liability \
+insurance and flagging. The 45 is used for planning because a bid cannot \
+promise the good end of somebody else's queue. Another railroad's procedure \
+was not read and may differ."""
+
+
+# -- Not confirmed. Recorded as "not found", never as "does not exist" --------
+
+[school]
+label = "School"
+screenable = true
+confirmed = false
+statutory = false
+driver = "school district board approval, plus contractor badging"
+source = "Tex. Educ. Code § 22.0834 — background checks, which is not a notice period"
+url = "https://statutes.capitol.texas.gov/Docs/ED/htm/ED.22.htm"
+verified_on = 2026-09-12
+# Read on the date above. § 22.0834 requires a criminal history review of a
+# contractor's employees where they have continuing duties related to the
+# contracted services AND direct contact with students. Subsection (a-1)(3)
+# exempts public work separated from students by a secure barrier fence at
+# least six feet high, where the contractor bans interaction with students.
+#
+# That is a condition of entry. It is not a number of days, and this file will
+# not turn one into the other.
+not_found = """
+Not found: no published number of days for getting onto school district land. \
+Looked in: Tex. Educ. Code § 22.0834, which sets background-check conditions \
+and no notice period; the TxDOT Survey Manual (ESS, rev. April 2026), which \
+does not address school access; and TxDOT ROW Preliminary Procedures Ch. 4. \
+District board approval runs on a board's own meeting cycle, and badging \
+follows approval — both real, neither published as a figure."""
+note = """
+Treated as a scheduling risk with no number, not as clear. The estimator must \
+call the district. Note the § 22.0834 exemption: work separated from students \
+by a six-foot barrier with an enforced no-contact policy may not need the \
+background check at all."""
+
+[church]
+label = "Church"
+screenable = false
+confirmed = false
+statutory = false
+driver = "trustee, vestry or diocesan authority, on a monthly meeting cycle"
+source = "No statute found. Governance is the congregation's own."
+url = "https://statutes.capitol.texas.gov/"
+verified_on = 2026-09-12
+not_found = """
+Not found: no Texas statute setting a notice period for entering church land. \
+Looked in: Tex. Occ. Code ch. 1071, Tex. Health & Safety Code ch. 711 and \
+Tex. Util. Code ch. 251. Access rests on whoever holds authority for the \
+congregation, which is commonly a board meeting monthly."""
+note = "Listed because the specification's table lists it. Not screened in this run."
+
+[federal_or_tribal]
+label = "Federal or tribal land"
+screenable = false
+confirmed = false
+statutory = false
+driver = "special-use permit; tribal council and Bureau of Indian Affairs"
+source = "Not verified. No figure was confirmed from a federal or tribal source."
+url = "https://www.doi.gov/bia"
+verified_on = 2026-09-12
+not_found = """
+Not found: no lead time confirmed for federal or tribal land. Looked in: the TxDOT \
+Survey Manual (ESS, rev. April 2026) and ROW Preliminary Procedures Ch. 4, \
+neither of which addresses it. Special-use permits from USFS, USACE, USFWS or \
+NPS, and tribal council plus BIA consent, are the routes named in this repo's \
+own research and none of them publishes a turn-around this run could read. \
+Assume months; do not quote a number."""
+note = "Listed because the specification's table lists it. Not screened in this run."
+
+[gated_or_agricultural]
+label = "Gated or agricultural access"
+screenable = false
+confirmed = false
+statutory = false
+driver = "gate codes, escorts, livestock and biosecurity — scheduling friction"
+source = "No statute. Tex. Penal Code § 30.05 is trespass notice, not an access period."
+url = "https://statutes.capitol.texas.gov/Docs/PE/htm/PE.30.htm"
+verified_on = 2026-09-12
+not_found = """
+Not found, and not findable: no notice period exists to look for, and no public \
+source publishes gate locations or livestock. This is the not-screenable gap \
+named in specification section 12 \
+and in every output this tool writes. It is listed here so the row is visible \
+rather than absent."""
+note = """
+A tool that says "I cannot see this, you must" is more use than one that \
+quietly returns a shorter list."""
