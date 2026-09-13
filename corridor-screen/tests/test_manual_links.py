@@ -29,6 +29,7 @@ import unittest
 from pathlib import Path
 
 from corridor_screen import manual_links
+from corridor_screen.cache import long_path
 
 # The socket guard `test_offline` built under #19. Borrowed rather than rebuilt:
 # there should be one answer in this repo to "take the network away," and it
@@ -144,7 +145,8 @@ class TestTheEvidenceIsOnDiskRatherThanOnTheNetwork(unittest.TestCase):
     def test_every_captured_file_the_record_names_is_committed(self):
         for capture in manual_links.CAPTURES:
             with self.subTest(capture=capture["file"]):
-                self.assertTrue((manual_links.CAPTURE_DIR / capture["file"]).is_file())
+                path = long_path(manual_links.CAPTURE_DIR / capture["file"])
+                self.assertTrue(Path(path).is_file())
 
     def test_the_legacy_capture_really_says_the_revision_we_claim(self):
         """The claim and the evidence are checked against each other, so this
@@ -164,7 +166,8 @@ class TestTheEvidenceIsOnDiskRatherThanOnTheNetwork(unittest.TestCase):
         older web. Read as UTF-8 it does not fail; it just comes out wrong
         above byte 127, which is the same shape of error as reading a survey
         file in the wrong coordinate system."""
-        raw = (manual_links.CAPTURE_DIR / manual_links.CAPTURES[0]["file"]).read_bytes()
+        with open(long_path(manual_links.CAPTURE_DIR / manual_links.CAPTURES[0]["file"]), "rb") as handle:
+            raw = handle.read()
         self.assertEqual(manual_links.declared_charset(raw).lower(), "iso-8859-1")
 
     def test_an_html_entity_does_not_hide_the_revision(self):
@@ -239,7 +242,7 @@ class TestTheFallbackARunCanBeReadFrom(unittest.TestCase):
 
     def test_the_committed_rendering_is_what_the_code_produces_today(self):
         path = manual_links.CAPTURE_DIR / manual_links.BEAT_NAME
-        with open(path, encoding="utf-8", newline="") as handle:
+        with open(long_path(path), encoding="utf-8", newline="") as handle:
             written = handle.read()
         self.assertEqual(written.replace("\r\n", "\n"), manual_links.beat() + "\n")
 
