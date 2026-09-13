@@ -130,3 +130,14 @@ body:
       options:
         - label: I have kept client-identifying information out of this issue.
           required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ---
+
+        **What happens to this.** These introductions pick the next worked
+        example. The pattern the session showed — **corridor → public data
+        → flagged list → lead times** — works for a ranch boundary and an
+        ALTA as well as it works for a highway. Which one gets built next
+        depends on what turns up here.
