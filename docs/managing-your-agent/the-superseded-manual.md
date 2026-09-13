@@ -31,9 +31,10 @@ replaced.
 
 It would be easier if it were. A dead host gives an agent a clear answer.
 
-`onlinemanuals.txdot.gov` still **resolves in DNS**, to `168.44.238.246`. It
-accepts no connection on port 80 or port 443 — three attempts, twelve seconds
-each, on 2026-09-13.
+`onlinemanuals.txdot.gov` is still **in DNS** — the internet's phone book, which
+turns a name into the number a computer actually dials. The name is in the book.
+Nobody answers the phone: no connection on port 80 or port 443, three attempts,
+twelve seconds each, on 2026-09-13.
 
 So what an agent actually sees is a **timeout**. Not a 404 that says "this is
 gone." A timeout, which looks exactly like bad Wi-Fi, and which any sensible
@@ -83,8 +84,10 @@ onlinemanuals.txdot.gov/TxDOTOnlineManuals/TxDOTManuals/ess/index.htm
    nothing answers here today
 ```
 
-Both are captured. The redirect stub is kept because it is the reason the check
-below looks for two shapes rather than one.
+Both are captured. The check below does not need to know about two paths — it
+matches the **host**, whatever follows it — but the redirect stub is kept
+because it is the evidence for this diagram, and because it is the thing that
+explains why two different old addresses are still circulating.
 
 ## Run it yourself
 
@@ -92,7 +95,7 @@ The beat reproduces on demand, and **reads only from disk** — it cannot be tak
 away from you by a hotel network:
 
 ```bash
-python -m corridor_screen.citations --show
+python -m corridor_screen.manual_links --show
 ```
 
 ## The boring half, which is the useful one
@@ -104,19 +107,30 @@ somebody is in a hurry.
 So there is now something that runs it:
 
 ```bash
-python -m corridor_screen.citations --check .
+python -m corridor_screen.manual_links --check .
 ```
 
-It fails the build if any page or module in this repo cites a superseded URL,
-and it prints the `txdot.gov` address to use instead. It runs in the test suite.
+It exits non-zero if any page or module in this repo cites a superseded URL, and
+it prints the `txdot.gov` address to use instead. **It runs in the test suite**,
+so `python -m unittest discover -s tests -t .` catches one.
 
-**Telling a citation from a warning.** Five pages here name
-`onlinemanuals.txdot.gov` on purpose, to warn about it — including the rule
-forbidding it. A check that flagged its own rule is a check somebody deletes.
-So the test is whether the URL is **clickable**: a full address with `http://`
-or `https://` in front of it supports a claim; a hostname in a sentence does
-not. Two files hold real examples as test fixtures and evidence, and each says
-so in a line you meet before the URLs.
+!!! note "It does not yet fail CI"
+    An earlier draft of this page said "fails the build." That was not true, and
+    it is the shape of claim this page exists to warn about. GitHub Actions here
+    runs two workflows — the docs site and the slides — and **neither runs the
+    Python tests.** Wiring that up is separate work and is not smuggled in here.
+
+**Telling a citation from a warning.** Several pages here name
+`onlinemanuals.txdot.gov` on purpose, to warn about it — including the rule in
+CLAUDE.md forbidding it, and this page. A check that flagged its own rule is a
+check somebody deletes. So the test is whether the URL is **clickable**: a full
+address with `http://` or `https://` in front of it supports a claim; a hostname
+in a sentence does not.
+
+Two files hold real ones as fixtures and evidence, and each declares it in a
+line you meet before the URLs. The declaration exempts the **whole file**, which
+would be a loose thread — so a test pins the exempt list to exactly those two.
+Adding a third is a visible change to a test, not a quiet line in a file.
 
 That distinction is the only clever thing here. Everything else is a regular
 expression and a list of files, which is the point:

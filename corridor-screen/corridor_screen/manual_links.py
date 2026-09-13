@@ -44,11 +44,12 @@ error is usually boring and was written for something else."*
 What this file is careful not to claim
 ======================================
 
-**The old host is not called dead.** Checked on 2026-09-13, it still resolves
-in DNS -- ``onlinemanuals.txdot.gov`` answers as ``168.44.238.246`` -- and
-nothing accepts a connection on port 80 or 443. "Resolves but does not answer"
-and "does not exist" are different findings, and this repo writes "not found"
-rather than "does not exist" for exactly this reason.
+**The old host is not called dead.** Checked on 2026-09-13, the name is still
+published in DNS and nothing accepted a connection on port 80 or 443. "Listed
+but not answering" and "does not exist" are different findings, and this repo
+writes "not found" rather than "does not exist" for exactly this reason. The
+address it resolved to that day is in the capture README, with its date, which
+is where a fact with a shelf life belongs.
 
 **The revisions are read from the captures, not typed here.** ``revision_in``
 pulls them out of the committed HTML, and there is a test asserting the file
@@ -63,11 +64,21 @@ import re
 import sys
 from pathlib import Path
 
+from .cache import long_path
+
 CAPTURE_DIR = Path(__file__).resolve().parent.parent / "captures" / "superseded-manual"
 
 # When every claim below was checked against the live web. Section numbers and
 # revision dates move; a claim with no date is a claim about nothing.
 CHECKED_ON = "2026-09-13"
+
+# The beat, rendered and committed beside the pages it is built from. Issue #27
+# asks for "a capture that can stand in if the live thing breaks on the day" --
+# the page captures are this beat's *inputs*, and this is its *output*. If
+# Python will not start on the podium, a presenter opens a text file instead.
+# A test pins it to what `beat()` produces, the way the committed
+# `screening.json` is pinned by the replay check.
+BEAT_NAME = "the-beat.txt"
 
 # The one sentence. Issue #25: "The script names what the agent did wrong in one
 # sentence." One, and it stays one -- there is a test on the full stops.
@@ -80,21 +91,42 @@ VERDICT = (
 # live on this host -- the first meta-refreshed to the second -- so the path is
 # left open and the scheme is what decides.
 #
-# That is not a shortcut, it is the distinction itself. Five places in this repo
-# name `onlinemanuals.txdot.gov` in order to warn about it, and one writes out
-# `onlinemanuals.txdot.gov/txdotmanuals/ess/...` to describe the family. None is
-# clickable and none supports a claim. A guard that flagged the rule forbidding
-# the trap is a guard somebody deletes on a deadline.
+# That is not a shortcut, it is the distinction itself. Several pages here name
+# `onlinemanuals.txdot.gov` in order to warn about it -- including the rule in
+# CLAUDE.md forbidding it -- and one writes the family out as
+# `onlinemanuals.txdot.gov/txdotmanuals/ess/...`. None is clickable and none
+# supports a claim. A guard that flagged the rule forbidding the trap is a guard
+# somebody deletes on a deadline.
+#
+# **The count is deliberately not written here.** An earlier draft of this
+# comment said "five", which was wrong the moment this module and its docs page
+# were added, and a number nobody re-counts is the exact failure this file
+# exists to catch. `--check` prints what it actually found.
 #
 # The cost is honest and small: a markdown link written without a scheme is
 # missed. Such a link is already broken -- it resolves against this site -- so
 # it fails as a link before it fails as a citation.
-LEGACY_PATTERN = r"https?://onlinemanuals\.txdot\.gov/\S*"
+#
+# No trailing slash is required. `https://onlinemanuals.txdot.gov` is clickable
+# and supports a claim just as well as a deep link, and the first version of
+# this pattern let it straight through.
+#
+# **Case-insensitive, and an optional `www.`.** Host names are case-insensitive
+# by definition, so `HTTP://OnlineManuals.txdot.gov/...` is the same address and
+# the same mistake. The first version matched none of those three shapes.
+LEGACY_PATTERN = re.compile(r"https?://(?:www\.)?onlinemanuals\.txdot\.gov\S*",
+                            re.IGNORECASE)
 
 # A file whose job is to hold these URLs says so, in words, where a reader and
 # this check can both see it. The captures are the same thing in HTML: evidence
 # of what was served, not a claim that it is current.
+#
+# **The declaration has to be at the top.** Anywhere in the file, and an HTML
+# comment on the last line -- invisible in rendered MkDocs -- silences a real
+# citation a hundred lines above it. A reader who opens the file meets the
+# declaration before the URLs or the exemption is not honest.
 EVIDENCE_MARKER = "superseded-url-evidence"
+DECLARATION_LINES = 40
 
 # Where the manual actually lives. Not a guess -- fetched and read on the date
 # above, and committed as `current-ess-index.html` beside this module.
@@ -133,16 +165,32 @@ CAPTURES = (
 
 # What the old host does today, recorded rather than characterized. See this
 # module's docstring on why it is not called dead.
+#
+# **The IP address is deliberately not here.** An address has a shelf life, so
+# the one seen on the day is in the capture README beside its date, which is
+# where a fact that rots belongs. This module holds the
+# part that does not: the name is still published, and nothing answers on it.
+# Two paragraphs up this file says revisions are read from the captures rather
+# than typed; a typed IP would have been the one claim held to a lower standard
+# than the rest.
 HOST_TODAY = (
-    "resolves in DNS as 168.44.238.246, and accepts no connection on port 80 or "
-    "443 (three attempts, 12 s each)"
+    "the name is still published, and nothing accepted a connection on port 80 "
+    "or 443 (three attempts, 12 s each)"
 )
 
 # Files worth checking, and the one directory that is exempt. The captures are
 # **evidence**: they contain the legacy URLs because that is what was served,
 # and flagging them would be flagging the photograph for showing the crime.
-CHECK_SUFFIXES = (".md", ".py", ".toml", ".yml", ".yaml")
-SKIP_PARTS = ("captures", ".git", "__pycache__", "site", "node_modules")
+#
+# `.json` is on the list because a generated output can carry a URL too --
+# `screening.json` already carries `txdot.gov` ones -- and a superseded address
+# reaching a file somebody sends out is worse than one in a page.
+CHECK_SUFFIXES = (".md", ".py", ".toml", ".yml", ".yaml", ".json", ".html")
+
+# `.claude` holds this repo's own git worktrees, each a full copy of everything.
+# Without it, a check run from the main checkout walks every branch in progress,
+# reports other people's files, and breaks the test that pins the exempt list.
+SKIP_PARTS = ("captures", ".git", ".claude", "__pycache__", "site", "node_modules")
 
 
 def capture_text(name):
@@ -193,12 +241,12 @@ def superseded(text):
 
     **Naming the host is not citing it.** ``CLAUDE.md`` carries the rule
     "Never `onlinemanuals.txdot.gov`", and a check that flagged its own rule
-    would be a check somebody deletes. So a bare hostname is left alone and only
-    a fetchable URL -- a scheme, or a path under one of the two legacy
-    directories -- counts as a citation.
+    would be a check somebody deletes. So a hostname in a sentence is left
+    alone, and a URL counts as a citation when it is **clickable** -- when it
+    carries ``http://`` or ``https://`` in front of it.
     """
     found, seen = [], set()
-    for match in re.finditer(LEGACY_PATTERN, text):
+    for match in LEGACY_PATTERN.finditer(text):
         url = match.group(0).rstrip(".,;:)]}>\"'`")
         if url in seen:
             continue
@@ -207,59 +255,104 @@ def superseded(text):
     return sorted(found, key=lambda f: f["url"])
 
 
-def exempt(root):
-    """Files that hold these URLs as evidence, and say so.
+def _pages(root):
+    """Every file worth checking, walked once, through the door that opens them.
 
-    Returned rather than silently skipped, so `report` can name them. A guard
-    with an invisible exemption list is a guard that quietly stops guarding, and
-    a reader can see each declaration in the diff that added it.
+    **``Path.read_text`` is not that door on Windows.** A surveyor's checkout
+    sits under something like "OneDrive - Some Long Firm Name\\Documents\\...",
+    and this repo's own worktree already pushes files past the 260 characters
+    Windows will open without being asked in the extended form.
+
+    The first version of this guard used ``read_text`` behind a bare
+    ``except OSError: continue`` and silently skipped **21 files here** -- a
+    fifth of everything it was asked to check -- while printing a clean result.
+    A guard that quietly does not read a file is worse than no guard, because
+    it is trusted.
+
+    So the read goes through ``cache.long_path``, which is the same door
+    ``test_offline._copy_tree`` needed for ``shutil``, and anything still
+    unreadable is yielded as the exception so a caller can say so out loud.
     """
-    out = []
     for path in sorted(Path(root).rglob("*")):
         if path.suffix.lower() not in CHECK_SUFFIXES:
             continue
-        if any(part in SKIP_PARTS for part in path.parts):
+        inside = Path(path).relative_to(root)
+        # **Relative parts, not absolute ones.** Skipping on the full path
+        # means the root's own folders count: this very repo is checked out
+        # under a `.claude/worktrees/...` directory, so an absolute test for
+        # `.claude` skipped every file in it and reported a clean, empty run.
+        if any(part in SKIP_PARTS for part in inside.parts):
             continue
+        name = inside.as_posix()
         try:
-            if EVIDENCE_MARKER in path.read_text(encoding="utf-8", errors="replace"):
-                out.append(str(path.relative_to(root)))
-        except OSError:
-            continue
-    return out
+            with open(long_path(path), encoding="utf-8", errors="replace") as handle:
+                yield name, handle.read()
+        except OSError as exc:
+            yield name, exc
+
+
+def declares_evidence(body):
+    """Whether a file declares, up front, that it holds these URLs as evidence.
+
+    Only the opening lines count. See ``DECLARATION_LINES``: an exemption a
+    reader does not meet before the URLs is not a declaration, it is a hiding
+    place.
+    """
+    return EVIDENCE_MARKER in "\n".join(body.splitlines()[:DECLARATION_LINES])
+
+
+def unreadable(root):
+    """Files the guard could not open at all.
+
+    Must be empty for a clean result to mean anything: "nothing found" across a
+    file nobody read is not a finding.
+    """
+    return [name for name, body in _pages(root) if isinstance(body, Exception)]
+
+
+def exempt(root):
+    """Files that hold these URLs as evidence, and say so.
+
+    Returned rather than silently skipped, so ``main`` can name them. A guard
+    with an invisible exemption list is a guard that quietly stops guarding, and
+    a reader can see each declaration in the diff that added it.
+    """
+    return [name for name, body in _pages(root)
+            if not isinstance(body, Exception) and declares_evidence(body)]
 
 
 def check_repo(root):
     """Every superseded citation in the repo, as (path, url, replacement)."""
     offenders = []
-    for path in sorted(Path(root).rglob("*")):
-        if path.suffix.lower() not in CHECK_SUFFIXES:
+    for name, body in _pages(root):
+        if isinstance(body, Exception) or declares_evidence(body):
             continue
-        if any(part in SKIP_PARTS for part in path.parts):
-            continue
-        try:
-            text = path.read_text(encoding="utf-8", errors="replace")
-        except OSError:
-            continue
-        if EVIDENCE_MARKER in text:
-            continue
-        for finding in superseded(text):
+        for finding in superseded(body):
             offenders.append({
-                "path": str(Path(path).relative_to(root)),
+                "path": name,
                 "url": finding["url"],
                 "replacement": finding["replacement"],
             })
     return offenders
 
 
-def report(offenders):
-    """What to print when the guard trips."""
-    if not offenders:
-        return "  no superseded TxDOT manual URLs found"
-    lines = [f"  {len(offenders)} superseded TxDOT manual "
-             f"{'URL' if len(offenders) == 1 else 'URLs'} cited:"]
-    for bad in offenders:
-        lines += [f"    {bad['path']}", f"      cites   {bad['url']}",
-                  f"      use     {bad['replacement']}"]
+def report(offenders, unreadable=()):
+    """What to print when the guard runs.
+
+    Anything unreadable is named. "No superseded URLs found" across a file
+    nobody managed to open is not a finding, and printing it as one is how a
+    guard starts lying quietly.
+    """
+    if offenders:
+        lines = [f"  {len(offenders)} superseded TxDOT manual "
+                 f"{'URL' if len(offenders) == 1 else 'URLs'} cited:"]
+        for bad in offenders:
+            lines += [f"    {bad['path']}", f"      cites   {bad['url']}",
+                      f"      use     {bad['replacement']}"]
+    else:
+        lines = ["  no superseded TxDOT manual URLs found"]
+    for name in unreadable:
+        lines.append(f"  could not read, so it was not checked: {name}")
     return "\n".join(lines)
 
 
@@ -269,8 +362,13 @@ def beat():
     current = revision_in(capture_text("current"))
     old_url = CAPTURES[0]["url"]
 
+    # **Plain ASCII, deliberately.** An em dash here is a `UnicodeEncodeError`
+    # and a traceback on a Windows console that has not been told otherwise --
+    # which is every borrowed podium laptop. Verified: the first version of this
+    # function died under `PYTHONIOENCODING=cp437`, at 1:36, instead of printing
+    # the beat. Nothing else in this package prints a non-ASCII character.
     return "\n".join([
-        "  Failure beat 1 — the superseded manual",
+        "  Failure beat 1 - the superseded manual",
         "",
         "  What a search for the TxDOT Survey Manual still hands you:",
         f"    {old_url}",
@@ -295,9 +393,9 @@ def beat():
 
 
 def main(argv=None):
-    """``python -m corridor_screen.citations --show``"""
+    """``python -m corridor_screen.manual_links --show``"""
     parser = argparse.ArgumentParser(
-        prog="corridor-screen citations",
+        prog="corridor-screen manual-links",
         description="Failure beat one, and the guard that keeps this repo out of it.",
     )
     group = parser.add_mutually_exclusive_group()
@@ -305,15 +403,27 @@ def main(argv=None):
                        help="print the failure beat (the default)")
     group.add_argument("--check", metavar="ROOT", nargs="?", const=".",
                        help="fail if any page or module cites a superseded URL")
+    group.add_argument("--write-fallback", action="store_true",
+                       help=f"re-render the committed {BEAT_NAME} beside the captures")
     args = parser.parse_args(argv)
+
+    if args.write_fallback:
+        path = CAPTURE_DIR / BEAT_NAME
+        with open(long_path(path), "w", encoding="utf-8", newline="\n") as handle:
+            handle.write(beat() + "\n")
+        print(f"  written  {path}")
+        return 0
 
     if args.check:
         root = Path(args.check).resolve()
-        offenders = check_repo(root)
-        print(report(offenders))
+        offenders, cannot = check_repo(root), unreadable(root)
+        print(report(offenders, cannot))
         for name in exempt(root):
             print(f"  (holding these URLs as evidence, by declaration: {name})")
-        return 1 if offenders else 0
+        # A file nobody could open fails this too. The alternative is a green
+        # check over unread files, which is the failure this whole module is
+        # about.
+        return 1 if (offenders or cannot) else 0
 
     print(beat())
     return 0

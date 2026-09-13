@@ -165,15 +165,15 @@ show rather than quietly ending at twelve; the Markdown carries all of them.
 ## The check that keeps a citation honest
 
 ```bash
-python -m corridor_screen.citations --show
+python -m corridor_screen.manual_links --show
 ```
 
 Failure beat one of the session, and it runs entirely from files committed in
 `captures/superseded-manual/` — so a hotel network cannot take it away from you.
 
 Search still hands out `onlinemanuals.txdot.gov` links for the TxDOT Survey
-Manual. **That host resolves in DNS and answers nothing**, so an agent sees a
-timeout rather than a 404 — which looks exactly like bad Wi-Fi and invites a
+Manual. **That host is still listed in DNS — the internet's phone book — and answers
+nothing**, so an agent sees a timeout rather than a 404 — which looks exactly like bad Wi-Fi and invites a
 retry. The manual moved, and the two are not the same document: the old address
 last served **March 2025, Manual Notice 2025-1**, and the one in force is
 **April 2026, Manual Notice 2026-1**.
@@ -181,7 +181,7 @@ last served **March 2025, Manual Notice 2025-1**, and the one in force is
 The other half is the one that earns its keep every day:
 
 ```bash
-python -m corridor_screen.citations --check .
+python -m corridor_screen.manual_links --check .
 ```
 
 It fails if any page or module here cites a superseded address, and prints the

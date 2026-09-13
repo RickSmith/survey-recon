@@ -34,7 +34,7 @@ verified_on = 2026-09-12
 
 
 class TestTheShippedTable(unittest.TestCase):
-    """The real file, with the real citations. These are the numbers that ship."""
+    """The real file, with the real manual_links. These are the numbers that ship."""
 
     def setUp(self):
         self.table = lead_times.load()
