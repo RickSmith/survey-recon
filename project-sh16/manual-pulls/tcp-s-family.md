@@ -58,10 +58,14 @@ later on this page:
 
 *(The misspelling of "continuously" is TxDOT's, reproduced as printed.)*
 
-**The one-hour line buys sign and device relief, on every sheet.** The G20-2a
-"END ROAD WORK" sign may be omitted for short duration work. On S-1 the shoulder
-taper and tangent channelizing devices may be omitted too. That is signs and
-cones — setup and teardown time — not a change in vehicles or headcount.
+**The one-hour line buys relief on every sheet — but it buys different things
+on different sheets, and that difference is the whole cost story.** On every
+sheet the G20-2a "END ROAD WORK" sign may be omitted for short duration work,
+and on S-1 the shoulder taper and tangent channelizing devices may be omitted
+too. Signs and cones: setup and teardown time.
+
+**On S-2, S-3 and S-5 the hour also changes the vehicle.** Read the shadow
+vehicle section below before pricing anything from this page.
 
 **The surveying-specific catch.** TCP(S-1)-08A Note 3: "If line-of-sight
 requirements for surveying operations will preclude the placement of the Work
@@ -121,25 +125,74 @@ truck. A shadow truck plus operator is the single largest step-change in a
 survey crew's day rate, so whether a sheet *requires* one is the question that
 decides an estimate.
 
-**No sheet in the family requires one on a clock.** The wording is consistent:
+**The family splits in two, and you cannot see the split in the notes alone —
+you have to look at what the drawing depicts.** Each sheet labels one protective
+vehicle in its plan view. That label is the sheet's baseline; the notes then say
+what you may swap it for.
 
-| Sheet | Note | What it says |
+| Sheet | The vehicle **drawn** in the plan | Which notes the callout points at |
 |---|---|---|
-| S-1 | 4 | A Shadow Vehicle with a TMA "**may be used in lieu of** the Work Vehicle" |
-| S-2 | 10 | For short duration work the Shadow Vehicle with TMA "**may be replaced by** another Work Vehicle with high intensity rotating, flashing or strobe lights" |
-| S-2 | 11 | Shadow Vehicles with a TMA "are **desirable**"; with engineer approval, "Type III barricades or other channelizing devices **may be substituted**" |
-| S-2c | 3 | With engineer approval, barricades or channelizing devices "**may be substituted for** the Heavy Work Vehicle" |
-| S-3 | 2, 3 | Materially the same as S-2 notes 10 and 11 ("Shadow Vehicle with TMA" rather than "with a TMA") |
-| S-4 | 4 | Same as S-1 note 4 |
-| S-5 | 2, 3 | Materially the same as S-2 notes 10 and 11 (wording differs by an article and a comma) |
+| S-1 | Work Vehicle with high intensity lights | Notes 3 and 4 |
+| S-2 | **Shadow Vehicle with TMA** and high intensity lights | Notes 10 & 11 |
+| S-2c | *(no vehicle callout; legend shows a Work Vehicle)* | Notes 2 & 3 |
+| S-3 | **Shadow Vehicle with TMA** and high intensity lights | Notes 2 & 3 |
+| S-4 | Work Vehicle with high intensity lights | Note 4 |
+| S-5 | Work Vehicle with high intensity lights | Note 2 |
 
-Read together: the TMA shadow vehicle is **desirable**, is an **alternative to**
-the work vehicle, and is itself **substitutable** with barricades or cones when
-the Engineer approves. Across all six sheets there is **no duration and no
-posted speed at which a sheet states that a shadow truck becomes required.**
+**The grammar of the notes confirms the drawings, in both directions.**
 
-That is a finding about these six sheets. It is not a finding about TxDOT
-contract provisions, district practice, or what a given Area Engineer will
+Where the drawing shows a *work* vehicle, the note offers an **upgrade** — S-1
+Note 4 and S-4 Note 4: "A Shadow Vehicle with a Truck Mounted Attenuator … **may
+be used in lieu of** the Work Vehicle." Optional, and the crew's own truck is
+the baseline.
+
+Where the drawing shows a *shadow* vehicle, the note offers a **downgrade**, and
+it is conditional — S-2 Note 10, S-3 Note 2, S-5 Note 2: "**For short duration
+work** the Shadow Vehicle with TMA may be **replaced by** another Work Vehicle
+with high intensity rotating, flashing or strobe lights." The definite article is
+doing real work: *the* Shadow Vehicle is the one already in the drawing.
+
+### So: is a shadow truck ever required?
+
+**On S-1, S-4 and S-2c — no.** The drawn vehicle is an ordinary work vehicle and
+the TMA is an option.
+
+**On S-2, S-3 and S-5 — effectively yes, once the work passes one hour.** The
+shadow vehicle with TMA is what the sheet draws. The permission to drop to an
+ordinary work vehicle is granted only *for short duration work*, which every
+sheet defines as up to one hour. Past the hour that permission lapses and the
+drawn configuration stands. There is one remaining escape, and it is not
+automatic: S-2 Note 11 / S-3 Note 3 / S-5 Note 3 — "Shadow Vehicles with a TMA
+are **desirable** when workers or equipment are in the work space. **When
+approved by the engineer**, Type III barricades or other channelizing devices
+may be substituted for the Shadow Vehicle."
+
+So the honest sentence is: **on the three sheets that put a crew in a travel
+lane or on the centerline, passing one hour restores a shadow vehicle with TMA
+unless the Engineer approves barricades instead.** Not a certainty. Not a
+formality either.
+
+Which sheets are those? S-2 (road closure with flaggers, and work in the
+roadway), S-3 (lane closure, and work on centerline), S-5 (right and median
+shoulders of divided roadways). Exactly the cases where the crew is exposed.
+
+**There is still no posted speed anywhere in the family that triggers a shadow
+vehicle.** That part of the original finding survives. The duration part did
+not.
+
+### An inconsistency on S-5, reported not resolved
+
+S-5's plan callout labels a **Work Vehicle**, but the note it points to — Note 2
+— is written about replacing "the Shadow Vehicle with TMA," and Note 3 is about
+substituting for "the Shadow Vehicle." The drawing and its own notes do not
+agree about what is drawn. The most coherent reading is that S-5 depicts the
+short-duration case and its notes state the baseline, which is how S-3's
+identically worded notes behave. **That is a reading, not something the sheet
+says.** Anyone pricing an S-5 job past one hour should ask the Engineer rather
+than rely on this paragraph.
+
+All of the above is a finding about these six sheets. It is not a finding about
+TxDOT contract provisions, district practice, or what a given Area Engineer will
 accept on a given job — none of which are in scope here, and all of which can be
 stricter.
 
@@ -158,9 +211,22 @@ could not be fetched at the time:
 > **A 20-minute shot on a 55-mph highway converts a two-person crew into a crew
 > plus shadow truck.**
 
-**Not supported by any of the six sheets.** And the interesting part is *why*,
-because it is not that somebody made the numbers up. **All three numbers are
-real. Each governs something else.**
+**Half right, and the half that is right is the half that costs money.**
+
+**Right:** duration really can put a shadow truck on the job. On S-2, S-3 and
+S-5 the shadow vehicle with TMA is what the sheet draws, and the permission to
+use an ordinary work vehicle instead is granted only for short duration work.
+Somebody's instinct about a cost cliff was sound.
+
+**Wrong on every number and on the mechanism.** The line is **one hour**, not 15
+or 20 minutes. It is not a speed threshold at all — 55 mph is an ordinary table
+row on all six sheets. And what happens at the line is that a *permission
+lapses*, leaving the drawn configuration standing, subject to the Engineer's
+discretion to accept barricades instead. That is not the same as a rule that
+adds a truck, and it does not apply on S-1, S-4 or S-2c at all.
+
+The interesting part is *why* the numbers are wrong, because nobody made them
+up. **All three are real. Each governs something else.**
 
 | Number | Where it really comes from | What it actually governs |
 |---|---|---|
@@ -173,9 +239,29 @@ none of them makes. That is the failure mode worth putting on stage: not
 fabrication, but **synthesis across sources that each looked authoritative**.
 Every number survives spot-checking. The sentence built from them does not.
 
-**The honest replacement** is TCP(S-1)-08A Note 3 — the line-of-sight rule. It
-is surveying-specific, TxDOT wrote it about survey crews rather than about road
-crews generally, and it bites on most jobs rather than on a stopwatch edge case.
+**The honest replacement** has two parts:
+
+1. **The one-hour line, on S-2, S-3 and S-5** — the sheets that put a crew in a
+   travel lane, on the centerline, or on a divided-highway shoulder. Past an
+   hour, the drawn shadow vehicle with TMA stands unless the Engineer approves
+   barricades. That is the cost cliff the original claim was reaching for, at
+   the right number and on the right sheets.
+2. **TCP(S-1)-08A Note 3** — the line-of-sight rule, which is
+   surveying-specific and bites regardless of duration.
+
+### A note on how this page itself went wrong
+
+The first version of this file said flatly that no sheet in the family requires
+a shadow truck. That was read entirely out of the **general notes**, whose verbs
+are all soft — "desirable," "may be replaced by," "may be substituted." It is
+also wrong, and it was caught by a surveyor looking at the **drawings** and
+saying that S-2 and S-3 plainly show a shadow vehicle.
+
+On these sheets the drawing is the requirement and the notes are the exceptions
+to it. Reading the notes without the plan view inverts the meaning of both. An
+agent that can extract text but cannot see a drawing will make this mistake
+every time, and will sound confident doing it — which is the point of the
+session, arriving unplanned.
 
 Correcting the research doc is
 [#70](https://github.com/RickSmith/survey-recon/issues/70), not this file's job.
@@ -206,8 +292,11 @@ Correcting the research doc is
 
 **May not:**
 
-- Assert that any duration or any posted speed triggers a required shadow truck.
-  **Not found on any of the six sheets.**
+- Assert that any **posted speed** triggers a required shadow truck. **Not found
+  on any of the six sheets** — 55 mph is an ordinary table row on all of them.
+- Treat the one-hour line as costing only signs and cones. On **S-2, S-3 and
+  S-5** it also restores the drawn shadow vehicle with TMA, subject to the
+  Engineer's discretion to accept barricades. On S-1, S-4 and S-2c it does not.
 - Assume freeway or controlled-access work is covered. **Not found** — every
   sheet is footnoted "Conventional Roads Only."
 - Assume the drawn TCP is the whole obligation. S-2c Note 12 says plainly that

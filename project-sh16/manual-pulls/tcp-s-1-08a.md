@@ -23,7 +23,11 @@ notes together, not a phrase printed on the sheet.* It is the
 surveying-specific trap, because sighting down a line is the job. The shadow
 vehicle with a truck-mounted attenuator (TMA) appears in **Note 4** as a
 permitted **substitute** for the work vehicle — an option, not a penalty the
-clock triggers.
+clock triggers. **That is true of this sheet and not of the family.** S-1 draws
+an ordinary work vehicle, so the TMA is an upgrade. S-2 and S-3 draw a shadow
+vehicle with TMA, so on those the same clock works the other way. Do not carry
+this paragraph across to another sheet; see
+[`tcp-s-family.md`](tcp-s-family.md).
 
 ## The rest of what the sheet says
 
@@ -87,11 +91,15 @@ When this file was written, TCP(S-1) was the only sheet in hand, so the verdict
 was recorded as "unsupported and unresolved" — a 55-mph highway might have been
 a divided facility covered by a sheet nobody had read.
 
-**It has since been resolved.** All five remaining sheets were pulled and read.
-Divided roadways are covered, by TCP(S-4)-08A and TCP(S-5)-08, and **no sheet in
-the family makes a shadow truck required at any duration or any posted speed.**
-The three numbers in the claim each turn out to be real and to govern something
-else. The full account, with the table, is in
+**It has since been resolved, and the answer is split.** All five remaining
+sheets were pulled and read. Divided roadways are covered, by TCP(S-4)-08A and
+TCP(S-5)-08. **No posted speed anywhere in the family triggers a shadow truck** —
+55 mph is an ordinary table row on all six sheets. But **duration does**, on
+three of them: S-2, S-3 and S-5 *draw* a shadow vehicle with TMA, and the
+permission to use an ordinary work vehicle instead is granted only for short
+duration work. Past an hour it lapses.
+
+TCP(S-1) is not one of those three — see the box below. The full account is in
 [`tcp-s-family.md`](tcp-s-family.md).
 
 Correcting `docs/txdot-research.md` is

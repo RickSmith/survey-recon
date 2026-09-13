@@ -47,8 +47,9 @@ publishes, not because anything in this repo reads them.
 
 **Read the summaries before quoting any sheet:**
 
-- [`tcp-s-family.md`](tcp-s-family.md) — what all six require, and the answer to
-  whether a shadow truck is ever forced by the clock. It is not.
+- [`tcp-s-family.md`](tcp-s-family.md) — what all six require, including when a
+  shadow vehicle with a truck-mounted attenuator is forced by the clock. On
+  three of the six sheets it is.
 - [`tcp-s-1-08a.md`](tcp-s-1-08a.md) — the crew-time reading of S-1 on its own.
 
 ## "Blocked" was not true
