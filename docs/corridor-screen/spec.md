@@ -1,7 +1,7 @@
 # Corridor screening — specification
 
 **Status:** settled 2026-09-12, from the grilling on [issue #5](https://github.com/RickSmith/survey-recon/issues/5).
-**Amended:** 2026-09-13 — section 3.6, the offline, comparison and live-check commands; section 14, which entry of the cache the live check is allowed to refresh; section 5, the crew safety step; section 6, the pipeline source and the crew safety layers; section 8, how a returned record is tested against the corridor; section 10, the parcel field names, the ROW map block, the `crew_safety` block, and nine additions for the flags; section 3.6, the parcel table command and the two files it writes; section 9, whose drawings section 9 is counting; section 10, what `renderings` holds; section 15, the two renderings that are no longer unsettled. See the notes there.
+**Amended:** 2026-09-13 — section 3.6, the offline, comparison and live-check commands; section 14, which entry of the cache the live check is allowed to refresh; section 5, the crew safety step; section 6, the pipeline source and the crew safety layers; section 8, how a returned record is tested against the corridor; section 10, the parcel field names, the ROW map block, the `crew_safety` block, and nine additions for the flags; section 3.6, the parcel table command and the two files it writes; section 9, whose drawings section 9 is counting; section 10, what `renderings` holds; section 15, the two renderings that are no longer unsettled; section 3.6, the crew-day command and the two files it writes; section 15, the crew-day build-up, which is now built, and the TCP(S-1)-08A entry, whose claim was wrong. See the notes there.
 **Scope of work for:** the `corridor-screen/` tool.
 
 A note on words. A **spec** is a scope of work. A **schema** is an agreed field list — the column headings on a parcel table that everybody uses the same way. An **endpoint** is the web address you ask a question of. A **cache** is a saved copy of an answer you already got. Everything else is in [CONTEXT.md](https://github.com/RickSmith/survey-recon/blob/main/CONTEXT.md).
@@ -99,16 +99,19 @@ There is a second command, and it is a check rather than a screening run. It com
 python -m corridor_screen.replay one-run/screening.json another-run/screening.json
 ```
 
-One per rendering, reading the screening file rather than the services — section 2's "one fetch, many renderings." Two of the three are built:
+One per rendering, reading the screening file rather than the services — section 2's "one fetch, many renderings." All three are built:
 
 ```bash
 python -m corridor_screen.bid_memo --out project-sh16/
 python -m corridor_screen.parcel_table --out project-sh16/
+python -m corridor_screen.crew_day --out project-sh16/
 ```
 
 The parcel table writes **two files from one run**: `flagged-parcels.md`, and `flagged-parcels.svg` for the projector. Section 9's reasoning for SVG is why — a Markdown file cannot promise a type size, and [#23](https://github.com/RickSmith/survey-recon/issues/23) asks for something readable from the back of a room.
 
-And a third, which is the one genuinely live call — the plan of record's "one live moment proves it isn't a movie," kept as its own act rather than folded into a run that must not fail:
+The crew-day build-up writes two as well: `crew-day.md`, and `crew-day.txt` as the plain-text fallback for a podium where Python will not start. [#24](https://github.com/RickSmith/survey-recon/issues/24) asks for "a fallback capture recorded as the work happens," so both are written on every run rather than behind a flag.
+
+And one more, which is the one genuinely live call — the plan of record's "one live moment proves it isn't a movie," kept as its own act rather than folded into a run that must not fail:
 
 ```bash
 python -m corridor_screen.live_check --out project-sh16/
@@ -707,9 +710,13 @@ project-sh16/cache/
 
 ## 15. Not settled here
 
-- The crew-day build-up. A separate work order reading this file.
+- ~~The crew-day build-up. A separate work order reading this file.~~
 
-    The bid memo and the flagged parcel table were on this list until 2026-09-13. Both are built, under [#22](https://github.com/RickSmith/survey-recon/issues/22) and [#23](https://github.com/RickSmith/survey-recon/issues/23), and their commands are in section 3.6. Each was settled by its own work order rather than by this specification, which is what this entry always meant and still means for the third. Rick ruled on 2026-09-13.
+    **Settled 2026-09-13, by [#24](https://github.com/RickSmith/survey-recon/issues/24).** All three renderings are now built — the bid memo under [#22](https://github.com/RickSmith/survey-recon/issues/22), the flagged parcel table under [#23](https://github.com/RickSmith/survey-recon/issues/23), and the crew-day build-up under #24. Their commands are in section 3.6. Each was settled by its own work order rather than by this specification, which is what this entry always meant.
+
+    The entry is struck through rather than deleted, the same way section 3.6's cache rule was amended rather than rewritten. This specification is read on stage as a record of what was decided and when, and a list that quietly loses its items cannot be read that way.
+
+    **What #24 settled that this specification did not anticipate:** the rates are their own checked-in data file, `corridor_screen/crew_rates.toml`, on the same reasoning section 13 gives for `lead_times.toml`. Every row is an assumption — **TxDOT publishes no production rates** — and the loader refuses a row whose `source` names TxDOT without a URL somebody opened and the date they opened it. That is CLAUDE.md's "never invent a TxDOT requirement" enforced by code rather than remembered by whoever edits next.
 - Any county but Bexar.
 - Elevation and topography. USGS 3DEP timed out on three attempts of four, and returned a silent wrong answer on the fourth. It stays off the critical path.
 - ~~TCP(S-1)-08A. The host blocks automated fetch, so it must be pulled by hand.~~ Settled 2026-09-13, and the claim that came with it was wrong.
@@ -722,4 +729,4 @@ project-sh16/cache/
 
     Corrected under [#70](https://github.com/RickSmith/survey-recon/issues/70).
 
-    **This bears on the crew-day build-up, which is still on this list.** An estimator working from the old sentence would price a shadow truck onto a twenty-minute shot that does not need one, and would miss the one it does need — an hour in a travel lane.
+    **This bore on the crew-day build-up, which landed the same day under [#24](https://github.com/RickSmith/survey-recon/issues/24).** An estimator working from the old sentence would price a shadow truck onto a twenty-minute shot that does not need one, and would miss the one it does need — an hour in a travel lane. `corridor_screen/crew_day.py` is built against the corrected reading and cites the sheets rather than restating them, which is the same rule this entry is held to.

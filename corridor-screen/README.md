@@ -34,7 +34,8 @@ and the flags that hang off it, from
 | The whole tool replaying offline, checked against the live run | yes |
 | One genuinely live call, cross-checked against the capture | yes |
 | The bid memo — the document a principal reads before pricing | yes |
-| The flagged parcel table, the crew-day build-up | not yet, separate work orders |
+| The flagged parcel table, with its projector drawing | yes |
+| The crew-day build-up, with every rate open to argument | yes |
 | TxDOT primary control points, on layer 67 | yes |
 | Roadway facts — ROW_MIN, lanes, traffic | not yet, a separate work order |
 | SVG renderings | not yet |
@@ -121,7 +122,7 @@ than during one.
 ## The renderings
 
 The screening run fetches once; separate commands read that one file and write
-what a person actually reads. Two of the three are built:
+what a person actually reads. All three are built:
 
 ```bash
 python -m corridor_screen.bid_memo --out ../project-sh16
@@ -161,6 +162,39 @@ else.
 
 The drawing shows twelve rows. A corridor with more says how many it did not
 show rather than quietly ending at twelve; the Markdown carries all of them.
+
+The third is the crew-day build-up:
+
+```bash
+python -m corridor_screen.crew_day --out ../project-sh16
+```
+
+It writes `crew-day.md`, the build-up itself, and `crew-day.txt`, the same
+thing as a plain text fallback for a podium where Python will not start. Both
+are written every run, so the capture [#27](https://github.com/RickSmith/survey-recon/issues/27)
+audits is recorded as the work happens rather than when somebody remembers a
+flag.
+
+**The output is not a number.** It is eleven labeled inputs, seven lines of
+arithmetic and two totals, because a room of firm owners is going to argue with
+it and that is the only thing that makes it worth anything. Every rate carries
+a handle — `A1` to `A11` — so a surveyor can disagree with one row out loud
+rather than disagreeing with the total.
+
+**Every rate is an assumption and says so.** TxDOT publishes no production
+rates: the standard sheets say what goes on the road, not how long it takes to
+put it there. They live in
+[`corridor_screen/crew_rates.toml`](corridor_screen/crew_rates.toml), which is
+plain text a firm edits without touching Python, and the loader refuses a row
+whose `source` names TxDOT unless it carries a URL somebody opened and the date
+they opened it.
+
+**The traffic-control line has no total, and that is the finding.** Nothing in
+this run counts manholes or culverts, so nobody knows how many times the crew
+has to set up and take down. That is not zero, and on a job like this it is
+where the time goes. The rest of the traffic control is read from
+`TCP(S-1)-08A` itself: the duration line is **one hour**, and **no posted speed
+anywhere in the six-sheet family puts a shadow truck on the job.**
 
 ## The check that keeps a citation honest
 

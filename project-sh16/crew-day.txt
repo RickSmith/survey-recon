@@ -1,0 +1,32 @@
+  Crew-day build-up  SH0016-KG DFO 347.7 to 356.367
+  Run live, finished 2026-09-13T07:07:07-05:00
+
+  FIELD
+    Look for the published NGS marks       11 marks x 0.75 hours per mark = 8.25 hours
+    Set new control                        8.691 miles x 0.5 pairs per mile x 3 hours per pair = 13.04 hours
+    Recover corners, tract by tract        524 tracts x 0.5 hours per tract = 262.00 hours
+    Extra time on the flagged tracts       8 tracts x 2 hours per tract = 16.00 hours
+    Set and retrieve traffic control       not measured x 1.25 hours per occupation = not measured
+    Chain the centerline                   not measured x 5 hours per mile = not measured
+
+  OFFICE
+    Hand-retrace the ROW map sheets        69 sheets x 1.5 hours per sheet = 103.50 hours
+    Draft the deliverable                  8.691 miles x 4 hours per mile = 34.76 hours
+
+  field     299.29 hours  =  38 crew-days of 2
+  office    138.26 hours  =  18 office days
+  The two are never added together.
+
+  2 lines above have no total at all, because
+  an input was never measured. Those hours are missing from
+  the figures above, not zero in them:
+    Set and retrieve traffic control: Times traffic control has to be set is not measured
+    Chain the centerline: Miles worked on the centerline is not measured
+
+  Every rate has a handle, A1 to A12. All are
+  somebody's assumption, not TxDOT's. Argue with a row, not a total.
+  Traffic control read from TCP(S-1)-08A: the duration line is
+  1 hour, and no posted speed anywhere in the family
+  puts a shadow truck on the job.
+
+  An RPLS reads this and decides. Nobody has walked the corridor.
