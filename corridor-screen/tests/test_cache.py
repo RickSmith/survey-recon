@@ -82,9 +82,79 @@ class TestIndex(unittest.TestCase):
             self.assertEqual(text.count("| BCAD_Parcels |"), 2)
 
 
+class TestWarningsRecordedLater(unittest.TestCase):
+    """Section 14 asks the record to carry any sanity check that tripped, and
+    checks only run once a response is in hand."""
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.cache = Cache(Path(self.tmp.name))
+        self.entry = self.cache.entry("BCAD_Parcels", "parcels", URL, PARAMS)
+        self.cache.write(self.entry, b'{"features": []}', 200, layer_id=0, record_count=2000)
+
+    def tearDown(self):
+        self.tmp.cleanup()
+
+    def read_back(self):
+        return tomllib.loads(self.entry.meta_path.read_text(encoding="utf-8"))
+
+    def test_a_check_that_tripped_lands_in_the_record(self):
+        self.cache.add_warnings(self.entry, [{"check": "record count equals a paging cap"}])
+        self.assertEqual(self.read_back()["warnings"], ["record count equals a paging cap"])
+
+    def test_the_response_itself_is_still_not_touched(self):
+        before = self.entry.body_path.read_bytes()
+        self.cache.add_warnings(self.entry, [{"check": "something"}])
+        self.assertEqual(self.entry.body_path.read_bytes(), before)
+
+    def test_the_rest_of_the_record_survives_the_second_visit(self):
+        self.cache.add_warnings(self.entry, [{"check": "something"}])
+        data = self.read_back()
+        self.assertEqual(data["record_count"], 2000)
+        self.assertEqual(data["request_params"], PARAMS)
+        self.assertEqual(data["http_status"], 200)
+
+    def test_no_warnings_leaves_the_record_alone(self):
+        self.cache.add_warnings(self.entry, [])
+        self.assertEqual(self.read_back()["warnings"], [])
+
+
+class TestReplayedFromCache(unittest.TestCase):
+    def test_a_cached_response_can_still_say_how_old_it_is(self):
+        """A run served from the cache that cannot say when its data was
+        captured is a run nobody can judge."""
+        with tempfile.TemporaryDirectory() as tmp:
+            cache = Cache(Path(tmp))
+            first = cache.entry("BCAD_Parcels", "parcels", URL, PARAMS)
+            cache.write(first, b"{}", 200, layer_id=0, record_count=5)
+            again = cache.entry("BCAD_Parcels", "parcels", URL, PARAMS)
+            captured = cache.captured_at_of(again)
+            self.assertIsNotNone(captured)
+            self.assertIn("T", captured)
+
+    def test_a_check_tripping_on_replayed_data_is_still_written_down(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            cache = Cache(Path(tmp))
+            first = cache.entry("BCAD_Parcels", "parcels", URL, PARAMS)
+            cache.write(first, b"{}", 200, layer_id=0, record_count=5)
+            again = cache.entry("BCAD_Parcels", "parcels", URL, PARAMS)
+            cache.captured_at_of(again)
+            cache.add_warnings(again, [{"check": "impossible acreage"}])
+            data = tomllib.loads(again.meta_path.read_text(encoding="utf-8"))
+            self.assertEqual(data["warnings"], ["impossible acreage"])
+            self.assertEqual(data["request_params"], PARAMS)
+
+
 class TestTomlWriter(unittest.TestCase):
     def test_quotes_and_backslashes_survive_the_round_trip(self):
         awkward = {"where": 'Situs LIKE \'%"quoted"%\' AND path = "C:\temp"'}
+        data = tomllib.loads(render_toml(awkward))
+        self.assertEqual(data["where"], awkward["where"])
+
+    def test_a_newline_in_a_value_survives_the_round_trip(self):
+        """A raw newline inside a quoted TOML string is a parse error, so a
+        request parameter containing one would make its record unreadable."""
+        awkward = {"where": "Situs LIKE '%A%'\nAND 1=1\tpadded"}
         data = tomllib.loads(render_toml(awkward))
         self.assertEqual(data["where"], awkward["where"])
 

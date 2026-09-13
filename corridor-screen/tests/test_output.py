@@ -84,7 +84,23 @@ class TestHonestyBlock(unittest.TestCase):
     def test_a_skipped_service_says_why_rather_than_being_left_out(self):
         entry = output.skipped_service(PARCELS, "the run stopped first")
         self.assertEqual(entry["status"], "skipped")
-        self.assertEqual(entry["warnings"], ["the run stopped first"])
+        self.assertEqual(entry["detail"], "the run stopped first")
+
+    def test_a_skipped_service_keeps_prose_out_of_the_warning_list(self):
+        """`warnings` holds sanity checks, which have a shape. Prose there would
+        look like a recorded doubt without being readable as one."""
+        entry = output.skipped_service(PARCELS, "the run stopped first")
+        self.assertEqual(entry["warnings"], [])
+
+    def test_a_service_entry_says_when_its_answer_was_captured(self):
+        entry = output.service_entry(
+            PARCELS,
+            {"ping": "ok", "ms": 210, "detail": ""},
+            "from-cache",
+            [{"cache_key": "bcad/parcels__abc", "attempts": 0, "captured_at": "2026-09-12T20:26:56-05:00"}],
+            530,
+        )
+        self.assertEqual(entry["captured_at"], "2026-09-12T20:26:56-05:00")
 
 
 class TestWriting(unittest.TestCase):

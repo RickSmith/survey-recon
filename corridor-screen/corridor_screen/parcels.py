@@ -19,7 +19,7 @@ from .sources import BEXAR_PARCEL_FIELDS
 
 # A parcel is never reported as clear of something that was not looked for.
 # Nothing is looked for yet, so this list is empty and every parcel says so.
-SCREENED_FOR_NOTHING = []
+FLAG_TYPES_SCREENED = []
 
 
 def _synthetic_id(feature):
@@ -91,7 +91,7 @@ def to_row(feature, fields=None):
         # is unknown and it only becomes "no" where the TxDOT land layer
         # confirms the parcel. See spec section 11.
         "roe_required": "unknown",
-        "screened_for": list(SCREENED_FOR_NOTHING),
+        "screened_for": list(FLAG_TYPES_SCREENED),
         "flags": [],
         "max_lead_time_days": None,
         "lead_time_driver": None,

@@ -15,7 +15,7 @@ import os
 from datetime import datetime, timezone
 from pathlib import Path
 
-from .cache import _long_path, _write_text
+from .cache import long_path, write_text
 
 SCHEMA_VERSION = "0.1.0"
 
@@ -63,25 +63,39 @@ def service_entry(source, ping, status, records, record_count, warnings=()):
         "status": status,
         "attempts": sum(r.get("attempts", 0) for r in records),
         "record_count": record_count,
+        # When the answer was captured. A run replayed from the cache says how
+        # old its data is; a reader who cannot see that cannot judge the file.
+        "captured_at": next((r.get("captured_at") for r in records if r.get("captured_at")), None),
         "cache_files": [r["cache_key"] for r in records],
         "warnings": list(warnings),
     }
 
 
-def skipped_service(source, reason):
+def skipped_service(source, reason, ping=None):
+    """A service the run never got to.
+
+    The reason goes in `detail`, not in `warnings`. `warnings` is the list of
+    sanity checks that tripped, and each entry there has a shape -- check,
+    severity, detail, what to do. A sentence of prose in that list would be the
+    one thing this block exists to prevent: something that looks like a
+    recorded doubt but cannot be read like one.
+    """
+    ping = ping or {}
     return {
         "name": source.name,
         "url": source.layer_url if source.layer_id is not None else source.base_url,
         "layer_id": source.layer_id,
         "purpose": source.purpose,
-        "ping": None,
-        "ping_ms": None,
-        "ping_detail": "",
+        "ping": ping.get("ping"),
+        "ping_ms": ping.get("ms"),
+        "ping_detail": ping.get("detail", ""),
         "status": "skipped",
+        "detail": reason,
         "attempts": 0,
         "record_count": None,
+        "captured_at": None,
         "cache_files": [],
-        "warnings": [reason],
+        "warnings": [],
     }
 
 
@@ -142,6 +156,6 @@ def write(document, out_dir, name=None):
     if name is None:
         name = COMPLETE_NAME if document["run"]["status"] == "complete" else INCOMPLETE_NAME
     path = Path(out_dir) / name
-    os.makedirs(_long_path(path.parent), exist_ok=True)
-    _write_text(path, json.dumps(document, indent=2) + "\n")
+    os.makedirs(long_path(path.parent), exist_ok=True)
+    write_text(path, json.dumps(document, indent=2) + "\n")
     return path

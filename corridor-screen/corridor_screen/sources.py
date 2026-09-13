@@ -85,6 +85,11 @@ GEOMETRY = Source(
 # the field name in this tool's output; right side is the field name on the
 # service. Pointing this tool at another county starts here.
 BEXAR_PARCEL_FIELDS = {
+    # Geo_id is the appraisal district's own geographic identifier and is what a
+    # parcel should be quoted by. Some records publish no Geo_id -- road slivers
+    # and similar -- so PropID is tried next, and a parcel with neither gets an
+    # identifier made from its shape. Every row says in `id_source` which of the
+    # three it got, because only the first two can be quoted back to Bexar County.
     "id": "Geo_id",
     "id_fallback": "PropID",
     "owner": "Owner_Name",

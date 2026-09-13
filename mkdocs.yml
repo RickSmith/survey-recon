@@ -44,7 +44,9 @@ nav:
       - The claim we got wrong: managing-your-agent/the-claim-we-got-wrong.md
   - The worked example - SH16: scenarios/sh16/index.md
   - Corridor screening: corridor-screen/spec.md
-  - Data sources: data-sources/index.md
+  - Data sources:
+      - data-sources/index.md
+      - ArcGIS geometry service: data-sources/arcgis-geometry-service.md
   - Toolkit: toolkit/index.md
   - Governance:
       - governance/index.md

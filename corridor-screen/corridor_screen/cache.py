@@ -24,6 +24,7 @@ import hashlib
 import json
 import os
 import re
+import tomllib
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -34,12 +35,12 @@ INDEX_NAME = "INDEX.md"
 # "OneDrive - Some Long Firm Name\Documents\Projects\..." reaches that
 # limit easily, and the failure is a file-not-found error on a directory that
 # plainly exists -- confusing enough to sink an afternoon. Every read and write
-# in this file goes through _long_path, so the cache works wherever the project
+# in this file goes through long_path, so the cache works wherever the project
 # happens to sit.
 LONG_PATH_PREFIX = "\\\\?\\"
 
 
-def _long_path(path):
+def long_path(path):
     """The form of a path that Windows will open at any length."""
     absolute = os.path.abspath(str(path))
     if os.name == "nt" and not absolute.startswith(LONG_PATH_PREFIX):
@@ -60,7 +61,7 @@ def _short_hash(method, url, params):
     return hashlib.sha256(payload.encode("utf-8")).hexdigest()[:12]
 
 
-def _slug(text):
+def slug(text):
     """Squeeze a label down to something safe to use as a file name."""
     cleaned = re.sub(r"[^A-Za-z0-9]+", "-", str(text)).strip("-").lower()
     return cleaned[:40] or "response"
@@ -85,7 +86,7 @@ def _toml_value(value):
     if isinstance(value, (list, tuple)):
         return "[" + ", ".join(_toml_value(v) for v in value) + "]"
     escaped = str(value).replace("\\", "\\\\").replace('"', '\\"')
-    escaped = escaped.replace("\n", "\n").replace("\r", "\r").replace("\t", "\t")
+    escaped = escaped.replace("\n", "\\n").replace("\r", "\\r").replace("\t", "\\t")
     return '"' + escaped + '"'
 
 
@@ -104,13 +105,17 @@ class CacheEntry:
 
     def __init__(self, root, service, readable, method, url, params):
         self.service = service
-        self.readable = _slug(readable)
+        self.readable = slug(readable)
         self.method = method.upper()
         self.url = url
         self.params = dict(params)
         self.key = _short_hash(method, url, params)
-        self.directory = Path(root) / _slug(service)
+        self.directory = Path(root) / slug(service)
         self.stem = f"{self.readable}__{self.key}"
+        # Filled in when a response is saved, so that a sanity check tripping
+        # later can be written into the record without re-reading it.
+        self.captured_at = None
+        self.provenance = None
 
     @property
     def body_path(self):
@@ -123,10 +128,10 @@ class CacheEntry:
     @property
     def cache_key(self):
         """How the output file points at this response."""
-        return f"{_slug(self.service)}/{self.stem}"
+        return f"{slug(self.service)}/{self.stem}"
 
     def exists(self):
-        return os.path.exists(_long_path(self.body_path))
+        return os.path.exists(long_path(self.body_path))
 
 
 class Cache:
@@ -142,44 +147,79 @@ class Cache:
         """The bytes the server sent, or None if this request was never made."""
         if not entry.exists():
             return None
-        with open(_long_path(entry.body_path), "rb") as handle:
+        with open(long_path(entry.body_path), "rb") as handle:
             return handle.read()
 
     def read_meta(self, entry):
-        if not entry.meta_path.exists():
+        """The provenance record of a saved response, as a table, or None."""
+        if not os.path.exists(long_path(entry.meta_path)):
             return None
-        return _read_text(entry.meta_path)
+        return tomllib.loads(read_text(entry.meta_path))
+
+    def captured_at_of(self, entry):
+        """When a cached response was captured.
+
+        Reading it back also restores the record onto the entry, so that a
+        sanity check tripping on replayed data can still be written down. A run
+        served from the cache must be able to say how old its data is -- that
+        is the whole point of the honesty block.
+        """
+        record = self.read_meta(entry)
+        if not record:
+            return None
+        # "warnings" is rewritten on every visit and "request_params" is its own
+        # sub-table, so neither belongs in the flat part of the record.
+        entry.provenance = {
+            k: v for k, v in record.items() if k not in ("warnings", "request_params")
+        }
+        captured = record.get("captured_at")
+        entry.captured_at = captured
+        return captured.isoformat(timespec="seconds") if hasattr(captured, "isoformat") else captured
 
     def write(self, entry, body, http_status, layer_id=None, record_count=None, warnings=()):
         """Save a response and its provenance record.
 
         The response goes down untouched. Everything known about how it was
-        obtained goes in the sidecar beside it.
+        obtained goes in the second file beside it.
         """
-        os.makedirs(_long_path(entry.directory), exist_ok=True)
-        with open(_long_path(entry.body_path), "wb") as handle:
+        os.makedirs(long_path(entry.directory), exist_ok=True)
+        with open(long_path(entry.body_path), "wb") as handle:
             handle.write(body)
-        table = {
+        entry.captured_at = datetime.now(timezone.utc).astimezone()
+        entry.provenance = {
             "service": entry.service,
             "cache_key": entry.cache_key,
             "request_method": entry.method,
             "request_url": entry.url,
-            "captured_at": datetime.now(timezone.utc).astimezone(),
+            "captured_at": entry.captured_at,
             "http_status": int(http_status),
             "response_bytes": len(body),
+            "layer_id": int(layer_id) if layer_id is not None else None,
+            "record_count": int(record_count) if record_count is not None else None,
         }
-        if layer_id is not None:
-            table["layer_id"] = int(layer_id)
-        if record_count is not None:
-            table["record_count"] = int(record_count)
-        table["warnings"] = list(warnings)
+        self._write_provenance(entry, warnings)
+
+    def add_warnings(self, entry, warnings):
+        """Record, beside a response already saved, what was doubted about it.
+
+        Sanity checks run after a response is in hand, so this is a second
+        visit to the provenance record -- section 14 asks it to carry "any
+        sanity check that tripped". The response file is not touched, only the
+        record beside it.
+        """
+        if not warnings or not entry.provenance:
+            return
+        self._write_provenance(entry, warnings)
+
+    def _write_provenance(self, entry, warnings):
+        table = {k: v for k, v in entry.provenance.items() if v is not None}
+        table["warnings"] = [w["check"] if isinstance(w, dict) else str(w) for w in warnings]
         header = (
             "# Provenance record. The response file beside this one is exactly what the\n"
             "# server sent and is never edited. Every parameter of the request is listed\n"
             "# under [request_params], so the call can be repeated and checked.\n"
         )
-        body_text = render_toml(table, {"request_params": entry.params})
-        _write_text(entry.meta_path, header + body_text)
+        write_text(entry.meta_path, header + render_toml(table, {"request_params": entry.params}))
 
     def entries(self):
         """Every provenance record in the cache, oldest name first."""
@@ -188,11 +228,9 @@ class Cache:
     def write_index(self, corridor_label=""):
         """Regenerate INDEX.md -- the file you point at when you say the
         captures are from a particular date."""
-        import tomllib
-
         rows = []
         for meta_path in self.entries():
-            data = tomllib.loads(_read_text(meta_path))
+            data = tomllib.loads(read_text(meta_path))
             rows.append(
                 "| {service} | {layer} | {captured} | {count} | `{key}` |".format(
                     service=data.get("service", "?"),
@@ -218,16 +256,16 @@ class Cache:
                 "",
             ]
         )
-        os.makedirs(_long_path(self.root), exist_ok=True)
-        _write_text(self.root / INDEX_NAME, text)
+        os.makedirs(long_path(self.root), exist_ok=True)
+        write_text(self.root / INDEX_NAME, text)
         return self.root / INDEX_NAME
 
 
-def _read_text(path):
-    with open(_long_path(path), "r", encoding="utf-8") as handle:
+def read_text(path):
+    with open(long_path(path), "r", encoding="utf-8") as handle:
         return handle.read()
 
 
-def _write_text(path, text):
-    with open(_long_path(path), "w", encoding="utf-8", newline="\n") as handle:
+def write_text(path, text):
+    with open(long_path(path), "w", encoding="utf-8", newline="\n") as handle:
         handle.write(text)

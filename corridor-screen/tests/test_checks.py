@@ -3,7 +3,6 @@
 import unittest
 
 from corridor_screen import checks
-from corridor_screen.geometry import grow_bbox, point_in_bbox
 from corridor_screen.sources import Source
 
 LAYER = Source(
@@ -75,7 +74,7 @@ CORRIDOR_BBOX = [-98.69, 29.48, -98.60, 29.58]
 
 
 def near(service, points):
-    return checks.check_centroids_near_corridor(service, points, CORRIDOR_BBOX, grow_bbox, point_in_bbox)
+    return checks.check_centroids_near_corridor(service, points, CORRIDOR_BBOX)
 
 
 class TestNearTheCorridor(unittest.TestCase):
@@ -94,7 +93,7 @@ class TestNearTheCorridor(unittest.TestCase):
 
     def test_nothing_to_check_means_no_opinion(self):
         self.assertIsNone(near("x", []))
-        self.assertIsNone(checks.check_centroids_near_corridor("x", [[0.0, 0.0]], None, grow_bbox, point_in_bbox))
+        self.assertIsNone(checks.check_centroids_near_corridor("x", [[0.0, 0.0]], None))
 
 
 class TestAcreage(unittest.TestCase):

@@ -48,7 +48,7 @@ python -m corridor_screen --route SH0016-KG --begin-dfo 347.7 --end-dfo 356.367 
 |---|---|
 | `--route` | The TxDOT route name, exactly as `TxDOT_Roadways` publishes it |
 | `--begin-dfo`, `--end-dfo` | The two limits, as Distance From Origin in miles. Either order |
-| `--half-width` | How far each side of the centerline counts as inside. Default 300 US survey feet |
+| `--half-width` | How far each side of the centerline counts as inside. Default 300 feet |
 | `--mode` | `live`, `cache-first` (default) or `cache-only` |
 | `--out` | Where the output file and the cache are written |
 | `--yes` | Never ask about a dead service. Stop instead. Use for unattended runs |
@@ -94,9 +94,10 @@ project-sh16/cache/
   INDEX.md                     one line per response
 ```
 
-The response file is never edited. The provenance lives in the sidecar beside
-it, because the moment you write metadata into a response, "this is real data
-the server really sent" stops being true — and that sentence is load-bearing.
+The response file is never edited. The provenance record — the second file
+beside it — carries everything about how the answer was obtained, because the
+moment you write that into the response itself, "this is real data the server
+really sent" stops being true. That sentence is load-bearing.
 
 `INDEX.md` is the file to point at when you say on stage that the captures were
 taken on a particular date.
@@ -127,6 +128,16 @@ python -m unittest discover -s tests -t .
 
 They use `unittest` from the standard library rather than a test runner that
 has to be installed, for the same reason as everything else here.
+
+## On feet
+
+The half-width is in **international feet**, not US survey feet, and the reason
+is worth a sentence. The parcel service accepts only that foot — it rejects
+`esriSRUnit_SurveyFoot` outright, and answers a US survey foot *code* as if it
+were meters, silently. The corridor buffer therefore uses the same foot, so the
+drawn corridor is the ribbon the parcels came from. At 300 feet the two differ
+by about six ten-thousandths of a foot. The whole finding is written up in
+[the geometry service page](../docs/data-sources/arcgis-geometry-service.md).
 
 ## A Windows note
 

@@ -16,6 +16,8 @@ warning is written into the output next to the data it doubts. The tool does
 not hide it and does not fix it.
 """
 
+from .geometry import grow_bbox, point_in_bbox
+
 # ArcGIS servers cap how many records they will hand over at once. A count that
 # lands exactly on a cap is far more likely to be the cap than a coincidence.
 PAGING_CAPS = (500, 1000, 2000)
@@ -99,7 +101,7 @@ def check_parcel_density(service, record_count, corridor_area_sq_mi):
     return None
 
 
-def check_centroids_near_corridor(service, points, corridor_bbox, grow_bbox, point_in_bbox):
+def check_centroids_near_corridor(service, points, corridor_bbox):
     """Returned records should be somewhere near the ribbon.
 
     The 3DEP failure recorded in ``docs/txdot-research.md`` was a server

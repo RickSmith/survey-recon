@@ -10,3 +10,11 @@ wrong answer instead of an error.
 
 Verified research notes live in
 [TxDOT research](../txdot-research.md) until this chapter is written.
+
+## Written so far
+
+- [Esri ArcGIS geometry service](arcgis-geometry-service.md) — builds the corridor
+  polygon. Written under [issue #13](https://github.com/RickSmith/survey-recon/issues/13)
+  because the corridor tool started calling it, and it appears in no earlier
+  research note. It carries the unit-code trap: a value the parcel query accepts
+  and answers wrong.

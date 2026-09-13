@@ -52,6 +52,23 @@ def _encode(params):
     return urllib.parse.urlencode({k: v for k, v in params.items() if v is not None})
 
 
+def _describe_url(source):
+    """The address whose own description of itself answers both questions.
+
+    The reachability ping and the field list check ask a layer the same thing:
+    "describe yourself". Naming that request once means it is cached once, so
+    the field list check costs no second call, and the index does not carry two
+    files holding identical bytes.
+    """
+    url = source.layer_url if source.layer_id is not None else source.base_url
+    name = (
+        f"{source.name}-layer-{source.layer_id}-metadata"
+        if source.layer_id is not None
+        else f"{source.name}-metadata"
+    )
+    return url, name, {"f": "json"}
+
+
 def _open(url, params, method, timeout):
     """One request. Returns the raw bytes and the HTTP status."""
     encoded = _encode(params)
@@ -74,6 +91,16 @@ class Fetcher:
         self.mode = mode
         self.timeout = timeout
         self.retries = retries
+        # Every cache entry this run touched, by cache key, so that a sanity
+        # check tripping later can be written back into the right record.
+        self.entries = {}
+
+    def note_warnings(self, records, warnings):
+        """Write tripped checks into the provenance of the responses they doubt."""
+        for record in records:
+            entry = self.entries.get(record["cache_key"])
+            if entry is not None:
+                self.cache.add_warnings(entry, warnings)
 
     # -- reachability ------------------------------------------------------
 
@@ -87,15 +114,26 @@ class Fetcher:
         """
         if self.mode == "cache-only":
             return {"ping": "skipped", "ms": 0, "detail": "cache-only run makes no network calls"}
-        url = source.layer_url if source.layer_id is not None else source.base_url
+        url, readable, params = _describe_url(source)
         started = time.monotonic()
         try:
-            _open(url, {"f": "json"}, "GET", PING_TIMEOUT_S)
+            body, status = _open(url, params, "GET", PING_TIMEOUT_S)
         except Exception as exc:
             elapsed = int((time.monotonic() - started) * 1000)
             return {"ping": "blocked", "ms": elapsed, "detail": f"{type(exc).__name__}: {exc}"}
         elapsed = int((time.monotonic() - started) * 1000)
-        return {"ping": "slow" if elapsed >= SLOW_PING_MS else "ok", "ms": elapsed, "detail": ""}
+        # The ping answer is a response like any other, so it is saved like any
+        # other. It is never served *from* the cache -- a cached ping would say
+        # a host was reachable last week, which is not what a ping is for.
+        entry = self.cache.entry(source.name, readable, url, params)
+        self.cache.write(entry, body, status, layer_id=source.layer_id)
+        self.entries[entry.cache_key] = entry
+        return {
+            "ping": "slow" if elapsed >= SLOW_PING_MS else "ok",
+            "ms": elapsed,
+            "detail": "",
+            "cache_key": entry.cache_key,
+        }
 
     # -- fetching ----------------------------------------------------------
 
@@ -110,11 +148,13 @@ class Fetcher:
 
         if cached is not None:
             data = json.loads(cached)
+            self.entries[entry.cache_key] = entry
             record = {
                 "cache_key": entry.cache_key,
                 "status": "from-cache",
                 "attempts": 0,
                 "http_status": None,
+                "captured_at": self.cache.captured_at_of(entry),
             }
             return data, record
 
@@ -136,11 +176,13 @@ class Fetcher:
 
         count = count_records(data) if callable(count_records) else None
         self.cache.write(entry, body, status, layer_id=layer_id, record_count=count)
+        self.entries[entry.cache_key] = entry
         record = {
             "cache_key": entry.cache_key,
             "status": "ok",
             "attempts": attempts,
             "http_status": status,
+            "captured_at": entry.captured_at.isoformat(timespec="seconds"),
         }
         return data, record
 
@@ -164,14 +206,13 @@ class Fetcher:
     # -- queries -----------------------------------------------------------
 
     def layer_metadata(self, source):
-        """The layer's own description of itself, including its field list."""
-        return self.get_json(
-            source.name,
-            f"{source.name}-layer-{source.layer_id}-metadata",
-            source.layer_url,
-            {"f": "json"},
-            layer_id=source.layer_id,
-        )
+        """The layer's own description of itself, including its field list.
+
+        In every mode but `live` this is already on disk, because the ping a
+        moment ago asked the same question and saved the answer.
+        """
+        url, readable, params = _describe_url(source)
+        return self.get_json(source.name, readable, url, params, layer_id=source.layer_id)
 
     def query_all(self, source, params, readable, page_size=2000):
         """Every feature matching a query, one page at a time.

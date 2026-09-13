@@ -1,12 +1,12 @@
 {
   "schema_version": "0.1.0",
   "run": {
-    "run_id": "texas-bexar-sh0016-kg-20260912T202648",
-    "started_at": "2026-09-12T20:26:48-05:00",
-    "finished_at": "2026-09-12T20:26:56-05:00",
+    "run_id": "texas-bexar-sh0016-kg-20260912T203823",
+    "started_at": "2026-09-12T20:38:23-05:00",
+    "finished_at": "2026-09-12T20:38:24-05:00",
     "status": "complete",
     "stopped_at_service": null,
-    "mode": "live",
+    "mode": "cache-first",
     "tool_version": "0.1.0",
     "half_width_ft": 300,
     "adjacent_distance_ft": 100,
@@ -58,7 +58,7 @@
       29.575341
     ],
     "ring_count": 1,
-    "polygon_cache_key": "arcgis-geometry/corridor-buffer-300ft__25880c6b587a"
+    "polygon_cache_key": "arcgis-geometry/corridor-buffer-300ft__411deacfd794"
   },
   "roadway": {
     "status": "not-screened",
@@ -71,11 +71,12 @@
       "layer_id": 0,
       "purpose": "alignment",
       "ping": "ok",
-      "ping_ms": 264,
+      "ping_ms": 375,
       "ping_detail": "",
       "status": "ok",
-      "attempts": 1,
+      "attempts": 0,
       "record_count": 1,
+      "captured_at": "2026-09-12T20:37:24-05:00",
       "cache_files": [
         "txdot-roadways/route-sh0016-kg-offset-0__8b09a7137241"
       ],
@@ -87,13 +88,14 @@
       "layer_id": null,
       "purpose": "buffer",
       "ping": "ok",
-      "ping_ms": 266,
+      "ping_ms": 233,
       "ping_detail": "",
       "status": "ok",
-      "attempts": 1,
+      "attempts": 0,
       "record_count": 1,
+      "captured_at": "2026-09-12T20:37:24-05:00",
       "cache_files": [
-        "arcgis-geometry/corridor-buffer-300ft__25880c6b587a"
+        "arcgis-geometry/corridor-buffer-300ft__411deacfd794"
       ],
       "warnings": []
     },
@@ -103,11 +105,12 @@
       "layer_id": 0,
       "purpose": "parcels",
       "ping": "ok",
-      "ping_ms": 219,
+      "ping_ms": 297,
       "ping_detail": "",
       "status": "ok",
-      "attempts": 1,
+      "attempts": 0,
       "record_count": 530,
+      "captured_at": "2026-09-12T20:37:25-05:00",
       "cache_files": [
         "bcad-parcels/parcels-offset-0__f3bad56c7f66"
       ],

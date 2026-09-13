@@ -14,13 +14,34 @@ One risk, stated openly. If a server ignores the distance we get a whole county
 back and it looks fine. That is what the sanity checks in ``checks.py`` are for.
 """
 
+import json
+
 from . import geometry
 
-# US survey feet. TxDOT requires US survey feet in its deliverables, so that is
-# the foot this tool names. At 300 ft the difference from an international foot
-# is about six ten-thousandths of a foot, which changes nothing here -- the unit
-# is named explicitly so it is never left to somebody's default.
-US_SURVEY_FOOT = 9003
+# The international foot, EPSG unit code 9002, named explicitly rather than
+# left to anybody's default.
+#
+# It is worth saying why this is not the US survey foot, because TxDOT's Survey
+# Manual does require US survey feet in deliverables (Ch. 3, Control Points:
+# https://www.txdot.gov/manuals/row/ess/index.html). Screening is not a
+# deliverable, and the parcel query and the buffer have to agree on one foot or
+# the drawn corridor is not the ribbon the parcels came from. The parcel query
+# endpoint accepts only `esriSRUnit_Foot`; it rejects `esriSRUnit_SurveyFoot`
+# outright. So the international foot is the only unit both endpoints share.
+#
+# At a 300 ft half-width the two feet differ by about six ten-thousandths of a
+# foot, which changes nothing a screening run decides.
+#
+# **The trap, recorded.** Passing the numeric code `9003` to the parcel query's
+# `units` parameter does not error. It answered with 2,132 parcels where
+# `esriSRUnit_Foot` answered with 658 -- the same ratio as feet to meters, so
+# the server appears to read an unrecognized unit as meters and say nothing.
+# That is the third example in this repo of a service returning a plausible
+# wrong answer rather than an error. Tested live, 2026-09-12.
+INTERNATIONAL_FOOT = 9002
+
+# What the parcel query must be asked for, so it buffers in the same foot.
+QUERY_FOOT_UNITS = "esriSRUnit_Foot"
 
 
 class Corridor:
@@ -58,8 +79,6 @@ class CorridorError(Exception):
 
 def build(fetcher, source, alignment, half_width_ft):
     """Ask the geometry service for the corridor polygon, once."""
-    import json
-
     params = {
         "geometries": json.dumps(
             {"geometryType": "esriGeometryPolyline", "geometries": [alignment.to_esri_polyline()]}
@@ -68,7 +87,7 @@ def build(fetcher, source, alignment, half_width_ft):
         "outSR": 4326,
         "bufferSR": 4326,
         "distances": half_width_ft,
-        "unit": US_SURVEY_FOOT,
+        "unit": INTERNATIONAL_FOOT,
         "unionResults": "true",
         "geodesic": "true",
         "f": "json",

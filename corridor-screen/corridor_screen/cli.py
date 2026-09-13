@@ -12,10 +12,13 @@ are recorded there. Shortened to the steps that exist in this first pass:
 The ping exists because last is not soon enough to find out. The field list
 check exists because a query against the wrong layer answers without
 complaining. Both cost seconds and both stop a run that was going to be wrong.
+
+**However a run ends, it writes an output file.** Half an answer that says so
+beats no answer, and a run that stops without a record teaches nobody anything.
 """
 
 import argparse
-import re
+import json
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -23,12 +26,24 @@ from pathlib import Path
 from . import __version__, checks, corridor as corridor_mod, output, parcels
 from .alignment import AlignmentError, from_route_features
 from .arcgis import MODES, Fetcher, ServiceDown, ServiceError
-from .cache import Cache
-from .geometry import grow_bbox, point_in_bbox
+from .cache import Cache, slug
 from .sources import GEOMETRY, PARCELS, ROADWAYS
 
 DEFAULT_HALF_WIDTH_FT = 300
 DEFAULT_ADJACENT_FT = 100
+
+# Pinged in this order, and skipped in this order if the run never reaches them.
+SOURCES = (ROADWAYS, GEOMETRY, PARCELS)
+
+# What went wrong is worth recording; how the tool crashed is not. Anything in
+# here becomes an incomplete run with a readable reason rather than a traceback.
+EXPECTED_FAILURES = (
+    ServiceDown,
+    ServiceError,
+    AlignmentError,
+    corridor_mod.CorridorError,
+    checks.FieldListError,
+)
 
 
 def parse_args(argv=None):
@@ -47,7 +62,7 @@ def parse_args(argv=None):
         type=float,
         default=DEFAULT_HALF_WIDTH_FT,
         help=(
-            "How far each side of the centerline counts as inside the corridor, in US survey "
+            "How far each side of the centerline counts as inside the corridor, in "
             f"feet. Stated, never derived. Default {DEFAULT_HALF_WIDTH_FT}."
         ),
     )
@@ -61,33 +76,29 @@ def parse_args(argv=None):
     return parser.parse_args(argv)
 
 
-def _slug(text):
-    return re.sub(r"[^A-Za-z0-9]+", "-", str(text)).strip("-").lower()
-
-
 def _say(message=""):
     print(message, flush=True)
 
 
-def _report_wrong_file_check(alignment, corridor):
+def _report_wrong_file_check(alignment):
     """The cheapest protection in the whole tool.
 
-    A misread route does not look like a subtle error. It looks like a
+    Printed as soon as the alignment is read and before the corridor is built,
+    so a corridor from the wrong route is obvious before any of the fan-out
+    happens. A misread route does not look like a subtle error. It looks like a
     four-thousand-mile corridor on line one.
     """
     _say()
-    _say("  Wrong-file check -- read these three numbers before anything else")
+    _say("  Wrong-file check -- read these numbers before anything else")
     _say(f"    corridor length   {alignment.length_mi:.2f} miles")
     _say(f"    starts at         {alignment.start[1]:.6f}, {alignment.start[0]:.6f}")
     _say(f"    ends at           {alignment.end[1]:.6f}, {alignment.end[0]:.6f}")
     _say(f"    separate runs     {len(alignment.paths)}")
-    if corridor is not None:
-        _say(f"    corridor area     {corridor.area_sq_mi:.2f} square miles")
     _say(f"    check the map     {output.map_link(alignment.bbox)}")
     _say()
 
 
-def _with_a_person_asked(label, attempt, unattended):
+def _run_stage(label, attempt, unattended):
     """Run one stage. If the service is dead, a person decides -- if one is there.
 
     Three automatic retries have already happened inside the fetcher by the
@@ -115,117 +126,131 @@ def _with_a_person_asked(label, attempt, unattended):
 
 def run(args):
     started_at = datetime.now(timezone.utc).astimezone()
-    run_id = f"texas-bexar-{_slug(args.route)}-{started_at.strftime('%Y%m%dT%H%M%S')}"
+    run_id = f"texas-bexar-{slug(args.route)}-{started_at.strftime('%Y%m%dT%H%M%S')}"
     out_dir = Path(args.out)
     cache = Cache(out_dir / "cache")
     fetcher = Fetcher(cache, mode=args.mode)
 
     _say(f"corridor-screen {__version__}  run {run_id}  mode {args.mode}")
 
+    services = []
+    warnings = []
+    rows = []
+    alignment = None
+    corridor = None
+    status = "complete"
+    stopped_at = None
+
     # 1 -- reachability, in seconds, before any real work
     pings = {}
-    for source in (ROADWAYS, GEOMETRY, PARCELS):
+    for source in SOURCES:
         pings[source.name] = fetcher.ping(source)
         result = pings[source.name]
         _say(f"  ping  {source.name:<18} {result['ping']:<8} {result['ms']} ms  {result['detail']}")
-    blocked = [name for name, r in pings.items() if r["ping"] == "blocked"]
+    blocked = [name for name, result in pings.items() if result["ping"] == "blocked"]
+
     if blocked:
         _say()
-        _say(f"  {', '.join(blocked)} is not answering today. Nothing has been fetched.")
-        _say("  Try again, or run with --mode cache-only if this corridor was captured before.")
-        return 2
-
-    services = []
-    warnings = []
-    alignment = None
-    corridor = None
-
-    try:
-        # 2 -- the wrong layer answers without complaining, so check first
-        for source in (ROADWAYS, PARCELS):
-            metadata, _ = _with_a_person_asked(
-                "field list", lambda s=source: fetcher.layer_metadata(s), args.yes
-            )
-            checks.confirm_fields(source, metadata)
-        _say("  field lists confirmed on every layer")
-
-        # 3 -- the alignment
-        features, road_records = _with_a_person_asked("route", lambda: fetcher.query_all(
-            ROADWAYS,
-            {
-                "where": f"RTE_NM='{args.route}' AND BEGIN_DFO<={args.end_dfo} AND END_DFO>={args.begin_dfo}",
-                "outFields": "RTE_NM,BEGIN_DFO,END_DFO",
-                "returnGeometry": "true",
-                "returnM": "true",
-                "outSR": 4326,
-                "f": "json",
-            },
-            readable=f"route-{_slug(args.route)}",
-        ), args.yes)
-        alignment = from_route_features(features, args.route, args.begin_dfo, args.end_dfo)
-        services.append(
-            output.service_entry(ROADWAYS, pings[ROADWAYS.name], "ok", road_records, len(features))
-        )
-
-        # 4 -- the corridor polygon, fetched once and cached
-        corridor, buffer_record = _with_a_person_asked(
-            "buffer", lambda: corridor_mod.build(fetcher, GEOMETRY, alignment, args.half_width), args.yes
-        )
-        services.append(
-            output.service_entry(GEOMETRY, pings[GEOMETRY.name], "ok", [buffer_record], len(corridor.rings))
-        )
-        _report_wrong_file_check(alignment, corridor)
-
-        # 5 -- parcels, the spine everything joins to
-        parcel_features, parcel_records = _with_a_person_asked("parcels", lambda: fetcher.query_all(
-            PARCELS,
-            {
-                "geometry": _polyline_json(alignment),
-                "geometryType": "esriGeometryPolyline",
-                "inSR": 4326,
-                "outSR": 4326,
-                "spatialRel": "esriSpatialRelIntersects",
-                "distance": args.half_width,
-                "units": "esriSRUnit_Foot",
-                "outFields": ",".join(PARCELS.required_fields),
-                "returnGeometry": "false",
-                "returnCentroid": "true",
-                "f": "json",
-            },
-            readable="parcels",
-        ), args.yes)
-        rows = parcels.to_rows(parcel_features)
-
-        centroids = [c for c in (parcels.centroid_of(f) for f in parcel_features) if c]
-        parcel_warnings = checks.collect(
-            checks.check_paging_cap(PARCELS.name, len(parcel_features)),
-            checks.check_parcel_density(PARCELS.name, len(parcel_features), corridor.area_sq_mi),
-            checks.check_centroids_near_corridor(
-                PARCELS.name, centroids, corridor.bbox, grow_bbox, point_in_bbox
-            ),
-            checks.check_impossible_acres(PARCELS.name, rows),
-        )
-        warnings.extend(parcel_warnings)
-        services.append(
-            output.service_entry(
-                PARCELS, pings[PARCELS.name], "ok", parcel_records, len(parcel_features), parcel_warnings
-            )
-        )
-
-        status, stopped_at = "complete", None
-
-    except (ServiceDown, ServiceError, AlignmentError, corridor_mod.CorridorError) as exc:
-        # A stopped run still writes its output, marked incomplete, naming what
-        # stopped it. The responses already fetched are already cached, so a
-        # re-run in cache-first mode resumes almost free.
-        _say()
-        _say(f"  run stopped: {exc}")
+        _say(f"  {', '.join(blocked)} is not answering today. Nothing was fetched.")
+        _say("  Try again, or use --mode cache-only if this corridor was captured before.")
         status = "incomplete"
-        stopped_at = getattr(exc, "service", type(exc).__name__)
-        rows = []
-        for source in (ROADWAYS, GEOMETRY, PARCELS):
-            if not any(s["name"] == source.name for s in services):
-                services.append(output.skipped_service(source, "the run stopped before this service was asked"))
+        stopped_at = blocked[0]
+        services = [
+            output.skipped_service(
+                source, "the host was not answering when the run began", pings[source.name]
+            )
+            for source in SOURCES
+        ]
+    else:
+        try:
+            # 2 -- the wrong layer answers without complaining, so check first
+            for source in (ROADWAYS, PARCELS):
+                metadata, _ = _run_stage(
+                    "field list", lambda s=source: fetcher.layer_metadata(s), args.yes
+                )
+                checks.confirm_fields(source, metadata)
+            _say("  field lists confirmed on every layer")
+
+            # 3 -- the alignment, and the wrong-file check before anything wider
+            features, road_records = _run_stage("route", lambda: fetcher.query_all(
+                ROADWAYS,
+                {
+                    "where": f"RTE_NM='{args.route}' AND BEGIN_DFO<={args.end_dfo} AND END_DFO>={args.begin_dfo}",
+                    "outFields": "RTE_NM,BEGIN_DFO,END_DFO",
+                    "returnGeometry": "true",
+                    "returnM": "true",
+                    "outSR": 4326,
+                    "f": "json",
+                },
+                readable=f"route-{slug(args.route)}",
+            ), args.yes)
+            alignment = from_route_features(features, args.route, args.begin_dfo, args.end_dfo)
+            services.append(
+                output.service_entry(ROADWAYS, pings[ROADWAYS.name], "ok", road_records, len(features))
+            )
+            _report_wrong_file_check(alignment)
+
+            # 4 -- the corridor polygon, fetched once and cached
+            corridor, buffer_record = _run_stage(
+                "buffer", lambda: corridor_mod.build(fetcher, GEOMETRY, alignment, args.half_width), args.yes
+            )
+            services.append(
+                output.service_entry(GEOMETRY, pings[GEOMETRY.name], "ok", [buffer_record], len(corridor.rings))
+            )
+            _say(f"  corridor area {corridor.area_sq_mi:.2f} square miles")
+
+            # 5 -- parcels, the spine everything joins to
+            parcel_features, parcel_records = _run_stage("parcels", lambda: fetcher.query_all(
+                PARCELS,
+                {
+                    "geometry": json.dumps(alignment.to_esri_polyline()),
+                    "geometryType": "esriGeometryPolyline",
+                    "inSR": 4326,
+                    "outSR": 4326,
+                    "spatialRel": "esriSpatialRelIntersects",
+                    "distance": args.half_width,
+                    "units": corridor_mod.QUERY_FOOT_UNITS,
+                    "outFields": ",".join(PARCELS.required_fields),
+                    "returnGeometry": "false",
+                    "returnCentroid": "true",
+                    "f": "json",
+                },
+                readable="parcels",
+            ), args.yes)
+            rows = parcels.to_rows(parcel_features)
+
+            centroids = [c for c in (parcels.centroid_of(f) for f in parcel_features) if c]
+            parcel_warnings = checks.collect(
+                checks.check_paging_cap(PARCELS.name, len(parcel_features)),
+                checks.check_parcel_density(PARCELS.name, len(parcel_features), corridor.area_sq_mi),
+                checks.check_centroids_near_corridor(PARCELS.name, centroids, corridor.bbox),
+                checks.check_impossible_acres(PARCELS.name, rows),
+            )
+            warnings.extend(parcel_warnings)
+            # Section 14 asks the provenance record to carry any sanity check
+            # that tripped, so the doubt travels with the response it doubts.
+            fetcher.note_warnings(parcel_records, parcel_warnings)
+            services.append(
+                output.service_entry(
+                    PARCELS, pings[PARCELS.name], "ok", parcel_records, len(parcel_features), parcel_warnings
+                )
+            )
+
+        except EXPECTED_FAILURES as exc:
+            # A stopped run still writes its output, marked incomplete, naming
+            # what stopped it. The responses already fetched are already cached,
+            # so a re-run in cache-first mode resumes almost free.
+            _say()
+            _say(f"  run stopped: {exc}")
+            status = "incomplete"
+            stopped_at = getattr(exc, "service", type(exc).__name__)
+            for source in SOURCES:
+                if not any(entry["name"] == source.name for entry in services):
+                    services.append(
+                        output.skipped_service(
+                            source, "the run stopped before this service was asked", pings.get(source.name)
+                        )
+                    )
 
     document = output.build(
         run_id=run_id,
@@ -247,27 +272,19 @@ def run(args):
 
     _say(f"  parcels     {len(rows)}")
     _say(f"  warnings    {len(warnings)}")
-    for w in warnings:
-        _say(f"    - {w['check']}: {w['detail']}")
+    for recorded in warnings:
+        _say(f"    - {recorded['check']}: {recorded['detail']}")
     _say(f"  written     {written}")
     _say(f"  cache index {index}")
+    if status != "complete":
+        kept = out_dir / output.COMPLETE_NAME
+        if kept.exists():
+            _say(f"  left alone  {kept} is from an earlier run and was not overwritten")
     return 0 if status == "complete" else 1
 
 
-def _polyline_json(alignment):
-    import json
-
-    return json.dumps(alignment.to_esri_polyline())
-
-
 def main(argv=None):
-    args = parse_args(argv)
-    try:
-        return run(args)
-    except checks.FieldListError as exc:
-        _say()
-        _say(f"  stopped before any query: {exc}")
-        return 3
+    return run(parse_args(argv))
 
 
 if __name__ == "__main__":
