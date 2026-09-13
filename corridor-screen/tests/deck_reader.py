@@ -8,12 +8,14 @@ front matter is fenced with the same three dashes that separate slides, a fenced
 code block may contain a line of three dashes that separates nothing, and a
 speaker note and a Marp directive are both HTML comments.
 
-Two test files ask:
+Three test files ask:
 
 * `test_deck.py` -- the frame. Every block covered, in order, the clock in every
   note and on no slide, the cut line marked, nothing oversized
 * `test_money_slide.py` -- the content of one block, against the crew-day
   build-up its figures come out of
+* `test_datum_gap.py` -- the content of one slide, against the research note and
+  the SH16 run behind it
 
 It lives here for `tests/markdown_docs.py`'s reason, which is this repo's
 standing one:
@@ -168,3 +170,57 @@ def slides_by_block():
         if claim:
             grouped.setdefault(claim.time, []).append(slide)
     return grouped
+
+
+def block_headed(phrase):
+    """Every slide of the block whose break slide is headed with a phrase.
+
+    A block is found through the deck rather than through the run of show,
+    deliberately. `test_deck.py` already holds every block of the deck to the
+    plan of record -- same clock, same order, same length -- so the block this
+    finds is the plan's block, and reading the plan again here would be a
+    second copy of that relationship rather than a check of anything.
+    """
+    for slide in slides():
+        if slide.is_a_break and phrase.lower() in slide.heading.lower():
+            claim = noted(slide)
+            if claim:
+                return slides_by_block()[claim.time]
+    raise AssertionError(f"no break slide in the deck is headed {phrase!r}")
+
+
+def slide_headed(phrase):
+    """The one slide whose heading carries a phrase.
+
+    More than one is as much a finding as none: a check meant for one slide
+    that silently reads whichever came first is a check nobody can trust.
+    """
+    found = [
+        slide for slide in slides() if phrase.lower() in slide.heading.lower()
+    ]
+    if len(found) != 1:
+        raise AssertionError(
+            f"{len(found)} slides are headed {phrase!r} in the deck, wanted one"
+        )
+    return found[0]
+
+
+def with_markup(slides_):
+    """Everything the room can see across a run of slides, as one string.
+
+    The markdown is left on, for the checks that want a rate handle: `A4` is
+    told apart from the letter A followed by a four by those backticks.
+    """
+    return "\n".join(line for slide in slides_ for line in slide.content_lines())
+
+
+def visible(slides_):
+    """The same, with the bold and the backticks taken off.
+
+    A figure and the noun it counts have to sit beside each other to be checked
+    at all, and `**38 crew-days**` re-emphasized as `**38** crew-days` is the
+    same slide to the room and a different string to a test. `markdown_docs.flat`
+    does this job for line wrapping on the pages in `docs/`; this is the same
+    class of false failure, wearing emphasis instead of a line break.
+    """
+    return with_markup(slides_).replace("**", "").replace("*", "").replace("`", "")
