@@ -129,6 +129,44 @@ def from_compact_date(value):
     return value
 
 
+def error_of(data):
+    """The error a service reported *inside* a successful HTTP response.
+
+    Returns a readable message, or ``None`` when the body is a real answer.
+
+    **An ArcGIS service can fail without failing.** It answers ``HTTP 200`` and
+    puts the problem in the body, so the status line says everything is fine.
+    Read on 2026-09-13, the Railroad Commission's pipeline service was serving
+    this, with a 200 in front of it::
+
+        {"error": {"code": 503, "message": "User couldn't access this
+         resource 'rrc_public/tpms.mapserver'.", "details": []}}
+
+    Both the ping and ``get_json`` have to ask this question, and only one of
+    them used to. That asymmetry is issue #62: the ping waved the host through
+    as answering, and saved the error body over a good capture on its way past.
+
+    A body that is not a JSON object -- a list of NGS marks, a line of plain
+    text -- has no envelope to read and is not an error by this test.
+    """
+    if not isinstance(data, dict) or "error" not in data:
+        return None
+    error = data.get("error") or {}
+    code = error.get("code")
+    message = error.get("message", "unknown error")
+    details = "; ".join(str(d) for d in (error.get("details") or []))
+    said = f"{message} {details}".strip()
+    return f"HTTP 200 carrying error {code}: {said}" if code else said
+
+
+def _parsed(body):
+    """The body as data, or ``None`` if it is not JSON at all."""
+    try:
+        return json.loads(body)
+    except (ValueError, TypeError):
+        return None
+
+
 def _encode(params):
     return urllib.parse.urlencode({k: v for k, v in params.items() if v is not None})
 
@@ -203,6 +241,38 @@ class Fetcher:
             elapsed = int((time.monotonic() - started) * 1000)
             return {"ping": "blocked", "ms": elapsed, "detail": f"{type(exc).__name__}: {exc}"}
         elapsed = int((time.monotonic() - started) * 1000)
+
+        # **The body decides, not the status line.** A service can answer 200
+        # and put a 503 in the payload, and a ping that only watched the
+        # transport would call that host healthy. It is not: it is serving
+        # nothing, and the run needs to know now rather than at the field-list
+        # check ninety seconds later. Issue #62.
+        reported = error_of(_parsed(body))
+        if reported:
+            # Saved, because section 14 says every response is saved and a run
+            # that quietly forgets its own failure is no better. Saved under its
+            # **own** name, because the good capture of this layer lives at the
+            # ordinary key and the offline demo replays from it -- writing an
+            # error there is what broke #62 in the first place. The prefix goes
+            # in front rather than behind: `slug` truncates at 40 characters, so
+            # a `-error` suffix collides with the name it was meant to differ
+            # from.
+            # The warning is not decoration. The provenance record beside this
+            # body will say `http_status = 200`, which is true and is the whole
+            # trap. Somebody reading that file a month from now should not have
+            # to infer the failure from a filename.
+            failed = self.cache.entry(source.name, f"error-{readable}", url, params)
+            self.cache.write(
+                failed, body, status, layer_id=source.layer_id, warnings=[reported]
+            )
+            self.entries[failed.cache_key] = failed
+            return {
+                "ping": "blocked",
+                "ms": elapsed,
+                "detail": reported,
+                "cache_key": failed.cache_key,
+            }
+
         # The ping answer is a response like any other, so it is saved like any
         # other. It is never served *from* the cache -- a cached ping would say
         # a host was reachable last week, which is not what a ping is for.
@@ -263,10 +333,9 @@ class Fetcher:
 
         body, status, attempts = self._fetch_with_retries(source_name, url, params, method)
         data = json.loads(body)
-        if isinstance(data, dict) and "error" in data:
-            message = data["error"].get("message", "unknown error")
-            details = "; ".join(data["error"].get("details", []) or [])
-            raise ServiceError(f"{source_name}: {message} {details}".strip())
+        reported = error_of(data)
+        if reported:
+            raise ServiceError(f"{source_name}: {reported}")
 
         count = count_records(data) if callable(count_records) else None
         self.cache.write(entry, body, status, layer_id=layer_id, record_count=count)

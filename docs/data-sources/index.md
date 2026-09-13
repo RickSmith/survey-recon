@@ -115,6 +115,10 @@ The most expensive kind. No error, no delay, no clue.
 - **`maps.dot.state.tx.us` blocks intermittently.** The same URL failed and then
   succeeded minutes later. It is why the ROW step is deliberately last —
   [ROW map sheets](row-map-sheets.md)
+- **A host that fails without failing.** The pipeline service answered
+  `HTTP 200` carrying a `503`, so the status line said everything was fine while
+  the body said nothing was. Watched happen on 2026-09-13. A `200` is a delivery
+  receipt, not an answer — [the flag services](flag-services.md)
 - **The parcel service rebuilds weekly**, says so itself, and publishes the date
   it was last edited. How fast a transfer reaches the appraisal roll in the first
   place is a separate question we did not confirm —
