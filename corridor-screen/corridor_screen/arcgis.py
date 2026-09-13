@@ -147,19 +147,29 @@ def error_of(data):
     as answering, and saved the error body over a good capture on its way past.
 
     A body that is not a JSON object -- a list of NGS marks, a line of plain
-    text -- has no envelope to read and is not an error by this test.
+    text -- carries no such block and is not an error by this test.
+
+    **The answer is never an empty string.** An ``error`` block with nothing
+    readable in it is still an error, and returning ``""`` for one would make
+    every caller's ``if reported:`` quietly wave it through. That is how the
+    first attempt at this function reintroduced the bug it was written to fix.
+
+    The status line is deliberately **not** named here. This function is handed
+    the body and never sees the status, so it is in no position to state one.
+    A caller that knows the real status says so itself.
     """
     if not isinstance(data, dict) or "error" not in data:
         return None
     error = data.get("error") or {}
     code = error.get("code")
-    message = error.get("message", "unknown error")
     details = "; ".join(str(d) for d in (error.get("details") or []))
-    said = f"{message} {details}".strip()
-    return f"HTTP 200 carrying error {code}: {said}" if code else said
+    said = f"{error.get('message', '')} {details}".strip()
+    if code is not None:
+        return f"error {code}: {said}" if said else f"error {code}"
+    return said or "an error with no message"
 
 
-def _parsed(body):
+def _json_or_none(body):
     """The body as data, or ``None`` if it is not JSON at all."""
     try:
         return json.loads(body)
@@ -247,16 +257,41 @@ class Fetcher:
         # transport would call that host healthy. It is not: it is serving
         # nothing, and the run needs to know now rather than at the field-list
         # check ninety seconds later. Issue #62.
-        reported = error_of(_parsed(body))
+        #
+        # A body can fail to be an answer in two ways, and both are checked.
+        # It can carry an error block, which is what the Railroad Commission
+        # served. Or it can not be JSON at all -- an HTML error page from a
+        # gateway, or the plain text a wrong `wkid` produces. Every source is
+        # pinged with `f=json` for a layer description, so a body that will not
+        # parse is a host that is not answering either.
+        data = _json_or_none(body)
+        reported = error_of(data) if data is not None else (
+            f"a body that is not JSON at all: {body[:120]!r}"
+        )
         if reported:
-            # Saved, because section 14 says every response is saved and a run
-            # that quietly forgets its own failure is no better. Saved under its
-            # **own** name, because the good capture of this layer lives at the
-            # ordinary key and the offline demo replays from it -- writing an
-            # error there is what broke #62 in the first place. The prefix goes
-            # in front rather than behind: `slug` truncates at 40 characters, so
-            # a `-error` suffix collides with the name it was meant to differ
-            # from.
+            # **Saved, and this is the part worth weighing.** Issue #62 offered
+            # three directions and asked for none of them to be picked in
+            # silence, so all three are answered here.
+            #
+            # *Do not write at all, since a cached ping is never served.* True
+            # of the ping result, false of the response. `layer_metadata` reads
+            # this exact request back out of the cache -- it is why a cache-only
+            # run can check a field list at all -- so a ping that wrote nothing
+            # would break every offline run rather than one poisoned one.
+            #
+            # *Refuse to overwrite a good response with an error one.* Correct
+            # in effect, but it protects the second run and not the first. A
+            # corridor captured for the first time during an outage would still
+            # be left with an error body sitting at the name a later run treats
+            # as the capture.
+            #
+            # *Write it under a distinct key.* Taken. Section 14 says every
+            # response is saved, the failure is a response, and under its own
+            # name it can neither be mistaken for a capture nor destroy one.
+            # The prefix leads rather than trails because `slug` truncates at
+            # 40 characters, so a `-error` suffix would collide with the very
+            # name it was meant to differ from.
+            reported = f"HTTP {status} carrying {reported}"
             # The warning is not decoration. The provenance record beside this
             # body will say `http_status = 200`, which is true and is the whole
             # trap. Somebody reading that file a month from now should not have

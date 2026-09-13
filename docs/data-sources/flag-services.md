@@ -263,7 +263,7 @@ Two lessons, and only one of them is about pipelines:
 - **A failed call must never be allowed to destroy a good capture.** The demo
   runs from that cache.
 
-The ping now reads the body. A `200` carrying an error envelope is reported
+The ping now reads the body. A `200` carrying an error is reported
 `blocked` with the service's own message as its reason, which costs the pipeline
 flag and nothing else — no parcel is ever reported clear of pipelines that were
 never checked. The error body is still saved, because

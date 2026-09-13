@@ -33,20 +33,13 @@ from corridor_screen.arcgis import ServiceDown
 from corridor_screen.cache import Cache, long_path
 from corridor_screen.sources import PIPELINES
 
+# Borrowed rather than copied. `AN_ERROR_BODY` is the exact body the Railroad
+# Commission served on 2026-09-13, and two copies of it would drift the first
+# time somebody corrected one of them.
+from tests.test_arcgis import AN_ERROR_BODY, answering
+
 REPO = Path(__file__).resolve().parents[2]
 DEMO = REPO / "project-sh16"
-
-# The real network opener, kept so the one test that replaces it can put it back.
-REAL_OPEN = arcgis._open
-
-# What the Railroad Commission served on 2026-09-13: a 503 inside a 200.
-AN_ERROR_BODY = json.dumps({
-    "error": {
-        "code": 503,
-        "message": "User couldn't access this resource 'rrc_public/tpms.mapserver'.",
-        "details": [],
-    }
-}).encode("utf-8")
 
 # The SH16 scope, exactly as the README tells a presenter to run it.
 SH16 = ["--route", "SH0016-KG", "--begin-dfo", "347.7", "--end-dfo", "356.367"]
@@ -276,12 +269,8 @@ class TestAFailedLiveRunLeavesTheDemoIntact(unittest.TestCase):
     def test_a_failed_live_ping_does_not_break_the_cache_only_fallback(self):
         with a_copy_of_the_demo_cache() as out:
             # The live run, failing exactly as it did on 2026-09-13.
-            fetcher = arcgis.Fetcher(Cache(out / "cache"), mode="live")
-            arcgis._open = lambda url, params, method, timeout: (AN_ERROR_BODY, 200)
-            try:
-                ping = fetcher.ping(PIPELINES)
-            finally:
-                arcgis._open = REAL_OPEN
+            with answering(AN_ERROR_BODY):
+                ping = arcgis.Fetcher(Cache(out / "cache"), mode="live").ping(PIPELINES)
             self.assertEqual(ping["ping"], "blocked", "the 503 inside the 200 was missed")
 
             # The fallback a presenter reaches for, with the network gone.
