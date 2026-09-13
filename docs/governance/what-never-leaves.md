@@ -29,7 +29,7 @@ answers. It is not a program running on your desk.
 
 - [ ] **Client names.** Also addresses, phone numbers, email addresses
 - [ ] **Anything that identifies a client** even without the name — an unusual
-      tract, a pending sale, a dispute anyone local would recognise
+      tract, a pending sale, a dispute anyone local would recognize
 - [ ] **Unrecorded documents.** Deeds not yet filed, title commitments, easements
       in negotiation
 - [ ] **Anything under a confidentiality or non-disclosure agreement**
@@ -39,7 +39,7 @@ answers. It is not a program running on your desk.
 - [ ] **Drawings from a live job.** Including a screenshot of one
 - [ ] **Our pricing.** Rates, build-ups, anything you would not show a competitor
 - [ ] **Anything about an employee.** Pay, performance, health, complaints
-- [ ] **Passwords, licence keys, or anything that gets somebody into a system**
+- [ ] **Passwords, license keys, or anything that gets somebody into a system**
 - [ ] **«ADD YOURS»**
 
 ## ALLOWED — go ahead

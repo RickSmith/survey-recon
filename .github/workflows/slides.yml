@@ -33,7 +33,7 @@ jobs:
       # Marp runs in a container that already carries a browser inside it,
       # which is what draws the PDF. Nobody has to install anything.
       #
-      #   --theme-set  : where the type sizes and colours are defined
+      #   --theme-set  : where the type sizes and colors are defined
       #   --html       : allow plain HTML tags inside a slide
       #   --output     : the file to write. Marp picks the format from the
       #                  extension, so .html gives a web page and .pdf a PDF

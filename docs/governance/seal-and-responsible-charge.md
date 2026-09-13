@@ -130,7 +130,7 @@ There is no separate, looser standard called responsible charge. It is one
 standard with three names — the third, § 131.2(39), is the older "responsible
 supervision," still valid.
 
-### Work from others must be labelled, and the originator named
+### Work from others must be labeled, and the originator named
 
 **22 Tex. Admin. Code § 138.33(c):**
 
@@ -314,7 +314,7 @@ Written as "not found," not "does not exist." Here is where we looked.
 | Question | Status |
 |---|---|
 | Whether TBPELS has addressed AI beyond PAO 71 | **Not found.** We read the full opinion index at <https://pels.texas.gov/policy.htm> on 2026-09-12. PAO 71 is the only one on AI. PAO 74, 10 October 2025, is the most recent surveying opinion and is about subsurface utility engineering |
-| Whether any board rule requires you to disclose AI use on a sealed document | **Not found** in the *Acts and Rules* effective 18 June 2026. Section 138.33(c) requires labelling incorporated work products of **others** and naming the originator. Whether software output counts as "work products of others" is not addressed anywhere we looked |
+| Whether any board rule requires you to disclose AI use on a sealed document | **Not found** in the *Acts and Rules* effective 18 June 2026. Section 138.33(c) requires labeling incorporated work products of **others** and naming the originator. Whether software output counts as "work products of others" is not addressed anywhere we looked |
 | Whether the board or a court has ruled on AI output and § 1071.351(d) | **Not found** |
 | Whether professional liability carriers require notice of AI use | **Not checked.** This varies by carrier. It is a question for yours, not for us |
 

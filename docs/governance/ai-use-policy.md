@@ -55,7 +55,7 @@ Approved here, today:
 
 - «Desktop research on public records and published standards»
 - «Drafting internal documents, checklists and correspondence»
-- «Summarising long documents we already hold»
+- «Summarizing long documents we already hold»
 - «ADD YOUR OWN»
 
 > *Firm choice.* Nothing requires a firm to keep a list like this, and nothing
@@ -72,7 +72,7 @@ Approved here, today:
   signature blocks, no "I hereby certify" language in a draft
 - **«ADD YOUR OWN»**
 
-> *Rule.* 22 Tex. Admin. Code § 138.59(a), (b): practise only in your areas of
+> *Rule.* 22 Tex. Admin. Code § 138.59(a), (b): practice only in your areas of
 > competence.
 > *Board guidance.* PAO 71: "Licensees should not use AI software to work on a
 > project in which they do not already have established competence through

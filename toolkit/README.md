@@ -14,7 +14,7 @@ the part you take home.
 | `CLAUDE.md` | The employee handbook. Your firm's rules, which the agent reads first every session |
 | `CONTEXT.md` | The glossary. The words your firm uses, so the agent stops guessing |
 | `docs/agents/` | Three short files telling the agent where work orders live and what the labels mean |
-| `.claude/skills/` | The five commands. Plain markdown, copied from Matt Pocock's set under MIT licence |
+| `.claude/skills/` | The five commands. Plain markdown, copied from Matt Pocock's set under MIT license |
 
 `.claude/skills/README.md` explains which five and why. Read it second.
 
@@ -113,12 +113,12 @@ You stop wherever you like. Plenty of useful days end after `/to-spec`.
 
 **You accept the work. Not the agent.** That is the whole shape of it.
 
-## Licence
+## License
 
 The five commands and the four supporting skills in `.claude/skills/` are
-copyright © 2026 **Matt Pocock**, used under the MIT licence. The licence text
+copyright © 2026 **Matt Pocock**, used under the MIT license. The license text
 sits beside them at `.claude/skills/LICENSE`, and `.claude/skills/README.md`
 records exactly which version and commit were copied, and when.
 
 Everything else in this folder is part of `survey-recon` and carries that
-repository's licence.
+repository's license.

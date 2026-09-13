@@ -26,6 +26,7 @@ Readers are expert surveyors with little programming background. So:
 - **No unexplained jargon.** If a term is not in `CONTEXT.md`, either define it inline or add it to `CONTEXT.md`
 - Prefer short sentences and concrete examples over abstraction
 - Screenshots earn their place in setup docs. Use them generously there
+- **US English, not British.** The readers are Texas professionals reading Texas rules, and TxDOT's own data spells it `ROW_Centerline`. So `color`, `license`, `labeled`, `meters`, `centerline`. Two things are exempt: vendored third-party files keep their author's spelling — see `toolkit/.claude/skills/README.md` — and platform identifiers keep the platform's, so GitHub Actions' `cancel-in-progress` stays exactly as GitHub spells it
 
 ## Dependency discipline
 

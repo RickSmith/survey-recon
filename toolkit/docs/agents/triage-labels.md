@@ -50,7 +50,7 @@ Some skills apply `ready-for-agent` to everything they create, on the reasoning
 that a properly written work order is agent-ready by construction.
 
 That is not always true. "Walk the site and photograph the access" is a job for a
-person. So is "call the landowner." Labelling those `ready-for-agent` makes the
+person. So is "call the landowner." Labeling those `ready-for-agent` makes the
 list lie about itself, and **a list that lies is worse than no list.**
 
 Use `ready-for-human` when a person has to do it. Having two labels is only worth

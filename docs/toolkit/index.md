@@ -115,7 +115,7 @@ Everything else can wait.
 
 ---
 
-## Credit and licence
+## Credit and license
 
 The five commands, and the four skills that support them, are a curated subset of
 [mattpocock/skills](https://github.com/mattpocock/skills) — copyright © 2026
@@ -129,7 +129,7 @@ copy still carrying somebody else's name is how a document ends up blamed on the
 wrong person. Where this kit needed to say something different, it says it in
 `CLAUDE.md` instead — where the difference is visibly ours.
 
-The licence text travels with them, at
+The license text travels with them, at
 [`.claude/skills/LICENSE`](https://github.com/RickSmith/survey-recon/blob/main/toolkit/.claude/skills/LICENSE).
 
 The trade-off of copying rather than installing is that these files do not update

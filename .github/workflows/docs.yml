@@ -18,7 +18,7 @@ permissions:
   id-token: write
 
 # Never let two publishes of the same branch overlap, and never cancel one
-# half-way - a cancelled publish can leave the live site in pieces.
+# half-way - a canceled publish can leave the live site in pieces.
 concurrency:
   group: pages-${{ github.ref }}
   cancel-in-progress: false

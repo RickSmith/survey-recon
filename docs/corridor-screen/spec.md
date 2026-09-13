@@ -9,7 +9,7 @@ A note on words. A **spec** is a scope of work. A **schema** is an agreed field 
 
 ## 1. What this does
 
-You give it the centre line of a corridor. It widens that line into a ribbon, asks a fixed list of public map services what is inside the ribbon, and writes out one file: every parcel in the corridor, what about each one costs time, and how many days of notice each of those things needs.
+You give it the centerline of a corridor. It widens that line into a ribbon, asks a fixed list of public map services what is inside the ribbon, and writes out one file: every parcel in the corridor, what about each one costs time, and how many days of notice each of those things needs.
 
 It is a first pass before you price a job. It is desktop reconnaissance, which is what this repo is named for.
 
@@ -27,7 +27,7 @@ Saying this plainly matters more than the feature list.
 
 ### 3.1 The alignment
 
-The centre line. Five ways to give it:
+The centerline. Five ways to give it:
 
 | Form | How it is read | Notes |
 |---|---|---|
@@ -64,7 +64,7 @@ Before any service is called, the tool prints, and records in the output:
 
 - the corridor length in miles
 - both end point coordinates
-- a link to a public web map centred on the corridor
+- a link to a public web map centered on the corridor
 - **a rendering** of the alignment and its buffer (see section 9)
 
 This is the cheapest protection in the whole tool. A misread shapefile does not look like a subtle error. It looks like a four-thousand-mile corridor on line one.
@@ -167,7 +167,7 @@ Two are produced:
 1. **The quick one**, after reading the alignment, before any service is called. Alignment and buffer only. This is the wrong-file check.
 2. **The full one**, at the end. Parcels, flag markers, parcels shaded by how many flags they carry, north arrow, scale bar, corner coordinates, the not-screenable notice, and the run stamp.
 
-There is no basemap — that would mean a network dependency inside the artifact. Instead the tool prints a public web-map link centred on the corridor, so one click confirms the real-world location against real imagery.
+There is no basemap — that would mean a network dependency inside the artifact. Instead the tool prints a public web-map link centered on the corridor, so one click confirms the real-world location against real imagery.
 
 ## 10. Output, field by field
 
@@ -194,7 +194,7 @@ services   control   row_maps   parcels   corridor_flags   warnings
 | `area` | `texas-bexar` |
 | `not_screenable` | list of type and reason — see section 12 |
 | `renderings` | paths to both SVG files |
-| `map_link` | public web-map URL centred on the corridor |
+| `map_link` | public web-map URL centered on the corridor |
 
 ### `alignment`
 
