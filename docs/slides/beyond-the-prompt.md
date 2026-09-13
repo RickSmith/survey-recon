@@ -1021,60 +1021,108 @@ three and the least about accountability. Beat 3 is never cut.
 
 # Where the work got sent back
 
-- This repo was built the way this session tells you to work
-- Here are the issues, the check prints, and the places it got redlined
-- Including one that was approved and should not have been
+- Every change here began as a work order and ended in a human review
+- **Nothing was squashed.** The history is untidy because it is real
+- The rule against rewriting it was broken **once**, knowingly, on day one
+- The agent named the rule and laid out both options. A licensed human chose
 - Not a demo. A record, and it is public
 
-> **To be written** — #85
+docs/managing-your-agent/
 
 <!--
 1:36–1:48 · 12 min · Review, seal — and the three failures
 
-Fallbacks: docs/managing-your-agent/the-force-push.md and
-docs/managing-your-agent/the-claim-we-got-wrong.md tell this from the repo
-rather than from GitHub.
+Two pages, in this order, and neither one needs GitHub.
+
+**docs/managing-your-agent/the-force-push.md first.** Fifteen minutes after this
+repo existed, its own rule against rewriting history was set aside. What it cost
+was one line of a license file, and the copyright name that survived is the more
+correct of the two. What makes it worth a room's time is the shape: the agent
+stopped, laid out both options, and named the rule it was about to break. Rick
+chose, with the conflict in front of him.
+
+**Say the word "once" out loud.** It has happened one time, on purpose, and that
+page is a record rather than a precedent. A room that hears "we bend it when it
+suits us" has heard the opposite of the point.
+
+Then docs/managing-your-agent/the-claim-we-got-wrong.md, and only far enough to
+say it is there. It is beat 3, twelve minutes from now, and telling it here
+spends the surprise.
 -->
 
 ---
 
 # Beat 1 — the superseded manual
 
-- Search still points at a TxDOT address that no longer serves the manual
-- The agent found the wrong document, believed it, and cited a dead revision
+- Search still hands out a TxDOT address that TxDOT retired
+- The old host answers nothing. **A timeout reads as weather**
+- So it followed the link, read a real manual, cited **March 2025**
+- The revision in force is **April 2026** — txdot.gov/manuals/row/ess
 - It did not lie. It did what a new hire does with a stale binder
-- The defense: fetch the URL you are about to cite, and check what comes back
 
-> **To be written** — #85
+corridor-screen/captures/superseded-manual/ · captured 2026-09-13
 
 <!--
 1:36–1:48 · 12 min · Review, seal — and the three failures
 
-Fallback: python -m corridor_screen.manual_links --show, from the
-corridor-screen folder. It needs no network.
+Run `python -m corridor_screen.manual_links --show` from the corridor-screen
+folder. It prints both addresses, what each one serves, and the evidence file
+behind each. No network.
+
+**The detail that makes this a beat rather than a broken link**: the retired
+host still has a published name, and nothing accepted a connection on port 80 or
+on 443 — three attempts each, twelve seconds apiece. So a caller gets a timeout,
+and a timeout reads as a bad network rather than as a retired document. A "page
+not found" would have told the agent something. Silence told it nothing, so it
+used what the search gave it.
+
+The defense is boring, and being boring is the point: fetch the URL you are
+about to cite and read what comes back. This repo runs that check over its own
+files on every test run, which is why the retired host is named in `CLAUDE.md`
+rather than left to memory.
+
+Fallback: corridor-screen/captures/superseded-manual/the-beat.txt is the same
+beat as plain text, for a podium where Python will not start.
 -->
 
 ---
 
-# Beat 2 — the silent `NoData`
+# Beat 2 — wrong, not missing
 
-- `NoData` is a service saying "no height recorded for that point"
-- One question, asked twice, one word apart
-- It ignored the coordinate system, landed in the ocean, and said `NoData`
-- No error, and the web's code for "here is your answer" on both
-- It did not fail. It answered. That is worse
+- One question, asked twice, one word apart. Same point on Bandera Rd
+- `units=Feet` → **866.87**. `units=US_Feet` → **264.22**
+- 866.87 ÷ 264.22 = **3.28084**, feet per meter. The second is in meters
+- `US_Feet` is not a typo. It is the unit a Texas surveyor works in
+- **No error either time.** Nothing in the reply says which unit
 
-> **To be written** — #85
+corridor-screen/captures/silent-nodata/
 
 <!--
 1:36–1:48 · 12 min · Review, seal — and the three failures
 
-Not on the cut line, and the block it sits in is never cut. The plan's own
-timing warning is narrower than that: if the run is behind at 1:36, drop
-this one beat -- the most technical of the three and the least about
-accountability -- and keep the block.
+**This is the beat to drop if the run is behind at 1:36.** The plan of record
+says so: the most technical of the three and the least about accountability. The
+block itself is never cut — only this one beat inside it.
 
-Fallback: python -m corridor_screen.elevation_trap --show
+Run `python -m corridor_screen.elevation_trap --show` from the corridor-screen
+folder.
+
+Two things to say while the numbers are up. First, `US_Feet` is the US survey
+foot, EPSG 9003 — the unit TxDOT's Survey Manual asks for in deliverables,
+txdot.gov/manuals/row/ess. The surveyor asking in the unit of their own
+profession is the one who gets meters back.
+
+Second, the same service can fail loudly, and that version is the safe one. A
+point out in the Gulf answers with plain text that is not JSON at all, so
+anything reading it breaks inside a second. The believable answer is the
+dangerous one.
+
+**What separates them is where the range check is drawn.** 264 ft is below the
+floor of Bexar County, which runs roughly 400 to 2,000, so a check against this
+county catches it and a check against the whole Earth sails straight past.
+Nobody writes a county range check unless they already know where the job is.
+
+Fallback: corridor-screen/captures/silent-nodata/the-beat.txt.
 -->
 
 ---
@@ -1082,40 +1130,77 @@ Fallback: python -m corridor_screen.elevation_trap --show
 # Beat 3 — the error in our own work order
 
 - Our own work order told the agent to publish a false statement of law
-- A licensed human wrote it. It was already on four pages of this repo
-- The agent went looking for the citation our own rules demand, and stopped
-- If your checking only runs one direction, you have built half of it
+- A licensed human wrote it. It was live on **four pages** of this repo
+- **The same work order carried the rule that refused it** — criterion 5
+- The agent went to find the citation, found **PAO 71**, and stopped
+- Approved **14 Nov 2024** — public for nearly two years. pels.texas.gov
 
-> **To be written** — #85
+corridor-screen/captures/the-work-order/issue-7.txt
 
 <!--
 1:36–1:48 · 12 min · Review, seal — and the three failures
 
-Never cut. Needs about three minutes: the room has to see the work order
-before it sees the catch.
+**Never cut.** It needs about three minutes, because the room has to see the
+work order before it sees the catch. Two lines, in this order, and do not
+summarize either one.
 
-Fallback: corridor-screen/captures/the-work-order/issue-7.txt has both halves,
-in order. The rule that caught it was written for something else entirely.
+Open corridor-screen/captures/the-work-order/issue-7.txt. Acceptance criterion 4
+is in the first half: "It states plainly that TBPELS has not spoken directly to
+AI." A licensed human wrote that, in a work order, to be published. Read it out.
+
+Then the comment in the second half: "Correction: acceptance criterion 4 is
+factually wrong. Please do not restore it."
+
+**Then say which rule caught it**, because that is the part a firm can copy.
+Criterion 5 of the same issue — no invented requirement anywhere, every rule
+cites its source or says it could not be confirmed — is the one the comment
+credits. It came from the handbook rule in `CLAUDE.md`, written about TxDOT
+manuals and about nothing like this.
+
+The rule that catches an error is usually boring and was written for something
+else. That is the argument for writing the handbook before you need it.
+
+The account is docs/managing-your-agent/the-claim-we-got-wrong.md. The opinion
+is quoted in full on docs/governance/seal-and-responsible-charge.md, so neither
+one needs a network.
 -->
 
 ---
 
 # You seal it. You own it.
 
-- TBPELS has spoken directly to AI. Its answer is the existing doctrine
-- AI is a tool. The licensee is responsible for what they sign and seal
-- Responsible charge is direct supervision's standard, not a looser one
-- Personally review and approve decisions before they are acted on
+- TBPELS has spoken directly to AI, in writing, since 2024
+- **AI is a tool. Nothing bans it.** You answer for what you seal
+- **Responsible charge is a synonym for direct supervision**
+- Review and approve decisions **before they are acted on**
+- Check the work as though you had done it yourself. You did
 
 PAO 71, 14 Nov 2024 · pels.texas.gov · 22 Tex. Admin. Code § 131.2(11), (38)
-
-> **To be written** — #85
 
 <!--
 1:36–1:48 · 12 min · Review, seal — and the three failures
 
-Every claim on this slide needs its citation: PAO 71 of 14 November 2024, and
-22 TAC 131.2. docs/governance/seal-and-responsible-charge.md carries both, and
+The claim in this deck most likely to be photographed and forwarded, which is
+why every citation on it is on the slide rather than only here.
+
+**This repo said the opposite on four pages until 12 September 2026.** Say so.
+If it is not said here it is not said anywhere, and beat 3 two slides back was
+that correction landing.
+
+What PAO 71 says, in the board's own words: AI software is a tool, neither the
+Practice Acts nor the board rules directly ban it, and licensees are ultimately
+responsible for any work product they sign and seal. It sets three caveats —
+oversight and review, competence, and client data — and names the surveying
+rules behind each. Its conclusion is that no new opinion was needed.
+
+**The sentence to slow down on is the definition.** 22 Tex. Admin. Code
+§ 131.2(11) says direct supervision entails that the surveyor personally makes
+the decisions, or personally reviews and approves proposed decisions prior to
+their implementation. An agent that ran unsupervised and handed over a finished
+product did not have its decisions approved before it made them. That is the
+whole argument for small assignments with a check print at the end of each.
+
+Fallback: docs/governance/seal-and-responsible-charge.md quotes all of it and
 needs no network.
 -->
 
