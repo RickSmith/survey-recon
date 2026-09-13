@@ -147,6 +147,8 @@ they are collected here so no page has to stop and explain them twice.
 | **Paging cap** | The most records a service will hand over at once. Ask for more and it gives you the cap **and a flag saying there is more** — a tool that ignores the flag reports the cap as if it were the answer |
 | **HTTP 200** | The web's code for "here is your answer." It says the request arrived and got a reply. **It does not say the reply is an answer** — several services return a 200 carrying an error message, and a caller that checks only the code sees success |
 | **Null, and blank** | Not the same thing. `null` is "no value recorded"; a field holding a single space is a value, and a query asking for `IS NOT NULL` will match it. Both BCAD and NGS do this, and it is why `arcgis.attribute` treats whitespace as absent |
+| **DNS** | The phone book of the internet: it turns a name like `txdot.gov` into the number a computer actually dials. A name can still be in the book after the office behind it has closed -- which is exactly what `onlinemanuals.txdot.gov` does, and why a dead manual looks like bad Wi-Fi rather than a missing page. Settled in [issue #25](https://github.com/RickSmith/survey-recon/issues/25) |
+| **Capture** | A saved copy of a whole page or response, kept so a claim about it can be checked later without going back to the web. The screening cache is one kind; `corridor-screen/captures/` holds the other, for pages that are not service responses. Like a photocopy of the deed you worked from, filed with the job |
 | **Robots-blocked** | A server refusing automated requests by policy, via a `robots.txt` file naming what may be fetched. It is a rule rather than a failure, and a polite tool obeys it |
 
 ## Translation table — used throughout the docs
