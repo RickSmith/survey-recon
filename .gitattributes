@@ -16,3 +16,9 @@
 # rewrite, so nothing is broken yet. This is here so that a service which starts
 # formatting its JSON cannot quietly break the promise later.
 project-sh16/cache/**/*.json -text
+
+# Documents pulled by hand are binary. `text=auto` usually detects that on its
+# own, but a PDF that git guesses wrong about is a corrupted PDF, and the
+# people committing these files are not going to be reading a diff to catch it.
+# So say it outright.
+project-sh16/manual-pulls/*.pdf -text
