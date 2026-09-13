@@ -1048,6 +1048,9 @@ suits us" has heard the opposite of the point.
 Then docs/managing-your-agent/the-claim-we-got-wrong.md, and only far enough to
 say it is there. It is beat 3, twelve minutes from now, and telling it here
 spends the surprise.
+
+Fallback: this slide is already its own fallback. Both pages are committed, so
+open them from the laptop and never open GitHub at all.
 -->
 
 ---
@@ -1162,8 +1165,11 @@ The rule that catches an error is usually boring and was written for something
 else. That is the argument for writing the handbook before you need it.
 
 The account is docs/managing-your-agent/the-claim-we-got-wrong.md. The opinion
-is quoted in full on docs/governance/seal-and-responsible-charge.md, so neither
-one needs a network.
+is quoted in full on docs/governance/seal-and-responsible-charge.md.
+
+Fallback: corridor-screen/captures/the-work-order/issue-7.txt is the whole beat,
+both halves in order, and it is the file to open first whatever the network is
+doing. This is the beat that must not be cut, so it never depends on GitHub.
 -->
 
 ---

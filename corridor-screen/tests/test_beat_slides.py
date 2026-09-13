@@ -130,6 +130,23 @@ class TestTheBlockIsTheFiveSlidesTheWorkOrderNames(unittest.TestCase):
     def test_beat_three_says_on_the_presenter_screen_that_it_is_never_cut(self):
         self.assertIn("never cut", note("Beat 3").lower())
 
+    def test_every_slide_in_the_block_labels_its_fallback(self):
+        """#85: *"the speaker notes ... still name a fallback where one
+        exists."*
+
+        Every slide in this block has one -- `docs/presenting/fallbacks.md`
+        carries a row for each. Naming it in prose is not enough: a presenter
+        four minutes past the hour with no network is scanning for the word,
+        not reading the note. Two of these five said it in a sentence and were
+        caught by review for exactly that.
+        """
+        for slide in block():
+            with self.subTest(slide=slide.number, heading=slide.heading):
+                self.assertIn(
+                    "Fallback:", slide.note,
+                    f"slide {slide.number} has no labeled fallback to scan for",
+                )
+
 
 class TestWhereTheWorkGotSentBack(unittest.TestCase):
     """The slide that claims this repo's own history is worth showing.
