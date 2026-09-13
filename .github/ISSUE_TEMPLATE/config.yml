@@ -1,0 +1,14 @@
+# This file controls the list you see after clicking "New issue".
+#
+# It is not a template itself. It decides what sits alongside the two
+# templates in this folder.
+
+# "Open a blank issue" stays on the list, deliberately. Somebody whose
+# question fits neither template should not be stuck staring at a page that
+# has no door in it.
+blank_issues_enabled: true
+
+contact_links:
+  - name: Read the handbook first
+    url: https://ricksmith.github.io/survey-recon/
+    about: How this repo works, what the words mean, and how to set an agent up from nothing.
