@@ -859,11 +859,14 @@ why*. That section sits above the findings in the file, not below them, and
 that ordering is the whole slide. Say so out loud -- a memo that leads with
 what it could not check is a memo a principal can price against.
 
-**The honesty block is the part that earns trust.** CONTEXT.md calls it that:
-every service called, whether it answered, when the answer was captured, and
-what was doubted about it. It is what lets a reader decide whether to trust the
-rest of the file, and it is the opposite of what a confident tool normally
-ships.
+**Two different things earn the trust here, and they are worth keeping apart.**
+*What is not known, and why* is the gaps section, and what makes it work is
+where it sits. The **honesty block** is the other one, and CONTEXT.md reserves
+that term for something narrower: the record of every service called, whether
+it answered, when its answer was captured and what was doubted about it, which
+is what *What was done* and the screening file beside the memo carry. Do not
+call the gaps section the honesty block on stage. A room holding CONTEXT.md
+will hear it, and this deck is the thing teaching them the word.
 
 Four gaps are worth naming off the screen, because each one costs somebody a
 phone call: gated access and livestock, which nothing public publishes; the
@@ -873,9 +876,10 @@ TxDOT already owns a tract, which was not checked at all.
 
 **Right of entry is the one with a statute behind it**, so the citation is on
 the slide rather than only here. An RPLS refused permission *may seek* a court
-order; an LSLS acting officially *is entitled to* one, Tex. Occ. Code
-§ 1071.358. Two different verbs, two different licenses. No parcel polygon
-establishes either, and nothing in this screening is permission to enter.
+order, Tex. Occ. Code § 1071.3585; an LSLS acting officially *is entitled to*
+one, Tex. Occ. Code § 1071.358. Two different verbs, two different licenses,
+and two sections a digit apart. No parcel polygon establishes either, and
+nothing in this screening is permission to enter.
 
 Do not let the room hear this as a disclaimer page. It is the findings section
 of an estimate, written by something that knows the difference between
@@ -893,9 +897,9 @@ for this slide is opening the file on the laptop.
 - `unknown` is never written as `no`. One of those finds a locked gate
 - School, **not found** — 7 of the 8. Unmeasured, so it sorts first
 - Cemetery, **14 calendar days** — Tex. Health & Safety Code § 711.041(c)(2)
-- Gated access and livestock **cannot be screened**, and it says so
+- Gated access and livestock **cannot be screened**. The run says so
 
-project-sh16/flagged-parcels.md · statutes.capitol.texas.gov
+project-sh16/flagged-parcels.md · project-sh16/screening.json
 
 <!--
 1:18–1:36 · 18 min · Act III — The estimate package
@@ -924,30 +928,35 @@ call that turns it into a date.
 
 The school row is the honest one and it is seven of the eight. Looked in:
 Tex. Educ. Code § 22.0834, which sets background-check conditions and no notice
-period; the TxDOT Survey Manual (ESS), which does not address school access; and
-TxDOT ROW Preliminary Procedures Ch. 4. District board approval runs on a
-board's own meeting cycle and badging follows approval -- both real, neither
-published as a figure.
+period; the TxDOT Survey Manual (ESS) rev. April 2026,
+txdot.gov/manuals/row/ess, which does not address school access; and TxDOT ROW
+Preliminary Procedures Ch. 4. District board approval runs on a board's own
+meeting cycle and badging follows approval -- both real, neither published as a
+figure.
 
 **Calendar days and working days are different promises** and this table never
 converts one into the other. The cemetery figure is fourteen calendar days.
 
-The last bullet is the party chief's. Nothing public publishes gate locations or
-livestock, so the output says it could not screen them rather than leaving a
-blank that reads as clear.
+**The last bullet is the party chief's, and it names the run rather than the
+table**, because the table is not where it is written. Nothing public publishes
+gate locations or livestock, so the run records both under `not_screenable`
+with the reason beside each, and project-sh16/bid-memo.md reads them out in
+prose. The table lists tracts that were flagged; a thing nothing can flag was
+never going to appear in it. Say "the run says so" and open the memo if the
+room wants to see the sentence.
 
-Fallback: both files are committed under project-sh16/, so the drawing and the
-table are on the laptop whatever the network does.
+Fallback: all three files are committed under project-sh16/, so the drawing, the
+table and the run are on the laptop whatever the network does.
 -->
 
 ---
 
 # The crew-day build-up
 
-- The hours as arguable math, not one number you either take or leave
-- Every rate carries a **handle**, `A1` to `A12`. Argue with a row, not a total
-- Start with `A4` — 0.5 hours on every one of 524 tracts
-- **5 of the 12 inputs were never measured.** Those lines show no total, not a zero
+- The hours as arguable math, not one number to take or leave
+- Every rate has a **handle**, `A1` to `A12`. Argue with a row, not a total
+- **5 of the 12 inputs were never measured.** No total, not a zero
+- Twelve rates, all plain text. Replace them before you quote a client
 - An estimate you can argue with is an estimate you can defend
 
 project-sh16/crew-day.md · these rates are published by nobody
@@ -967,12 +976,16 @@ argue with.
 Say plainly that none of the twelve is published by TxDOT or by anybody else.
 The standard sheets say what goes on the road, not how long it takes to put it
 there. These are this repo's assumptions and they are meant to be replaced --
-crew_rates.toml is plain text a firm edits without touching any Python.
+corridor-screen/corridor_screen/crew_rates.toml is plain text a firm edits
+without touching any Python, which is what the fourth bullet is promising.
 
-**A4 is the one this room will reach for**, so offer it first. Half an hour on
-every tract the corridor clips, ranch or quarter-acre lot, and some of those
-tracts are already in TxDOT's hands. Halve it and the field estimate moves more
-than any other single change on the page.
+**This slide deliberately says nothing the money slide already said.** At 0:46
+this room was given the day counts, `A4` by name, and the half-hour-per-tract
+figure behind it. Do not read any of that out again -- eighteen minutes is what
+the run of show gives this block, and saying the same three things twice is how
+it stops fitting. Have A4 ready for when somebody raises it, which somebody
+will: halve it and the field estimate moves more than any other single change
+on the page. Some of those tracts may already be in TxDOT's hands, too.
 
 **The five unmeasured inputs are the point of the slide, not a caveat on it.**
 Manholes, culverts, how many times traffic control gets set, how much of the
@@ -980,10 +993,6 @@ retracement falls on the centerline, and the existing right-of-way width. Two
 whole lines of the build-up therefore carry no total at all, and those hours are
 missing from the figures rather than being zero in them. The figures are a
 floor.
-
-The money slide at 0:46 already gave this room the day counts. Do not read them
-out again here -- this slide is about the arithmetic under them, and repeating
-the totals is what makes the block run long.
 
 Fallback: this is the slide to drop first inside the block. The build-up is
 committed at project-sh16/crew-day.md, and project-sh16/crew-day.txt is the same

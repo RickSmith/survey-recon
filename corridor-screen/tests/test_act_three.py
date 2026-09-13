@@ -34,10 +34,10 @@ import re
 import unittest
 
 from tests.build_up_figures import (
-    A_NUMBER,
     HANDLE,
     figures,
     numbers_it_publishes,
+    quantities_on,
     rate_handles,
     rate_values,
 )
@@ -50,7 +50,7 @@ from tests.deck_reader import (
     visible,
     with_markup,
 )
-from tests.markdown_docs import flat, json_of, table_rows, text_of
+from tests.markdown_docs import json_of, plain, table_rows, text_of
 
 SCREENING = REPO / "project-sh16" / "screening.json"
 MEMO = REPO / "project-sh16" / "bid-memo.md"
@@ -63,13 +63,14 @@ BLOCK = "Act III — The estimate package"
 # The three slides this work order owns, in the order the block runs them.
 OWNED = ("The bid memo", "The flagged parcel table", "The crew-day build-up")
 
-# A rate handle is `A4`, and the 4 in it is not a quantity. Taken off a line
-# before it is searched for numbers -- the same reason and the same pattern as
-# `test_money_slide.py`, which strips it for the same check.
-A_HANDLE_ON_A_LINE = re.compile(r"`A\d+`")
-
-# A line carrying its own source may carry its own digits: a statute section
-# and a file name belong to the source, not to the build-up.
+# A line carrying its own source may carry its own digits: a statute section and
+# a file name belong to the source, not to the build-up. `test_money_slide.py`
+# asks the same question of its own block and answers it with the one host that
+# block cites; this block cites files as well, so it looks for either.
+#
+# Taking a rate handle off a line before counting its numbers is
+# `build_up_figures.quantities_on`, imported above. It was a second copy of
+# `test_money_slide.py`'s pattern until this file's review found it.
 A_SOURCE_ON_A_LINE = re.compile(r"\b[\w-]+\.(?:gov|com|org|md|txt|svg|json)\b")
 
 
@@ -85,17 +86,6 @@ def act_three():
 def flagged():
     """The flagged tracts of the SH16 run, as the tool selects them."""
     return [parcel for parcel in run()["parcels"] if parcel.get("flags")]
-
-
-def stripped(markdown):
-    """A phrase with its emphasis taken off, so two documents can be compared.
-
-    The memo writes `**may seek**` and the slide writes `*may seek*`. Same
-    words to a reader, different strings to a test, and a check that failed on
-    that is a check that punishes editing -- `deck_reader.visible` exists for
-    the same reason on the slide side of the comparison.
-    """
-    return flat(markdown).replace("**", "").replace("*", "").replace("`", "")
 
 
 def parcel_rows():
@@ -154,7 +144,7 @@ class TestTheBidMemoSlideIsTheMemoS(unittest.TestCase):
         for gap in ("Gated access", "Livestock"):
             with self.subTest(gap=gap):
                 self.assertIn(
-                    f"{gap} — no public source publishes", stripped(self.memo)
+                    f"{gap} — no public source publishes", plain(self.memo)
                 )
         self.assertIn("Gated access and livestock", self.said)
 
@@ -166,27 +156,27 @@ class TestTheBidMemoSlideIsTheMemoS(unittest.TestCase):
         stronger verb on a projector is a promise the statute does not make to
         the people reading it.
         """
-        self.assertIn("may seek a court order", stripped(self.memo))
-        self.assertIn("may seek a court order", stripped(self.said))
-        self.assertNotIn("entitled to", stripped(self.said))
+        self.assertIn("may seek a court order", plain(self.memo))
+        self.assertIn("may seek a court order", plain(self.said))
+        self.assertNotIn("entitled to", plain(self.said))
 
     def test_the_statute_on_the_slide_is_the_rpls_section_and_not_the_lsls_one(self):
         """`test_deck.py` checks that a source is beside the claim at all. This
         checks it is the right one: § 1071.358 is the LSLS section and it is one
         character away from the RPLS's, which is the worst possible distance."""
-        self.assertIn("§ 1071.3585", stripped(self.memo))
-        self.assertIn("§ 1071.3585", stripped(self.said))
+        self.assertIn("§ 1071.3585", plain(self.memo))
+        self.assertIn("§ 1071.3585", plain(self.said))
 
     def test_it_repeats_what_the_memo_says_it_is_not(self):
         for disclaimed in ("not a survey", "not a title search"):
             with self.subTest(claim=disclaimed):
-                self.assertIn(f"It is {disclaimed}", stripped(self.memo))
+                self.assertIn(f"It is {disclaimed}", plain(self.memo))
         self.assertIn("Not a survey. Not a title search.", self.said)
 
     def test_it_says_who_decides(self):
         """The last line of the memo and the last bullet of the slide, and the
         session's whole thesis in five words. The tool decides nothing."""
-        self.assertIn("An RPLS reads it and decides", stripped(self.memo))
+        self.assertIn("An RPLS reads it and decides", plain(self.memo))
         self.assertIn("**An RPLS reads it and decides**", self.said)
 
 
@@ -274,6 +264,28 @@ class TestTheFlaggedParcelSlideIsTheTableS(unittest.TestCase):
         """Not a caveat. A blank where a gate should be reads as clear."""
         self.assertIn("Gated access and livestock **cannot be screened**", self.said)
 
+    def test_the_run_really_does_say_so_and_the_slide_credits_the_run(self):
+        """The hole #84's own review found, and the reason this check exists.
+
+        The first draft said *and it says so* under a source line naming only
+        `flagged-parcels.md`. The table says nothing of the kind and never
+        could: it lists tracts that were flagged, and the whole point of these
+        two is that nothing can flag them. The sentence lives in the run, under
+        `not_screenable`, with a reason beside each one.
+
+        The old check read the slide's own wording and nothing else, so it was
+        circular -- it would have passed a slide crediting any document at all.
+        This reads the run.
+        """
+        recorded = {entry["type"]: entry["reason"]
+                    for entry in run()["run"]["not_screenable"]}
+        self.assertEqual(set(recorded), {"gated access", "livestock"})
+        for kind, reason in recorded.items():
+            with self.subTest(kind=kind):
+                self.assertIn("no public source publishes", reason)
+        self.assertIn("The run says so", self.said)
+        self.assertIn("project-sh16/screening.json", self.said)
+
 
 class TestTheCrewDaySlideIsTheBuildUpS(unittest.TestCase):
     """Arguable math, and the handle is what makes it arguable."""
@@ -304,17 +316,22 @@ class TestTheCrewDaySlideIsTheBuildUpS(unittest.TestCase):
         """The one error on this block a surveyor would catch first.
 
         `A4` is a real handle and `0.75` is a real number, so *start with `A4` —
-        0.75 hours per tract* passes every other check here and is wrong: 0.75
-        is `A1`'s. This ties a handle to the value its own row gives it.
+        0.75 hours per tract* reads perfectly and is wrong: 0.75 is `A1`'s. This
+        ties a handle to the value its own row gives it.
 
-        A handle named without any number beside it is not a quote and is not
-        checked -- naming the range is how the slide offers the argument.
+        **This is a guard rather than a requirement**, and today it guards
+        nothing: the slide names its handles as a range and quotes no rate
+        beside one, because the money slide already gave this room `A4` and its
+        half hour. That is deliberate -- see the class below. A handle named
+        with no number beside it is not a quote, so it is not checked. The guard
+        stays because the first draft of this slide did quote one, and the next
+        edit may again.
         """
         values = rate_values()
         self.assertTrue(values, "the build-up's rate table no longer reads")
         for line in self.slide.content_lines():
             for handle in set(HANDLE.findall(line)):
-                on_the_line = set(A_NUMBER.findall(A_HANDLE_ON_A_LINE.sub("", line)))
+                on_the_line = quantities_on(line)
                 if not on_the_line:
                     continue
                 with self.subTest(handle=handle, line=line):
@@ -323,6 +340,27 @@ class TestTheCrewDaySlideIsTheBuildUpS(unittest.TestCase):
                         f"the slide shows {handle} beside {sorted(on_the_line)}, "
                         f"and the build-up gives it {sorted(values.get(handle, ()))}",
                     )
+
+    def test_that_guard_can_actually_fail(self):
+        """A guard that guards nothing today should still be shown to work.
+
+        Without this, the check above is a comment: it would go on passing if
+        the arithmetic under it broke, and nobody would find out until a slide
+        quoted the wrong rate on a projector.
+        """
+        values = rate_values()
+        wrong = sorted(values["A1"] - values["A4"])
+        self.assertTrue(wrong, "A1 and A4 now carry the same value, so pick another pair")
+        line = f"- Start with `A4` — {wrong[0]} hours on every one of 524 tracts"
+        self.assertFalse(values["A4"] & quantities_on(line))
+
+    def test_it_promises_the_rates_are_a_firms_to_replace(self):
+        """Act III is the block about documents a principal can use, so the
+        take-home is that these twelve are editable without any Python. The
+        file is plain text and the build-up says which file."""
+        self.assertIn("plain text a firm edits without touching any Python",
+                      plain(text_of(BUILD_UP)))
+        self.assertIn("Twelve rates, all plain text", self.said)
 
     def test_the_unmeasured_input_count_is_the_build_ups_own(self):
         """Five of twelve, and they are the point of the slide rather than a
@@ -343,7 +381,7 @@ class TestTheCrewDaySlideIsTheBuildUpS(unittest.TestCase):
         for line in self.slide.content_lines():
             if A_SOURCE_ON_A_LINE.search(line):
                 continue
-            for number in A_NUMBER.findall(A_HANDLE_ON_A_LINE.sub("", line)):
+            for number in quantities_on(line):
                 with self.subTest(number=number, line=line):
                     self.assertIn(
                         number, published,
@@ -357,16 +395,22 @@ class TestTheCrewDaySlideIsTheBuildUpS(unittest.TestCase):
         that hears twelve rates read out will assume somebody stands behind
         them."""
         self.assertIn("none of them is published by TxDOT or by anybody else",
-                      stripped(text_of(BUILD_UP)))
+                      plain(text_of(BUILD_UP)))
         self.assertIn("published by nobody", self.said)
 
-    def test_it_does_not_read_the_money_slides_totals_out_again(self):
+    def test_it_says_nothing_the_money_slide_already_said(self):
         """The block runs eighteen minutes and this slide is on the cut line.
 
-        The day counts were given to this room at 0:46 and are checked there by
-        `test_money_slide.py`. Saying them twice is how a block that fits
-        becomes a block that does not, and it is what the note tells the
-        presenter not to do.
+        At 0:46 this room was given the day counts, `A4` by name, and the
+        half-hour-per-tract figure behind it -- `test_money_slide.py` holds that
+        slide to all three. Saying them twice is how a block that fits becomes a
+        block that does not.
+
+        **The first draft said two of the three**, and #84's review caught it:
+        *Start with `A4` — 0.5 hours on every one of 524 tracts* is the money
+        slide's own sentence in different words. So this reads the money slide
+        rather than listing what not to repeat, and a phrase moved onto that
+        slide tomorrow is a phrase this one may not carry.
         """
         totals = figures()
         for count, what in ((totals.field_days, "crew-days in the field"),
@@ -377,8 +421,24 @@ class TestTheCrewDaySlideIsTheBuildUpS(unittest.TestCase):
                     f"the crew-day slide reads the money slide's {what} out again",
                 )
 
+    def test_it_does_not_re_argue_the_rate_the_money_slide_argued(self):
+        """`A4` and its half hour belong to 0:46. Read out of that slide rather
+        than written down here, so the two cannot drift apart."""
+        money = on_screen("The billable-hour math")
+        argued = set(HANDLE.findall(money))
+        self.assertTrue(argued, "the money slide no longer names a rate to argue with")
+        for handle in argued:
+            with self.subTest(handle=handle):
+                self.assertNotIn(
+                    f"`{handle}` —", self.said,
+                    f"the money slide already put {handle} and its rate in front "
+                    f"of this room, thirty minutes before this slide",
+                )
+
     def test_the_note_tells_the_presenter_the_same_thing(self):
-        self.assertIn("Do not read them out again here", note("The crew-day build-up"))
+        said = note("The crew-day build-up")
+        self.assertIn("says nothing the money slide already said", said)
+        self.assertIn("Do not read any of that out again", said)
 
 
 class TestTheBlockIsStillTheShapeTheRunOfShowGivesIt(unittest.TestCase):

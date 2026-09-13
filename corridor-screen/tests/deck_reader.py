@@ -33,7 +33,7 @@ import re
 from collections import namedtuple
 from pathlib import Path
 
-from tests.markdown_docs import text_of
+from tests.markdown_docs import text_of, unemphasized
 
 REPO = Path(__file__).resolve().parents[2]
 DECK = REPO / "docs" / "slides" / "beyond-the-prompt.md"
@@ -222,8 +222,14 @@ def visible(slides_):
     same slide to the room and a different string to a test. `markdown_docs.flat`
     does this job for line wrapping on the pages in `docs/`; this is the same
     class of false failure, wearing emphasis instead of a line break.
+
+    The replacements themselves are `markdown_docs.unemphasized`, because the
+    pages in `docs/` need the same three and a fourth copy was being written in
+    `test_act_three.py`. **One slide per line is kept**, which is why this is
+    not `markdown_docs.plain`: a phrase that ran across two bullets would start
+    matching, and the checks here tell one bullet from two on purpose.
     """
-    return with_markup(slides_).replace("**", "").replace("*", "").replace("`", "")
+    return unemphasized(with_markup(slides_))
 
 
 # A repo path as it appears on a slide or in a speaker note. Anchored to the
