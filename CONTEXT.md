@@ -90,7 +90,7 @@ They are buyers and risk-owners. They are not going to install things themselves
 
 | Term | Meaning |
 |---|---|
-| **The worked example** | SH16 (Bandera Rd), Loop 410 → Gibeaut Rd, Bexar County |
+| **The worked example** | SH16 (Bandera Rd), Loop 410 → Old Bandera Rd, Bexar County. Route `SH0016-KG`, **DFO 347.7 to 356.367**, 8.691 miles. **This row is where the corridor is defined**; every other page agrees with it rather than restating it. The DFO pair is the corridor — the two road names are a label for it, and the label has been wrong once. See [the end point](#the-end-point-and-how-it-got-its-name) |
 | **Corridor screening** | Buffer an alignment, query public services, emit a flagged parcel list with lead times. The tool this repo is named for |
 | **Flagged parcel** | A tract with something that costs time — school, cemetery, railroad, pipeline, gated access, livestock |
 | **Lead time** | Statutory or procedural delay before you can enter. Railroad 30–45 days, cemetery 14 days, Texas 811 48 hours |
@@ -101,6 +101,36 @@ They are buyers and risk-owners. They are not going to install things themselves
 | **Run of show** | The minute-by-minute plan for the two hours — which block is on screen when. A stage term, not a software one. It is the table in `docs/plan-of-record.md` §5, and it is the definitive list of what the session does |
 | **Cut line** | The order things get dropped in if the session runs long, decided in advance rather than at the podium. `docs/plan-of-record.md` §7 |
 | **Fallback capture** | A committed file that stands in for a live demo step when the live thing will not run. Every one of them is on the card at `docs/presenting/fallbacks.md`, which is checked against the run of show on every test run |
+
+### The end point, and how it got its name
+
+Until 2026-09-13 every page in this repo called the north end of the corridor
+**Gibeaut Rd**. There is no such road in Bexar County. The name came out of the
+grilling on 12 September, was written into thirteen files, and was never checked
+against a map until Rick read it on a slide.
+
+**The corridor never moved.** `SH0016-KG`, DFO 347.7 to 356.367, 8.691 miles,
+half-width 300 ft — unchanged, so no figure anywhere in this repo shifted. Only
+the label was wrong. The account is
+[issue #99](https://github.com/RickSmith/survey-recon/issues/99).
+
+The name it has now was checked twice against public sources, both on
+2026-09-13, at the run's own north end — 29.574516, −98.688309:
+
+| Source | What it answered |
+|---|---|
+| [Nominatim reverse geocode](https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=29.574516&lon=-98.688309&zoom=17) | `Bandera Road, Helotes, Bexar County, Texas, 78023` |
+| [Overpass](https://overpass-api.de/), named highways within 40 m | exactly two — **Bandera Road** (SH16 itself) and **Old Bandera Road** |
+| Nominatim search, `Gibeaut, Bexar County, Texas` | **zero results** |
+
+The south end answers `Northwest Loop 410, Leon Valley`, which is what it was
+always called.
+
+**TxDOT's own roadway inventory was not consulted**, because the SH16 run does
+not call it — `Roadway_Inventory_2023` is recorded as `not-screened`. So this
+name rests on OpenStreetMap rather than on the department's data. That is a
+weaker source than most things in this repo cite, and it is written down here
+rather than left for somebody to discover.
 
 ## Corridor-screening vocabulary
 

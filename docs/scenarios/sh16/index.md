@@ -20,7 +20,7 @@
     [`crew-day.txt`](https://github.com/RickSmith/survey-recon/blob/main/project-sh16/crew-day.txt)
     for a podium where Python will not start.
 
-TxDOT SH16 (Bandera Rd), Loop 410 to Gibeaut Rd. Preliminary design ROW mapping,
+TxDOT SH16 (Bandera Rd), Loop 410 to Old Bandera Rd. Preliminary design ROW mapping,
 widening on both sides. One corridor, start to finish: find the control, count
 the tracts, flag what costs time, and build an estimate you can defend.
 

@@ -1,6 +1,6 @@
 # TxDOT ROW Survey — Source Material & Verified Endpoints
 
-Research compiled 2026-09-12. Test corridor throughout: SH16 / Bandera Rd, Loop 410 → Gibeaut Rd, Bexar County. Bbox `-98.66,29.45,-98.56,29.56` (WGS84), midpoint `29.505,-98.615`.
+Research compiled 2026-09-12. Test corridor throughout: SH16 / Bandera Rd, Loop 410 → Old Bandera Rd, Bexar County. Bbox `-98.66,29.45,-98.56,29.56` (WGS84), midpoint `29.505,-98.615`.
 
 ---
 

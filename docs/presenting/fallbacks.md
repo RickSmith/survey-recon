@@ -37,10 +37,19 @@ the day you need it is the day you will mistype it. The same line is in
 `corridor-screen/README.md` under *If the network is down* — copy it from
 there, or have it open in a second window before you start.
 
-**Say what you are doing.** The plan of record is blunt about this: undisclosed
-caching, if noticed, costs you the room. The line is already written —
-*"these were captured on the 12th and 13th of September, so we're not at the
-mercy of the hotel Wi-Fi. The code is live code and you can run it yourself."*
+**Say what you are doing — this is the line for when you have fallen back, not
+the opening script.** The plan is to run live, and the SH16 run really did call
+all fourteen services on 13 September. The cold-open slide promises real code
+and real data, and names the cache as the backup. So you only need this the
+moment you actually switch to it:
+
+> *"This is running off answers we captured on the 12th and 13th of September,
+> so we're not at the mercy of the hotel Wi-Fi. The code is live code and you
+> can run it yourself."*
+
+Say it the moment you switch, not at the end. Undisclosed caching, if noticed,
+costs you the room — the plan of record is blunt about that, and it is why the
+disclosure is on the slide as well as here.
 
 **Open a file rather than a website.** Every path above is a file in this
 repo, on the laptop, in a folder. None of them is a link.

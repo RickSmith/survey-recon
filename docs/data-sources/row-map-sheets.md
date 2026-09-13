@@ -130,7 +130,7 @@ the corridor when any part of its line comes within the half-width. A sheet is
 a line, so the test is the one used for a parcel, not the strict point test
 used for a survey mark.
 
-**Crossing routes are reported, not dropped.** SH16 from Loop 410 to Gibeaut Rd
+**Crossing routes are reported, not dropped.** SH16 from Loop 410 to Old Bandera Rd
 meets two major interchanges, and the right of way at an interchange is drawn
 on the crossing route's sheets. Those are records a crew has to pull. So the
 count covers every route that reaches the corridor, and `by_route` in the
@@ -152,7 +152,7 @@ it is not the number the corridor run reports. Both were read live on
 | Every route reaching this corridor | **69** | 1900-01-01 to 2005-04-30 | six |
 
 **The corridor is not the county.** It is 8.69 miles of SH16, from Loop 410 to
-Gibeaut Rd, and that stretch lies entirely inside one of the route's three
+Old Bandera Rd, and that stretch lies entirely inside one of the route's three
 control sections. All 15 of control section 0291-10's sheets reach it; the 8
 sheets on 0291-09 and the 4 on 0613-01 are elsewhere on SH16 and do not. 15
 plus 8 plus 4 is 27.

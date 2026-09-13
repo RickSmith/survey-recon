@@ -3,7 +3,7 @@
 This first pass reads one of the five input forms in the specification: a route
 name and two DFO numbers. DFO is Distance From Origin, TxDOT's measure along a
 route, and it is the thing a surveyor already has when they describe a job as
-"SH16 from Loop 410 to Gibeaut Rd".
+"SH16 from Loop 410 to Old Bandera Rd".
 
 TxDOT publishes the route geometry with M values attached, and those M values
 are the DFO. So the limits are not guessed at from coordinates -- the route is

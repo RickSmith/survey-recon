@@ -14,7 +14,7 @@ applies to a parcel, and not the strict point test ``control.select`` uses for
 a survey mark.
 
 **A crossing route's sheet is still a record you need.** SH16 from Loop 410 to
-Gibeaut Rd meets two major interchanges, and the right of way at those
+Old Bandera Rd meets two major interchanges, and the right of way at those
 interchanges is defined on Loop 410 and Loop 1604 sheets, not on SH16 ones. So
 every sheet that reaches the corridor is reported, whatever route it belongs
 to, and ``by_route`` is what keeps that readable rather than confusing.
