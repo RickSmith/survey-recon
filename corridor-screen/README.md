@@ -289,6 +289,11 @@ Before 2026-10-04 that writes one letter and says the second is not due. On or
 after it, two — and nobody had to remember. It mails nothing, signs nothing and
 carries no address. An **RPLS** does all three.
 
+**Nobody has to run it either.** `.github/workflows/roe-followup.yml` reads the
+same clock every day on a schedule and puts whatever is due into the run
+summary. It commits nothing and needs no secret. That workflow is the evidence
+behind "with no human action"; the command above is the rehearsal of it.
+
 ## The one call that stays live
 
 Everything above replays from disk. This one goes out to NGS while you watch:

@@ -31,11 +31,13 @@ import datetime as dt
 import io
 import json
 import socket
+import subprocess
 import unittest
 from contextlib import redirect_stdout
 from pathlib import Path
 
 from corridor_screen import beats, lead_times, roe
+from corridor_screen.cache import long_path
 
 REPO = Path(__file__).resolve().parent.parent.parent
 SCREENING = REPO / "project-sh16" / "screening.json"
@@ -51,7 +53,7 @@ SCHOOL_PARCEL = "04524-401-0020"
 
 
 def document():
-    with open(SCREENING, "r", encoding="utf-8") as handle:
+    with open(long_path(SCREENING), "r", encoding="utf-8") as handle:
         return json.load(handle)
 
 
@@ -368,7 +370,7 @@ class TestTheDemoSurvivesBeingRecorded(unittest.TestCase):
         """
         path = roe.CAPTURE_DIR / roe.DEMO_NAME
         self.assertTrue(path.exists(), f"{path} is not committed")
-        with open(path, "r", encoding="utf-8", newline="") as handle:
+        with open(long_path(path), "r", encoding="utf-8", newline="") as handle:
             committed = handle.read()
         self.assertEqual(committed.replace("\r\n", "\n"), roe.demo() + "\n")
 
@@ -409,24 +411,46 @@ class TestWhatIsCommittedAndWhatIsNot(unittest.TestCase):
 
     def test_the_committed_first_letter_is_what_the_code_writes(self):
         path = self.FOLDER / self.schedule[0].filename()
-        with open(path, "r", encoding="utf-8", newline="") as handle:
+        with open(long_path(path), "r", encoding="utf-8", newline="") as handle:
             committed = handle.read()
         self.assertEqual(committed.replace("\r\n", "\n"), self.schedule[0].markdown())
 
-    def test_the_second_letter_is_not_committed_yet(self):
-        """It is not due. A file sitting there would undo the whole point."""
+    def test_the_second_letter_is_not_committed(self):
+        """A follow-up already sitting in the repo is not a follow-up.
+
+        **This is a claim about git, not about the disk**, and the difference
+        is the whole reason this test was rewritten. Asserting the file was
+        absent from the filesystem turned the documented command --
+        ``--write ../project-sh16/roe`` -- into something that reddens the
+        suite from 2026-10-04 onward, which is four days before the session.
+        Writing the letter on or after its day is the demo working. Committing
+        it is the mistake, and `.gitignore` is what stops it.
+        """
         path = self.FOLDER / self.schedule[1].filename()
-        self.assertFalse(
-            path.exists(),
-            f"{path} is committed, and day {self.schedule[1].day} has not arrived. "
-            f"A follow-up that is already in the repo is not a follow-up.",
+        tracked = subprocess.run(
+            ["git", "ls-files", "--error-unmatch", "--", str(path)],
+            cwd=REPO, capture_output=True, text=True,
         )
+        self.assertNotEqual(
+            tracked.returncode, 0,
+            f"{path} is tracked by git. Written is fine -- the clock writes it "
+            f"on day {self.schedule[1].day} -- but committed is not.",
+        )
+
+    def test_gitignore_is_what_keeps_it_out(self):
+        """Because the test above only catches it after somebody has done it.
+
+        `.gitignore` catches it at ``git add``, on the machine, which is the
+        cheaper of the two places.
+        """
+        with open(long_path(REPO / ".gitignore"), "r", encoding="utf-8") as handle:
+            self.assertIn(self.schedule[1].filename(), handle.read())
 
     def test_the_folder_explains_the_letter_that_is_missing(self):
         """An empty-looking folder reads as unfinished work rather than as a clock."""
         readme = self.FOLDER / "README.md"
         self.assertTrue(readme.exists(), f"{readme} is not committed")
-        with open(readme, "r", encoding="utf-8") as handle:
+        with open(long_path(readme), "r", encoding="utf-8") as handle:
             said = handle.read()
         self.assertIn(self.schedule[1].filename(), said)
         self.assertIn(str(self.schedule[1].day), said)

@@ -23,6 +23,13 @@ desktop.ini
 .vscode/
 .idea/
 
+# The second right-of-entry letter, written by the clock rather than by a
+# person. It is not due until 2026-10-04, and after that date anybody who runs
+# the documented command gets one on disk. That is the demo working — see
+# project-sh16/roe/README.md — but it must not land in a commit, because a
+# follow-up already sitting in the repo is not a follow-up.
+project-sh16/roe/roe-letter-2.md
+
 # Agent scratch — never commit secrets or client data
 .claude/settings.local.json
 scratch/

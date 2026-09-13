@@ -132,9 +132,9 @@ TEMPLATES = {1: "020-10-tem", 2: "020-11-tem"}
 TOOLKIT_URL = "https://www.txdot.gov/business/resources/surveyor-toolkit.html"
 ROE_MANUAL_URL = "https://www.txdot.gov/manuals/row/ess/surveying_procedures/right_of_entry.html"
 
-# The day the clock starts on the committed demo: the day the SH16 screening
-# run finished and flagged the tract. Read from the run rather than typed, so
-# the demo cannot drift from the data it claims to come from.
+# The tract the committed demo is built around: the one parcel on SH16 with a
+# confirmed wait behind it. Day 0 is not a constant beside it -- it is read off
+# the run, by `start_of_clock`.
 DEMO_PARCEL = "15664-003-0040"
 
 
@@ -295,15 +295,6 @@ def due_on(letters, as_of):
 # The letters themselves
 # ---------------------------------------------------------------------------
 
-def _wait_sentence(parcel):
-    """What the screening says this tract costs, in one readable line."""
-    return parcel_table.wait_cell(parcel)
-
-
-def _flag_sentence(parcel):
-    return parcel_table.flag_cell(parcel)
-
-
 def _citations(parcel):
     """Source and link for every flag on this tract, deduplicated.
 
@@ -402,8 +393,8 @@ def _letter_lines(letter):
     lines += [
         "## What the screening found on this tract",
         "",
-        f"- **On it:** {_flag_sentence(parcel)}",
-        f"- **Longest wait before entry:** {_wait_sentence(parcel)}",
+        f"- **On it:** {parcel_table.flag_cell(parcel)}",
+        f"- **Longest wait before entry:** {parcel_table.wait_cell(parcel)}",
         "",
         "That wait is a notice period, not the length of the work. It is how "
         "long a crew must wait before it can start.",
@@ -471,6 +462,26 @@ def find(document, parcel_id):
     raise NotAFlaggedParcel(f"{parcel_id} is not in this screening run")
 
 
+def start_of_clock(document):
+    """Day 0 -- the day the screening run finished and flagged the tract.
+
+    Read off the run rather than typed anywhere, so neither the demo nor a
+    written letter can claim a date the data does not have.
+    """
+    run = document.get("run") or {}
+    return dt.date.fromisoformat((run.get("finished_at") or "")[:10])
+
+
+def _clock(document, parcel_id):
+    """The four things both `demo` and `write_letters` start from.
+
+    They had a copy of this each. The two drifted apart the moment one of them
+    grew a comment the other did not, which is the reason it is one function.
+    """
+    document = document if document is not None else read_screening()
+    return document, find(document, parcel_id), follow_up_interval(),         start_of_clock(document)
+
+
 def _found_in_run(document, flag_type):
     """Did this run actually find that kind of flag, on a parcel or corridor-wide?
 
@@ -492,15 +503,7 @@ def demo(document=None, parcel_id=DEMO_PARCEL):
     Built from the committed run and the committed table, so it needs no
     network and reads the same on the day as it does now.
     """
-    document = document if document is not None else read_screening()
-    parcel = find(document, parcel_id)
-    interval = follow_up_interval()
-    run = document.get("run") or {}
-
-    # Day 0 is the day the screening flagged the tract. Read from the run
-    # rather than typed here, so the demo cannot claim a date the data does
-    # not have.
-    sent_on = dt.date.fromisoformat((run.get("finished_at") or "")[:10])
+    document, parcel, interval, sent_on = _clock(document, parcel_id)
     letters = schedule(document, parcel, sent_on, interval)
     second = letters[1]
     day_before = second.date - dt.timedelta(days=1)
@@ -508,9 +511,10 @@ def demo(document=None, parcel_id=DEMO_PARCEL):
     # No leading or trailing blank line, so the committed recording is the
     # rendered text plus exactly one newline -- the same shape the three
     # failure beats commit, checked the same way.
+    title = "The letter that sends itself"
     lines = [
-        "  The letter that sends itself",
-        "  ===========================",
+        f"  {title}",
+        "  " + "=" * len(title),
         "",
         "  Right of entry is not a statutory right in Texas. You have to ask,",
         "  and when nobody answers you have to ask again. TxDOT ships a second",
@@ -519,8 +523,8 @@ def demo(document=None, parcel_id=DEMO_PARCEL):
         f"  The tract, read out of project-sh16/{SOURCE_FILE}",
         f"    parcel        {parcel['id']}",
         f"    owner         {parcel.get('owner')}",
-        f"    on it         {_flag_sentence(parcel)}",
-        f"    longest wait  {_wait_sentence(parcel)}",
+        f"    on it         {parcel_table.flag_cell(parcel)}",
+        f"    longest wait  {parcel_table.wait_cell(parcel)}",
         "",
         f"  Where day {interval.days} comes from",
         "    No published right-of-entry turn-around was found in any TxDOT",
@@ -563,6 +567,13 @@ def demo(document=None, parcel_id=DEMO_PARCEL):
         f"and knows nothing about weekends or",
         "  holidays. It writes the letter; a person still sends it.",
         "",
+        "  Nobody has to run this",
+        "    .github/workflows/roe-followup.yml reads the same clock every day",
+        "    on a schedule. It commits nothing, mails nothing and needs no",
+        f"    secret. If request 2 of 2 turns up in its summary on "
+        f"{second.date.isoformat()}",
+        "    and nobody started it, that is the claim above, evidenced.",
+        "",
         "  What this does not do",
         "    It does not mail anything. It has no address and no authority.",
         "    An RPLS signs the letter and remains accountable for it --",
@@ -592,11 +603,7 @@ def write_letters(out_dir, as_of=None, parcel_id=DEMO_PARCEL, document=None):
     Only the letters that are due. A run before day 21 writes one file; a run
     on or after it writes two, and nobody had to remember.
     """
-    document = document if document is not None else read_screening()
-    parcel = find(document, parcel_id)
-    interval = follow_up_interval()
-    run = document.get("run") or {}
-    sent_on = dt.date.fromisoformat((run.get("finished_at") or "")[:10])
+    document, parcel, interval, sent_on = _clock(document, parcel_id)
     as_of = as_of or dt.date.today()
 
     folder = Path(out_dir)
@@ -627,8 +634,22 @@ def main(argv=None):
     group.add_argument("--write", metavar="DIR",
                        help="write every letter that is due into DIR")
     parser.add_argument("--as-of", metavar="YYYY-MM-DD",
-                        help="the date the clock is read on. Default today.")
+                        help="the date the clock is read on, with --write. "
+                             "Default today.")
     args = parser.parse_args(argv)
+
+    if args.as_of and not args.write:
+        # Silently ignoring it would be worse than refusing it. Somebody
+        # reaching for `--as-of --show` is asking to see the demo from the
+        # far side of day 21, and the demo is a committed recording that must
+        # read the same every time -- so the answer is no, with the command
+        # that does what they meant.
+        parser.error(
+            "--as-of only means something with --write. The demo is a "
+            "committed recording and reads the same on every date; to see "
+            "the letters from the far side of the follow-up day, use "
+            "--write DIR --as-of YYYY-MM-DD."
+        )
 
     if args.write_fallback:
         print(f"  written  {write_recording()}")

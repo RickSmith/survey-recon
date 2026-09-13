@@ -52,9 +52,13 @@ To see it from the other side of day 21 without waiting:
 python -m corridor_screen.roe --write ../project-sh16/roe --as-of 2026-10-04
 ```
 
-That writes `roe-letter-2.md`, which is **not** committed. Delete it again
-before committing anything — the test suite checks that it is absent, for the
-reason at the top of this page.
+That writes `roe-letter-2.md`. So does the plain command above, on or after
+2026-10-04 — which is the demo working, not a mistake.
+
+**You do not have to remember to delete it.** `roe-letter-2.md` is in
+`.gitignore`, so it never reaches a commit, and the test suite checks that git
+is not tracking it rather than that the file is missing from the disk. A demo
+about people forgetting things should not depend on a person remembering one.
 
 ## What these letters are not
 

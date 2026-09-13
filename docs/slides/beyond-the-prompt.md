@@ -881,12 +881,12 @@ Build it so it survives being reduced to a recorded teaser. See #34.
 
 # The letter nobody remembers to send
 
-- Right of entry is not a statutory right. You have to ask
+- Right of entry is not a statutory right **in Texas**. You have to ask
 - A denied RPLS *may seek* a court order; an LSLS *is entitled to* one
 - TxDOT ships **two** templates. Non-response is the ordinary case
 
-**Day 21 is derived, not typed.** Longest confirmed wait in the table, 45
-calendar days — halved, 22 — rounded down to whole weeks, **21**.
+**Day 21 is derived, not typed.** 45 calendar days in `lead_times.toml`, cited
+to Union Pacific — halved, 22 — rounded to whole weeks, **21**.
 
 Tex. Occ. Code §§ 1071.3585 and 1071.358 · nothing in it touches client data
 
@@ -895,6 +895,11 @@ Tex. Occ. Code §§ 1071.3585 and 1071.358 · nothing in it touches client data
 
 Live: `python -m corridor_screen.roe --show` from the corridor-screen folder.
 It reads from disk and makes no network call.
+
+"With no human action" is a real claim, so point at the thing that makes it
+one: .github/workflows/roe-followup.yml reads the same clock daily on a
+schedule. If request 2 turned up in a run summary on 4 October and nobody
+started it, open the run. That is the evidence; the command is the rehearsal.
 
 If the live demo is cut, play the recording and say plainly that it is a
 recording -- corridor-screen/captures/the-letter-that-sends-itself/the-demo.txt.

@@ -1,5 +1,5 @@
   The letter that sends itself
-  ===========================
+  ============================
 
   Right of entry is not a statutory right in Texas. You have to ask,
   and when nobody answers you have to ask again. TxDOT ships a second
@@ -36,6 +36,12 @@
   21 days is 3 whole weeks, so letter two falls on the same weekday as letter one. Both
   land on a Sunday. The clock counts calendar days and knows nothing about weekends or
   holidays. It writes the letter; a person still sends it.
+
+  Nobody has to run this
+    .github/workflows/roe-followup.yml reads the same clock every day
+    on a schedule. It commits nothing, mails nothing and needs no
+    secret. If request 2 of 2 turns up in its summary on 2026-10-04
+    and nobody started it, that is the claim above, evidenced.
 
   What this does not do
     It does not mail anything. It has no address and no authority.

@@ -177,6 +177,38 @@ whether or not a person is looking.**
 If the second letter shows up in a scheduled run's summary on 4 October 2026
 and nobody started it, the segment has proved itself before the session opens.
 
+Two limits worth knowing before relying on it.
+
+**A scheduled workflow only runs from the default branch.** Until this work is
+merged to `main`, nothing is on a timer. Merged before 4 October and the
+evidence exists; merged after, and the first scheduled run is whatever day
+follows the merge.
+
+**`roe-letter-2.md` is in `.gitignore`.** On or after its day, running the
+documented command writes it onto the disk — that is the demo working. It never
+reaches a commit, because a follow-up already sitting in the repo is not a
+follow-up. The test suite checks git is not tracking it, rather than checking
+the file is absent, so a run past day 21 does not turn the suite red four days
+before the session.
+
+## On the name "Hermes"
+
+**The block is called Hermes and what runs it is a cron job.** Saying so here
+rather than leaving somebody to find out.
+
+[The plan of record](../plan-of-record.md) settles two things about this
+segment: decision 2 names "Claude Code as the spine + Hermes (Nous Research)
+for autonomous work," and decision 16 files the ROE letters as "the Hermes
+beat." What is built is a GitHub Actions schedule reading a clock. It is
+genuinely autonomous — nobody starts it — and it is not Hermes.
+
+That is a gap between a locked decision and a delivered thing, and this page is
+not the place it gets closed. It is **Rick's call**, and there are three
+honest ways out: run the segment on Hermes as decision 2 says; keep the cron
+job and record the substitution in an ADR under `docs/adr/`; or keep the name
+as the session's label for the block and say plainly on stage what is behind
+it. Naming it is the part that could not wait.
+
 ---
 
 Built under [issue #34](https://github.com/RickSmith/survey-recon/issues/34).
