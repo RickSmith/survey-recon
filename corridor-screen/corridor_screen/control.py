@@ -64,7 +64,7 @@ real, and it is the 3DEP shape of failure recorded in
 
 from datetime import datetime, timezone
 
-from .arcgis import attribute
+from .arcgis import attribute, from_compact_date
 from .geometry import FEET_PER_MILE, point_of, point_to_paths_miles
 from .output import not_screened
 from .sources import NGS_MARK_FIELDS, TXDOT_CONTROL_FIELDS
@@ -170,28 +170,6 @@ def recovery_of(condition):
     return RECOVERY_REPORTED
 
 
-def _recovered_on(value):
-    """The recovery date, as a date a person can read.
-
-    The service publishes ``19950413``. That is a date, and on a projector it
-    reads as a number. Eight digits are written out as ``1995-04-13``; anything
-    else is passed through exactly as the service sent it, because a value this
-    code does not recognize is not a value it should be rewriting.
-
-    The date matters as much as the condition beside it. ``GOOD`` recovered in
-    1952 and ``GOOD`` recovered in 2019 are not the same promise.
-
-    This is the one field in a mark that is not verbatim, and the trade is the
-    same one ``output.write`` already makes with ``ensure_ascii=False``: the
-    output file is meant to be read by a person, so readability wins where the
-    change is total and the fallback is obvious. Both halves are testable and
-    the raw value is in the cached response either way.
-    """
-    if isinstance(value, str) and len(value) == 8 and value.isdigit():
-        return f"{value[0:4]}-{value[4:6]}-{value[6:8]}"
-    return value
-
-
 def to_mark(feature, point, distance_ft, source_name=None):
     """One NGS mark, in the shape the output file uses.
 
@@ -213,7 +191,7 @@ def to_mark(feature, point, distance_ft, source_name=None):
         # published nothing -- never rewritten into a shorter list of values.
         "condition": condition,
         "recovery": recovery_of(condition),
-        "last_recovered": _recovered_on(read("last_recovered")),
+        "last_recovered": from_compact_date(read("last_recovered")),
         "last_recovered_by": read("last_recovered_by"),
         "designation": read("designation"),
         "stamping": read("stamping"),

@@ -32,6 +32,7 @@ and the flags that hang off it, from
 | ROW map sheets over the corridor, and how far back they go | yes |
 | The crew safety sheet — nearest hospital, EMS and police | yes |
 | The whole tool replaying offline, checked against the live run | yes |
+| One genuinely live call, cross-checked against the capture | yes |
 | TxDOT primary control points, on layer 67 | yes |
 | Roadway facts — ROW_MIN, lanes, traffic | not yet, a separate work order |
 | SVG renderings | not yet |
@@ -114,6 +115,33 @@ the network taken away** — not politely asked for, actually removed, at the
 level below every library that could reach for it. See `tests/test_offline.py`.
 That test is the one that would catch a stray live call before a session rather
 than during one.
+
+## The one call that stays live
+
+Everything above replays from disk. This one goes out to NGS while you watch:
+
+```bash
+python -m corridor_screen.live_check --out ../project-sh16
+```
+
+It is worth making because **it asks a different NGS endpoint than the screening
+run uses** — the Data Explorer API with a point and a radius, against the
+datasheets feature service with a corridor. Different service, different query,
+different spellings of the same fields. So when the two agree about a mark, that
+is a cross-check rather than a recording agreeing with itself.
+
+Run on 2026-09-13 against the committed capture: 5 marks appear in both, and
+**all 5 conditions agree** — `MARK NOT FOUND` on every one.
+
+A mark in one and not the other is ordinary, and never reported as a
+disagreement: a circle around the midpoint and a 300-foot ribbon are different
+questions. A condition that *has* changed is printed loudly and is not an error
+— it means NGS updated a record since the capture, which is the tool being right
+about how old its data is.
+
+**If there is no network,** it says so and says the screening run is unaffected.
+That is why it is a separate command and not a mode: the worst a dead network
+can do is cost the live moment.
 
 ## Reading the output
 

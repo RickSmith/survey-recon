@@ -109,6 +109,26 @@ def from_epoch_ms(value):
     return (EPOCH + timedelta(milliseconds=value)).date().isoformat()
 
 
+def from_compact_date(value):
+    """``20020308`` written out as ``2002-03-08``.
+
+    NGS publishes its recovery dates as eight digits in a string, on both of
+    the endpoints this tool calls -- ``LAST_RECV`` on the datasheets feature
+    service and ``lastRecovered`` on the Data Explorer API. On a projector,
+    eight digits read as a number rather than a date.
+
+    Anything this does not recognize is passed through exactly as it arrived. A
+    value this code cannot read is not a value it should be rewriting.
+
+    It lives here beside ``attribute`` and ``from_epoch_ms``, for the reason
+    written above those: all three are about reading what a service actually
+    sent, two callers need this one, and neither of them owns it.
+    """
+    if isinstance(value, str) and len(value) == 8 and value.isdigit():
+        return f"{value[0:4]}-{value[4:6]}-{value[6:8]}"
+    return value
+
+
 def _encode(params):
     return urllib.parse.urlencode({k: v for k, v in params.items() if v is not None})
 

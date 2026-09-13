@@ -657,9 +657,11 @@ TXDOT_CONTROL_FIELDS = {
 # are layer 14 and also layer 49. Ambulance services are 15 and also 50. Fire
 # and EMS are 16 and also 51. Police stations are 18 and also 53.
 #
-# Read live on 2026-09-13, both copies of all four answered the same box with
-# the same count: 17 hospitals, 13 ambulance services, 31 fire or EMS stations,
-# 13 police stations. Both are plain point feature layers with the same fields.
+# Read live on 2026-09-13 against the tool's own 25-mile envelope, both copies of
+# all four answered with the same count: 33 hospitals, 33 ambulance services,
+# 140 fire or EMS stations, 57 police stations -- the same four figures the
+# data-source page quotes, because it is the same box. Both are plain point
+# feature layers with the same fields.
 #
 # So this is a trap that does not bite -- but only because it was checked. The
 # lower set is used, which is what specification section 6 names and what the
@@ -787,3 +789,38 @@ SAFETY_FIELDS = {
     # the place is still open.
     "load_date": "LOADDATE",
 }
+
+
+# -- The one call that stays live -------------------------------------------
+#
+# Issue #20, and the plan of record's own words: "Keep one genuinely live call
+# -- NGS `/radial` was the most reliable endpoint tested. One live moment proves
+# it isn't a movie."
+#
+# This is the NGS **Data Explorer API**, not the datasheets feature service the
+# screening run uses. That difference is the point rather than an oversight:
+# two endpoints, two services, two spellings of the same fields, and when they
+# agree about a mark that is a cross-check rather than a recording agreeing
+# with itself. The account of why the *run* uses the feature service instead is
+# in the control section above, and none of it changes -- this one is asked
+# once, by hand, to prove the wires are real.
+#
+# Not an ArcGIS service, so it has no layer and no `/query`. `base_url` is the
+# whole endpoint and `live_check.fetch` calls it directly. Read live on
+# 2026-09-13: HTTP 200 in half a second, 13 marks within two miles of the SH16
+# corridor midpoint, answered as a plain JSON list.
+#
+# Written up in `docs/data-sources/ngs-datasheets.md`.
+
+NGS_RADIAL = Source(
+    name="NGS_Data_Explorer",
+    base_url="https://geodesy.noaa.gov/api/nde/radial",
+    layer_id=None,
+    purpose="live-check",
+    required_fields=(),
+    note=(
+        "A point and a radius, answered as a JSON list. Fields are camel case "
+        "here -- `condition`, `lastRecovered` -- where the feature service "
+        "answers `LAST_COND` and `LAST_RECV`. Caps at 500 records."
+    ),
+)

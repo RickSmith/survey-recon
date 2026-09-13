@@ -1,9 +1,9 @@
 {
   "schema_version": "0.1.0",
   "run": {
-    "run_id": "texas-bexar-sh0016-kg-20260913T065745",
-    "started_at": "2026-09-13T06:57:45-05:00",
-    "finished_at": "2026-09-13T06:58:06-05:00",
+    "run_id": "texas-bexar-sh0016-kg-20260913T070646",
+    "started_at": "2026-09-13T07:06:46-05:00",
+    "finished_at": "2026-09-13T07:07:07-05:00",
     "status": "complete",
     "stopped_at_service": null,
     "mode": "live",
@@ -129,12 +129,12 @@
       "layer_id": 0,
       "purpose": "alignment",
       "ping": "ok",
-      "ping_ms": 203,
+      "ping_ms": 218,
       "ping_detail": "",
       "status": "ok",
       "attempts": 1,
       "record_count": 1,
-      "captured_at": "2026-09-13T06:57:55-05:00",
+      "captured_at": "2026-09-13T07:06:55-05:00",
       "cache_files": [
         "txdot-roadways/route-sh0016-kg-offset-0__8b09a7137241"
       ],
@@ -147,12 +147,12 @@
       "layer_id": null,
       "purpose": "buffer",
       "ping": "ok",
-      "ping_ms": 281,
+      "ping_ms": 266,
       "ping_detail": "",
       "status": "ok",
       "attempts": 1,
       "record_count": 1,
-      "captured_at": "2026-09-13T06:57:55-05:00",
+      "captured_at": "2026-09-13T07:06:56-05:00",
       "cache_files": [
         "arcgis-geometry/corridor-buffer-300ft__411deacfd794"
       ],
@@ -165,12 +165,12 @@
       "layer_id": 0,
       "purpose": "parcels",
       "ping": "ok",
-      "ping_ms": 250,
+      "ping_ms": 311,
       "ping_detail": "",
       "status": "ok",
       "attempts": 1,
       "record_count": 530,
-      "captured_at": "2026-09-13T06:57:56-05:00",
+      "captured_at": "2026-09-13T07:06:56-05:00",
       "cache_files": [
         "bcad-parcels/parcels-offset-0__6ba49c286d84"
       ],
@@ -188,7 +188,7 @@
       "status": "ok",
       "attempts": 1,
       "record_count": 39,
-      "captured_at": "2026-09-13T06:57:57-05:00",
+      "captured_at": "2026-09-13T07:06:58-05:00",
       "cache_files": [
         "usgs-structures-schools/flag-school-offset-0__48ba8dc13de5"
       ],
@@ -206,12 +206,12 @@
       "layer_id": 2,
       "purpose": "flag:cemetery",
       "ping": "ok",
-      "ping_ms": 578,
+      "ping_ms": 421,
       "ping_detail": "",
       "status": "ok",
       "attempts": 1,
       "record_count": 6,
-      "captured_at": "2026-09-13T06:57:58-05:00",
+      "captured_at": "2026-09-13T07:06:58-05:00",
       "cache_files": [
         "usgs-structures-cemeteries/flag-cemetery-offset-0__2e07a8e3c809"
       ],
@@ -229,12 +229,12 @@
       "layer_id": 38,
       "purpose": "flag:railroad",
       "ping": "ok",
-      "ping_ms": 358,
+      "ping_ms": 469,
       "ping_detail": "",
       "status": "ok",
       "attempts": 1,
       "record_count": 0,
-      "captured_at": "2026-09-13T06:57:58-05:00",
+      "captured_at": "2026-09-13T07:06:59-05:00",
       "cache_files": [
         "usgs-transportation-railroads/flag-railroad-offset-0__8218960c572c"
       ],
@@ -252,12 +252,12 @@
       "layer_id": 0,
       "purpose": "flag:pipeline",
       "ping": "ok",
-      "ping_ms": 188,
+      "ping_ms": 186,
       "ping_detail": "",
       "status": "ok",
       "attempts": 1,
       "record_count": 0,
-      "captured_at": "2026-09-13T06:57:59-05:00",
+      "captured_at": "2026-09-13T07:06:59-05:00",
       "cache_files": [
         "rrc-tpms-pipelines/flag-pipeline-offset-0__b0a8a869ab57"
       ],
@@ -275,12 +275,12 @@
       "layer_id": 1,
       "purpose": "control:ngs",
       "ping": "ok",
-      "ping_ms": 203,
+      "ping_ms": 235,
       "ping_detail": "",
       "status": "ok",
       "attempts": 1,
       "record_count": 31,
-      "captured_at": "2026-09-13T06:57:59-05:00",
+      "captured_at": "2026-09-13T07:07:00-05:00",
       "cache_files": [
         "ngs-datasheets/ngs-marks-offset-0__30b895696892"
       ],
@@ -298,12 +298,12 @@
       "layer_id": 67,
       "purpose": "control:txdot",
       "ping": "ok",
-      "ping_ms": 171,
+      "ping_ms": 311,
       "ping_detail": "",
       "status": "ok",
       "attempts": 2,
       "record_count": 8,
-      "captured_at": "2026-09-13T06:58:00-05:00",
+      "captured_at": "2026-09-13T07:07:00-05:00",
       "cache_files": [
         "txdot-primary-control-points/txdot-control-offset-0__b994285d5935",
         "txdot-primary-control-points/txdot-control-attachments__f04e379578c8"
@@ -322,12 +322,12 @@
       "layer_id": 0,
       "purpose": "row-maps",
       "ping": "ok",
-      "ping_ms": 156,
+      "ping_ms": 141,
       "ping_detail": "",
       "status": "ok",
       "attempts": 1,
       "record_count": 69,
-      "captured_at": "2026-09-13T06:58:02-05:00",
+      "captured_at": "2026-09-13T07:07:02-05:00",
       "cache_files": [
         "txdot-row-maps/row-map-sheets-offset-0__da3f2c441bf2"
       ],
@@ -345,12 +345,12 @@
       "layer_id": 14,
       "purpose": "safety:hospital",
       "ping": "ok",
-      "ping_ms": 343,
+      "ping_ms": 358,
       "ping_detail": "",
       "status": "ok",
       "attempts": 1,
       "record_count": 33,
-      "captured_at": "2026-09-13T06:58:04-05:00",
+      "captured_at": "2026-09-13T07:07:04-05:00",
       "cache_files": [
         "usgs-structures-hospitals/safety-hospital-offset-0__9313006ef86e"
       ],
@@ -368,12 +368,12 @@
       "layer_id": 15,
       "purpose": "safety:ambulance",
       "ping": "ok",
-      "ping_ms": 375,
+      "ping_ms": 328,
       "ping_detail": "",
       "status": "ok",
       "attempts": 1,
       "record_count": 33,
-      "captured_at": "2026-09-13T06:58:04-05:00",
+      "captured_at": "2026-09-13T07:07:05-05:00",
       "cache_files": [
         "usgs-structures-ambulance/safety-ambulance-offset-0__a9fa7068d02e"
       ],
@@ -391,12 +391,12 @@
       "layer_id": 16,
       "purpose": "safety:fire_ems",
       "ping": "ok",
-      "ping_ms": 343,
+      "ping_ms": 344,
       "ping_detail": "",
       "status": "ok",
       "attempts": 1,
       "record_count": 140,
-      "captured_at": "2026-09-13T06:58:05-05:00",
+      "captured_at": "2026-09-13T07:07:06-05:00",
       "cache_files": [
         "usgs-structures-fire-ems/safety-fire-ems-offset-0__5806afb64dbb"
       ],
@@ -414,12 +414,12 @@
       "layer_id": 18,
       "purpose": "safety:police",
       "ping": "ok",
-      "ping_ms": 375,
+      "ping_ms": 358,
       "ping_detail": "",
       "status": "ok",
       "attempts": 1,
       "record_count": 57,
-      "captured_at": "2026-09-13T06:58:06-05:00",
+      "captured_at": "2026-09-13T07:07:07-05:00",
       "cache_files": [
         "usgs-structures-police/safety-police-offset-0__ae2e7e14254c"
       ],

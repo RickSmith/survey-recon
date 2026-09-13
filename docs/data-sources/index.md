@@ -50,3 +50,9 @@ Verified research notes live in
   one output here nobody prices, and the caveat it carries is the one that could
   get somebody hurt: every distance on it is a straight line, and an ambulance
   drives roads.
+- **The NGS Data Explorer API** — the one call that stays live, so a session can
+  show the wires are real. It is a second NGS endpoint, not a second source: the
+  screening run uses the datasheets feature service, and the account of why the
+  tool reads one and cross-checks against the other is on
+  [the NGS datasheets page](ngs-datasheets.md). Kept under
+  [issue #20](https://github.com/RickSmith/survey-recon/issues/20).

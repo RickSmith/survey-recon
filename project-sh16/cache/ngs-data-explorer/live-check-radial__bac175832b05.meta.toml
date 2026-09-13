@@ -1,0 +1,18 @@
+# Provenance record. The response file beside this one is exactly what the
+# server sent and is never edited. Every parameter of the request is listed
+# under [request_params], so the call can be repeated and checked.
+service = "NGS_Data_Explorer"
+cache_key = "ngs-data-explorer/live-check-radial__bac175832b05"
+request_method = "GET"
+request_url = "https://geodesy.noaa.gov/api/nde/radial"
+captured_at = 2026-09-13T07:12:52-05:00
+http_status = 200
+response_bytes = 17886
+record_count = 13
+warnings = []
+
+[request_params]
+lat = "29.528488"
+lon = "-98.644635"
+radius = 2.0
+units = "MILE"
