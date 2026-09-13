@@ -53,6 +53,7 @@ nav:
       - The NGS datasheets service: data-sources/ngs-datasheets.md
       - The TxDOT control points service: data-sources/txdot-control-points.md
       - The TxDOT ROW map sheet index: data-sources/row-map-sheets.md
+      - The crew safety services: data-sources/crew-safety.md
   - Toolkit: toolkit/index.md
   - Governance:
       - governance/index.md

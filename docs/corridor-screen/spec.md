@@ -1,7 +1,7 @@
 # Corridor screening — specification
 
 **Status:** settled 2026-09-12, from the grilling on [issue #5](https://github.com/RickSmith/survey-recon/issues/5).
-**Amended:** 2026-09-13 — section 6, the pipeline source; section 8, how a returned record is tested against the corridor; section 10, the parcel field names, and nine additions for the flags. See the notes there.
+**Amended:** 2026-09-13 — section 5, the crew safety step; section 6, the pipeline source and the crew safety layers; section 8, how a returned record is tested against the corridor; section 10, the parcel field names, the ROW map block, the `crew_safety` block, and nine additions for the flags. See the notes there.
 **Scope of work for:** the `corridor-screen/` tool.
 
 A note on words. A **spec** is a scope of work. A **schema** is an agreed field list — the column headings on a parcel table that everybody uses the same way. An **endpoint** is the web address you ask a question of. A **cache** is a saved copy of an answer you already got. Everything else is in [CONTEXT.md](https://github.com/RickSmith/survey-recon/blob/main/CONTEXT.md).
@@ -103,12 +103,24 @@ We additionally request the buffer polygon **once** and cache it, so there is a 
 3  Buffer                   fetch and cache the corridor polygon
 4  Parcels                  the spine everything joins to
 5  Roadway facts            ROW_MIN, lanes, traffic
-6  Flags                    schools, cemeteries, railroads, pipelines, hospitals, EMS, historic
+6  Flags                    schools, cemeteries, railroads, pipelines, historic
 7  Control                  NGS marks, TxDOT primary control points
 8  ROW map sheets           the least reliable host, deliberately last
+9  Crew safety              nearest hospital, ambulance, fire and EMS, police
 ```
 
-**The reason, recorded.** Parcels are the spine — every flag joins to a parcel, so nothing useful exists before step 4. Control and ROW sheets are independent of the parcel list, so a failure there costs the least, and they go last.
+**The reason, recorded.** Parcels are the spine — every flag joins to a parcel, so nothing useful exists before step 4. Control, ROW sheets and the crew safety sheet are independent of the parcel list, so a failure there costs the least, and they go last.
+
+!!! note "Amended 2026-09-13, on [PR #57](https://github.com/RickSmith/survey-recon/pull/57)"
+    Until then step 6 read "schools, cemeteries, railroads, pipelines, **hospitals, EMS**, historic" and there was no step 9.
+
+    Hospitals and EMS were filed here as flags, which are things that hang off a parcel and cost days of notice. [#18](https://github.com/RickSmith/survey-recon/issues/18) is blunt that they are neither: "This is a different output from the flagged parcel list. It answers a field-crew safety question, not a bid question, and a party chief actually uses it."
+
+    They are a step of their own now, writing their own `crew_safety` block and attached to no parcel. A hospital does not belong in a column of notice periods, and the question it answers is asked by a different person on a different day.
+
+    It also changes what "nearest" has to mean. A flag is on a parcel or adjacent to it; the nearest hospital to a rural corridor is neither, and may be twenty miles away. So the safety step asks about a far wider box than any other step here — see section 6.
+
+    Raised on the pull request rather than patched over. Rick ruled on 2026-09-13.
 
 **The ping exists because last is not soon enough to find out.** Our research recorded `maps.dot.state.tx.us` failing and then succeeding minutes later. A five-second ping tells you the host is blocking today *before* you spend ninety seconds building a run you are about to abandon. The ping result is recorded in the output.
 
@@ -125,9 +137,21 @@ Every endpoint below was queried live on 2026-09-12 and returned real results. F
 | Control | `Primary_Control_Points` — **the San Antonio district's**, see below | **67** |
 | Control | NGS Data Explorer `/radial`, and the NGS datasheets feature service | 1 |
 | ROW sheets | `ROW_Maps_CL_2017` on `maps.dot.state.tx.us` | 0 |
-| Cemeteries · Historic · Hospitals · Ambulance · Fire and EMS · Schools | USGS `structures` | 2 · 11 · 14 · 15 · 16 · 23 |
+| Cemeteries · Historic · Schools | USGS `structures` | 2 · 11 · 23 |
+| Hospitals · Ambulance · Fire and EMS · **Police** | USGS `structures`, for the crew safety sheet | 14 · 15 · 16 · **18** |
 | Railroads | USGS `transportation` | 38 |
 | Pipelines | **TPMS** `rrc_public/tpms` on `gis.rrc.texas.gov`, the Railroad Commission of Texas | 0 |
+
+!!! note "Amended 2026-09-13, on [PR #57](https://github.com/RickSmith/survey-recon/pull/57)"
+    Until then one row read "Cemeteries · Historic · **Hospitals · Ambulance · Fire and EMS** · Schools — 2 · 11 · 14 · 15 · 16 · 23," with no police layer anywhere in this table.
+
+    **Police is added.** [#18](https://github.com/RickSmith/survey-recon/issues/18) asks for "nearest hospital, nearest EMS, nearest police" in as many words. `Police Stations` is layer **18** on the same server. Layer 17 is the `Law Enforcement` group above it, and layer 19 is `Prisons/Correctional Facilities`, which is not what was asked for.
+
+    **The row is split in two**, because the two halves are now different steps and are asked different questions. Cemeteries, historic sites and schools are flags: things on a parcel, costing notice. Hospitals, ambulance, fire and EMS and police are the crew safety sheet, step 9, asked about a box **25 miles** around the corridor rather than about the ribbon — because the nearest hospital to a rural corridor is not in the corridor, and a box sized to the ribbon would find nothing that read like an answer.
+
+    **Two findings about this server, from reading it rather than the docs.** Every layer on it exists twice, once under a `Labels` group and once under `Features`, so hospitals are layer 14 *and* layer 49. Queried live on the tool's own 25-mile envelope, both copies of all four returned identical counts and identical identifier sets. And USGS splits EMS across **two** layers that return genuinely different places here, so both are asked; answering "nearest EMS" from one of them would have been half the question.
+
+    Written up on [the crew safety services](../data-sources/crew-safety.md). Raised on the pull request rather than patched over. Rick ruled on 2026-09-13.
 
 **Layer numbers are load-bearing.** Control is layer 67. TxDOT land parcels is layer 328. Section 8 checks this at startup, before any query is sent.
 
@@ -269,8 +293,23 @@ One JSON file. JSON is a plain text format that both a person and a program can 
 
 ```
 schema_version   run   alignment   corridor   roadway
-services   control   row_maps   parcels   corridor_flags   warnings
+services   control   row_maps   crew_safety   parcels   corridor_flags   warnings
 ```
+
+!!! note "Amended 2026-09-13, on [PR #57](https://github.com/RickSmith/survey-recon/pull/57)"
+    Until then this list had ten keys and no `crew_safety`.
+
+    It is a block of its own rather than a field on a parcel row, which is the whole point of [#18](https://github.com/RickSmith/survey-recon/issues/18): a party chief reads it before the crew drives out, and an estimator never reads it at all.
+
+    It carries `search_radius_mi`, `by_type` — one entry per kind of help, each with its `nearest`, the two behind it, and a count of records that arrived with no position — `not_found_within_the_radius`, `not_checked`, and `notes`.
+
+    **Three answers per kind, never two.** Found; or asked with nothing inside the radius, which is named in `not_found_within_the_radius` and read against `search_radius_mi`; or never asked, which is named in `not_checked` and reported nowhere as absent. "None within 25 miles" and "there is no hospital" are different claims and only one of them is checkable — and here the cost of confusing them is a crew that believes it has no cover.
+
+    **Every distance in it is a straight line**, and `notes` says so in the file rather than only in the documentation, because the person who needs that caveat is standing on a road. Each place carries three of them: to the nearest point of the centerline, and to each end of the corridor. On SH16 the nearest hospital is 2.05 miles from the line and from the south end, and **7.99 miles from the north end** — one number would have been tidier and would have been wrong at one end.
+
+    `run` also gains `safety_search_miles`, the fourth stated distance, so all four sit together where a reader compares them.
+
+    Raised on the pull request rather than patched over. Rick ruled on 2026-09-13.
 
 ### `run`
 

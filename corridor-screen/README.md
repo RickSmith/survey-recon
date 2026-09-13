@@ -30,7 +30,9 @@ and the flags that hang off it, from
 | The longest wait on a parcel, without arithmetic | yes |
 | NGS marks in the corridor, carrying their condition | yes |
 | ROW map sheets over the corridor, and how far back they go | yes |
-| TxDOT control points, roadway facts | not yet, separate work orders |
+| The crew safety sheet — nearest hospital, EMS and police | yes |
+| TxDOT primary control points, on layer 67 | yes |
+| Roadway facts — ROW_MIN, lanes, traffic | not yet, a separate work order |
 | SVG renderings | not yet |
 
 ## What you need to run it
@@ -55,6 +57,7 @@ python -m corridor_screen --route SH0016-KG --begin-dfo 347.7 --end-dfo 356.367 
 | `--sanity-margin-ft` | How far outside the ribbon any part of a parcel may sit before the run doubts it. Default 500 |
 | `--adjacent-distance-ft` | How close a feature must be to a parcel to earn an `adjacent` flag. Default 100 |
 | `--corridor-flag-parcels` | How many parcels one feature must cross before it is also recorded against the run. Default 5 |
+| `--safety-search-miles` | How far around the corridor to look for the nearest hospital, EMS and police. Default 25. Raise it on a rural corridor |
 | `--mode` | `live`, `cache-first` (default) or `cache-only` |
 | `--out` | Where the output file and the cache are written |
 | `--yes` | Never ask about a dead service. Stop instead. Use for unattended runs |
@@ -131,7 +134,9 @@ with the field list each one is expected to publish.
 | Railroads | USGS `transportation`, same server | **38** |
 | Pipelines | **TPMS**, Railroad Commission of Texas | 0 |
 | NGS marks | `NGS_Datasheets_Feature_Service` on `services2.arcgis.com` | 1 |
+| TxDOT control | `Primary_Control_Points`, the San Antonio district's | **67** |
 | ROW map sheets | `ROW_Maps_CL_2017` on `maps.dot.state.tx.us` | 0 |
+| Hospitals · Ambulance · Fire and EMS · Police | USGS `structures`, same server as the flags | **14 · 15 · 16 · 18** |
 
 The four flag services each have a quirk worth knowing, and two of them return
 a plausible wrong answer rather than an error. They are written up in
@@ -148,6 +153,14 @@ number — and on Windows the obvious way to read one raises an error instead of
 returning a wrong date, on exactly the oldest sheets. It is written up on
 [the ROW map sheets page](../docs/data-sources/row-map-sheets.md), together with
 why this corridor reports 15 SH16 sheets where the county reports 27.
+
+The crew safety layers sit on the same USGS server as the flags and carry a
+quirk of their own: **every layer on that server exists twice**, once under a
+`Labels` group and once under a `Features` group, so hospitals are layer 14 and
+also layer 49. Both copies answered identically when checked, which is the only
+reason it does not bite. That, and the reason every distance on that sheet is
+labeled a straight line rather than a drive, are on
+[the crew safety page](../docs/data-sources/crew-safety.md).
 
 **Layer numbers are load-bearing.** TxDOT's control points are layer 67 and its
 land parcels are layer 328. A query against layer 0 does not error — it answers

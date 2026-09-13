@@ -1,9 +1,9 @@
 {
   "schema_version": "0.1.0",
   "run": {
-    "run_id": "texas-bexar-sh0016-kg-20260913T061533",
-    "started_at": "2026-09-13T06:15:33-05:00",
-    "finished_at": "2026-09-13T06:15:38-05:00",
+    "run_id": "texas-bexar-sh0016-kg-20260913T064153",
+    "started_at": "2026-09-13T06:41:53-05:00",
+    "finished_at": "2026-09-13T06:41:59-05:00",
     "status": "complete",
     "stopped_at_service": null,
     "mode": "cache-first",
@@ -11,6 +11,7 @@
     "half_width_ft": 300,
     "adjacent_distance_ft": 100,
     "sanity_margin_ft": 500.0,
+    "safety_search_miles": 25.0,
     "area": "texas-bexar",
     "not_screenable": [
       {
@@ -128,7 +129,7 @@
       "layer_id": 0,
       "purpose": "alignment",
       "ping": "ok",
-      "ping_ms": 233,
+      "ping_ms": 296,
       "ping_detail": "",
       "status": "ok",
       "attempts": 0,
@@ -146,7 +147,7 @@
       "layer_id": null,
       "purpose": "buffer",
       "ping": "ok",
-      "ping_ms": 281,
+      "ping_ms": 265,
       "ping_detail": "",
       "status": "ok",
       "attempts": 0,
@@ -164,7 +165,7 @@
       "layer_id": 0,
       "purpose": "parcels",
       "ping": "ok",
-      "ping_ms": 281,
+      "ping_ms": 219,
       "ping_detail": "",
       "status": "ok",
       "attempts": 0,
@@ -182,7 +183,7 @@
       "layer_id": 23,
       "purpose": "flag:school",
       "ping": "ok",
-      "ping_ms": 468,
+      "ping_ms": 578,
       "ping_detail": "",
       "status": "ok",
       "attempts": 0,
@@ -205,7 +206,7 @@
       "layer_id": 2,
       "purpose": "flag:cemetery",
       "ping": "ok",
-      "ping_ms": 375,
+      "ping_ms": 468,
       "ping_detail": "",
       "status": "ok",
       "attempts": 0,
@@ -228,7 +229,7 @@
       "layer_id": 38,
       "purpose": "flag:railroad",
       "ping": "ok",
-      "ping_ms": 358,
+      "ping_ms": 389,
       "ping_detail": "",
       "status": "ok",
       "attempts": 0,
@@ -251,7 +252,7 @@
       "layer_id": 0,
       "purpose": "flag:pipeline",
       "ping": "ok",
-      "ping_ms": 296,
+      "ping_ms": 264,
       "ping_detail": "",
       "status": "ok",
       "attempts": 0,
@@ -274,7 +275,7 @@
       "layer_id": 1,
       "purpose": "control:ngs",
       "ping": "ok",
-      "ping_ms": 360,
+      "ping_ms": 218,
       "ping_detail": "",
       "status": "ok",
       "attempts": 0,
@@ -297,7 +298,7 @@
       "layer_id": 67,
       "purpose": "control:txdot",
       "ping": "ok",
-      "ping_ms": 375,
+      "ping_ms": 281,
       "ping_detail": "",
       "status": "ok",
       "attempts": 0,
@@ -321,7 +322,7 @@
       "layer_id": 0,
       "purpose": "row-maps",
       "ping": "ok",
-      "ping_ms": 203,
+      "ping_ms": 140,
       "ping_detail": "",
       "status": "ok",
       "attempts": 0,
@@ -336,6 +337,98 @@
         "over_corridor": 69,
         "without_shape": 0,
         "unused": 0
+      }
+    },
+    {
+      "name": "USGS_Structures_Hospitals",
+      "url": "https://carto.nationalmap.gov/arcgis/rest/services/structures/MapServer/14",
+      "layer_id": 14,
+      "purpose": "safety:hospital",
+      "ping": "ok",
+      "ping_ms": 359,
+      "ping_detail": "",
+      "status": "ok",
+      "attempts": 0,
+      "record_count": 33,
+      "captured_at": "2026-09-13T06:23:24-05:00",
+      "cache_files": [
+        "usgs-structures-hospitals/safety-hospital-offset-0__9313006ef86e"
+      ],
+      "warnings": [],
+      "records_used": {
+        "returned": 33,
+        "kept": 3,
+        "without_position": 0,
+        "unused": 30
+      }
+    },
+    {
+      "name": "USGS_Structures_Ambulance",
+      "url": "https://carto.nationalmap.gov/arcgis/rest/services/structures/MapServer/15",
+      "layer_id": 15,
+      "purpose": "safety:ambulance",
+      "ping": "ok",
+      "ping_ms": 406,
+      "ping_detail": "",
+      "status": "ok",
+      "attempts": 0,
+      "record_count": 33,
+      "captured_at": "2026-09-13T06:23:25-05:00",
+      "cache_files": [
+        "usgs-structures-ambulance/safety-ambulance-offset-0__a9fa7068d02e"
+      ],
+      "warnings": [],
+      "records_used": {
+        "returned": 33,
+        "kept": 3,
+        "without_position": 0,
+        "unused": 30
+      }
+    },
+    {
+      "name": "USGS_Structures_Fire_EMS",
+      "url": "https://carto.nationalmap.gov/arcgis/rest/services/structures/MapServer/16",
+      "layer_id": 16,
+      "purpose": "safety:fire_ems",
+      "ping": "ok",
+      "ping_ms": 343,
+      "ping_detail": "",
+      "status": "ok",
+      "attempts": 0,
+      "record_count": 140,
+      "captured_at": "2026-09-13T06:23:25-05:00",
+      "cache_files": [
+        "usgs-structures-fire-ems/safety-fire-ems-offset-0__5806afb64dbb"
+      ],
+      "warnings": [],
+      "records_used": {
+        "returned": 140,
+        "kept": 3,
+        "without_position": 0,
+        "unused": 137
+      }
+    },
+    {
+      "name": "USGS_Structures_Police",
+      "url": "https://carto.nationalmap.gov/arcgis/rest/services/structures/MapServer/18",
+      "layer_id": 18,
+      "purpose": "safety:police",
+      "ping": "ok",
+      "ping_ms": 343,
+      "ping_detail": "",
+      "status": "ok",
+      "attempts": 0,
+      "record_count": 57,
+      "captured_at": "2026-09-13T06:23:26-05:00",
+      "cache_files": [
+        "usgs-structures-police/safety-police-offset-0__ae2e7e14254c"
+      ],
+      "warnings": [],
+      "records_used": {
+        "returned": 57,
+        "kept": 3,
+        "without_position": 0,
+        "unused": 54
       }
     }
   ],
@@ -2006,6 +2099,227 @@
         "distance_from_centerline_ft": 0.0,
         "source_service": "TxDOT_ROW_Maps",
         "warnings": []
+      }
+    ]
+  },
+  "crew_safety": {
+    "search_radius_mi": 25.0,
+    "by_type": {
+      "hospital": {
+        "nearest": {
+          "name": "Audie L Murphy Veterans Affairs Hospital",
+          "address": "7400 Merton Minter Boulevard",
+          "city": "San Antonio",
+          "state": "TX",
+          "zipcode": "78284",
+          "distance_from_centerline_mi": 2.05,
+          "distance_from_start_mi": 7.99,
+          "distance_from_end_mi": 2.05,
+          "longitude": -98.58039079768315,
+          "latitude": 29.506997036989983,
+          "source_load_date": "2020-04-08",
+          "usgs_id": "e669faa0-3c48-44c9-8f82-bfbbb4ceae01",
+          "source_service": "USGS_Structures_Hospitals"
+        },
+        "others": [
+          {
+            "name": "University Hospital",
+            "address": "4502 Medical Drive",
+            "city": "San Antonio",
+            "state": "TX",
+            "zipcode": "78229",
+            "distance_from_centerline_mi": 2.21,
+            "distance_from_start_mi": 8.05,
+            "distance_from_end_mi": 2.21,
+            "longitude": -98.57807138175554,
+            "latitude": 29.50831257390776,
+            "source_load_date": "2020-11-19",
+            "usgs_id": "c88d4922-037c-4d15-b6bd-e501154c2b9d",
+            "source_service": "USGS_Structures_Hospitals"
+          },
+          {
+            "name": "Warm Springs Rehabilitation Hospital of San Antonio",
+            "address": "5101 Medical Drive",
+            "city": "San Antonio",
+            "state": "TX",
+            "zipcode": "78229",
+            "distance_from_centerline_mi": 2.21,
+            "distance_from_start_mi": 7.39,
+            "distance_from_end_mi": 2.31,
+            "longitude": -98.58696480008636,
+            "latitude": 29.51397703798811,
+            "source_load_date": "2020-04-08",
+            "usgs_id": "3b2a5afb-bc69-40a6-9fad-7f257a8b9b09",
+            "source_service": "USGS_Structures_Hospitals"
+          }
+        ],
+        "without_position": 0
+      },
+      "ambulance": {
+        "nearest": {
+          "name": "Alamo Area Ambulance",
+          "address": "5706 Mobud Drive",
+          "city": "San Antonio",
+          "state": "TX",
+          "zipcode": "78238-1819",
+          "distance_from_centerline_mi": 0.08,
+          "distance_from_start_mi": 8.19,
+          "distance_from_end_mi": 0.12,
+          "longitude": -98.60041770208338,
+          "latitude": 29.484039531958242,
+          "source_load_date": "2016-08-12",
+          "usgs_id": "308b2451-574f-438c-9746-e913d6d4b345",
+          "source_service": "USGS_Structures_Ambulance"
+        },
+        "others": [
+          {
+            "name": "Pulse Ambulance Service",
+            "address": "5403 Jackwood Drive",
+            "city": "San Antonio",
+            "state": "TX",
+            "zipcode": "78238-1809",
+            "distance_from_centerline_mi": 0.14,
+            "distance_from_start_mi": 8.06,
+            "distance_from_end_mi": 0.24,
+            "longitude": -98.60170890184521,
+            "latitude": 29.48542923165157,
+            "source_load_date": "2016-08-12",
+            "usgs_id": "39ca39b3-44ee-47ef-85f4-ae9a3bedd82e",
+            "source_service": "USGS_Structures_Ambulance"
+          },
+          {
+            "name": "Allegiance Mobile Health",
+            "address": "6502 Callaghan Road",
+            "city": "San Antonio",
+            "state": "TX",
+            "zipcode": "78229",
+            "distance_from_centerline_mi": 1.8,
+            "distance_from_start_mi": 9.06,
+            "distance_from_end_mi": 1.8,
+            "longitude": -98.57167509486162,
+            "latitude": 29.49157863440158,
+            "source_load_date": "2025-08-05",
+            "usgs_id": "e6a731a6-334e-4103-b0d2-1c6a7593e869",
+            "source_service": "USGS_Structures_Ambulance"
+          }
+        ],
+        "without_position": 0
+      },
+      "fire_ems": {
+        "nearest": {
+          "name": "Helotes Fire Department",
+          "address": "12951 Bandera Road",
+          "city": "Helotes",
+          "state": "TX",
+          "zipcode": "78023",
+          "distance_from_centerline_mi": 0.08,
+          "distance_from_start_mi": 0.8,
+          "distance_from_end_mi": 7.67,
+          "longitude": -98.6876538269596,
+          "latitude": 29.56288304373533,
+          "source_load_date": "2022-04-02",
+          "usgs_id": "e42debb6-0fad-402e-8fbc-08104f8c4d60",
+          "source_service": "USGS_Structures_Fire_EMS"
+        },
+        "others": [
+          {
+            "name": "San Antonio Fire Department Station 49",
+            "address": "8710 Mystic Park",
+            "city": "San Antonio",
+            "state": "TX",
+            "zipcode": "78254",
+            "distance_from_centerline_mi": 0.17,
+            "distance_from_start_mi": 4.44,
+            "distance_from_end_mi": 3.86,
+            "longitude": -98.64240710453835,
+            "latitude": 29.524144422411727,
+            "source_load_date": "2022-04-02",
+            "usgs_id": "75799150-a5a3-448d-bcff-4d1260b5b62a",
+            "source_service": "USGS_Structures_Fire_EMS"
+          },
+          {
+            "name": "Leon Valley Fire Department",
+            "address": "6300 El Verde Road",
+            "city": "San Antonio",
+            "state": "TX",
+            "zipcode": "78238",
+            "distance_from_centerline_mi": 0.18,
+            "distance_from_start_mi": 7.17,
+            "distance_from_end_mi": 1.23,
+            "longitude": -98.61762887046322,
+            "latitude": 29.490931800928898,
+            "source_load_date": "2020-02-23",
+            "usgs_id": "058f6627-014e-4571-91f2-7f5fcea67693",
+            "source_service": "USGS_Structures_Fire_EMS"
+          }
+        ],
+        "without_position": 0
+      },
+      "police": {
+        "nearest": {
+          "name": "Leon Valley Police Department",
+          "address": "6400 El Verde Road",
+          "city": "Leon Valley",
+          "state": "TX",
+          "zipcode": "78238",
+          "distance_from_centerline_mi": 0.06,
+          "distance_from_start_mi": 7.13,
+          "distance_from_end_mi": 1.22,
+          "longitude": -98.6164008060962,
+          "latitude": 29.492404033160117,
+          "source_load_date": "2019-03-23",
+          "usgs_id": "1ea009c6-5d34-43bd-97e6-18dabe87da54",
+          "source_service": "USGS_Structures_Police"
+        },
+        "others": [
+          {
+            "name": "Helotes Police Department",
+            "address": "12951 Bandera Road",
+            "city": "Helotes",
+            "state": "TX",
+            "zipcode": "78023",
+            "distance_from_centerline_mi": 0.07,
+            "distance_from_start_mi": 0.85,
+            "distance_from_end_mi": 7.59,
+            "longitude": -98.68639535731515,
+            "latitude": 29.562397138020316,
+            "source_load_date": "2019-01-31",
+            "usgs_id": "f9a5414e-4c93-4ed0-9db6-ecea894a1278",
+            "source_service": "USGS_Structures_Police"
+          },
+          {
+            "name": "Northside Independent School District Police Department",
+            "address": "5619 Grissom Road",
+            "city": "San Antonio",
+            "state": "TX",
+            "zipcode": "78238",
+            "distance_from_centerline_mi": 0.78,
+            "distance_from_start_mi": 7.18,
+            "distance_from_end_mi": 1.61,
+            "longitude": -98.62611730850104,
+            "latitude": 29.485867930995216,
+            "source_load_date": "2016-08-12",
+            "usgs_id": "32fcfb08-0894-4c6d-92c4-c72823dd6494",
+            "source_service": "USGS_Structures_Police"
+          }
+        ],
+        "without_position": 0
+      }
+    },
+    "not_found_within_the_radius": [],
+    "not_checked": [],
+    "notes": [
+      {
+        "topic": "these distances are straight lines",
+        "detail": "Every distance on this sheet is measured as a straight line -- to the nearest point of the centerline, and to each end of the corridor. It is not a drive time and it is not a road distance. The line does not know about the river with no crossing, the freeway with no turnaround, or the locked gate on the ranch road, and an ambulance does. Two miles here can be a twenty-minute drive. Check the route before the crew goes out."
+      },
+      {
+        "topic": "this is a screening aid, not a safety plan",
+        "detail": "This block finds published points and measures straight lines to them. It does not know opening hours, whether a hospital has an emergency department, whether an ambulance service runs at night, or what mutual-aid agreement covers the county line. It has never been near this corridor. The party chief makes the call and confirms the numbers."
+      },
+      {
+        "topic": "how old these records are",
+        "detail": "source_load_date is the day USGS loaded that record, not the day anybody checked the place is still there. On this corridor those dates run from 2016 to 2025. A station that closed in 2017 is still in a record loaded in 2016."
       }
     ]
   },

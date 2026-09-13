@@ -116,7 +116,8 @@ def skipped_service(source, reason, ping=None):
 def build(run_id, started_at, mode, half_width_ft, adjacent_distance_ft, sanity_margin_ft, tool_version,
           alignment, corridor, services, parcel_rows, warnings,
           status="complete", stopped_at_service=None, corridor_flags=(),
-          screened_for=(), lead_time_table=None, control=None, row_maps=None):
+          screened_for=(), lead_time_table=None, control=None, row_maps=None,
+          crew_safety=None, safety_search_miles=None):
     """Assemble the whole output file."""
     return {
         "schema_version": SCHEMA_VERSION,
@@ -131,6 +132,11 @@ def build(run_id, started_at, mode, half_width_ft, adjacent_distance_ft, sanity_
             "half_width_ft": half_width_ft,
             "adjacent_distance_ft": adjacent_distance_ft,
             "sanity_margin_ft": sanity_margin_ft,
+            # The fourth stated distance. It sits here with the other three
+            # rather than only inside `crew_safety`, because every distance
+            # this run was given is a number a person chose and the run block
+            # is where they are read together.
+            "safety_search_miles": safety_search_miles,
             "area": "texas-bexar",
             "not_screenable": NOT_SCREENABLE,
             "renderings": [],
@@ -161,6 +167,14 @@ def build(run_id, started_at, mode, half_width_ft, adjacent_distance_ft, sanity_
         # of answer this is. Same rule as ``control`` above.
         "row_maps": row_maps if row_maps is not None else not_screened(
             "the run did not reach the ROW map step"
+        ),
+        # Where the nearest help is, from ``safety.block``. Kept apart from the
+        # parcel rows on purpose: issue #18 is blunt that this is a different
+        # output, answering a party chief's question rather than a bid one. A
+        # hospital does not belong in a column of things that cost days of
+        # notice.
+        "crew_safety": crew_safety if crew_safety is not None else not_screened(
+            "the run did not reach the crew safety step"
         ),
         "parcels": parcel_rows,
         # Things that cost time but belong to no single parcel -- a pipeline in

@@ -638,3 +638,152 @@ TXDOT_CONTROL_FIELDS = {
     # base address published anywhere -- see `control.attachment_url`.
     "pdf_filename": "PDF_Filename",
 }
+
+
+# -- The crew safety sheet --------------------------------------------------
+#
+# Issue #18. Where the nearest help is, for the crew standing on the road --
+# not a bid question, and kept apart from the flags in the output for that
+# reason. All four layers live on the same USGS structures server the school
+# and cemetery flags already use, and they publish an identical field list.
+#
+# ----
+#
+# Every layer on this service exists twice, and the copies are identical
+# =====================================================================
+#
+# `structures/MapServer` publishes two group layers -- `Labels` at 0 and
+# `Features` at 35 -- and every feature layer appears once under each. Hospitals
+# are layer 14 and also layer 49. Ambulance services are 15 and also 50. Fire
+# and EMS are 16 and also 51. Police stations are 18 and also 53.
+#
+# Read live on 2026-09-13, both copies of all four answered the same box with
+# the same count: 17 hospitals, 13 ambulance services, 31 fire or EMS stations,
+# 13 police stations. Both are plain point feature layers with the same fields.
+#
+# So this is a trap that does not bite -- but only because it was checked. The
+# lower set is used, which is what specification section 6 names and what the
+# school and cemetery flags on this same server already use.
+#
+# ----
+#
+# Police was not in the specification, and the ticket asked for it
+# ================================================================
+#
+# Until 2026-09-13, section 6 listed this server's layers as "Cemeteries,
+# Historic, Hospitals, Ambulance, Fire and EMS, Schools -- 2, 11, 14, 15, 16,
+# 23," with no police row at all. Issue #18 asks for "nearest hospital, nearest
+# EMS, nearest police" in as many words, so `Police Stations`, layer 18, is
+# called. Layer 17 is the `Law Enforcement` group above it and layer 19 is
+# `Prisons/Correctional Facilities`, which is not what was asked for.
+#
+# Amending a settled spec is not the agent's call -- the precedent is `AcctNumb`
+# on PR #52, `NPMS` on PR #53, the control blocks on PR #54 and the ROW map
+# block on PR #56. This was raised on PR #57, and Rick ruled on 2026-09-13.
+# Section 6 now carries police, and splits that row in two: the flags and the
+# crew safety sheet are different steps, asked different questions about
+# different extents. Section 5 gained step 9 and section 10 gained the
+# `crew_safety` block on the same ruling, so this code and the specification
+# agree again.
+#
+# ----
+#
+# EMS is two layers, not one
+# ==========================
+#
+# USGS splits it. `Ambulance Services` is layer 15 and `Fire Stations/EMS
+# Stations` is layer 16, and on this corridor they return different places --
+# the nearest ambulance service is Alamo Area Ambulance and the nearest fire or
+# EMS station is Helotes Fire Department. Asking only one of them would answer
+# the ticket's "nearest EMS" with half the data, so both are asked and reported
+# separately rather than merged.
+#
+# The casing trap at the top of this section applies to all four: published in
+# capitals, answered in lower case. `arcgis.attribute` is what handles it.
+#
+# Written up in `docs/data-sources/crew-safety.md`.
+
+# All four layers publish this identical list, so it is written once. The field
+# list check reads it off each layer before any query is sent, which is what
+# would catch the wrong one of the two copies quietly changing.
+SAFETY_REQUIRED_FIELDS = (
+    "PERMANENT_IDENTIFIER",
+    "NAME",
+    "ADDRESS",
+    "CITY",
+    "STATE",
+    "ZIPCODE",
+    "LOADDATE",
+)
+
+HOSPITALS = Source(
+    name="USGS_Structures_Hospitals",
+    base_url=f"{USGS_CARTO}/structures/MapServer",
+    layer_id=14,
+    purpose="safety:hospital",
+    required_fields=SAFETY_REQUIRED_FIELDS,
+    note="Points. Also published at layer 49 under the Features group -- same data.",
+)
+
+AMBULANCE = Source(
+    name="USGS_Structures_Ambulance",
+    base_url=f"{USGS_CARTO}/structures/MapServer",
+    layer_id=15,
+    purpose="safety:ambulance",
+    required_fields=SAFETY_REQUIRED_FIELDS,
+    note="Points. One of the two layers USGS splits EMS across. Also at layer 50.",
+)
+
+FIRE_EMS = Source(
+    name="USGS_Structures_Fire_EMS",
+    base_url=f"{USGS_CARTO}/structures/MapServer",
+    layer_id=16,
+    purpose="safety:fire_ems",
+    required_fields=SAFETY_REQUIRED_FIELDS,
+    note="Points. The other half of EMS. Also at layer 51.",
+)
+
+POLICE = Source(
+    name="USGS_Structures_Police",
+    base_url=f"{USGS_CARTO}/structures/MapServer",
+    layer_id=18,
+    purpose="safety:police",
+    required_fields=SAFETY_REQUIRED_FIELDS,
+    note=(
+        "Points. Not named in specification section 6 -- issue #18 asks for it. "
+        "Layer 17 is the Law Enforcement group above it. Also at layer 53."
+    ),
+)
+
+# One safety type per source, in the order a party chief reads them. Keeping the
+# pair together means a new type is one entry here and nothing else.
+SAFETY_SOURCES = (
+    (HOSPITALS, "hospital"),
+    (AMBULANCE, "ambulance"),
+    (FIRE_EMS, "fire_ems"),
+    (POLICE, "police"),
+)
+
+# The types this tool knows about, named once. A type not on this list cannot be
+# reported on at all, which is what stops a missing key reading as "none here".
+SAFETY_TYPES = tuple(kind for _, kind in SAFETY_SOURCES)
+
+# How a safety place is built from what the structures layers publish. Left side
+# is the field name in this tool's output; right side is the field name on the
+# service. Same shape and same job as `BEXAR_PARCEL_FIELDS`, `NGS_MARK_FIELDS`
+# and `ROW_MAP_FIELDS` above. All four layers publish this identical list.
+SAFETY_FIELDS = {
+    "id": "PERMANENT_IDENTIFIER",
+    "name": "NAME",
+    # What a party chief needs beyond a name. A name with no address is a name
+    # somebody has to look up on a phone that may have no signal.
+    "address": "ADDRESS",
+    "city": "CITY",
+    "state": "STATE",
+    "zipcode": "ZIPCODE",
+    # A real date field, so milliseconds -- read through `arcgis.from_epoch_ms`,
+    # the same function TxDOT's ROW map dates go through and for the same
+    # reason. The day USGS loaded the record, never the day anybody confirmed
+    # the place is still open.
+    "load_date": "LOADDATE",
+}

@@ -28,25 +28,26 @@ it reads like one, so ``block`` writes a ``not-screened`` block instead.
 The date trap, which does not return a wrong answer -- it stops the run
 ========================================================================
 
-Every other service this tool calls publishes its dates as strings. NGS sends
-``19950413`` and ``control._recovered_on`` tidies it up. **This service
-publishes real date fields**, and ArcGIS sends a date field as milliseconds
-since 1 January 1970.
+NGS publishes its dates as strings -- ``19950413``, which
+``control._recovered_on`` tidies up. **This service publishes real date
+fields**, and ArcGIS sends a date field as milliseconds since 1 January 1970.
 
 Every sheet older than 1970 is therefore a negative number, and on SH16 that is
-two thirds of them. Handed to ``datetime.fromtimestamp`` or
-``datetime.utcfromtimestamp`` on Windows, a negative value raises ``OSError:
-[Errno 22] Invalid argument``. Not a wrong date -- an exception, on exactly the
+two thirds of them. Handed to ``datetime.fromtimestamp`` on Windows, a negative
+value raises ``OSError`` rather than returning a wrong date -- on exactly the
 oldest sheets, which are exactly the ones that put time on an estimate.
 
-Confirmed on Windows 11 with Python 3.11 on 2026-09-12, on the real value the
-service returns for the 1937 sheet. ``EPOCH + timedelta(milliseconds=...)``
-has no such limit and is what this file uses.
+The arithmetic that works, and the account of how it was confirmed, is
+``arcgis.from_epoch_ms``. It was written here first and moved when the USGS
+structures layers turned out to publish ``LOADDATE`` the same way, under
+[#18](https://github.com/RickSmith/survey-recon/issues/18). Two services need
+it and neither owns it.
 
-The service states each date twice, which is what makes the reading checkable:
-``SAT-029110-SH0016-19980306`` carries ``19980306`` in its own name, and
-``MAP_FROM_DT`` carries the same day. They agree, so the milliseconds are being
-read in the zone ArcGIS sends them in. There is a test that says so.
+What stays here is the cross-check, because it belongs to this service: it
+states each date twice. ``SAT-029110-SH0016-19980306`` carries ``19980306`` in
+its own name, and ``MAP_FROM_DT`` carries the same day. They agree, so the
+milliseconds are being read in the zone ArcGIS sends them in. There is a test
+that says so.
 
 ----
 
@@ -64,16 +65,10 @@ Counted on 2026-09-12, on the cross-check response cached at
 ``txdot-row-maps/sh16-bexar-county-wide-cross-check``.
 """
 
-from datetime import datetime, timedelta, timezone
-
-from .arcgis import attribute
+from .arcgis import attribute, from_epoch_ms
 from .geometry import FEET_PER_MILE, shape_of, shape_to_paths_miles
 from .output import not_screened
 from .sources import ROW_MAP_FIELDS
-
-# Milliseconds since here is what an ArcGIS date field carries. See the trap
-# above for why the arithmetic is done this way rather than with fromtimestamp.
-EPOCH = datetime(1970, 1, 1, tzinfo=timezone.utc)
 
 # How a sheet with no route on it appears in the breakdown. A missing key reads
 # as nothing; a named row reads as the gap it is. Same rule as
@@ -122,24 +117,6 @@ EARLIEST_DATE_DETAIL = (
     "drawing it came from. If that date is " + SUSPECT_DATE + ", check it "
     "against the drawing before quoting it."
 )
-
-
-def from_epoch_ms(value):
-    """One ArcGIS date field, as a date a person can read.
-
-    The service sends milliseconds since 1970, so anything older than 1970 is
-    negative -- and a negative value is what raises ``OSError`` on Windows in
-    the obvious implementation. See the trap in this file's own docstring.
-
-    Anything that is not a number is passed through exactly as it arrived. A
-    value this code does not recognize is not a value it should be rewriting,
-    which is the same trade ``control._recovered_on`` already makes.
-    """
-    if value is None:
-        return None
-    if isinstance(value, bool) or not isinstance(value, (int, float)):
-        return value
-    return (EPOCH + timedelta(milliseconds=value)).date().isoformat()
 
 
 def to_sheet(feature, distance_ft, source_name=None):

@@ -17,6 +17,7 @@ estimate.
 import unittest
 
 from corridor_screen import row_maps
+from corridor_screen.arcgis import from_epoch_ms
 from corridor_screen.geometry import LocalPlane
 
 PLANE = LocalPlane(29.545)
@@ -46,21 +47,27 @@ def select(features, half_width_ft=HALF_WIDTH_FT):
 
 
 class TestReadingTheDates(unittest.TestCase):
-    """The dates arrive as milliseconds since 1970, and half of them are negative."""
+    """The dates arrive as milliseconds since 1970, and half of them are negative.
+
+    The reader itself lives in ``arcgis`` -- it moved there when the USGS
+    structures layers turned out to publish ``LOADDATE`` the same way. It is
+    tested here because this is the service that found the trap, and the last
+    test is the cross-check that only this service can offer.
+    """
 
     def test_a_date_after_1970_is_read(self):
-        self.assertEqual(row_maps.from_epoch_ms(MS_1998), "1998-03-06")
+        self.assertEqual(from_epoch_ms(MS_1998), "1998-03-06")
 
     def test_a_date_before_1970_is_read_rather_than_crashing(self):
         """The trap. ``datetime.fromtimestamp`` raises ``OSError`` here on Windows."""
-        self.assertEqual(row_maps.from_epoch_ms(MS_1937), "1937-09-01")
+        self.assertEqual(from_epoch_ms(MS_1937), "1937-09-01")
 
     def test_no_date_stays_no_date(self):
-        self.assertIsNone(row_maps.from_epoch_ms(None))
+        self.assertIsNone(from_epoch_ms(None))
 
     def test_a_value_this_code_does_not_recognize_is_passed_through_untouched(self):
         """A value it cannot read is not a value it should be rewriting."""
-        self.assertEqual(row_maps.from_epoch_ms("19980306"), "19980306")
+        self.assertEqual(from_epoch_ms("19980306"), "19980306")
 
     def test_the_date_read_matches_the_date_in_the_sheets_own_name(self):
         """The cross-check that says the milliseconds were read in the right zone.
