@@ -45,15 +45,9 @@ from tests.build_up_figures import (
     rate_handles,
     rate_values,
 )
-from tests.deck_reader import noted, slides, slides_by_block
+from tests.deck_reader import block_headed, content_slides, visible, with_markup
 
 # What the block's break slide is headed, which is how this file finds it.
-#
-# Found through the deck rather than through the run of show, deliberately.
-# `test_deck.py` already holds every block of the deck to the plan of record --
-# same clock, same order, same length -- so the block this finds is the plan's
-# block, and reading the plan a second time here would be a second copy of that
-# relationship rather than a check of anything.
 THE_BLOCK = "money slide"
 
 # The unit a speaker note counts slides in. Notes in this deck are written for a
@@ -79,50 +73,19 @@ A_HANDLE_ON_A_LINE = re.compile(r"`A\d+`")
 
 def the_block():
     """Every slide of the money slide block, break slide first."""
-    for slide in slides():
-        if slide.is_a_break and THE_BLOCK in slide.heading.lower():
-            claim = noted(slide)
-            if claim:
-                return slides_by_block()[claim.time]
-    raise AssertionError(
-        f"no break slide in the deck is headed {THE_BLOCK!r}, so this file "
-        f"cannot find the block it is about"
-    )
+    return block_headed(THE_BLOCK)
 
 
-def content_slides():
+def the_content():
     """The block's slides that carry content, which is all but the break."""
-    return [slide for slide in the_block() if not slide.is_a_break]
-
-
-def with_markup(slides_):
-    """Everything the room can see across a run of slides, as one string.
-
-    The markdown is left on, for the checks that want a rate handle: `A4` is
-    told apart from the letter A followed by a four by those backticks.
-    """
-    return "\n".join(line for slide in slides_ for line in slide.content_lines())
-
-
-def visible(slides_):
-    """The same, with the bold and the backticks taken off.
-
-    A figure and the noun it counts have to sit beside each other to be checked
-    at all, and `**38 crew-days**` re-emphasized as `**38** crew-days` is the
-    same slide to the room and a different string to a test. `markdown_docs.flat`
-    does this job for line wrapping on the principals' brief; this is the same
-    class of false failure, wearing emphasis instead of a line break.
-    """
-    return (
-        with_markup(slides_).replace("**", "").replace("*", "").replace("`", "")
-    )
+    return content_slides(the_block())
 
 
 class TheFiguresAreTheBuildUpsFigures(unittest.TestCase):
     def test_the_day_counts_are_the_build_ups_own(self):
         """The two numbers the build-up refuses to add together."""
         build_up = figures()
-        seen = visible(content_slides())
+        seen = visible(the_content())
         self.assertIn(f"{build_up.field_days} crew-days", seen)
         self.assertIn(f"{build_up.office_days} days", seen)
 
@@ -134,7 +97,7 @@ class TheFiguresAreTheBuildUpsFigures(unittest.TestCase):
         anywhere on the block -- which the placeholder's own `#32` satisfied.
         So the digit is wanted beside the noun it counts.
         """
-        self.assertIn(f"{figures().crew_size} people", visible(content_slides()))
+        self.assertIn(f"{figures().crew_size} people", visible(the_content()))
 
     def test_every_number_on_the_block_is_one_the_build_up_publishes(self):
         """The blunt check, and the one the issue actually asks for.
@@ -144,7 +107,7 @@ class TheFiguresAreTheBuildUpsFigures(unittest.TestCase):
         numbers -- a manual's revision year and chapter belong to the manual.
         """
         published = numbers_it_publishes()
-        for slide in content_slides():
+        for slide in the_content():
             for line in slide.content_lines():
                 if A_SOURCE in line:
                     continue
@@ -178,7 +141,7 @@ class TheFiguresAreTheBuildUpsFigures(unittest.TestCase):
         """
         values = rate_values()
         self.assertTrue(values, "the build-up's rate table no longer reads")
-        for slide in content_slides():
+        for slide in the_content():
             for handle in set(HANDLE.findall(with_markup([slide]))):
                 wanted = values.get(handle, set())
                 quoted = any(
@@ -200,7 +163,7 @@ class TheFiguresAreTheBuildUpsFigures(unittest.TestCase):
         disagreeing with the total, which is the thing the build-up exists to
         stop."""
         self.assertTrue(
-            HANDLE.search(with_markup(content_slides())),
+            HANDLE.search(with_markup(the_content())),
             "no rate handle anywhere on the block, so nobody in the room can "
             "argue with one rate by name",
         )
@@ -218,7 +181,7 @@ class TheCostIsInHours(unittest.TestCase):
             )
 
     def test_the_block_talks_in_hours_and_days(self):
-        seen = visible(content_slides()).lower()
+        seen = visible(the_content()).lower()
         for unit in ("hours", "days"):
             self.assertIn(unit, seen, f"the block never says {unit!r}")
 
@@ -231,7 +194,7 @@ class ReworkLeadsAndSpeedFollows(unittest.TestCase):
         bullet is the block mentioning rework, which is not the same as leading
         with it.
         """
-        headings = [slide.heading.lower() for slide in content_slides()]
+        headings = [slide.heading.lower() for slide in the_content()]
         self.assertTrue(
             any("rework" in heading for heading in headings),
             f"no slide of the block is headed about rework. Its headings are "
@@ -248,7 +211,7 @@ class ReworkLeadsAndSpeedFollows(unittest.TestCase):
         whole block could not fail, and would have passed with the rework slide
         deleted outright.
         """
-        seen = visible(content_slides()).lower()
+        seen = visible(the_content()).lower()
         rework = seen.find("rework")
         speed = seen.find("speed")
         self.assertNotEqual(rework, -1, "the content slides never say 'rework'")
@@ -263,7 +226,7 @@ class ReworkLeadsAndSpeedFollows(unittest.TestCase):
     def test_the_unbillable_survey_is_on_this_block(self):
         """`test_deck.py` checks the deck says it somewhere, with its source.
         This checks it is said *here*, which is what the issue asks for."""
-        self.assertIn("cannot be invoiced", visible(content_slides()).lower())
+        self.assertIn("cannot be invoiced", visible(the_content()).lower())
 
 
 class TheBlockIsFinishedAndFitsSixMinutes(unittest.TestCase):
@@ -288,7 +251,7 @@ class TheBlockIsFinishedAndFitsSixMinutes(unittest.TestCase):
         )
         word = stated.group(1).lower()
         self.assertIn(word, NUMBER_WORDS, f"{word!r} is not a number this reads")
-        self.assertEqual(NUMBER_WORDS[word], len(content_slides()))
+        self.assertEqual(NUMBER_WORDS[word], len(the_content()))
 
 
 if __name__ == "__main__":

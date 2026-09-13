@@ -530,18 +530,40 @@ difference through properly. Take the numbers from there.
 
 # The datum gap
 
-- What datum do you certify to, and what does your report say
-- TxDOT's April 2026 Survey Manual does not mention the 2022 replacements
-- State that precisely, with the manual's date. No blame, and no pretending
-- It is a scope and liability question, not a geodesy lecture
+- **April 2026** Survey Manual: no NAD 83 realization, no epoch, no geoid model
+- No reference in it to **NATRF2022**, **NAPGD2022** or **SPCS2022**
+- All 4 TxDOT control records in this corridor publish geoid model `N/A`
+- It does say: *"TxDOT will not accept any datum transformations for control"*
 
-> **To be written** — #33
+**So what datum do you certify to, and what does your report say?**
+
+Survey Manual (ESS) rev. April 2026, Ch. 3 · txdot.gov/manuals/row/ess
 
 <!--
 0:57–1:18 · 21 min · Act II — Find the control
 
-This is the slide most likely to be quoted afterward, so it has to be exactly
-right. Open question, stated plainly, no settled answer implied.
+This is the slide most likely to be quoted afterward, out of a photograph taken
+from the fourth row by somebody who was not here. So say the sentence on the
+slide and stop.
+
+**It is a gap, not a mistake, and it is not TxDOT's to close on its own.** NGS
+set the 2022 dates and has moved them before. Nobody in this room gets to be
+smug about it, and a slide that sounded smug would cost you every contractor in
+the audience.
+
+What a report can say today, if somebody asks — and this is a firm's choice,
+not a rule anybody has written:
+
+  - the realization and epoch the work was held to, by name
+  - the geoid model used, by name
+  - where the published values came from, and on what date
+  - that no transformation was performed, which the manual does require
+
+The manual does not ask for the first three. It does not disagree with them
+either. That is the whole of the answer available today.
+
+Sources: docs/txdot-research.md has the finding and how it was read;
+docs/data-sources/txdot-control-points.md has the N/A geoid in the live data.
 -->
 
 ---

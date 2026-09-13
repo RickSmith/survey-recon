@@ -22,7 +22,7 @@ page is what was on the screen in the room.
 
 !!! note "It is a frame, not a talk"
     The deck is **45 slides** — one section break for every block of the two
-    hours, and outline slides under each. **32 of them are still placeholders**,
+    hours, and outline slides under each. **31 of them are still placeholders**,
     and each of those says so on its face and names the work order that will
     fill it.
 
@@ -30,14 +30,15 @@ page is what was on the screen in the room.
     session.
 
     The skeleton was built under
-    [issue #12](https://github.com/RickSmith/survey-recon/issues/12). The money
-    slide landed under
-    [#32](https://github.com/RickSmith/survey-recon/issues/32) — its figures are
-    read out of the crew-day build-up and checked against it on every test run.
-    The rest of the content lands under
+    [issue #12](https://github.com/RickSmith/survey-recon/issues/12). Two blocks
+    have landed: the money slide under
+    [#32](https://github.com/RickSmith/survey-recon/issues/32), its figures read
+    out of the crew-day build-up, and the datum gap under
+    [#33](https://github.com/RickSmith/survey-recon/issues/33), its geoid count
+    read out of the SH16 run. Both are checked against those sources on every
+    test run. The rest of the content lands under
     [#31](https://github.com/RickSmith/survey-recon/issues/31)
-    (the concept slides), [#33](https://github.com/RickSmith/survey-recon/issues/33)
-    (the datum gap), [#34](https://github.com/RickSmith/survey-recon/issues/34)
+    (the concept slides), [#34](https://github.com/RickSmith/survey-recon/issues/34)
     (Hermes), and [#81](https://github.com/RickSmith/survey-recon/issues/81)
     through [#86](https://github.com/RickSmith/survey-recon/issues/86) (the cold
     open, the three Acts, the failure beat and the close).
@@ -63,6 +64,7 @@ page is what was on the screen in the room.
 | `.github/workflows/slides.yml` | Renders the deck to HTML and PDF every time the repo is pushed |
 | `corridor-screen/tests/test_deck.py` | Holds the deck to the run of show. See below |
 | `corridor-screen/tests/test_money_slide.py` | Holds the money slide to the crew-day build-up its figures come from |
+| `corridor-screen/tests/test_datum_gap.py` | Holds the datum-gap slide to the research note and the SH16 run |
 
 ## Where the clock lives
 

@@ -490,6 +490,10 @@ class TestTheClaimsWithConsequencesCarryTheirSource(unittest.TestCase):
         ("PAO 71", "pels.texas.gov"),
         ("responsible charge", "131.2"),
         ("Right of entry", "1071.358"),
+        # Added with the datum-gap slide, #33. A surveyor who hears this one
+        # and plans a job around it is planning around a sentence they did not
+        # read, on a slide that gets photographed and forwarded.
+        ("will not accept any datum transformations", "txdot.gov/manuals/row/ess"),
     )
 
     def slide_saying(self, phrase):
