@@ -34,7 +34,7 @@ Fallback if the command will not start: docs/presenting/fallbacks.md, row one.
 
 # The job we just handed it
 
-- **SH16, Loop 410 to Old Town Helotes** — 8.69 miles, Bexar County
+- **SH16, Loop 410 to Old Bandera Rd** — 8.69 miles, Bexar County
 - 300 ft each side of the centerline. We chose that and can modify if needed
 - Asked for: what is out there, and what it costs in crew days
 - 14 public map services. No client file was opened
