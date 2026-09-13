@@ -86,6 +86,14 @@ NOTE_EARLIEST_DATE = "the oldest date may not be a date"
 # confirmed -- see `docs/data-sources/row-map-sheets.md` for where we looked.
 SUSPECT_DATE = "1900-01-01"
 
+# How often that date appears, and out of how many records. Facts about the
+# service rather than about any one corridor -- like its paging cap -- so they
+# are named here once and read by anything that needs to explain the doubt.
+# Counted live on 2026-09-12 and cached at `txdot-row-maps/date-tally-*`.
+SUSPECT_DATE_RECORDS = 368
+SERVICE_RECORDS = 20276
+EARLY_DATED_RECORDS = 501
+
 DRAWINGS_DETAIL = (
     "No field in this service gives a direct link to a PDF. What you get here is "
     "the sheet count, the dates and the sheet names. The drawings come through "
@@ -107,9 +115,11 @@ WHAT_IS_COUNTED_DETAIL = (
 )
 
 EARLIEST_DATE_DETAIL = (
-    "This service publishes " + SUSPECT_DATE + " on 368 of its 20,276 records "
+    f"This service publishes {SUSPECT_DATE} on {SUSPECT_DATE_RECORDS} of its "
+    f"{SERVICE_RECORDS:,} records "
     "and publishes no empty date at all, which looks like a stand-in for a date "
-    "nobody recorded. We could not confirm that: the same layer holds 501 "
+    f"nobody recorded. We could not confirm that: the same layer holds "
+    f"{EARLY_DATED_RECORDS} "
     "records dated after " + SUSPECT_DATE + " and before 1917, including a "
     "1900-06-08 sheet, so early dates here are common for reasons we have not "
     "established. Counted on 2026-09-12 and cached. So the range above is "
@@ -306,7 +316,7 @@ def block(sheets, detail=None, without_shape=0):
     block actually writes, with a note recording the amendment, so this code
     and the specification agree again.
 
-    Settled on the same ruling, because it is a judgement about what a reader
+    Settled on the same ruling, because it is a judgment about what a reader
     will quote rather than a fact: ``sheet_count`` and ``date_range`` cover
     **every** route reaching the corridor and stay that way, so on SH16 they
     read 69 and 1900-01-01 to 2005-04-30 while the corridor's own route reads
