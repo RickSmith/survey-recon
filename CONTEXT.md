@@ -96,7 +96,7 @@ Settled during the grilling for [issue #5](https://github.com/RickSmith/survey-r
 | Term | Meaning |
 |---|---|
 | **Screening run** | One pass of corridor screening over one corridor. The unit that every cached response and every output is stamped against |
-| **Alignment** | The centre line of the corridor being screened. Either drawn and handed to the tool, or named as a route with two limits |
+| **Alignment** | The centerline of the corridor being screened. Either drawn and handed to the tool, or named as a route with two limits |
 | **Half-width** | How far each side of the alignment counts as inside the corridor. Screening states this number rather than deriving it, so the parcel count can always be argued against a number a person chose |
 | **Reachability ping** | A cheap check of every service before real work begins, so a blocked host is known in seconds rather than part-way through a run |
 | **Sanity check** | A blunt test applied to a service's answer, to catch a plausible wrong one — a paging cap mistaken for a result, a filter the server ignored. It records a warning. It never halts a run. See [ADR 0001](docs/adr/0001-sanity-checks-warn-dead-services-stop.md) |
@@ -104,7 +104,7 @@ Settled during the grilling for [issue #5](https://github.com/RickSmith/survey-r
 | **Run mode** | Whether a run may reach the network: live, cache-first, or cache-only. Cache-only is what makes a run repeatable away from a working network |
 | **Provenance record** | What is written beside every cached response: the exact request URL, the capture date, the HTTP status, and the record count. Caching without it is undisclosed caching |
 | **`unknown` vs `no`** | A parcel that could not be checked is `unknown`. It is never `no`. One of those two words sends a crew to a locked gate |
-| **On / adjacent** | Two strengths of the same flag. A feature inside the parcel is `on` it. The same feature within a stated neighbour distance is `adjacent`. Recorded separately and never merged — a party chief needs to know about both, and an estimator must not count both |
+| **On / adjacent** | Two strengths of the same flag. A feature inside the parcel is `on` it. The same feature within a stated neighbor distance is `adjacent`. Recorded separately and never merged — a party chief needs to know about both, and an estimator must not count both |
 | **Corridor-level flag** | Something that costs time but belongs to no single parcel — a pipeline easement crossing many of them, a railway crossing the route. Recorded against the run rather than against a parcel, so it cannot be quietly dropped |
 | **Incomplete run** | A screening run that stopped before every service answered. It still produces an output, marked incomplete, naming what finished and what stopped. Half an answer that says so beats no answer |
 | **Synthetic parcel id** | An identifier made from a parcel's shape, used when its source gives no usable key. Always marked synthetic, because it is ours and not the appraisal district's |

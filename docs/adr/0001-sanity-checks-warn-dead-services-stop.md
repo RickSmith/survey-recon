@@ -1,6 +1,6 @@
 # Sanity checks warn; dead services stop the run
 
-Corridor screening calls public services that fail in two quite different ways. A service can be **dead** — no response, or an HTTP error. Or it can be **wrong** — a plausible answer that is not the answer. The clearest example is in our own research: USGS 3DEP ignored the coordinate-system parameter, read longitude and latitude as Web Mercator metres, and returned a believable elevation for the wrong place. It did not fail. It answered.
+Corridor screening calls public services that fail in two quite different ways. A service can be **dead** — no response, or an HTTP error. Or it can be **wrong** — a plausible answer that is not the answer. The clearest example is in our own research: USGS 3DEP ignored the coordinate-system parameter, read longitude and latitude as Web Mercator meters, and returned a believable elevation for the wrong place. It did not fail. It answered.
 
 We treat the two opposite ways. **A dead service stops the run**, after three automatic retries and an offer to retry, skip or abort. **A tripped sanity check only records a warning**, and the run continues.
 

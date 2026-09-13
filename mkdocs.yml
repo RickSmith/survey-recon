@@ -76,7 +76,7 @@ theme:
     - search.highlight       # highlight the words you searched for
     - toc.follow             # the right-hand outline tracks where you are
 
-  # Two colour schemes and a switch in the header to move between them.
+  # Two color schemes and a switch in the header to move between them.
   palette:
     - scheme: default
       primary: teal
@@ -102,7 +102,7 @@ plugins:
 # Extra markdown features these pages use
 # ---------------------------------------------------------------------------
 #
-# Plain markdown does not know about coloured note boxes or buttons.
+# Plain markdown does not know about colored note boxes or buttons.
 # Each line below switches one of those on.
 
 markdown_extensions:

@@ -49,7 +49,7 @@ One trap worth knowing. GitHub numbers issues and pull requests out of the same 
 
 `/wayfinder` runs a large piece of work as a **map** — one issue holding the notes, the decisions so far, and the fog — with **child** issues hanging off it as individual jobs. Think of the map as the project file and the children as the jobs on it.
 
-**The map** is an issue labelled `wayfinder:map`. Create it with `gh issue create --label wayfinder:map`.
+**The map** is an issue labeled `wayfinder:map`. Create it with `gh issue create --label wayfinder:map`.
 
 **A child** is an issue linked to the map as a GitHub sub-issue, through `gh api` on the sub-issues endpoint. Where sub-issues are not switched on, put the child in a task list in the map body instead, and put `Part of #<map>` at the top of the child. Label it `wayfinder:<type>` — one of `research`, `prototype`, `grilling` or `task`. Once somebody takes it, assign it to them.
 

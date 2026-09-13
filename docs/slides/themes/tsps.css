@@ -8,7 +8,7 @@
   slide drops below 28pt.
 
   This builds on Marp's built-in "default" theme and overrides the sizes and
-  the colours. The line below is what pulls that built-in theme in.
+  the colors. The line below is what pulls that built-in theme in.
 */
 @import 'default';
 
@@ -73,7 +73,7 @@ section::after {
 
 /*
   The opening slide. Add "<!-- _class: title -->" to a slide to get this:
-  reversed out of the dark green, centred, and no page number.
+  reversed out of the dark green, centered, and no page number.
 */
 section.title {
   justify-content: center;

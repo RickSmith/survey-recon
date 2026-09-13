@@ -30,7 +30,7 @@ page is what was on the screen in the room.
 | File | What it is |
 |---|---|
 | `docs/slides/beyond-the-prompt.md` | The deck itself. Plain markdown. `---` starts a new slide |
-| `docs/slides/themes/tsps.css` | Type sizes and colours. The canvas is 1920 x 1080 and nothing is smaller than 28pt |
+| `docs/slides/themes/tsps.css` | Type sizes and colors. The canvas is 1920 x 1080 and nothing is smaller than 28pt |
 | `.github/workflows/slides.yml` | Renders the deck to HTML and PDF every time the repo is pushed |
 
 ## Previewing it on your own machine

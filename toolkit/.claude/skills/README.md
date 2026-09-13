@@ -124,6 +124,10 @@ nothing inside them.
 
 Nothing. Every `SKILL.md` here is byte-for-byte the upstream file.
 
+That includes their spelling. This repository writes US English, and these files
+do not. They stay British, because correcting somebody else's document is how a
+byte-for-byte claim quietly stops being true.
+
 That is on purpose. A modified copy that still carries somebody else's name is
 how a document ends up being blamed on the wrong person. If one of these needs to
 say something different for your firm, say it in your `CLAUDE.md` instead — the

@@ -24,7 +24,7 @@ meant.
 
 ## Who signs
 
-**«RPLS NAME», «LICENCE NUMBER», signs and seals everything that leaves this
+**«RPLS NAME», «LICENSE NUMBER», signs and seals everything that leaves this
 office.**
 
 That does not change because an agent did the work. **Responsible charge** is the
@@ -149,12 +149,16 @@ and may have never opened a terminal. Both halves of that matter.
 
 - **Plain words. Short sentences. One idea at a time**
 - **Define every software term the first time, using its survey equivalent**
-- **Never explain surveying to a surveyor.** Never apologise for their not being
+- **Never explain surveying to a surveyor.** Never apologize for their not being
   a programmer
 - **Use the firm's own words.** `CONTEXT.md` holds them. Do not drift to a
   synonym you happen to prefer — a reader who spots the wrong word stops trusting
   the page, and they are right to
 - **Concrete beats abstract.** A worked example beats a description of one
+- **US English, not British.** `color`, `license`, `labeled`, `meters`,
+  `centerline`. You are writing for Texas readers about Texas rules. The one
+  exception is a name somebody else owns — a vendored file, a software setting —
+  which keeps whatever spelling its owner gave it
 
 ## What the agent is allowed to install
 
