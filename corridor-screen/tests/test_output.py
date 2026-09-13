@@ -113,6 +113,29 @@ class TestHonestyBlock(unittest.TestCase):
         self.assertEqual(entry["status"], "skipped")
         self.assertEqual(entry["detail"], "the run stopped first")
 
+    def test_a_skipped_service_points_at_what_the_blocked_host_did_say(self):
+        """Issue #62. When a host answers with an error the ping saves it, and
+        nothing else in the run names that file. Putting the reason on screen
+        while hiding the evidence for it is the reverse of what this is for."""
+        entry = output.skipped_service(
+            PARCELS,
+            "the host was blocking at the ping",
+            {"ping": "blocked", "ms": 2235, "detail": "HTTP 200 carrying error 503",
+             "cache_key": "bcad-parcels/error-bcad-parcels-layer-0-metadata__aa18"},
+        )
+        self.assertEqual(
+            entry["cache_files"],
+            ["bcad-parcels/error-bcad-parcels-layer-0-metadata__aa18"],
+        )
+
+    def test_a_cache_only_run_lists_no_file_for_a_skipped_service(self):
+        """It never pinged, so there is nothing of its own to point at."""
+        entry = output.skipped_service(
+            PARCELS, "the run stopped first",
+            {"ping": "skipped", "ms": 0, "detail": "cache-only run makes no network calls"},
+        )
+        self.assertEqual(entry["cache_files"], [])
+
     def test_a_skipped_service_keeps_prose_out_of_the_warning_list(self):
         """`warnings` holds sanity checks, which have a shape. Prose there would
         look like a recorded doubt without being readable as one."""

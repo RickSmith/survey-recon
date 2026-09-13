@@ -121,6 +121,13 @@ def skipped_service(source, reason, ping=None):
     severity, detail, what to do. A sentence of prose in that list would be the
     one thing this block exists to prevent: something that looks like a
     recorded doubt but cannot be read like one.
+
+    **A skipped service can still have left a file, and it is named here.** The
+    ping saves whatever the host said, an error included -- see
+    ``arcgis.Fetcher.ping``. Leaving ``cache_files`` empty would put the reason
+    on screen and hide the evidence for it, which is the reverse of what this
+    block is for, and on a blocked host nothing else in the run points at that
+    record. A cache-only run makes no ping and so still lists nothing.
     """
     ping = ping or {}
     return {
@@ -136,7 +143,7 @@ def skipped_service(source, reason, ping=None):
         "attempts": 0,
         "record_count": None,
         "captured_at": None,
-        "cache_files": [],
+        "cache_files": [key for key in [ping.get("cache_key")] if key],
         "warnings": [],
         "records_used": None,
     }

@@ -234,6 +234,48 @@ rather than a plain dictionary lookup.
 
 ---
 
+## Trap four — the service that fails without failing
+
+Watched happen, live, on 2026-09-13, while the bid memo was being built.
+
+TPMS began answering **`HTTP 200` carrying a `503`**:
+
+```json
+{"error":{"code":503,"message":"User couldn't access this resource 'rrc_public/tpms.mapserver'.","details":[]}}
+```
+
+The transport succeeded. The status line said `200`. Nothing about the response
+was a failure except its contents.
+
+**The reachability ping believed the status line and said `ok`.** Ninety seconds
+later the field list check found none of its 44 fields and stopped the run,
+which is exactly what it is for — it refused to screen a corridor while
+pretending pipelines had been checked, and it left `screening.json` alone.
+
+But the ping had already saved that error body into the cache, on top of the
+good capture of the same layer. So `--mode cache-only` failed too, and the
+offline demo was gone until `git checkout` put it back. **On conference Wi-Fi
+there is no git to fall back on.**
+
+Two lessons, and only one of them is about pipelines:
+
+- **A `200` is not an answer.** It is a delivery receipt. Read the body.
+- **A failed call must never be allowed to destroy a good capture.** The demo
+  runs from that cache.
+
+The ping now reads the body. A `200` carrying an error is reported
+`blocked` with the service's own message as its reason, which costs the pipeline
+flag and nothing else — no parcel is ever reported clear of pipelines that were
+never checked. The error body is still saved, because
+[spec section 14](../corridor-screen/spec.md) says every response is saved, but
+under its own `error-` cache key beside the good one rather than over it, and
+its provenance record carries the reported error in `warnings` so that
+`http_status = 200` sitting in the same file cannot mislead a later reader.
+
+Written under [issue #62](https://github.com/RickSmith/survey-recon/issues/62).
+
+---
+
 ## What this added to spec section 10
 
 [Spec section 10](../corridor-screen/spec.md) is a settled contract, and these

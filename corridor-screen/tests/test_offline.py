@@ -28,9 +28,15 @@ import unittest
 from contextlib import contextmanager
 from pathlib import Path
 
-from corridor_screen import cli, replay
+from corridor_screen import arcgis, cli, replay
 from corridor_screen.arcgis import ServiceDown
-from corridor_screen.cache import long_path
+from corridor_screen.cache import Cache, long_path
+from corridor_screen.sources import PIPELINES
+
+# Borrowed rather than copied. `AN_ERROR_BODY` is the exact body the Railroad
+# Commission served on 2026-09-13, and two copies of it would drift the first
+# time somebody corrected one of them.
+from tests.test_arcgis import AN_ERROR_BODY, answering
 
 REPO = Path(__file__).resolve().parents[2]
 DEMO = REPO / "project-sh16"
@@ -245,6 +251,38 @@ class TestAMissingCaptureFailsLoudly(unittest.TestCase):
         for service in document["services"]:
             self.assertEqual(service["ping"], "skipped")
             self.assertIn("no network calls", service["ping_detail"])
+
+
+class TestAFailedLiveRunLeavesTheDemoIntact(unittest.TestCase):
+    """Issue #62, end to end, on the capture the session actually presents.
+
+    The incident was not that a host went down. Hosts go down -- the whole of
+    issue #19 is built on the assumption that they will. The incident was that
+    going down **took the offline demo with it**: the failed ping saved a 503
+    error body over 44 real fields, and `--mode cache-only` then failed too.
+
+    So this replays the sequence in order. A live run fails the way it really
+    failed, against a copy of the real committed cache, and then the cache-only
+    run that a presenter would fall back on has to still work.
+    """
+
+    def test_a_failed_live_ping_does_not_break_the_cache_only_fallback(self):
+        with a_copy_of_the_demo_cache() as out:
+            # The live run, failing exactly as it did on 2026-09-13.
+            with answering(AN_ERROR_BODY):
+                ping = arcgis.Fetcher(Cache(out / "cache"), mode="live").ping(PIPELINES)
+            self.assertEqual(ping["ping"], "blocked", "the 503 inside the 200 was missed")
+
+            # The fallback a presenter reaches for, with the network gone.
+            code, said = run_offline(out)
+            document = json.loads((out / "screening.json").read_text(encoding="utf-8"))
+
+        self.assertEqual(code, 0, said)
+        committed = json.loads((DEMO / "screening.json").read_text(encoding="utf-8"))
+        self.assertTrue(
+            replay.same_findings(committed, document),
+            "\n" + replay.report(committed, document),
+        )
 
 
 class TestTheNetworkGuardItself(unittest.TestCase):
