@@ -147,20 +147,32 @@ class TestTheCachingIsDisclosedOnTheSlide(unittest.TestCase):
     The plan of record is blunt about it, and the speaker note is not enough:
     the deck publishes on every push and nobody in the room sees the
     presenter's screen.
+
+    **The slide promises a live run and names the cache as the fallback**, in
+    that order. An earlier draft had it the other way round -- "answers
+    captured 12-13 September" -- which conceded the live demo before anybody
+    had asked for it. The committed SH16 run really did call all fourteen
+    services, so the stronger claim is the true one.
     """
 
-    def test_the_slide_itself_says_the_answers_were_captured(self):
-        self.assertRegex(on_screen(), r"captured\s+12.13 September")
+    def test_the_slide_promises_real_code_and_real_data(self):
+        said = on_screen().lower()
+        self.assertIn("real code", said)
+        self.assertIn("real data", said)
 
-    def test_the_slide_says_the_code_is_real(self):
-        """Captured answers are not a captured tool. The distinction is the
-        whole reason disclosing it does not cost anything."""
-        self.assertIn("Real code", on_screen())
+    def test_the_slide_still_admits_the_cache_on_its_own_face(self):
+        """Live first is a claim about intent. This is the part that has to be
+        true whatever happens on the day, and it is on the slide rather than
+        only in the note because nobody in the room sees the note."""
+        self.assertIn("previously captured", on_screen().lower())
+
+    def test_the_slide_says_where_to_run_it(self):
+        self.assertIn("corridor-screen/README.md", on_screen())
 
     def test_the_note_tells_the_presenter_to_say_it_out_loud(self):
         said = note()
-        self.assertIn("out loud", said)
         self.assertIn("Undisclosed caching", said)
+        self.assertIn("backup, not the plan", said)
 
 
 class TestTheNoteStillDoesItsJob(unittest.TestCase):
