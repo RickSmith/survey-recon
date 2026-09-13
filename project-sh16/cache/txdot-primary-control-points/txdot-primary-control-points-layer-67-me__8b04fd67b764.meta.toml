@@ -1,0 +1,15 @@
+# Provenance record. The response file beside this one is exactly what the
+# server sent and is never edited. Every parameter of the request is listed
+# under [request_params], so the call can be repeated and checked.
+service = "TxDOT_Primary_Control_Points"
+cache_key = "txdot-primary-control-points/txdot-primary-control-points-layer-67-me__8b04fd67b764"
+request_method = "GET"
+request_url = "https://services.arcgis.com/KTcxiTD9dsQw4r7Z/arcgis/rest/services/Primary_Control_Points/FeatureServer/67"
+captured_at = 2026-09-12T23:38:39-05:00
+http_status = 200
+response_bytes = 18408
+layer_id = 67
+warnings = []
+
+[request_params]
+f = "json"

@@ -47,6 +47,8 @@ from .sources import (
     NGS_MARKS,
     PARCELS,
     ROADWAYS,
+    TXDOT_CONTROL,
+    TXDOT_CONTROL_FIELDS,
 )
 
 DEFAULT_HALF_WIDTH_FT = 300
@@ -69,7 +71,11 @@ FLAG_SOURCE_LIST = tuple(source for source, _ in FLAG_SOURCES)
 # after the flags, which is where specification section 5 puts it, and for the
 # reason recorded there: "Control and ROW sheets are independent of the parcel
 # list, so a failure there costs the least."
-CONTROL_SOURCE_LIST = (NGS_MARKS,)
+#
+# Two services, asked separately and reported separately. They overlap -- 98 of
+# the 766 TxDOT records carry an NGS PID -- so their counts are never summed,
+# and one of them being blocked never blanks the other.
+CONTROL_SOURCE_LIST = (NGS_MARKS, TXDOT_CONTROL)
 
 # Pinged in this order, and skipped in this order if the run never reaches them.
 SOURCES = SPINE_SOURCES + FLAG_SOURCE_LIST + CONTROL_SOURCE_LIST
@@ -536,26 +542,185 @@ def _screen_control(fetcher, args, pings, blocked_hosts, alignment, plane):
     return marks, without_position, entry, tripped
 
 
-def _report_control(marks, without_position, returned):
-    """What the marks say about recovery, printed while somebody is watching."""
+def _control_sheet_urls(fetcher, source, features):
+    """Where each returned control point's own control sheet lives.
+
+    One request for the whole corridor. ``queryAttachments`` takes a list of
+    object ids and answers with the attachment on each, so eight points cost one
+    call rather than eight.
+
+    **The sheets are the reason this is worth a request at all.** The field the
+    research note calls a PDF link, ``SRVY_CTRL_DCMNT_ADDR``, is null on all 766
+    records, and ``PDF_Filename`` is a bare filename with no published base
+    address. Without this call a reader has the word ``Destroyed`` and no way to
+    read what TxDOT actually recorded about the monument.
+
+    A failure here costs the links and nothing else. The points, their
+    conditions and their positions are already in hand, and a run that reports
+    them without sheet links is far better than a run that reports nothing
+    because an attachments endpoint was slow. So this one swallows what the
+    other stages let out.
+    """
+    object_ids = [
+        attribute(f.get("attributes"), "OBJECTID")
+        for f in features
+    ]
+    object_ids = [str(oid) for oid in object_ids if oid is not None]
+    if not object_ids:
+        return {}, []
+    params = {"objectIds": ",".join(object_ids), "returnUrl": "false", "f": "json"}
+    try:
+        data, record = fetcher.get_json(
+            source.name,
+            "txdot-control-attachments",
+            f"{source.layer_url}/queryAttachments",
+            params,
+            method="POST",
+            layer_id=source.layer_id,
+        )
+    except (ServiceDown, ServiceError) as exc:
+        _say(f"  ctrl  txdot sheets  not resolved -- {exc}")
+        return {}, []
+    urls = {}
+    for group in data.get("attachmentGroups", []):
+        parent = group.get("parentObjectId")
+        for info in group.get("attachmentInfos", []) or []:
+            if info.get("contentType") == "application/pdf":
+                urls[parent] = control_mod.attachment_url(
+                    source.layer_url, parent, info.get("id")
+                )
+                break
+    return urls, [record]
+
+
+def _screen_txdot_control(fetcher, args, pings, blocked_hosts, alignment, plane):
+    """Ask TxDOT which of its own primary control points are in the corridor.
+
+    Returns ``(points, without_position, entry, warnings)``, the same shape
+    ``_screen_control`` returns and for the same reason: ``points`` is ``None``
+    when the service was never asked, and a list -- possibly empty -- when it
+    was. A blocked host must never read as a corridor with no TxDOT control.
+
+    Asked about the same box as the NGS marks, because the question is the same
+    question: a monument is in the corridor or it is not, whoever owns the
+    ground it sits on.
+    """
+    source = TXDOT_CONTROL
+    ping = pings.get(source.name, {})
+    extent = _control_extent(alignment, args.half_width)
+
+    if source.name in blocked_hosts:
+        _go_on_without(source, args, "control", "the TxDOT control points")
+        reason = (
+            "the host was not answering when the run began, so no TxDOT control "
+            "point was checked and this corridor is not reported as having none"
+        )
+        _say("  ctrl  txdot ctrl  not checked -- the host was blocking at the ping")
+        return None, 0, output.skipped_service(source, reason, ping), []
+
+    try:
+        features, records = _ask_about_extent(
+            fetcher, args, source, extent, "txdot-control", "txdot control", "the TxDOT control points"
+        )
+    except (ServiceDown, ServiceError, Skipped) as exc:
+        # A blocked host costs the control points and nothing else. A wrong
+        # layer is not caught here on purpose -- see `_ask_about_extent`, and
+        # this is the service the layer-67 rule was written about.
+        _say(f"  ctrl  txdot ctrl  not checked -- {exc}")
+        return None, 0, output.skipped_service(source, str(exc), ping), []
+
+    sheet_urls, sheet_records = _control_sheet_urls(fetcher, source, features)
+    records = records + sheet_records
+    points, without_position = control_mod.select_txdot(
+        features, alignment.flat_paths, args.half_width, plane,
+        source_name=source.name, pdf_urls=sheet_urls,
+    )
+    shapes = [
+        (_identifier(f, TXDOT_CONTROL_FIELDS["station"]), shape_of(f.get("geometry")))
+        for f in features
+    ]
+    tripped = checks.collect(
+        checks.check_paging_cap(source.name, len(features)),
+        checks.check_records_in_requested_extent(
+            source.name, shapes, extent, args.sanity_margin_ft, plane
+        ),
+        checks.check_records_without_position(source.name, without_position, len(features)),
+        # The projection trap. This layer stores its geometry in US Survey Feet
+        # and publishes its own degrees beside it, so the run can hold one
+        # against the other.
+        checks.check_published_position(
+            source.name,
+            [
+                (p["station"], [p["longitude"], p["latitude"]],
+                 [p["published_longitude"], p["published_latitude"]])
+                for p in points
+            ],
+            plane,
+        ),
+    )
+    fetcher.note_warnings(records, tripped)
+    entry = output.service_entry(
+        source,
+        ping,
+        "ok",
+        records,
+        len(features),
+        tripped,
+        used={
+            "returned": len(features),
+            "in_corridor": len(points),
+            "without_position": without_position,
+            "unused": len(features) - len(points) - without_position,
+        },
+    )
+    return points, without_position, entry, tripped
+
+
+def _report_control(marks, without_position, returned, points=None,
+                    points_without_position=0, points_returned=0):
+    """What the control says about recovery, printed while somebody is watching."""
     _say()
     _say("  Control")
     if marks is None:
         _say("    ngs marks         not checked -- no mark is reported present or absent")
+    else:
+        counted = control_mod.recovery_risk(marks)
+        _say(
+            f"    ngs marks         {returned:>4} returned  "
+            f"{counted['marks_in_corridor']:>3} in the corridor"
+        )
+        _say(f"    mark not found    {counted['mark_not_found']:>4} -- recovery risk, not marks you have")
+        _say(f"    condition unknown {counted['condition_unknown']:>4} -- never counted as found")
+        if without_position:
+            _say(f"    no position       {without_position:>4} -- could not be placed in or out")
+        for condition, count in sorted(counted["by_condition"].items()):
+            _say(f"      {condition:<18} {count:>4}")
+
+    if points is None:
+        _say("    txdot control     not checked -- no point is reported present or absent")
         _say()
         return
-    counted = control_mod.recovery_risk(marks)
+    tallied = control_mod.txdot_recovery_risk(points)
     _say(
-        f"    ngs marks         {returned:>4} returned  "
-        f"{counted['marks_in_corridor']:>3} in the corridor"
+        f"    txdot control     {points_returned:>4} returned  "
+        f"{tallied['points_in_corridor']:>3} in the corridor"
     )
-    _say(f"    mark not found    {counted['mark_not_found']:>4} -- recovery risk, not marks you have")
-    _say(f"    condition unknown {counted['condition_unknown']:>4} -- never counted as found")
-    if without_position:
-        _say(f"    no position       {without_position:>4} -- could not be placed in or out")
-    for condition, count in sorted(counted["by_condition"].items()):
+    # Records against monuments. This service holds two records for 274 of its
+    # stations, so a crew driving to the record count would drive twice.
+    _say(
+        f"    distinct stations {tallied['distinct_stations']:>4} -- "
+        "the monuments a crew drives to, not the records"
+    )
+    _say(f"    destroyed         {tallied['destroyed']:>4} -- on the map, not on the ground")
+    _say(f"    condition unknown {tallied['condition_unknown']:>4} -- never counted as found")
+    if points_without_position:
+        _say(f"    no position       {points_without_position:>4} -- could not be placed in or out")
+    for condition, count in sorted(tallied["by_condition"].items()):
         _say(f"      {condition:<18} {count:>4}")
-    _say("    txdot control     not checked -- separate work order, issue #15")
+    # The two counts are never summed. 98 of the 766 TxDOT records carry an NGS
+    # PID, so some monuments are on both lists, and one total would count those
+    # twice.
+    _say("    the two counts overlap and are never added -- some monuments are on both")
     _say()
 
 
@@ -577,12 +742,16 @@ def run(args):
     screened_for = []
     status = "complete"
     stopped_at = None
-    # `None` means the NGS service was never asked, which is not the same as a
-    # corridor with no marks in it. The detail beside it is what the output
-    # file says instead of a list.
+    # `None` means the service was never asked, which is not the same as a
+    # corridor with no control in it. The detail beside it is what the output
+    # file says instead of a list. One pair per service, so a blocked NGS host
+    # never blanks the TxDOT points a run did retrieve.
     control_marks = None
     control_without_position = 0
     control_detail = "the run stopped before the control step"
+    txdot_points = None
+    txdot_without_position = 0
+    txdot_detail = "the run stopped before the control step"
 
     # Read before anything is fetched. A table that cannot be quoted -- a row
     # with no citation, a "not found" that does not say where it looked -- is a
@@ -743,8 +912,27 @@ def run(args):
                 # the run says so rather than reading as a clean corridor.
                 control_detail = control_entry.get("detail", "the NGS marks were not checked")
                 status = "incomplete"
+
+            # TxDOT's own control, asked separately so that one of the two
+            # services being blocked costs only its own half of the answer.
+            txdot_points, txdot_without_position, txdot_entry, txdot_warnings = (
+                _screen_txdot_control(fetcher, args, pings, blocked_hosts, alignment, plane)
+            )
+            services.append(txdot_entry)
+            warnings.extend(txdot_warnings)
+            if txdot_points is None:
+                txdot_detail = txdot_entry.get(
+                    "detail", "the TxDOT control points were not checked"
+                )
+                status = "incomplete"
+
             _report_control(
-                control_marks, control_without_position, control_entry.get("record_count") or 0
+                control_marks,
+                control_without_position,
+                control_entry.get("record_count") or 0,
+                points=txdot_points,
+                points_without_position=txdot_without_position,
+                points_returned=txdot_entry.get("record_count") or 0,
             )
 
         except EXPECTED_FAILURES as exc:
@@ -755,11 +943,14 @@ def run(args):
             _say(f"  run stopped: {exc}")
             status = "incomplete"
             stopped_at = getattr(exc, "service", type(exc).__name__)
-            # Whatever the marks were going to say, the run did not get to ask.
+            # Whatever the control was going to say, the run did not get to ask.
             # The reason travels into the control block rather than leaving the
-            # generic one there, which would name the wrong step.
+            # generic one there, which would name the wrong step. Both services
+            # get it, because a run that stopped asked neither.
             control_marks = None
             control_detail = f"the run stopped before the control step finished: {exc}"
+            txdot_points = None
+            txdot_detail = control_detail
             for source in SOURCES:
                 if not any(entry["name"] == source.name for entry in services):
                     services.append(
@@ -787,7 +978,12 @@ def run(args):
         screened_for=screened_for,
         lead_time_table=lead_times_mod.citations(table, screened_for),
         control=control_mod.block(
-            control_marks, detail=control_detail, without_position=control_without_position
+            control_marks,
+            txdot_points=txdot_points,
+            detail=control_detail,
+            without_position=control_without_position,
+            txdot_detail=txdot_detail,
+            txdot_without_position=txdot_without_position,
         ),
     )
     written = output.write(document, out_dir)

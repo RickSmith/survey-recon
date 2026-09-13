@@ -209,3 +209,51 @@ class TestRecordsWithNoPosition(unittest.TestCase):
         self.assertEqual(tripped["severity"], "warning", "checks warn; they never halt")
         self.assertIn("2 of 31", tripped["detail"])
         self.assertTrue(tripped["what_to_do"])
+
+
+class TestThePublishedPosition(unittest.TestCase):
+    """The projection trap, caught by asking the same service the same thing twice.
+
+    TxDOT's layer 67 stores its geometry in WKID 103161 -- Texas South Central,
+    in US Survey Feet -- and publishes ``STATN_LAT`` and ``STATN_LON`` as plain
+    attributes in degrees. A query that forgets ``outSR=4326`` gets a real
+    position back, in feet, and nothing errors. Held against the degrees the
+    same record publishes, that answer stops looking fine immediately.
+    """
+
+    PLANE = LocalPlane(29.545)
+    SERVICE = "TxDOT_Primary_Control_Points"
+
+    def check(self, positions, tolerance_ft=100.0):
+        return checks.check_published_position(
+            self.SERVICE, positions, self.PLANE, tolerance_ft=tolerance_ft
+        )
+
+    def test_the_two_positions_agreeing_is_nothing_to_doubt(self):
+        point = [-98.67186241, 29.54765893]
+        self.assertIsNone(self.check([("Z0151155AZ", point, point)]))
+
+    def test_a_position_answered_in_feet_is_caught(self):
+        """What a missing outSR=4326 actually looks like on this layer."""
+        tripped = self.check(
+            [("Z0151155AZ", [2166836.612, 13767322.511], [-98.67186241, 29.54765893])]
+        )
+        self.assertEqual(tripped["severity"], "warning", "checks warn; they never halt")
+        self.assertIn("Z0151155AZ", tripped["detail"])
+        # The warning has to name the parameter to check, because that is the
+        # one thing a reader can act on.
+        self.assertIn("outSR", tripped["what_to_do"])
+        self.assertIn("4326", tripped["what_to_do"])
+
+    def test_a_record_that_publishes_no_position_is_skipped_not_doubted(self):
+        """Nothing to compare is not the same as a disagreement."""
+        self.assertIsNone(self.check([("A", [-98.67, 29.54], [None, None])]))
+
+    def test_small_rounding_between_the_two_is_left_alone(self):
+        """Slack for a service that is working, not a second check on its arithmetic."""
+        self.assertIsNone(
+            self.check([("A", [-98.67186241, 29.54765893], [-98.67176241, 29.54765893])])
+        )
+
+    def test_nothing_returned_is_nothing_to_doubt(self):
+        self.assertIsNone(self.check([]))
