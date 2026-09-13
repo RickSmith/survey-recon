@@ -67,7 +67,32 @@ https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/NGS_Datasheet
 | Bexar County | `https://maps.bexar.org/arcgis/rest/services/Parcels/MapServer/0` | Annual Sept/Oct |
 | CoSA own server | `gis.sanantonio.gov/arcgis/rest/services` | **Empty — avoid** |
 
-Fields: `Owner`, `Situs`, `AcctNumb`, `LglDesc`, `LglAcres`, `LandVal`, `ImprVal`, `TotVal`, `PropUse`. CoSA AGOL also has `RecordedPlat`, `PreliminaryPlat`, `Major_Thoroughfare_Plan__MTP`.
+Fields, **by service** — the two do not share field names:
+
+| Service | Fields |
+|---|---|
+| CoSA → BCAD *(preferred)* | `Geo_id`, `PropID`, `Situs`, `Owner_Name`, `legal_desc`, `legal_acre`, `state_cd`, `addr_line1`–`3`, `addr_city`, `zip`, `Exemptions`, `neighborho`, `GBA_Living`, `ParcelArea`, `LandSqft` |
+| Bexar County | `Owner`, `Situs`, `AcctNumb`, `LglDesc`, `LglAcres`, `LandVal`, `ImprVal`, `TotVal`, `PropUse`, `Acres`, `YrBlt`, `State_cd` |
+
+CoSA AGOL also has `RecordedPlat`, `PreliminaryPlat`, `Major_Thoroughfare_Plan__MTP` as separate layers.
+
+!!! warning "Corrected 2026-09-12"
+    This line previously gave the Bexar County field list — `AcctNumb`, `Owner`,
+    `LglDesc`, `LglAcres`, `PropUse` — as the fields of the **CoSA** service. Both
+    lists are real; they were attached to the wrong endpoints. Both services were
+    read again on 2026-09-12 while building the corridor tool, and the table above
+    is what each one actually publishes.
+
+    It matters because the preferred service is the CoSA one, and a query asking
+    it for `AcctNumb` fails outright. That is the good case. The bad case is the
+    one this repo keeps warning about: a field list that is wrong in a way the
+    server answers anyway. `State_cd` exists on Bexar County and `state_cd` on
+    CoSA, differing only in one capital letter.
+
+    [Spec section 10](corridor-screen/spec.md) still names `AcctNumb` as the parcel
+    identifier and has not been changed, because the spec is a settled contract and
+    changing it is Rick's call, not the agent's. The tool follows the service and
+    records the mapping in `corridor-screen/corridor_screen/sources.py`.
 
 **Ancillary — USGS `carto.nationalmap.gov` covers most of the list from one server**
 ```
