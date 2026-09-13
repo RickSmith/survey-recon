@@ -98,6 +98,9 @@ They are buyers and risk-owners. They are not going to install things themselves
 | **The grilling** | `/grill-with-docs` — the agent interviewing you about scope before it touches anything. The session's centerpiece |
 | **The failure beat** | Three deliberate, scripted moments showing work being confidently wrong and then caught. Two show the agent wrong. The third shows a licensed human wrong — a false statement of law written into a work order — and the agent catching it. The direction runs both ways, which is the point |
 | **The recursion** | This repo is built the way the session tells attendees to work, so its git history is itself a teaching artifact |
+| **Run of show** | The minute-by-minute plan for the two hours — which block is on screen when. A stage term, not a software one. It is the table in `docs/plan-of-record.md` §5, and it is the definitive list of what the session does |
+| **Cut line** | The order things get dropped in if the session runs long, decided in advance rather than at the podium. `docs/plan-of-record.md` §7 |
+| **Fallback capture** | A committed file that stands in for a live demo step when the live thing will not run. Every one of them is on the card at `docs/presenting/fallbacks.md`, which is checked against the run of show on every test run |
 
 ## Corridor-screening vocabulary
 

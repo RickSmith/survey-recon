@@ -202,10 +202,20 @@ def capture_text(name):
     every byte above 127. That is the same shape of error as reading a survey
     file in the wrong coordinate system: it does not fail, it just comes out
     wrong somewhere you were not looking.
+
+    **Opened through ``cache.long_path``**, like every other read in this
+    module. Issue #76: this one was missed, and the beat it renders would not
+    open its own evidence on a checkout whose paths run past the 260 characters
+    Windows takes without being asked in the extended form. A firm's checkout
+    under "OneDrive - Some Long Firm Name" gets there easily, and this repo's
+    own worktrees already do. The presenter would be typing ``--show`` at a
+    podium with no network -- the one moment the fallback exists for -- and
+    getting a not-found error naming a file they can see in their editor.
     """
     for capture in CAPTURES:
         if capture["name"] == name:
-            raw = (CAPTURE_DIR / capture["file"]).read_bytes()
+            with open(long_path(CAPTURE_DIR / capture["file"]), "rb") as handle:
+                raw = handle.read()
             return raw.decode(declared_charset(raw), errors="replace")
     raise KeyError(f"no capture named {name!r}")
 

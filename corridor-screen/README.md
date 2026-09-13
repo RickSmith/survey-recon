@@ -69,6 +69,10 @@ python -m corridor_screen --route SH0016-KG --begin-dfo 347.7 --end-dfo 356.367 
 
 ## If the network is down
 
+**Mid-session, open [the fallback card](../docs/presenting/fallbacks.md)
+instead of this page.** It is one page, in clock order, covering the whole
+two hours rather than this tool alone.
+
 **This is the line to run.** From this directory, nothing else needed:
 
 ```bash

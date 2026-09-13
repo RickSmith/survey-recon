@@ -47,6 +47,7 @@ nav:
   - The worked example - SH16:
       - scenarios/sh16/index.md
       - What the capture found: scenarios/sh16/capture-note.md
+  - If it breaks on the day: presenting/fallbacks.md
   - Corridor screening:
       - corridor-screen/spec.md
       - Lead times and their sources: corridor-screen/lead-times.md
