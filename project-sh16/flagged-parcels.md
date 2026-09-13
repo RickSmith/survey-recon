@@ -15,6 +15,18 @@
 
 **7 of these 8 have no number**, and that is a finding rather than a gap. Where a wait says *not found*, this repo looked for a published notice period and did not find one — see [lead times](../docs/corridor-screen/lead-times.md), which records where it looked. It is not a shorter wait. It is an unmeasured one, and somebody has to make the call that turns it into a date.
 
+## Where these numbers come from
+
+A lead time is worth exactly what its citation is worth. Every URL below
+was opened and read on the date the run records.
+
+| Flag | Wait | Source |
+|---|---|---|
+| Cemetery | 14 calendar days | [Tex. Health & Safety Code § 711.041(c)(2)](https://statutes.capitol.texas.gov/Docs/HS/htm/HS.711.htm) |
+| School | not found | [Tex. Educ. Code § 22.0834 — background checks, which is not a notice period](https://statutes.capitol.texas.gov/Docs/ED/htm/ED.22.htm) |
+
+**School — where we looked.** Not found: no published number of days for getting onto school district land. Looked in: Tex. Educ. Code § 22.0834, which sets background-check conditions and no notice period; the TxDOT Survey Manual (ESS, rev. April 2026), which does not address school access; and TxDOT ROW Preliminary Procedures Ch. 4. District board approval runs on a board's own meeting cycle, and badging follows approval — both real, neither published as a figure.
+
 ---
 
 Run `live`, finished 2026-09-13T07:07:07-05:00. Corridor half-width 300 ft, adjacent within 100 ft. Nothing here was typed by hand; every value is read from `screening.json`.

@@ -79,6 +79,23 @@ def a_document(parcels, **over):
             "finished_at": "2026-09-13T07:07:07-05:00",
             "half_width_ft": 300, "adjacent_distance_ft": 100,
             "screened_for": ["cemetery", "pipeline", "railroad", "school"],
+            "lead_times": {
+                "cemetery": {
+                    "label": "Cemetery", "lead_time_days": 14,
+                    "lead_time_basis": "calendar days", "confirmed": True,
+                    "statutory": True, "not_found": None,
+                    "source": "Tex. Health & Safety Code § 711.041(c)(2)",
+                    "url": "https://statutes.capitol.texas.gov/Docs/HS/htm/HS.711.htm",
+                },
+                "school": {
+                    "label": "School", "lead_time_days": None,
+                    "lead_time_basis": None, "confirmed": False, "statutory": False,
+                    "source": "Tex. Educ. Code § 22.0834 — background checks, "
+                              "which is not a notice period",
+                    "url": "https://statutes.capitol.texas.gov/Docs/ED/htm/ED.22.htm",
+                    "not_found": "Not found: no published number of days.",
+                },
+            },
             "not_screenable": [
                 {"type": "gated access", "reason": "no public source publishes them"},
             ],
@@ -173,6 +190,25 @@ class TestTheColumnWithNoNumberInIt(unittest.TestCase):
         )
         self.assertIn("school", cell)
 
+    def test_a_tract_with_both_a_number_and_an_unknown_shows_both(self):
+        """`docs/corridor-screen/lead-times.md`: a parcel with a cemetery and a
+        school shows 14 days **and** `school` in the not-found list, "because 14
+        is the longest number anybody can stand behind and it is not the whole
+        answer."
+
+        The first draft returned the number and dropped the unknown, which is
+        the same `unknown`-reported-as-`no` inversion the rest of this file is
+        built to prevent. No SH16 parcel carries both, so the real run could
+        never have caught it.
+        """
+        cell = parcel_table.wait_cell(a_parcel(
+            flags=[A_CEMETERY, a_flag()], max_lead_time_days=14,
+            max_lead_time_basis="calendar days", lead_time_driver="cemetery",
+            lead_time_not_found=["school"],
+        ))
+        self.assertIn("14", cell)
+        self.assertIn("school", cell)
+
     def test_the_cell_is_never_empty_and_never_a_dash(self):
         for parcel in (a_parcel(flags=[a_flag()]),
                        a_parcel(flags=[a_flag()], lead_time_not_found=["school"]),
@@ -182,6 +218,51 @@ class TestTheColumnWithNoNumberInIt(unittest.TestCase):
                 cell = parcel_table.wait_cell(parcel).strip()
                 self.assertTrue(cell)
                 self.assertNotIn(cell, ("-", "--", "—", "0", "n/a"))
+
+
+class TestEveryNumberCarriesItsCitation(unittest.TestCase):
+    """CLAUDE.md: "Numbers with legal consequence -- accuracy tolerances, notice
+    periods, fees -- get a source link next to them."
+    `docs/corridor-screen/lead-times.md` puts it harder: "a lead time is worth
+    exactly what its citation is worth."
+
+    The first draft of this table printed "14 calendar days" in both files and
+    cited it in neither -- the one confirmed statutory figure in the whole run
+    was the one number with no source beside it, and on the projector it was
+    bare. The same miss had already been caught once, on #22.
+    """
+
+    def _markdown(self):
+        return parcel_table.build(a_document([
+            a_parcel(id="cem", flags=[A_CEMETERY], max_lead_time_days=14,
+                     max_lead_time_basis="calendar days", lead_time_driver="cemetery"),
+            a_parcel(id="sch", flags=[a_flag()], lead_time_not_found=["school"]),
+        ]))
+
+    def test_the_statutory_number_carries_its_section(self):
+        self.assertIn("711.041(c)(2)", self._markdown())
+
+    def test_the_statutory_number_carries_a_link_that_can_be_followed(self):
+        self.assertIn("https://statutes.capitol.texas.gov/Docs/HS/htm/HS.711.htm",
+                      self._markdown())
+
+    def test_a_not_found_carries_where_it_looked(self):
+        """"Not found" without where you looked is not a finding."""
+        self.assertIn("22.0834", self._markdown())
+
+    def test_the_projector_shows_the_source_of_every_number_on_it(self):
+        """A URL cannot be read from the back of a room, but a section number
+        can, and a number with no source beside it is the thing this repo
+        exists to stop people quoting."""
+        drawn = parcel_table.svg(a_document([
+            a_parcel(id="cem", flags=[A_CEMETERY], max_lead_time_days=14,
+                     max_lead_time_basis="calendar days", lead_time_driver="cemetery"),
+        ]))
+        self.assertIn("711.041(c)(2)", drawn)
+
+    def test_only_the_types_actually_on_the_table_are_cited(self):
+        """A citation list carrying railroads a corridor does not have is noise."""
+        self.assertNotIn("up.com", self._markdown())
 
 
 class TestTheFlagsColumn(unittest.TestCase):
@@ -222,20 +303,65 @@ class TestNothingFoundIsDropped(unittest.TestCase):
         document["run"]["status"] = "incomplete"
         self.assertIn("incomplete", parcel_table.build(document).lower())
 
+    def test_the_incomplete_warning_is_not_a_mkdocs_admonition(self):
+        """This file is read on GitHub, where `!!! warning` comes out as
+        literal text and an indented code block. `bid_memo` refuses it for
+        exactly this reason and says so in a comment."""
+        document = a_document([a_parcel(id="x", flags=[a_flag()])])
+        document["run"]["status"] = "incomplete"
+        self.assertNotIn("!!!", parcel_table.build(document))
+
+    def test_the_flag_types_come_from_the_source_list_not_a_copy_of_it(self):
+        """A fifth flag type must not be silently reported as screened."""
+        from corridor_screen.sources import FLAG_SOURCES
+        document = a_document([a_parcel(id="x", flags=[a_flag()])])
+        document["run"]["screened_for"] = []
+        built = parcel_table.build(document).lower()
+        for _source, kind in FLAG_SOURCES:
+            self.assertIn(kind, built)
+
 
 class TestItFitsOnAScreen(unittest.TestCase):
     """Acceptance criterion: no scrolling during the demo."""
 
-    def test_more_rows_than_fit_are_capped(self):
+    def test_exactly_the_rows_that_fit_are_drawn_and_no_more(self):
         many = [a_parcel(id=f"p{n}", flags=[a_flag()]) for n in range(200)]
         drawn = parcel_table.svg(a_document(many))
-        self.assertLessEqual(drawn.count("</text>"), 400)
+        self.assertEqual(sum(1 for n in range(200) if f">p{n}<" in drawn),
+                         parcel_table.ROWS_ON_SCREEN)
 
     def test_a_capped_table_says_how_many_it_did_not_draw(self):
-        """Silently showing 12 of 200 is the quiet wrong answer on a projector."""
+        """Silently showing 10 of 200 is the quiet wrong answer on a projector."""
         many = [a_parcel(id=f"p{n}", flags=[a_flag()]) for n in range(200)]
         drawn = parcel_table.svg(a_document(many))
         self.assertIn(str(200 - parcel_table.ROWS_ON_SCREEN), drawn)
+
+    def test_the_markdown_never_caps_anything(self):
+        """The drawing has a screen to fit. The file does not."""
+        many = [a_parcel(id=f"p{n}", flags=[a_flag()]) for n in range(40)]
+        built = parcel_table.build(a_document(many))
+        for n in range(40):
+            self.assertIn(f"p{n}", built)
+
+    def test_a_confirmed_deadline_is_never_the_row_the_cap_drops(self):
+        """The sort puts unmeasured waits first, because those need a call. On a
+        corridor with more flagged tracts than fit, that made the one legally
+        binding date the **first** thing cut from the projector -- silently.
+
+        A date somebody is bound by does not come off the screen to make room
+        for a date nobody has found yet.
+        """
+        many = [a_parcel(id=f"u{n}", flags=[a_flag()], lead_time_not_found=["school"])
+                for n in range(40)]
+        many.append(a_parcel(id="STATUTORY", flags=[A_CEMETERY], max_lead_time_days=14,
+                             max_lead_time_basis="calendar days",
+                             lead_time_driver="cemetery"))
+        self.assertIn("STATUTORY", parcel_table.svg(a_document(many)))
+
+    def test_the_drawing_says_how_many_it_left_off(self):
+        many = [a_parcel(id=f"u{n}", flags=[a_flag()]) for n in range(40)]
+        drawn = parcel_table.svg(a_document(many))
+        self.assertIn(str(40 - parcel_table.ROWS_ON_SCREEN), drawn)
 
     def test_the_svg_is_well_formed_xml(self):
         drawn = parcel_table.svg(a_document([a_parcel(id="x", flags=[a_flag()])]))
@@ -246,6 +372,15 @@ class TestItFitsOnAScreen(unittest.TestCase):
         document = a_document([a_parcel(id="x", owner="SMITH & SONS <LP>",
                                         flags=[a_flag()])])
         ElementTree.fromstring(parcel_table.svg(document))
+
+    def test_a_full_table_of_every_flag_type_still_has_room_to_cite_them(self):
+        """The citation block is stacked up from the warning line, so a full
+        table and the longest citation list have to not meet in the middle."""
+        from corridor_screen.sources import FLAG_SOURCES
+        last_row = parcel_table.ROW_TOP + (parcel_table.ROWS_ON_SCREEN - 1) * parcel_table.ROW_STEP
+        top_citation = (parcel_table.NOTE_Y - 38
+                        - (len(FLAG_SOURCES) - 1) * parcel_table.CITE_STEP)
+        self.assertGreater(top_citation, last_row + parcel_table.CITE_STEP)
 
     def test_no_column_runs_past_the_right_margin(self):
         """A column that overran would not look wrong. It would silently

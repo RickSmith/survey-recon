@@ -54,28 +54,48 @@ import sys
 from pathlib import Path
 
 from .cache import long_path, write_text
+from .sources import FLAG_SOURCES
 
 TABLE_NAME = "flagged-parcels.md"
 DRAWING_NAME = "flagged-parcels.svg"
 
-# How many rows the drawing has room for at a size that reads from the back of
-# a room. Twelve at 60 px a row, under a title and above the run stamp, inside
-# the 1080 px of a 16:9 projector. A corridor with more says how many more
-# rather than quietly showing the first twelve.
-ROWS_ON_SCREEN = 12
+# The flag types the tool knows how to look for, read off the same place the
+# run reads them. A copy of this list here would silently report a fifth type as
+# screened the day somebody added one, which is the failure this whole file is
+# about. `bid_memo` derives it the same way.
+ALL_FLAG_TYPES = tuple(kind for _, kind in FLAG_SOURCES)
+
+# What a value reads as when the run did not record it. Never a zero, never a
+# dash: a reader has to be able to tell "none" from "not measured".
+UNRECORDED = "not recorded"
 
 # 16:9, the shape of every projector this will meet. The viewBox is what makes
-# the drawing resolution-independent: the numbers below are a coordinate space,
-# not pixels, so the same file is sharp on a laptop and on a 30-foot screen.
+# the drawing resolution-independent: every number below is a coordinate space
+# rather than pixels, so one file is sharp on a laptop and on a 30-foot screen.
 WIDTH, HEIGHT = 1920, 1080
 
-# The four columns, and where each starts. Four because a fifth stops being
-# readable from the back, and these four answer the question the room is asking:
-# which tract, whose, what is on it, how long is the wait.
-# Each is (heading, where it starts, how wide), and the last one ends exactly
-# on the right margin -- 1460 + 400 = 1860 = WIDTH - 60. Text is clipped to
-# these widths, so a column that overran the margin would not look wrong, it
-# would silently shorten the value inside it.
+# How many rows the drawing has room for at a size that reads from the back of
+# a room: ten at 60 apart, under a title and above the citations and the run
+# stamp. A corridor with more says how many more rather than quietly showing the
+# first ten, and `_for_screen` decides *which* ten.
+ROWS_ON_SCREEN = 10
+
+# Where the rows sit, how far apart, and how far apart the citation lines are.
+# Named rather than scattered because the citation block is laid out **upward**
+# from the warning line, so the two can meet in the middle if these drift apart.
+# There is a test on that.
+ROW_TOP, ROW_STEP, CITE_STEP = 284, 60, 26
+
+# The warning line, and the floor the citation block is stacked up from.
+NOTE_Y = HEIGHT - 72
+
+# The four columns: heading, where it starts, how wide. Four because a fifth
+# stops being readable from the back, and these four answer what the room is
+# asking -- which tract, whose, what is on it, how long is the wait.
+#
+# The last one ends exactly on the right margin: 1460 + 400 = 1860 = WIDTH - 60.
+# Text is clipped to these widths, so a column that overran would not look
+# wrong; it would silently shorten whatever sat inside it.
 COLUMNS = (
     ("Parcel", 60, 300),
     ("Owner", 380, 520),
@@ -119,15 +139,23 @@ def wait_cell(parcel, with_driver=True):
     statutory figure on SH16 its last three characters.
     """
     days = parcel.get("max_lead_time_days")
+    unpriced = parcel.get("lead_time_not_found") or []
+
     if days is not None:
         basis = parcel.get("max_lead_time_basis") or "days, basis not recorded"
         driver = parcel.get("lead_time_driver")
-        return f"{days} {basis}" + (f" ({driver})" if with_driver and driver else "")
+        cell = f"{days} {basis}" + (f" ({driver})" if with_driver and driver else "")
+        # **And**, not instead. `lead-times.md`: a parcel with a cemetery and a
+        # school shows 14 days *and* `school` in the not-found list, "because 14
+        # is the longest number anybody can stand behind and it is not the whole
+        # answer." Returning only the number here would report an unknown as
+        # settled, on the row where a reader is least likely to look twice.
+        return cell + (f" + {', '.join(unpriced)} not found" if unpriced else "")
 
-    # Whatever the run could not price. Falling back to the flag types on the
-    # parcel matters: a flag type with no row in the lead time table at all
-    # would otherwise leave this cell with nothing to say.
-    unpriced = parcel.get("lead_time_not_found") or sorted(
+    # Falling back to the flag types on the parcel matters: a flag type with no
+    # row in the lead time table at all would otherwise leave this cell with
+    # nothing to say.
+    unpriced = unpriced or sorted(
         {f.get("type") for f in parcel.get("flags") or [] if f.get("type")}
     )
     return "not found — " + ", ".join(unpriced) if unpriced else "not found"
@@ -160,8 +188,55 @@ def _unscreened(document):
     A type missing from ``screened_for`` is unknown on every parcel, never
     clear. The bid memo learned this the same way and says so too.
     """
-    known = {"cemetery", "pipeline", "railroad", "school"}
-    return sorted(known - set(_screened_types(document)))
+    return sorted(set(ALL_FLAG_TYPES) - set(_screened_types(document)))
+
+
+def _types_on(table):
+    """The flag types that actually appear on this corridor's table.
+
+    Used to keep the citation list to the numbers a reader can see. A source
+    list carrying railroads a corridor does not have is noise, and noise is how
+    a citation block stops being read.
+    """
+    return sorted({flag.get("type") for parcel in table
+                   for flag in parcel.get("flags") or [] if flag.get("type")})
+
+
+def citations(document, table=None):
+    """The source behind every number on the table, and behind every gap.
+
+    **This is not decoration and it is not a footnote.** CLAUDE.md: "Numbers
+    with legal consequence -- accuracy tolerances, notice periods, fees -- get a
+    source link next to them." ``docs/corridor-screen/lead-times.md`` puts it
+    harder: "a lead time is worth exactly what its citation is worth."
+
+    The first draft of this file printed ``14 calendar days`` in both outputs
+    and cited it in neither -- the single confirmed statutory figure in the run
+    was the one number with no source beside it, and on the projector it stood
+    bare in front of the people most likely to quote it. The same miss had
+    already been caught once, on #22, which is why it is a seam with tests
+    rather than a line in a template.
+
+    A "not found" is cited too. Without where it looked, "not found" is not a
+    finding -- it is a shrug.
+    """
+    table = rows(document) if table is None else table
+    published = (document.get("run") or {}).get("lead_times") or {}
+    out = []
+    for kind in _types_on(table):
+        entry = published.get(kind) or {}
+        days = entry.get("lead_time_days")
+        basis = entry.get("lead_time_basis") or ""
+        wait = f"{days} {basis}".strip() if days is not None else "not found"
+        out.append({
+            "type": kind,
+            "label": entry.get("label") or kind.title(),
+            "wait": wait,
+            "source": entry.get("source") or "no source recorded in the run",
+            "url": entry.get("url"),
+            "not_found": entry.get("not_found"),
+        })
+    return out
 
 
 # ----------------------------------------------------------------- the Markdown
@@ -198,11 +273,16 @@ def build(document):
     lines = [f"# Flagged parcels — {alignment.get('source_path', 'this corridor')}", ""]
 
     if run.get("status") != "complete":
+        # Plain blockquote rather than an admonition, for the reason
+        # `bid_memo` records: this file is read on GitHub, where MkDocs'
+        # `!!! warning` comes out as literal text and an indented code block.
+        # The one sentence that must be unmissable would be the one rendered as
+        # noise.
         lines += [
-            f"!!! warning \"This run was **{run.get('status', 'incomplete')}**\"",
-            "    Some services were never reached, so this table is a floor rather",
-            "    than a count. What was missed is in the screening file's own",
-            "    honesty block.",
+            f"> ## ⚠ This run was recorded as **{run.get('status', 'incomplete')}**",
+            ">",
+            "> Some services were never reached, so this table is a floor rather than",
+            "> a count. What was missed is in the screening file's own honesty block.",
             "",
         ]
 
@@ -224,7 +304,7 @@ def build(document):
     lines += ["| Parcel | Owner | What is on it | Longest wait |", "|---|---|---|---|"]
     for parcel in table:
         lines.append(
-            f"| `{parcel.get('id', '')}` | {parcel.get('owner') or 'not recorded'} "
+            f"| `{parcel.get('id', '')}` | {parcel.get('owner') or UNRECORDED} "
             f"| {flag_cell(parcel)} | {wait_cell(parcel)} |"
         )
     lines.append("")
@@ -242,6 +322,27 @@ def build(document):
         ]
 
     lines += _corridor_lines(document)
+
+    cited = citations(document, table)
+    if cited:
+        lines += [
+            "## Where these numbers come from",
+            "",
+            "A lead time is worth exactly what its citation is worth. Every URL below",
+            "was opened and read on the date the run records.",
+            "",
+            "| Flag | Wait | Source |",
+            "|---|---|---|",
+        ]
+        for entry in cited:
+            source = (f"[{entry['source']}]({entry['url']})" if entry["url"]
+                      else entry["source"])
+            lines.append(f"| {entry['label']} | {entry['wait']} | {source} |")
+        lines.append("")
+        for entry in cited:
+            if entry["not_found"]:
+                lines += [f"**{entry['label']} — where we looked.** {entry['not_found']}", ""]
+
     lines += [
         "---",
         "",
@@ -279,6 +380,29 @@ def _fit(text, width, size=26):
     return text if len(text) <= room else text[: room - 1].rstrip() + "…"
 
 
+def _for_screen(table):
+    """Which rows the drawing has room for, and how many it leaves off.
+
+    **A date somebody is bound by does not come off the screen to make room for
+    a date nobody has found yet.** The sort in ``rows`` puts unmeasured waits
+    first, because those are the ones needing a phone call today, and that is
+    right for a file nobody has to fit on a screen. Applied to a capped drawing
+    it meant the single confirmed statutory deadline on a busy corridor was the
+    **first** row cut, silently, from the projector.
+
+    So confirmed waits are seated first -- longest first, since ``rows`` already
+    ordered them that way -- and whatever room is left goes to the unmeasured
+    ones. Display order is unchanged: the table still reads in the order
+    ``rows`` chose.
+    """
+    confirmed = [p for p in table if p.get("max_lead_time_days") is not None]
+    unmeasured = [p for p in table if p.get("max_lead_time_days") is None]
+    seated = confirmed[:ROWS_ON_SCREEN]
+    seated += unmeasured[: max(0, ROWS_ON_SCREEN - len(seated))]
+    keep = {id(p) for p in seated}
+    return [p for p in table if id(p) in keep], max(0, len(table) - len(seated))
+
+
 def svg(document):
     """The projector rendering. Specification section 9's format, and its reason.
 
@@ -290,7 +414,7 @@ def svg(document):
     run = document.get("run") or {}
     alignment = document.get("alignment") or {}
     table = rows(document)
-    shown, hidden = table[:ROWS_ON_SCREEN], max(0, len(table) - ROWS_ON_SCREEN)
+    shown, hidden = _for_screen(table)
     title = _escape(_fit(alignment.get("source_path") or "Flagged parcels", 1800, 46))
     standfirst = _escape(
         f"{len(table)} of {len(document.get('parcels') or [])} parcels "
@@ -317,14 +441,14 @@ def svg(document):
                f'stroke="#d1d5db" stroke-width="2"/>')
 
     for index, parcel in enumerate(shown):
-        y = 284 + index * 60
+        y = ROW_TOP + index * ROW_STEP
         if index % 2:
             out.append(f'<rect x="44" y="{y - 40}" width="{WIDTH - 88}" height="56" '
                        f'fill="#f9fafb"/>')
         unmeasured = parcel.get("max_lead_time_days") is None
         cells = (
             parcel.get("id") or "",
-            parcel.get("owner") or "not recorded",
+            parcel.get("owner") or UNRECORDED,
             flag_cell(parcel),
             wait_cell(parcel, with_driver=False),
         )
@@ -341,18 +465,35 @@ def svg(document):
         f"Half-width {run.get('half_width_ft', '?')} ft."
     )
     if hidden:
-        footer = f"{hidden} more flagged parcels are not shown here. " + footer
+        footer = (f"{hidden} more flagged parcels are not shown here; the Markdown "
+                  f"beside this carries all {len(table)}. ") + footer
     unscreened = _unscreened(document)
     if unscreened:
         footer = f"Not checked at all: {', '.join(unscreened)}. " + footer
+
+    # **The source goes on the screen, not only in the file.** A URL cannot be
+    # read from the back of a room, but a section number can, and a notice
+    # period shown without one is exactly the thing a room full of licensed
+    # surveyors should not be invited to write down. The full links are in the
+    # Markdown beside this.
+    #
+    # One line per flag type, laid out upward from the note. Joining them into
+    # one line is what the first draft did, and it clipped `Tex. Educ. Code
+    # § 22.0834` mid-citation -- which is worse than no citation, because it
+    # looks like one.
+    cited = citations(document, table)
+    for index, entry in enumerate(cited):
+        y = NOTE_Y - 38 - (len(cited) - 1 - index) * CITE_STEP
+        line = f"{entry['label']} — {entry['wait']}: {entry['source']}"
+        out.append(f'<text x="60" y="{y}" font-size="20" fill="#6b7280">'
+                   f'{_escape(_fit(line, 1800, 20))}</text>')
 
     # The one sentence that has to survive being read from the back of a room.
     note = _escape(_fit(
         "A wait reading “not found” is unmeasured, not zero. "
         "Somebody has to make that call.", 1800, 23))
-    out.append(f'<text x="60" y="{HEIGHT - 108}" font-size="23" fill="#b45309">'
-               f'{note}</text>')
-    out.append(f'<text x="60" y="{HEIGHT - 64}" font-size="21" fill="#6b7280">'
+    out.append(f'<text x="60" y="{NOTE_Y}" font-size="23" fill="#b45309">{note}</text>')
+    out.append(f'<text x="60" y="{HEIGHT - 36}" font-size="21" fill="#6b7280">'
                f'{_escape(_fit(footer, 1800, 21))}</text>')
     out.append("</svg>")
     return "\n".join(out) + "\n"

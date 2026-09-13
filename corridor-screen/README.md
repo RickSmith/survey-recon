@@ -144,9 +144,12 @@ python -m corridor_screen.parcel_table --out ../project-sh16
 
 It writes **two** files from the same data. `flagged-parcels.md` is the one a
 reader keeps and a pull request can diff. `flagged-parcels.svg` is the one that
-goes on a projector — SVG for the reason [spec section
-9](../docs/corridor-screen/spec.md) already gives: it "stays sharp on a projector
-at any size," commits as text, and needs nothing installed.
+goes on a projector. **SVG is a drawing stored as text rather than as pixels** —
+it redraws itself at whatever size it is shown at, the way a vector plot stays
+sharp where a scan goes blocky. [Spec section
+9](../docs/corridor-screen/spec.md) picked it for exactly that: it "stays sharp
+on a projector at any size," commits to git as text, and needs nothing
+installed.
 
 **The interesting column is the one with no number in it.** On SH16, seven of
 the eight flagged tracts carry a school, and no published notice period was
