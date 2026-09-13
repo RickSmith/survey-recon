@@ -54,8 +54,14 @@ publishes, not because anything in this repo reads them.
 ## "Blocked" was not true
 
 Issue [#11](https://github.com/RickSmith/survey-recon/issues/11) said the host
-blocked automated fetching, so pulling these was a human job. That was written
-down as a fact and believed for weeks. It is not one.
+blocked automated fetching, so pulling these was a human job. It was written
+down as a fact, carried into the issue, and acted on. Nobody tested it until
+someone tested all of it. It is not true.
+
+*(The gap was about fourteen hours — #11 was opened 2026-09-12 20:32 UTC and
+checked the next morning. An earlier draft of this paragraph said "weeks," which
+was an invented number in a document about invented numbers. It is recorded here
+rather than quietly deleted.)*
 
 Every file above answers **HTTP 200 to a plain `curl`** at
 `https://ftp.txdot.gov/pub/txdot-info/cmd/cserve/standard/traffic/`. All twelve
@@ -92,7 +98,8 @@ Every file here was fetched from both and hashed; all thirteen matched. Cite the
 
 ## How to add a document
 
-1. Get the file. Try `curl` first — see above, "blocked" is often wrong.
+1. Get the file. Try `curl` first — the command-line downloader that comes
+   with git — because "blocked" is often wrong. A browser is fine too.
 2. Save it here with a lowercase, dashed name: `tcp-s-1-08a.pdf`, not
    `TCP(S-1)-08A.pdf`. Parentheses in a file name break shell commands on some
    systems, and this repo is run by beginners.
@@ -105,9 +112,27 @@ Every file here was fetched from both and hashed; all thirteen matched. Cite the
 same fingerprint are the same file. This loop re-fetches every recorded URL and
 checks it against what is committed:
 
+To check one file, download it again and compare the two fingerprints by eye:
+
 ```bash
-cd project-sh16/manual-pulls && for m in *.meta.toml; do f=$(python -c "import tomllib,sys;print(tomllib.load(open(sys.argv[1],'rb'))['file'])" "$m"); u=$(python -c "import tomllib,sys;print(tomllib.load(open(sys.argv[1],'rb'))['source_url'])" "$m"); a=$(sha256sum "$f" | cut -d' ' -f1); b=$(curl -sL "$u" | sha256sum | cut -d' ' -f1); [ "$a" = "$b" ] && echo "OK   $f" || echo "FAIL $f"; done
+curl -sL "https://ftp.txdot.gov/pub/txdot-info/cmd/cserve/standard/traffic/tcps1.pdf" | sha256sum
 ```
 
-Thirteen `OK` lines is a pass. That loop is what caught the dead URL described
-above — a claim nobody had tested until something tested all of them.
+```bash
+sha256sum project-sh16/manual-pulls/tcp-s-1-08a.pdf
+```
+
+To check all thirteen at once. `curl` downloads a file; `grep` picks the URL
+line out of the provenance file; the rest compares the two fingerprints. Note
+the space in `'^source_url = '` — without it, `grep` also matches
+`source_url_verified_at` and every line fails:
+
+```bash
+cd project-sh16/manual-pulls && for meta in *.meta.toml; do file=${meta%.meta.toml}; url=$(grep '^source_url = ' "$meta" | cut -d'"' -f2); here=$(sha256sum "$file" | cut -d' ' -f1); there=$(curl -sL "$url" | sha256sum | cut -d' ' -f1); if [ "$here" = "$there" ]; then echo "OK   $file"; else echo "FAIL $file"; fi; done
+```
+
+Thirteen `OK` lines is a pass. It needs nothing beyond the shell that ships with
+git, which is the whole toolkit this repo asks anyone to install.
+
+That check is what caught the dead URL described above — a claim nobody had
+tested until something tested all of them.

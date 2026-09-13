@@ -15,8 +15,11 @@ the shoulder taper and tangent section may be omitted (Note 2). Cross the hour
 and both come back — a sign, a run of cones, and the time to set and retrieve
 them. That is billable time, not a second vehicle. What actually adds a vehicle
 is **Note 3**: if line-of-sight requirements for the surveying operation will
-not allow the work vehicle to be parked where it protects the crew, the Note 2
-channelizing devices are required *regardless of duration*. That is the
+not allow the work vehicle to be parked where it protects the crew, "the
+channelizing devices mentioned in Note 2 are required." Note 2 is the note that
+lets them be omitted under an hour, so Note 3 withdraws that relief — the
+devices stand whatever the duration. *That last clause is a reading of the two
+notes together, not a phrase printed on the sheet.* It is the
 surveying-specific trap, because sighting down a line is the job. The shadow
 vehicle with a truck-mounted attenuator (TMA) appears in **Note 4** as a
 permitted **substitute** for the work vehicle — an option, not a penalty the

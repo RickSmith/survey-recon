@@ -1,15 +1,6 @@
-# Provenance record. The file beside this one is exactly what TxDOT serves and
-# is never edited.
-#
-# `source_url` was not assumed. The file was fetched from it, and the SHA-256 of
-# what came back equals the SHA-256 below. `mirror_url` is TxDOT's older FTP
-# host; it was fetched too and returned identical bytes, so the two hosts are
-# mirrors of one document rather than two revisions of it.
-#
-# Do NOT cite www.dot.state.tx.us/insdtdot/... for these files. That host answers
-# HTTP 200 with a "Page Not Found" HTML page for every one of them -- a soft-404,
-# which is a not-found answer wearing a success status code. See
-# project-sh16/manual-pulls/README.md.
+# Provenance record. The response file beside this one is exactly what the
+# server sent and is never edited. Both URLs below were fetched and their bytes
+# hashed; see README.md for the check and for the dead host to avoid.
 
 document = "TCP(S-3)-08 -- Traffic Control Plan for Surveying Operations (CAD source)"
 publisher = "Texas Department of Transportation, Traffic Operations Division"
