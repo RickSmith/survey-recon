@@ -89,10 +89,13 @@ CoSA AGOL also has `RecordedPlat`, `PreliminaryPlat`, `Major_Thoroughfare_Plan__
     server answers anyway. `State_cd` exists on Bexar County and `state_cd` on
     CoSA, differing only in one capital letter.
 
-    [Spec section 10](corridor-screen/spec.md) still names `AcctNumb` as the parcel
-    identifier and has not been changed, because the spec is a settled contract and
-    changing it is Rick's call, not the agent's. The tool follows the service and
-    records the mapping in `corridor-screen/corridor_screen/sources.py`.
+    [Spec section 10](corridor-screen/spec.md) named `AcctNumb` as the parcel
+    identifier. It was left alone until Rick ruled on it, because the spec is a
+    settled contract and amending one is not the agent's call. He ruled on
+    2026-09-13, on [PR #52](https://github.com/RickSmith/survey-recon/pull/52),
+    and section 10 now carries the real field names with a note recording the
+    amendment. The tool follows the service either way, and the mapping lives in
+    `corridor-screen/corridor_screen/sources.py`.
 
 **Ancillary — USGS `carto.nationalmap.gov` covers most of the list from one server**
 ```

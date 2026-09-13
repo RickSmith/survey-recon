@@ -26,8 +26,13 @@ The CoSA service publishes ``Geo_id``, ``PropID``, ``Owner_Name``,
 have carried one service's field list across to the other.
 
 This code follows the service, not the document, and the mapping below records
-which name went where. The specification is the contract, so the difference is
-raised in the pull request rather than patched over here.
+which name went where.
+
+Amending a settled spec is not the agent's call, so the difference was raised on
+[PR #52](https://github.com/RickSmith/survey-recon/pull/52) rather than patched
+over. Rick ruled on 2026-09-13 that section 10 should carry the real field
+names, and it now does, with a note recording the amendment. The account of how
+the two lists came to be swapped stays in ``docs/txdot-research.md``.
 """
 
 

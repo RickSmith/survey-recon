@@ -1,6 +1,7 @@
 # Corridor screening — specification
 
 **Status:** settled 2026-09-12, from the grilling on [issue #5](https://github.com/RickSmith/survey-recon/issues/5).
+**Amended:** 2026-09-13 — section 10, the parcel field names. See the note there.
 **Scope of work for:** the `corridor-screen/` tool.
 
 A note on words. A **spec** is a scope of work. A **schema** is an agreed field list — the column headings on a parcel table that everybody uses the same way. An **endpoint** is the web address you ask a question of. A **cache** is a saved copy of an answer you already got. Everything else is in [CONTEXT.md](https://github.com/RickSmith/survey-recon/blob/main/CONTEXT.md).
@@ -247,8 +248,8 @@ This block is the honesty block. It is what lets somebody else decide whether to
 
 | Field | Meaning |
 |---|---|
-| `id` | `AcctNumb`, or a synthetic identifier |
-| `id_source` | `AcctNumb` or `synthetic` |
+| `id` | `Geo_id`, or `PropID`, or a synthetic identifier |
+| `id_source` | `Geo_id`, `PropID` or `synthetic` |
 | `owner`, `situs`, `legal_description`, `legal_acres`, `property_use` | as published by the appraisal district |
 | `acres_in_corridor` | how much of the parcel is actually inside the ribbon |
 | `fraction_in_corridor` | that figure as a proportion |
@@ -259,6 +260,38 @@ This block is the honesty block. It is what lets somebody else decide whether to
 | `max_lead_time_days` | the one number that drives scheduling |
 | `lead_time_driver` | which flag set that number |
 | `warnings` | anything doubted about this row |
+
+#### Where each of those comes from
+
+The CoSA service is the one section 6 prefers. These are the fields it publishes.
+
+| Output field | CoSA `BCAD_Parcels` field |
+|---|---|
+| `id` | `Geo_id`, falling back to `PropID` |
+| `owner` | `Owner_Name` |
+| `situs` | `Situs` |
+| `legal_description` | `legal_desc` |
+| `legal_acres` | `legal_acre` |
+| `property_use` | `state_cd` — the Texas state property-use code, not a description |
+
+!!! note "Amended 2026-09-13, on [PR #52](https://github.com/RickSmith/survey-recon/pull/52)"
+    Until then this section named `AcctNumb` as the parcel identifier, and
+    [TxDOT research](../txdot-research.md) listed `Owner`, `LglDesc`, `LglAcres`
+    and `PropUse` beside it. Those field names are real, but they belong to the
+    **Bexar County** service at `maps.bexar.org` — not to the **CoSA** service
+    section 6 tells us to prefer. One service's field list had been carried
+    across to the other.
+
+    Both were read again on 2026-09-12 while building the tracer bullet, and the
+    tables above are what the preferred service actually publishes. This is the
+    first amendment to a settled section of this spec, and it is recorded here
+    rather than made quietly, because a spec that changes without saying so is
+    not a contract.
+
+    `PropID` is a genuine fallback, not a tidy-up: some records — road slivers
+    and the like — publish no `Geo_id`. A parcel with neither gets an identifier
+    made from its shape, and `id_source` always says which of the three it got,
+    because only the first two can be quoted back to Bexar County.
 
 **`screened_for` is how `unknown` stays different from `no`.** Anything not on that list was not checked, and is never reported as clear. If a service died and the run stopped, the parcels already written say so on their own.
 
