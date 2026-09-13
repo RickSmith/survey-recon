@@ -314,17 +314,90 @@ https://www.txdot.gov/manuals/row/ess/surveying_procedures/right_of_entry.html
 
 ### Traffic control — the crew-cost cliff
 **2025 TMUTCD**, effective Jan 18 2026. A conformance revision was in public comment through Sept 13 2026 — TCP requirements are actively changing.
-TxDOT publishes **TCP(S-1)-08A "Operations for Surveying"** (linked from the Toolkit; the file could not be fetched — **pull it manually**).
-From the comparable mobile-operations standard TCP(3-1): mobile TCPs apply on conventional roads **≤45 mph** for work stopping **up to ~15 minutes**. Beyond either threshold, a **stationary** TCP is required — shadow vehicle with **TMA**, arrow board, signing, radios.
 
-**A 20-minute shot on a 55-mph highway converts a two-person crew into a crew plus shadow truck.** That is the cost cliff, and it is the argument for remote methods that TxDOT's own manual already makes.
+TxDOT publishes **six** standard sheets titled "Traffic Control Plan for Surveying Operations": **TCP(S-1)-08A**, **TCP(S-2)-08A**, **TCP(S-2c)-10**, **TCP(S-3)-08**, **TCP(S-4)-08A** and **TCP(S-5)-08**. All six were pulled by hand on 2026-09-13 and are committed with provenance in [`project-sh16/manual-pulls/`](https://github.com/RickSmith/survey-recon/tree/main/project-sh16/manual-pulls). The full reading, with the plan-view evidence, is [`tcp-s-family.md`](https://github.com/RickSmith/survey-recon/blob/main/project-sh16/manual-pulls/tcp-s-family.md).
+
+**The duration line is one hour, and it is the only line.** All six sheets print the same definitions: *short duration* is work that occupies a location **up to 1 hour**; *short term stationary* is daytime work that holds a location for **more than 1 hour** within a single daylight period.
+
+**What crossing the hour costs depends on which sheet you are on.** That split is the whole cost story, and it is legible only in the drawing — see the correction below. Two of TxDOT's terms carry the cost: **channelizing devices** are the cones, drums and vertical panels that steer traffic away from the work space, and a **shadow vehicle** is a truck parked to be hit instead of the crew, carrying a **TMA** — a truck-mounted attenuator, the crash cushion on its back. A run of cones is time. A shadow vehicle is a truck and an operator, and it is the single largest step in a survey crew's day rate.
+
+| Sheet and case | Protective vehicle **drawn** | What the hour does |
+|---|---|---|
+| **TCP(S-2b)** work in roadway<br>**TCP(S-3a)** right lane closed | **Shadow Vehicle with TMA** — one | Permission to substitute an ordinary work vehicle is granted **"for short duration work"** only (S-2 Note 10, S-3 Note 2). Past the hour the permission lapses and the drawn shadow vehicle stands |
+| **TCP(S-3b)** work on centerline | **Two** Shadow Vehicles with TMA | The same, doubled. The most expensive configuration in the family — and the one a centerline retracement lands on |
+| **TCP(S-1a/b)** off or on shoulder<br>**TCP(S-2c)** two-lane rural intersection<br>**TCP(S-4a/b)** divided, off right shoulder or in median | Plain work vehicle (S-4b draws two, reducible to one behind a median barrier — S-4 Note 2) | The TMA is an **upgrade you may elect**, never a penalty the clock triggers (S-1 Note 4, S-4 Note 4). Crossing the hour costs the G20-2a "END ROAD WORK" sign — and, **on S-1 only**, a run of channelizing devices as well (S-1 Note 2). Setup and teardown time, not a second vehicle |
+| **TCP(S-2a)** road closed under 20 min | **None** — flaggers instead | — |
+| **TCP(S-5a/b)** divided, on right or median shoulder | **The sheet contradicts itself** | Unresolved — see below |
+
+One escape from the drawn shadow vehicle exists, and it is not automatic: S-2 Note 11 / S-3 Note 3 allow Type III barricades or other channelizing devices to be substituted **"when approved by the engineer."**
+
+**TCP(S-5)-08 is internally inconsistent, and this repo does not resolve it.** Its plan callout reads "Work Vehicle," and the truck drawn carries none of the legend's black TMA chevron — but its own Notes 2 and 3 are written about "*the* Shadow Vehicle with TMA," wording carried over verbatim from S-3, where a shadow vehicle *is* drawn. Either the drawing shows the short-duration case, or the notes were copied and never reconciled. **The sheet does not say which.** Put the question to the Engineer rather than pick a reading.
+
+**The surveying-specific catch, which duration does not reach.** TCP(S-1)-08A **Note 3**: if line-of-sight requirements for the surveying operation preclude placing the work vehicle where it protects workers, "the channelizing devices mentioned in Note 2 are required." Note 2 is the note that lets those devices be omitted under an hour — so Note 3 withdraws that relief, and the devices stand whatever the duration. *That last clause is a reading of the two notes together, not a phrase printed on the sheet.* A survey crew is in that case routinely, because sighting down a line is the job. TxDOT wrote this rule about surveyors specifically.
+
+**No posted speed triggers anything, anywhere in the family. Not found on any of the six sheets** — 55 mph is an ordinary row in the taper, device-spacing and buffer tables on every one of them. The family's one speed break is S-1's advance signing: **3X at 50 mph or less, 1500 ft above 50 mph.** Longer signing, not a different crew.
+
+**Freeway and controlled-access work is not found here.** All six sheets are footnoted **"Conventional Roads Only,"** and none uses the words *freeway* or *controlled access*. Divided conventional highways *are* covered — S-4 and S-5 are about nothing else. Look elsewhere before concluding TxDOT is silent on freeways.
+
+!!! danger "Corrected 2026-09-13, under [issue #70](https://github.com/RickSmith/survey-recon/issues/70) — twice"
+
+    **What this section used to say.** Until 2026-09-13 it read across from the
+    mobile-operations standard **TCP(3-1)**, honestly labeled as such, because
+    the surveying sheets could not be fetched at the time:
+
+    > mobile TCPs apply on conventional roads ≤45 mph for work stopping up to
+    > ~15 minutes. Beyond either threshold, a **stationary** TCP is required.
+    >
+    > **A 20-minute shot on a 55-mph highway converts a two-person crew into a
+    > crew plus shadow truck.**
+
+    **Half right — and right about the half that costs money.** Duration really
+    can put a shadow truck on the job, on S-2b and S-3, where the sheet draws
+    one. Somebody's instinct about a cost cliff was sound.
+
+    **Wrong on every number and on the mechanism.** The line is **one hour**,
+    not 15 or 20 minutes. It is not a speed threshold at all. And what happens
+    at the line is that a *permission lapses*, leaving the drawn configuration
+    standing, subject to the Engineer's discretion to accept barricades — which
+    is not the same as a rule that adds a truck, and does not happen on S-1,
+    S-2a, S-2c or S-4 at all.
+
+    Nobody made the numbers up. **Every one of them is real. Each governs
+    something else.**
+
+    | Number | Where it really comes from | What it actually governs |
+    |---|---|---|
+    | **~15 minutes** | TCP(S-2c)-10, MOBILE definition | The boundary between *mobile* and *short duration* work. A **classification**, with no requirement attached to crossing it |
+    | **15 minutes**, again | TCP(S-1)-08A Note 7 | The "SURVEY CREW AHEAD" sign at a low-volume intersecting side road is *desirable but not required* under 15 minutes in that area, **as determined by the Engineer**. It governs **one sign**, and it is the only 15-minute figure on S-1 |
+    | **20 minutes** | TCP(S-2)-08A Note 7 | "Road closures shall be less than 20 minutes." A cap on how long a road may be **closed** with flaggers. Nothing to do with shadow trucks |
+    | **45 mph** | TCP(S-3)-08 Note 7 | One CW20-5L "LEFT LANE CLOSED" sign per direction may be omitted below 45 mph **and** under 2000 ADT — average daily traffic, the count of vehicles past a point in a day. It governs **one sign** |
+
+    Four true figures from four different sheets, welded into a claim that none
+    of them makes. Not fabrication — **synthesis across sources that each
+    looked authoritative.** Every number survives spot-checking. The sentence
+    built from them does not.
+
+    **The first correction was also wrong**, and that is the better lesson. It
+    said flatly that no sheet in the family requires a shadow truck, read
+    entirely out of the general notes — whose verbs are all soft: *desirable*,
+    *may be replaced by*, *may be substituted*. Two reviewers checked the
+    quotations and passed them, because the quotations were accurate.
+
+    On a CAD standard sheet **the drawing states the requirement and the notes
+    are exceptions to it.** Identical note wording means opposite things
+    depending on what is drawn. The sheets had to be rendered and looked at
+    before the TMA chevron — a separate legend symbol, on some trucks and not
+    others — was visible at all. Text extraction flattens the legend, the notes
+    and the plan view into one stream and destroys exactly the distinction that
+    decides the cost. Recorded in
+    [#71](https://github.com/RickSmith/survey-recon/pull/71).
 
 **No TxDOT permit specific to surveyors working in state ROW was found** — RULIS covers utility installation and leasing. Stated as "not found," not "does not exist."
 
 ---
 
 ## Unverified — do not assert
-1. **TCP(S-1)-08A contents** — host blocked
+1. ~~**TCP(S-1)-08A contents** — host blocked~~ **Resolved 2026-09-13.** All six TCP(S-\*) sheets are pulled and committed in [`project-sh16/manual-pulls/`](https://github.com/RickSmith/survey-recon/tree/main/project-sh16/manual-pulls). Two things about them stay unverified and are **"not found," not "does not exist"**: which protective vehicle **TCP(S-5)-08** requires — its drawing and its notes disagree, and the sheet does not say which governs — and what covers **freeway or controlled-access** survey work, since all six sheets are footnoted "Conventional Roads Only"
 2. **Any published TxDOT ROE turnaround** — none found in the manuals
 3. **THC Atlas ArcGIS layer inventory** — server exists, robots-blocked
 4. **NOAA NCEI 1991–2020 normals dataset name** — docs only exemplify `daily-summaries`
@@ -336,6 +409,10 @@ From the comparable mobile-operations standard TCP(3-1): mobile TCPs apply on co
 - **§1071.3585 says a surveyor *may seek* a court order; §1071.358 says an LSLS *is entitled to* one.** Two words apart in the statute book, worlds apart in practice.
 - **"There is no acceptable failure rate for any TxDOT survey."**
 - **The agent confidently cited a superseded manual revision** because search results still point at the dead URL.
+- **A survey crew on the centerline for more than an hour is looking at two shadow trucks.** TCP(S-3b) draws both of them. Under the hour, the crew's own truck will do.
+- **TxDOT wrote a rule about sighting down a line.** TCP(S-1)-08A Note 3 — if line of sight will not let the work vehicle sit where it protects the crew, the channelizing devices are required however short the job.
+- **Four true numbers, welded into a claim none of them makes.** Two different 15-minute figures, 20 minutes and 45 mph are each real, on four different sheets, and each governs something else. Every number survived spot-checking. The sentence built from them did not.
+- **The notes said "desirable." The drawing said otherwise.** On a CAD standard sheet the drawing states the requirement and the notes are exceptions to it. An agent that reads text but cannot see a picture gets it backwards, and sounds confident doing it.
 
 ## Key source URLs
 - Surveyors' Toolkit — https://www.txdot.gov/business/resources/surveyor-toolkit.html
@@ -350,5 +427,14 @@ From the comparable mobile-operations standard TCP(3-1): mobile TCPs apply on co
 - NGS Web Services index — https://geodesy.noaa.gov/web_services/
 - TxDOT Open Data Portal — https://gis-txdot.opendata.arcgis.com/
 - TMUTCD — https://www.txdot.gov/business/resources/traffic-design-standards/tmutcd.html
+- TCP(S-1)-08A — https://ftp.txdot.gov/pub/txdot-info/cmd/cserve/standard/traffic/tcps1.pdf
+- TCP(S-2)-08A — https://ftp.txdot.gov/pub/txdot-info/cmd/cserve/standard/traffic/tcps2.pdf
+- TCP(S-2c)-10 — https://ftp.txdot.gov/pub/txdot-info/cmd/cserve/standard/traffic/tcps2c.pdf
+- TCP(S-2c)-10 announcement memo — https://ftp.txdot.gov/pub/txdot-info/cmd/cserve/standard/traffic/memotcps2c.pdf
+- TCP(S-3)-08 — https://ftp.txdot.gov/pub/txdot-info/cmd/cserve/standard/traffic/tcps3.pdf
+- TCP(S-4)-08A — https://ftp.txdot.gov/pub/txdot-info/cmd/cserve/standard/traffic/tcps4.pdf
+- TCP(S-5)-08 — https://ftp.txdot.gov/pub/txdot-info/cmd/cserve/standard/traffic/tcps5.pdf
+
+    All seven were fetched on 2026-09-13 and the bytes hashed against the copies committed in [`project-sh16/manual-pulls/`](https://github.com/RickSmith/survey-recon/tree/main/project-sh16/manual-pulls). **Do not use `www.dot.state.tx.us/insdtdot/...` for these** — that host answers HTTP 200 with a "Page Not Found" page for every file under it, which is a not-found answer wearing a success status code. The folder's `README.md` records how that trap was caught.
 - Texas 811 — https://texas811.org/law/
 - THC cemetery laws — https://thc.texas.gov/preserve/preservation-programs/cemetery-preservation/cemetery-laws

@@ -184,7 +184,7 @@ survey-recon/
 
 ## 8. Open questions
 1. **Recruit one RPLS** to walk the repo cold in week three.
-2. **TCP(S-1)-08A** — pull manually; it's the crew-time document and the host blocks automated fetch.
+2. ~~**TCP(S-1)-08A** — pull manually; it's the crew-time document and the host blocks automated fetch.~~ **Closed 2026-09-13.** Pulled by hand, along with the other five sheets in the TCP(S-\*) family, under [#68](https://github.com/RickSmith/survey-recon/pull/68) and [#69](https://github.com/RickSmith/survey-recon/issues/69). They are committed with provenance in [`project-sh16/manual-pulls/`](https://github.com/RickSmith/survey-recon/tree/main/project-sh16/manual-pulls). What still has no answer is which protective vehicle **TCP(S-5)-08** requires — its drawing and its notes disagree — and what covers **freeway** survey work, since all six sheets read "Conventional Roads Only." Both are recorded as "not found."
 3. **Short link + QR** for `<user>.github.io/survey-recon`.
 
 ---

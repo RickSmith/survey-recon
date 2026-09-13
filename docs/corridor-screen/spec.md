@@ -712,4 +712,14 @@ project-sh16/cache/
     The bid memo and the flagged parcel table were on this list until 2026-09-13. Both are built, under [#22](https://github.com/RickSmith/survey-recon/issues/22) and [#23](https://github.com/RickSmith/survey-recon/issues/23), and their commands are in section 3.6. Each was settled by its own work order rather than by this specification, which is what this entry always meant and still means for the third. Rick ruled on 2026-09-13.
 - Any county but Bexar.
 - Elevation and topography. USGS 3DEP timed out on three attempts of four, and returned a silent wrong answer on the fourth. It stays off the critical path.
-- TCP(S-1)-08A. The host blocks automated fetch, so it must be pulled by hand. It is the crew-time document, and the traffic-control cost cliff is real: a twenty-minute shot on a 55 mph highway turns a two-person crew into a crew plus a shadow truck with an attenuator.
+- ~~TCP(S-1)-08A. The host blocks automated fetch, so it must be pulled by hand.~~ Settled 2026-09-13, and the claim that came with it was wrong.
+
+    All six sheets in the TCP(S-\*) family were pulled by hand and committed with provenance under [#68](https://github.com/RickSmith/survey-recon/pull/68) and [#69](https://github.com/RickSmith/survey-recon/issues/69). The cost cliff is real. It is not where this entry put it.
+
+    **The trigger is duration, and the line is one hour — not twenty minutes.** No posted speed triggers anything anywhere in the family; 55 mph is an ordinary row in the spacing tables on all six sheets. **What the hour costs then depends on which sheet you are on**, and the split is per-sheet enough that this entry does not restate it. It is set out, sheet by sheet, in [TxDOT research](../txdot-research.md) — which reads off the plan-view evidence in [`tcp-s-family.md`](https://github.com/RickSmith/survey-recon/blob/main/project-sh16/manual-pulls/tcp-s-family.md). **Those two are the source of truth; this entry is a pointer, and must not be allowed to drift into a fourth account of the same sheets.**
+
+    The one line worth carrying here, because duration never reaches it and it is about surveyors specifically, is TCP(S-1)-08A **Note 3**: where line-of-sight requirements keep the work vehicle out of the position that protects the crew, the channelizing devices are required regardless of how short the job is.
+
+    Corrected under [#70](https://github.com/RickSmith/survey-recon/issues/70).
+
+    **This bears on the crew-day build-up, which is still on this list.** An estimator working from the old sentence would price a shadow truck onto a twenty-minute shot that does not need one, and would miss the one it does need — an hour in a travel lane.

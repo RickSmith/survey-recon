@@ -127,6 +127,7 @@ markdown_extensions:
   - md_in_html               # lets markdown work inside a <div>, for the card grid
   - pymdownx.details         # collapsible boxes
   - pymdownx.superfences     # better code blocks
+  - pymdownx.tilde           # ~~struck-through text~~, for claims we corrected
   - toc:
       permalink: true        # a clickable anchor beside every heading
 
