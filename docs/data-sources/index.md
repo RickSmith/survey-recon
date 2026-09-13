@@ -36,3 +36,11 @@ Verified research notes live in
   the one that is actually there: layer 0 hard-errors on this service. The quiet
   wrong answer comes from a differently named service that *does* answer at
   layer 0 and holds highway segments rather than monuments.
+- [The TxDOT ROW map sheet index](row-map-sheets.md) — how many record drawings
+  cover the corridor and how far back they go. Written under
+  [issue #16](https://github.com/RickSmith/survey-recon/issues/16). Its first
+  trap is the loud kind for once: the dates arrive as milliseconds, every sheet
+  older than 1970 is a negative number, and on Windows the obvious way to read
+  one raises an error rather than returning a wrong date. It also carries the
+  difference between a corridor figure and a county one, worked through with
+  both numbers cached.

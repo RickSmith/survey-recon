@@ -116,7 +116,7 @@ def skipped_service(source, reason, ping=None):
 def build(run_id, started_at, mode, half_width_ft, adjacent_distance_ft, sanity_margin_ft, tool_version,
           alignment, corridor, services, parcel_rows, warnings,
           status="complete", stopped_at_service=None, corridor_flags=(),
-          screened_for=(), lead_time_table=None, control=None):
+          screened_for=(), lead_time_table=None, control=None, row_maps=None):
     """Assemble the whole output file."""
     return {
         "schema_version": SCHEMA_VERSION,
@@ -155,8 +155,12 @@ def build(run_id, started_at, mode, half_width_ft, adjacent_distance_ft, sanity_
         "control": control if control is not None else not_screened(
             "the run did not reach the control step"
         ),
-        "row_maps": not_screened(
-            "the ROW map sheet index is a separate work order"
+        # The ROW map sheets over the corridor, from ``row_maps.block``. A run
+        # that never reached the service still gets a block, saying so -- built
+        # by the same function, so a reader never has to work out which shape
+        # of answer this is. Same rule as ``control`` above.
+        "row_maps": row_maps if row_maps is not None else not_screened(
+            "the run did not reach the ROW map step"
         ),
         "parcels": parcel_rows,
         # Things that cost time but belong to no single parcel -- a pipeline in

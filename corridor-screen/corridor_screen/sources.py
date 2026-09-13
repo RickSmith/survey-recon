@@ -345,6 +345,103 @@ NGS_MARK_FIELDS = {
 }
 
 
+# -- ROW map sheets ---------------------------------------------------------
+#
+# The historical record drawings, from issue #16. Old sheets mean hand
+# retracement off a scan, and that is time on the estimate -- so the two
+# numbers wanted here are how many sheets and how far back they go.
+#
+# Three things about this service are unlike every other one in this file.
+#
+# ----
+#
+# It is a MapServer, and it is the host the spec calls least reliable
+# ===================================================================
+#
+# Every other service here is a FeatureServer on a cloud host. This one is a
+# MapServer on TxDOT's own `maps.dot.state.tx.us`, which specification section
+# 5 names "the least reliable host, deliberately last," and which this repo's
+# own research recorded failing and then succeeding minutes later.
+#
+# The URL shape is the same -- `<base>/<layer>/query` -- so `Source` reaches it
+# unchanged, and the reachability ping is doing real work on this one.
+#
+# ----
+#
+# Its dates are real date fields, and two thirds of them are negative
+# ===================================================================
+#
+# `MAP_FROM_DT` and `MAP_TO_DT` are `esriFieldTypeDate`, which ArcGIS sends as
+# milliseconds since 1970. Every sheet older than 1970 is a negative number,
+# and on Windows the obvious way to read one raises `OSError` rather than
+# returning a wrong date. The whole account, and the arithmetic that works, is
+# at the top of `row_maps.py`.
+#
+# ----
+#
+# `ROW_MAP_ID` looks like a key and is not
+# ========================================
+#
+# Six of the 27 SH16 sheets in Bexar County share `ROW_MAP_ID` 993. `MAP_NM`
+# is the one-per-drawing name. Counting distinct identifiers gives 22 rather
+# than 27, and that is the kind of wrong number that looks right.
+#
+# Read live on 2026-09-12. Written up in
+# `docs/data-sources/row-map-sheets.md`.
+
+TXDOT_MAPS = "https://maps.dot.state.tx.us/arcgis/rest/services"
+
+ROW_MAPS = Source(
+    name="TxDOT_ROW_Maps",
+    base_url=f"{TXDOT_MAPS}/ROW/ROW_Maps_CL_2017/MapServer",
+    layer_id=0,
+    purpose="row-maps",
+    required_fields=(
+        "MAP_NM",
+        "ROW_MAP_ID",
+        "CTRL_SECT_NBR",
+        "CSJ_NBR",
+        "RTE_NM",
+        "CNTY_NM",
+        "MAP_FROM_DT",
+        "MAP_TO_DT",
+        "TOTL_MAP_PAGE_QTY",
+        "MAP_LMT_FROM_DSCR",
+        "MAP_LMT_TO_DSCR",
+    ),
+    note=(
+        "Lines, one per drawing. A MapServer rather than a FeatureServer, and the "
+        "layer name is RPAM.RPAM.VW_ROW_MAP_HyLink. Paging cap 5,000. The dates "
+        "are real date fields -- milliseconds, negative before 1970."
+    ),
+)
+
+# How a ROW map sheet row is built from what the service publishes. Left side
+# is the field name in this tool's output; right side is the field name on the
+# service. Same shape and same job as `BEXAR_PARCEL_FIELDS` and
+# `NGS_MARK_FIELDS` above.
+ROW_MAP_FIELDS = {
+    # One per drawing. TxDOT builds it as District-ControlSection-Route-Date,
+    # for example SAT-029110-SH0016-19980306, with a `-1` suffix when two
+    # sheets carry the same date. It states the sheet's date a second time,
+    # which is what makes the date reading checkable.
+    "map_name": "MAP_NM",
+    # Carried through as what it is. Not a unique key -- see the note above.
+    "row_map_id": "ROW_MAP_ID",
+    "control_section": "CTRL_SECT_NBR",
+    "csj": "CSJ_NBR",
+    "route": "RTE_NM",
+    "county": "CNTY_NM",
+    # The field the ticket exists for. See the date trap above.
+    "map_from_date": "MAP_FROM_DT",
+    "map_to_date": "MAP_TO_DT",
+    "total_pages": "TOTL_MAP_PAGE_QTY",
+    # What the sheet says its own limits are, in TxDOT's words.
+    "limit_from": "MAP_LMT_FROM_DSCR",
+    "limit_to": "MAP_LMT_TO_DSCR",
+}
+
+
 # -- TxDOT primary control points -------------------------------------------
 #
 # Issue #15. TxDOT's own control, beside the NGS marks above. A corridor with

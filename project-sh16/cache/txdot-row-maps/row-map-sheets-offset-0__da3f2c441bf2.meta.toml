@@ -1,0 +1,26 @@
+# Provenance record. The response file beside this one is exactly what the
+# server sent and is never edited. Every parameter of the request is listed
+# under [request_params], so the call can be repeated and checked.
+service = "TxDOT_ROW_Maps"
+cache_key = "txdot-row-maps/row-map-sheets-offset-0__da3f2c441bf2"
+request_method = "POST"
+request_url = "https://maps.dot.state.tx.us/arcgis/rest/services/ROW/ROW_Maps_CL_2017/MapServer/0/query"
+captured_at = 2026-09-12T23:50:08-05:00
+http_status = 200
+response_bytes = 582876
+layer_id = 0
+record_count = 69
+warnings = []
+
+[request_params]
+geometry = "{\"xmin\": -98.6905241406134, \"ymin\": 29.48163708566102, \"xmax\": -98.59874634836709, \"ymax\": 29.575338551590963, \"spatialReference\": {\"wkid\": 4326}}"
+geometryType = "esriGeometryEnvelope"
+inSR = 4326
+outSR = 4326
+spatialRel = "esriSpatialRelIntersects"
+where = "1=1"
+outFields = "MAP_NM,ROW_MAP_ID,CTRL_SECT_NBR,CSJ_NBR,RTE_NM,CNTY_NM,MAP_FROM_DT,MAP_TO_DT,TOTL_MAP_PAGE_QTY,MAP_LMT_FROM_DSCR,MAP_LMT_TO_DSCR"
+returnGeometry = "true"
+f = "json"
+resultOffset = 0
+resultRecordCount = 2000

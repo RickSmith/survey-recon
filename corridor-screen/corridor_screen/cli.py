@@ -9,7 +9,8 @@ are recorded there. Shortened to the steps that exist in this first pass:
 4. Buffer -- fetch and cache the corridor polygon
 5. Parcels -- the spine everything joins to
 6. Flags -- what about each parcel costs time
-7. Control -- the NGS marks in the corridor, and their condition
+7. Control -- the NGS marks and TxDOT's own points, and what condition they are in
+8. ROW map sheets -- how many drawings there are and how far back they go
 
 The ping exists because last is not soon enough to find out. The field list
 check exists because a query against the wrong layer answers without
@@ -34,6 +35,7 @@ from . import (
     lead_times as lead_times_mod,
     output,
     parcels,
+    row_maps as row_maps_mod,
 )
 from .alignment import AlignmentError, from_route_features
 from .arcgis import MODES, Fetcher, ServiceDown, ServiceError, attribute
@@ -47,6 +49,8 @@ from .sources import (
     NGS_MARKS,
     PARCELS,
     ROADWAYS,
+    ROW_MAP_FIELDS,
+    ROW_MAPS,
     TXDOT_CONTROL,
     TXDOT_CONTROL_FIELDS,
 )
@@ -77,8 +81,15 @@ FLAG_SOURCE_LIST = tuple(source for source, _ in FLAG_SOURCES)
 # and one of them being blocked never blanks the other.
 CONTROL_SOURCE_LIST = (NGS_MARKS, TXDOT_CONTROL)
 
+# The ROW map sheets go last, and specification section 5 says why in as many
+# words: `maps.dot.state.tx.us` is "the least reliable host, deliberately
+# last." This repo's own research recorded it failing and then succeeding
+# minutes later. Last is where a host like that costs the least, and the
+# reachability ping is doing real work on this one.
+ROW_MAP_SOURCE_LIST = (ROW_MAPS,)
+
 # Pinged in this order, and skipped in this order if the run never reaches them.
-SOURCES = SPINE_SOURCES + FLAG_SOURCE_LIST + CONTROL_SOURCE_LIST
+SOURCES = SPINE_SOURCES + FLAG_SOURCE_LIST + CONTROL_SOURCE_LIST + ROW_MAP_SOURCE_LIST
 
 # What went wrong is worth recording; how the tool crashed is not. Anything in
 # here becomes an incomplete run with a readable reason rather than a traceback.
@@ -460,12 +471,15 @@ def _report_flags(rows, corridor_flags, counts, screened_for):
     _say()
 
 
-def _control_extent(alignment, half_width_ft):
-    """The box the NGS datasheets service is asked about.
+def _corridor_extent(alignment, half_width_ft):
+    """The box asked about by every step that is not joined to a parcel.
 
-    A box around the corridor itself, not around the parcels. Control is not
-    joined to a parcel -- a mark is in the corridor or it is not, whoever owns
-    the ground -- so the corridor is what the question is about.
+    A box around the corridor itself, not around the parcels. Three steps use
+    it and none of them hangs off a parcel: an NGS mark is in the corridor or
+    it is not, whoever owns the ground; so is a TxDOT control point; and a ROW
+    sheet draws the strip of ground the parcels sit beside. So the corridor is
+    what all three questions are about, and ``_parcel_extent`` is the one the
+    flag services use instead.
 
     An envelope, for the reason written up in
     ``docs/data-sources/flag-services.md``: asked with a polyline and a
@@ -486,7 +500,7 @@ def _screen_control(fetcher, args, pings, blocked_hosts, alignment, plane):
     """
     source = NGS_MARKS
     ping = pings.get(source.name, {})
-    extent = _control_extent(alignment, args.half_width)
+    extent = _corridor_extent(alignment, args.half_width)
 
     if source.name in blocked_hosts:
         _go_on_without(source, args, "control", "the NGS marks")
@@ -607,7 +621,7 @@ def _screen_txdot_control(fetcher, args, pings, blocked_hosts, alignment, plane)
     """
     source = TXDOT_CONTROL
     ping = pings.get(source.name, {})
-    extent = _control_extent(alignment, args.half_width)
+    extent = _corridor_extent(alignment, args.half_width)
 
     if source.name in blocked_hosts:
         _go_on_without(source, args, "control", "the TxDOT control points")
@@ -724,6 +738,119 @@ def _report_control(marks, without_position, returned, points=None,
     _say()
 
 
+def _screen_row_maps(fetcher, args, pings, blocked_hosts, alignment, plane):
+    """Ask TxDOT which ROW map sheets cover the corridor, and how old they are.
+
+    Returns ``(sheets, without_shape, entry, warnings)``. ``sheets`` is
+    ``None`` when the service was never asked, and a list -- possibly an empty
+    one -- when it was. Those are different answers and the output file says
+    which it is, so a blocked host never reads as a corridor with no ROW record.
+
+    The same box the marks are asked about: a box around the corridor, not
+    around the parcels. A ROW sheet is not joined to a parcel -- it draws the
+    right of way, which is the strip of ground the parcels sit beside.
+    """
+    source = ROW_MAPS
+    ping = pings.get(source.name, {})
+    extent = _corridor_extent(alignment, args.half_width)
+
+    if source.name in blocked_hosts:
+        _go_on_without(source, args, "row maps", "the ROW map sheets")
+        reason = (
+            "the host was not answering when the run began, so no ROW map sheet "
+            "was checked and this corridor is not reported as having no ROW record"
+        )
+        _say("  row   map sheets not checked -- the host was blocking at the ping")
+        return None, 0, output.skipped_service(source, reason, ping), []
+
+    try:
+        features, records = _ask_about_extent(
+            fetcher, args, source, extent, "row-map-sheets", "row map sheets", "the ROW map sheets"
+        )
+    except (ServiceDown, ServiceError, Skipped) as exc:
+        # A blocked host costs the sheets and nothing else. A wrong layer is
+        # not caught here on purpose -- see `_ask_about_extent`.
+        _say(f"  row   map sheets not checked -- {exc}")
+        return None, 0, output.skipped_service(source, str(exc), ping), []
+
+    sheets, without_shape = row_maps_mod.select(
+        features, alignment.flat_paths, args.half_width, plane, source_name=source.name
+    )
+    shapes = [
+        (_identifier(f, ROW_MAP_FIELDS["map_name"]), shape_of(f.get("geometry")))
+        for f in features
+    ]
+    tripped = checks.collect(
+        checks.check_paging_cap(source.name, len(features)),
+        checks.check_records_in_requested_extent(
+            source.name, shapes, extent, args.sanity_margin_ft, plane
+        ),
+        checks.check_records_without_position(source.name, without_shape, len(features)),
+    )
+    fetcher.note_warnings(records, tripped)
+    entry = output.service_entry(
+        source,
+        ping,
+        "ok",
+        records,
+        len(features),
+        tripped,
+        # "69 returned, 69 used", the same pair every service asked about a box
+        # reports. The box is wider than the ribbon, so a sheet at its corner is
+        # a correct answer to the question asked and simply is not over the
+        # corridor.
+        used={
+            "returned": len(features),
+            "over_corridor": len(sheets),
+            "without_shape": without_shape,
+            "unused": len(features) - len(sheets) - without_shape,
+        },
+    )
+    return sheets, without_shape, entry, tripped
+
+
+def _report_row_maps(sheets, without_shape, returned):
+    """What the sheets say about retracement, printed while somebody is watching.
+
+    The route breakdown is printed rather than just the total, because the
+    total mixes the corridor's own route with the crossing routes whose right
+    of way is drawn at the interchanges. Both are records somebody may have to
+    pull; only one of them is what a reader means by "the SH16 sheets".
+    """
+    _say()
+    _say("  ROW map sheets")
+    if sheets is None:
+        _say("    map sheets        not checked -- no sheet is reported present or absent")
+        _say()
+        return
+    spread = row_maps_mod.date_range(sheets)
+    _say(f"    map sheets        {returned:>4} returned  {len(sheets):>3} over the corridor")
+    if spread["from"]:
+        _say(f"    date range        {spread['from']} to {spread['to']}")
+        _say(f"    oldest sheet      {spread['oldest_sheet']}")
+        if spread["from"] == row_maps_mod.SUSPECT_DATE:
+            # Said here and not only in the output file, because this is the
+            # line somebody reads off a screen. Whether this date is real or a
+            # stand-in for a blank could not be confirmed, so it is doubted out
+            # loud rather than quietly reported as the oldest drawing.
+            _say(
+                f"      {row_maps_mod.SUSPECT_DATE} is on 368 of this service's 20,276 "
+                "records and may be a stand-in for no date -- unconfirmed, so check it "
+                "against the drawing before quoting it"
+            )
+    if spread["sheets_without_a_date"]:
+        _say(f"    no date           {spread['sheets_without_a_date']:>4} -- left out of the range above")
+    if without_shape:
+        _say(f"    no shape          {without_shape:>4} -- could not be placed over the corridor or off it")
+    for route, summary in row_maps_mod.by_route(sheets).items():
+        years = summary["date_range"]
+        span = f"{years['from']} to {years['to']}" if years["from"] else "no dated sheet"
+        _say(f"      {route:<10} {summary['sheet_count']:>4}  {span}")
+    _say("    drawings          no direct link published -- RPAM, TxDOT's Real Property")
+    _say("                      Asset Map, or an Open Records Request. See the notes")
+    _say()
+
+
 def run(args):
     started_at = datetime.now(timezone.utc).astimezone()
     run_id = f"texas-bexar-{slug(args.route)}-{started_at.strftime('%Y%m%dT%H%M%S')}"
@@ -752,6 +879,13 @@ def run(args):
     txdot_points = None
     txdot_without_position = 0
     txdot_detail = "the run stopped before the control step"
+    # Same rule as the marks above. `None` means the ROW map service was never
+    # asked, which is not the same as a corridor with no ROW record over it --
+    # and on the host specification section 5 calls the least reliable, that
+    # distinction is the one most likely to be needed.
+    row_map_sheets = None
+    row_maps_without_shape = 0
+    row_maps_detail = "the run stopped before the ROW map step"
 
     # Read before anything is fetched. A table that cannot be quoted -- a row
     # with no citation, a "not found" that does not say where it looked -- is a
@@ -780,6 +914,10 @@ def run(args):
         control_detail = (
             f"{', '.join(spine_blocked)} was not answering, so the run never reached "
             "the control step and no NGS mark was checked"
+        )
+        row_maps_detail = (
+            f"{', '.join(spine_blocked)} was not answering, so the run never reached "
+            "the ROW map step and no map sheet was checked"
         )
         services = [
             output.skipped_service(
@@ -935,6 +1073,23 @@ def run(args):
                 points_returned=txdot_entry.get("record_count") or 0,
             )
 
+            # 8 -- the ROW map sheets. Deliberately last, on the host the
+            # specification names least reliable.
+            row_map_sheets, row_maps_without_shape, row_map_entry, row_map_warnings = (
+                _screen_row_maps(fetcher, args, pings, blocked_hosts, alignment, plane)
+            )
+            services.append(row_map_entry)
+            warnings.extend(row_map_warnings)
+            if row_map_sheets is None:
+                # Not checked. Same rule as a missing flag type and as the
+                # marks: the run says so rather than reading as a corridor
+                # whose right of way was never drawn.
+                row_maps_detail = row_map_entry.get("detail", "the ROW map sheets were not checked")
+                status = "incomplete"
+            _report_row_maps(
+                row_map_sheets, row_maps_without_shape, row_map_entry.get("record_count") or 0
+            )
+
         except EXPECTED_FAILURES as exc:
             # A stopped run still writes its output, marked incomplete, naming
             # what stopped it. The responses already fetched are already cached,
@@ -951,6 +1106,8 @@ def run(args):
             control_detail = f"the run stopped before the control step finished: {exc}"
             txdot_points = None
             txdot_detail = control_detail
+            row_map_sheets = None
+            row_maps_detail = f"the run stopped before the ROW map step finished: {exc}"
             for source in SOURCES:
                 if not any(entry["name"] == source.name for entry in services):
                     services.append(
@@ -984,6 +1141,9 @@ def run(args):
             without_position=control_without_position,
             txdot_detail=txdot_detail,
             txdot_without_position=txdot_without_position,
+        ),
+        row_maps=row_maps_mod.block(
+            row_map_sheets, detail=row_maps_detail, without_shape=row_maps_without_shape
         ),
     )
     written = output.write(document, out_dir)

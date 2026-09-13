@@ -1,0 +1,18 @@
+# Provenance record. The response file beside this one is exactly what the
+# server sent and is never edited. Every parameter of the request is listed
+# under [request_params], so the call can be repeated and checked.
+service = "TxDOT_ROW_Maps"
+cache_key = "txdot-row-maps/date-tally-no-date-at-all__8ef3d7cb0a06"
+request_method = "POST"
+request_url = "https://maps.dot.state.tx.us/arcgis/rest/services/ROW/ROW_Maps_CL_2017/MapServer/0/query"
+captured_at = 2026-09-12T23:56:26-05:00
+http_status = 200
+response_bytes = 11
+layer_id = 0
+record_count = 0
+warnings = []
+
+[request_params]
+where = "MAP_FROM_DT IS NULL"
+returnCountOnly = "true"
+f = "json"

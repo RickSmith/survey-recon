@@ -1,14 +1,14 @@
 # Provenance record. The response file beside this one is exactly what the
 # server sent and is never edited. Every parameter of the request is listed
 # under [request_params], so the call can be repeated and checked.
-service = "NGS_Datasheets"
-cache_key = "ngs-datasheets/ngs-datasheets-layer-1-metadata__d97c97e891ca"
+service = "TxDOT_ROW_Maps"
+cache_key = "txdot-row-maps/txdot-row-maps-layer-0-metadata__d79fef6aef10"
 request_method = "GET"
-request_url = "https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/NGS_Datasheets_Feature_Service/FeatureServer/1"
+request_url = "https://maps.dot.state.tx.us/arcgis/rest/services/ROW/ROW_Maps_CL_2017/MapServer/0"
 captured_at = 2026-09-13T06:15:36-05:00
 http_status = 200
-response_bytes = 34591
-layer_id = 1
+response_bytes = 5922
+layer_id = 0
 warnings = []
 
 [request_params]

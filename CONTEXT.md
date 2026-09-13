@@ -71,9 +71,10 @@ They are buyers and risk-owners. They are not going to install things themselves
 | **CSJ** | Control-Section-Job number — TxDOT's project identifier, e.g. `2552-04-041` |
 | **Control section** | A numbered segment of a highway. SH16 through Bexar spans 0291-09, 0291-10, 0613-01 |
 | **DFO** | Distance From Origin — TxDOT's linear referencing measure along a route |
-| **ROW map sheet** | The historical record drawing of a right of way. SH16 in Bexar has 27, dating 1937–1998 |
+| **ROW map sheet** | The historical record drawing of a right of way. SH16 across the whole of Bexar County has 27, dating 1937–1998, over three control sections. The demo corridor is 8.69 miles inside one of those sections and reaches 15 of them, dating 1944–1998 — a corridor figure and a county figure are different questions, and [the ROW map sheets page](docs/data-sources/row-map-sheets.md) works the difference through |
 | **ORD** | OpenRoads Designer — the MicroStation product TxDOT requires for design survey graphics |
 | **ProjectWise / OnBase** | TxDOT's document systems. Design surveys go to ProjectWise; final ROW maps to OnBase |
+| **RPAM** | Real Property Asset Map. TxDOT's own words: "an online application populated with geo-referenced features that represent all real property assets comprising the highway right of way and is the replacement for paper right-of-way maps" ([TxDOT, Real Property Asset Map](https://www.txdot.gov/data-maps/right-of-way-maps/real-property-asset-map.html)). A map not available there is obtained by Open Records Request. The corridor tool reports sheet numbers and dates; the drawings come from here |
 | **TMUTCD** | Texas Manual on Uniform Traffic Control Devices. The 2025 edition took effect January 18, 2026 |
 | **TCP** | Traffic Control Plan. TCP(S-1)-08A is the standard sheet for surveying operations |
 | **TMA** | Truck-Mounted Attenuator — the crash cushion on a shadow vehicle. Needing one changes the crew cost |
