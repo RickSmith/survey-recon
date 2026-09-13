@@ -24,6 +24,6 @@ worked example — including the ones that got sent back.
   a quarter times too small. Failure beat two, and why a wrong answer is worse
   than a broken one.
 - **[The description that outlived its evidence](the-description-that-outlived-its-evidence.md)**
-  — the glossary went on describing that beat as a run nobody captured, a day
-  after the captures came back saying otherwise. It reached a slide. What a
+  — the glossary went on describing that beat as a run nobody captured, while
+  the captures committed beside it said otherwise. It reached a slide. What a
   summary is for, and why it is not a source.

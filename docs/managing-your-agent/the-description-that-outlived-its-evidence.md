@@ -58,8 +58,10 @@ for the run of show. Then the beat was actually run, on 2026-09-13 under issue
 #26, and the captures came back saying something else. The write-up was
 corrected. The glossary was not, because nothing pointed from one to the other.
 
-So the repo held the corrected account and the wrong one at the same time, for a
-day, with the wrong one in the file every other page is told to trust.
+So the repo held the corrected account and the wrong one at the same time. Both
+`d905bac` and `01dbc29` are dated 2026-09-13 — the captures and the corrected
+write-up — and the glossary entry sitting beside them went on saying something
+else, in the file every other page is told to trust.
 
 ## The part that should worry you
 

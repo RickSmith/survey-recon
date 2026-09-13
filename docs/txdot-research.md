@@ -235,7 +235,7 @@ Also: Bexar railroads/schools/school-districts MapServers · CoSA Cemetery Stewa
     attempts on 2026-09-13 all answered, though one took 16.35 seconds. Both
     re-tests are written up on
     [sources we looked at and did not use](data-sources/not-used.md), and how
-    the wrong description travelled from this page into the glossary is
+    the wrong description traveled from this page into the glossary is
     [the description that outlived its evidence](managing-your-agent/the-description-that-outlived-its-evidence.md).
 
 ---

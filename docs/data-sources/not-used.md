@@ -155,9 +155,9 @@ number" to "a 200 that will not parse" and "a parameter quietly ignored" — and
 both of those still defeat a caller that only checks the status code.
 
 What we are also saying, plainly, is that **we could not confirm the `NoData`**.
-We looked in every response committed for this beat and in the research page that
-is the claim's only source, and it is not in either. That is *not found* rather
-than *it never happened*, and the difference is that somebody looked.
+We looked in every response committed for this beat and in the research page the
+claim came from, and it is in neither. That is a *not found*, and where it was
+looked for is written down above so the next person can look somewhere else.
 
 **The tool still does not call it.** Elevation is not something a corridor
 screening needs, the failure history is on the record whether or not any

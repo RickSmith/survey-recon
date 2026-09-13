@@ -52,10 +52,8 @@ CARD = REPO / "docs" / "presenting" / "fallbacks.md"
 PLAN = REPO / "docs" / "plan-of-record.md"
 GLOSSARY = REPO / "CONTEXT.md"
 
-# `NoData` as a word rather than as part of one. The folder holding the evidence
-# is still called `silent-nodata` on purpose -- renaming committed evidence to
-# match a corrected story is its own kind of tidying-up -- so the hyphen in
-# front of it has to not count. #104.
+# `NoData` as a word rather than as part of one, so that the folder name
+# `silent-nodata` -- which stays -- does not count as saying it. #104.
 A_BARE_NODATA = re.compile(r"(?<![\w-])nodata")
 
 # The five slides this work order owns, in the order the block runs them. The
@@ -458,20 +456,17 @@ class TestThePlanAndTheGlossaryAgreeWithTheDeck(unittest.TestCase):
     """The other two documents that carried the old account of beat 2.
 
     The card was held to the deck above. The plan of record and `CONTEXT.md`
-    were not, and both went on describing a run nobody captured -- the service
-    reading longitude and latitude as Web Mercator meters, landing in the
-    Atlantic and answering `NoData`. None of those three things is in the
-    evidence. `wkid` is honored (`wkid-3857-mercator.json`), the point that
-    would deserve a `NoData` answers plain text instead (`no-data-gulf.txt`),
-    and the token is in no response this repo holds.
+    were not, and both went on describing a run nobody captured. The skeleton
+    slide for this beat was written out of the glossary rather than out of the
+    captures, and inherited every error in it.
 
-    **These two pages are why it mattered.** `CONTEXT.md` is the glossary every
-    other page is told to trust, and the plan of record is the page that gets
-    read out loud. The skeleton slide for this beat was written out of the
-    glossary rather than out of the captures and inherited all three errors.
+    **That is why these two pages get checked and a third does not.**
+    `CONTEXT.md` is the glossary every other page is told to trust, and the
+    plan of record is the page that gets read out loud.
 
-    Issue #104. The account is
-    `docs/managing-your-agent/the-description-that-outlived-its-evidence.md`.
+    Issue #104. What was wrong and how it survived is the account at
+    `docs/managing-your-agent/the-description-that-outlived-its-evidence.md`,
+    which is the place to change it rather than here.
     """
 
     def setUp(self):
@@ -480,9 +475,15 @@ class TestThePlanAndTheGlossaryAgreeWithTheDeck(unittest.TestCase):
 
     def short_name(self):
         """`wrong, not missing` -- the deck's own name for beat 2, read off the
-        slide rather than written down a second time here."""
+        slide rather than written down a second time here.
+
+        Guarded, because an unguarded `partition` that misses returns an empty
+        string and every caller degrades to `assertIn("", ...)` -- a check that
+        can only pass, which is what this whole file exists to not be."""
         heading = next(slide.heading for slide in block() if "Beat 2" in slide.heading)
-        _, _, after = heading.partition("—")
+        _, dash, after = heading.partition("—")
+        self.assertTrue(dash, f"beat 2 is headed {heading!r} and carries no short name")
+        self.assertTrue(after.strip(), f"beat 2 is headed {heading!r}")
         return after.strip().lower()
 
     def glossary_entry(self):
@@ -494,7 +495,14 @@ class TestThePlanAndTheGlossaryAgreeWithTheDeck(unittest.TestCase):
         )
 
     def test_the_plan_names_beat_two_the_way_the_slide_is_headed(self):
-        self.assertIn(self.short_name(), self.beat.lower())
+        """Scoped to the numbered bullet rather than to the section, so that it
+        can fail on its own. The timing-warning check below reads the same name
+        out of the same section, and a section-wide check here would have been
+        passed by the warning alone."""
+        bullet = next(
+            line for line in self.section.splitlines() if line.startswith("2. ")
+        )
+        self.assertIn(self.short_name(), plain(bullet).lower())
 
     def test_the_timing_warning_names_the_beat_it_offers_to_cut(self):
         """It is the sentence a presenter acts on at 1:36, so it has to name
@@ -504,10 +512,13 @@ class TestThePlanAndTheGlossaryAgreeWithTheDeck(unittest.TestCase):
         self.assertIn(self.short_name(), plain(warning).lower())
 
     def test_the_plan_stops_naming_the_beat_after_a_word_no_capture_contains(self):
-        """Scoped to the failure-beat section rather than to the whole page,
-        because the ban is on the *claim*, not on the token. `NoData` stays a
-        term worth defining -- see the glossary check below -- and a page-wide
-        ban would forbid defining it."""
+        """The whole failure-beat section, not just beat 2 -- the old name was
+        in the beat and in the timing warning that offers to cut it, and both
+        get read out loud.
+
+        Not the whole page, though, because the ban is on the *claim* and not
+        on the token. `NoData` stays a term worth defining -- see the glossary
+        check below -- and a page-wide ban would forbid defining it."""
         self.assertIsNone(A_BARE_NODATA.search(self.beat.lower()))
 
     def test_the_glossary_keeps_the_term_and_drops_the_claim(self):
@@ -522,7 +533,11 @@ class TestThePlanAndTheGlossaryAgreeWithTheDeck(unittest.TestCase):
 
     def test_the_plan_blames_the_unit_rather_than_the_coordinate_system(self):
         """`wkid` is honored, so a page still saying the coordinate system moved
-        the point is describing the ticket rather than the run."""
+        the point is describing the ticket rather than the run.
+
+        Section-wide again, for the same reason as the check above: the run of
+        show is three beats and a timing warning, and none of the other two is
+        about a coordinate system either."""
         self.assertIn("us_feet", self.beat.lower())
         self.assertNotIn("web mercator", self.beat.lower())
 
