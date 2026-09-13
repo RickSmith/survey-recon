@@ -610,8 +610,17 @@ class TestItSurvivesTheLaptopItWillActuallyRunOn(unittest.TestCase):
 
     Beat one shipped with an em dash and a `UnicodeEncodeError` on a default
     Windows console. That was caught by review rather than by anything running,
-    which is issue #67's whole complaint. Until that seam exists, this is the
-    check for this module.
+    which is issue #67's whole complaint.
+
+    **That seam exists now**, and `summary` goes through it -- so an em dash
+    here fails when somebody runs the tool rather than when somebody runs this.
+    This check stays anyway: it is the one that names the three consoles, and
+    `beats.render` refuses non-ASCII without knowing which encodings a podium
+    actually has.
+
+    It applies to the console rendering only. The Markdown build-up written
+    beside it is UTF-8 and is meant to carry multiplication signs and em
+    dashes.
     """
 
     def test_the_summary_prints_on_a_console_that_only_speaks_ascii(self):

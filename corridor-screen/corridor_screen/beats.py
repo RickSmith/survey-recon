@@ -23,6 +23,22 @@ of three hundred people.
 
 ----
 
+`render` has a third caller, and it is not a beat
+=================================================
+
+`crew_day.summary` -- the console rendering printed at 1:18 -- goes through
+`render` too. It has no captures, no `CHECKED_ON` and no ``beat()``, and it
+should not be given any of them to look like a beat: it renders an estimate.
+What it shares is the console it prints to.
+
+**That module's other output is the opposite case**, which is worth saying
+here because it is the thing somebody will get backwards. `crew_day` also
+writes the Markdown build-up, as UTF-8, full of multiplication signs and em
+dashes, correctly -- it is read in an editor or on the site. Only the printed
+one is held to ASCII.
+
+----
+
 The shape a beat module has
 ===========================
 
