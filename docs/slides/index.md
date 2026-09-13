@@ -21,8 +21,8 @@ page is what was on the screen in the room.
 </p>
 
 !!! note "It is a frame, not a talk"
-    The deck is **45 slides** — one section break for every block of the two
-    hours, and outline slides under each. **31 of them are still placeholders**,
+    The deck is **46 slides** — one section break for every block of the two
+    hours, and outline slides under each. **23 of them are still placeholders**,
     and each of those says so on its face and names the work order that will
     fill it.
 
@@ -30,15 +30,16 @@ page is what was on the screen in the room.
     session.
 
     The skeleton was built under
-    [issue #12](https://github.com/RickSmith/survey-recon/issues/12). Two pieces
-    of content have landed: the money slide's two slides under
-    [#32](https://github.com/RickSmith/survey-recon/issues/32), their figures
-    read out of the crew-day build-up, and one slide in Act II — the datum gap —
-    under [#33](https://github.com/RickSmith/survey-recon/issues/33), its counts
-    read out of the SH16 run. Both are checked against those sources on every
-    test run. The rest of the content lands under
-    [#31](https://github.com/RickSmith/survey-recon/issues/31)
-    (the concept slides), [#34](https://github.com/RickSmith/survey-recon/issues/34)
+    [issue #12](https://github.com/RickSmith/survey-recon/issues/12). Three
+    pieces of content have landed, each checked against its own source on every
+    test run: the money slide under
+    [#32](https://github.com/RickSmith/survey-recon/issues/32), its figures read
+    out of the crew-day build-up; the datum gap under
+    [#33](https://github.com/RickSmith/survey-recon/issues/33), its counts read
+    out of the SH16 run; and the concept slides under
+    [#31](https://github.com/RickSmith/survey-recon/issues/31), held to the
+    translation table in `CONTEXT.md`. The rest lands under
+    [#34](https://github.com/RickSmith/survey-recon/issues/34)
     (Hermes), and [#81](https://github.com/RickSmith/survey-recon/issues/81)
     through [#86](https://github.com/RickSmith/survey-recon/issues/86) (the cold
     open, the three Acts, the failure beat and the close).
@@ -65,6 +66,7 @@ page is what was on the screen in the room.
 | `corridor-screen/tests/test_deck.py` | Holds the deck to the run of show. See below |
 | `corridor-screen/tests/test_money_slide.py` | Holds the money slide to the crew-day build-up its figures come from |
 | `corridor-screen/tests/test_datum_gap.py` | Holds the datum-gap slide to the research note and the SH16 run |
+| `corridor-screen/tests/test_concept_slides.py` | Holds the concept slides to the translation table, and to what they ported |
 
 ## Where the clock lives
 
