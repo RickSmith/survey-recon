@@ -224,3 +224,49 @@ def visible(slides_):
     class of false failure, wearing emphasis instead of a line break.
     """
     return with_markup(slides_).replace("**", "").replace("*", "").replace("`", "")
+
+
+# A repo path as it appears on a slide or in a speaker note. Anchored to the
+# three folders a slide ever points at, because a bare word with a slash in it
+# is not a path and `MARK NOT FOUND`/`A4` should not be read as one.
+#
+# It lives here because the checks that use it are per-block and there are now
+# three of them. #82's review found three slides shipping `captures/...`, which
+# is not where that folder is: a **half path reads as a whole one**, and the
+# room photographs the slide rather than the presenter's screen.
+A_PATH = re.compile(r"(?<![\w/.-])((?:corridor-screen|docs|project-sh16)/[\w./-]+)")
+
+
+def slides_in_block(label, breaks=False):
+    """The slides of one block, found by what their speaker notes claim.
+
+    `breaks` keeps the section break at the head of the block. It is off by
+    default because a break carries a name and a clock and nothing a
+    content check wants to read.
+
+    Written once for Act I, copied for Act II, and extracted on Act II's own
+    review before a third copy existed.
+    """
+    return [slide for slide in slides()
+            if noted(slide) and noted(slide).label == label
+            and (breaks or not slide.is_a_break)]
+
+
+def on_screen(heading):
+    """What the room sees on one slide, markup and all, note taken out.
+
+    The note is deliberately excluded. A note is allowed to say "do not put
+    524 on this slide"; a check reading the whole body would find the 524 in
+    that warning and fail the slide for obeying it.
+    """
+    return with_markup([slide_headed(heading)])
+
+
+def note(heading):
+    """That slide's speaker note as one line.
+
+    Notes are hard-wrapped prose, so a phrase worth checking usually has a
+    line break in the middle of it. `markdown_docs.flat` is the same job on a
+    page instead of on a note.
+    """
+    return " ".join(slide_headed(heading).note.split())

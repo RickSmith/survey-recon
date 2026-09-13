@@ -619,69 +619,134 @@ order you need them, and project-sh16/screening.json is the run itself.
 - Every published survey mark inside the corridor, and its last condition
 - Every TxDOT primary control point, and whether it still exists
 - Every right-of-way map sheet the corridor touches, and its date
-- All of it from public sources. No client data, ever
-
-> **To be written** — #83
+- Fourteen services. Every one answered, and the run finished complete
+- All of it from public sources. **No client data, ever**
 
 <!--
 0:57–1:18 · 21 min · Act II — Find the control
 
 The last bullet is a governance point disguised as a technical one. Say it
 plainly: nothing belonging to a client went anywhere near this.
+
+"Every one answered" is worth a beat. Fourteen public services, no sanity
+check tripped, and the run finished `complete` rather than `incomplete`. That
+is not the normal outcome and the tool is built for the other one -- a dead
+service stops the run and a doubtful answer records a warning, which is
+ADR 0001.
+
+The three findings come next in the order an estimator needs them: what
+control is published, whether it is still there, and what the record drawings
+are. Do not reorder them for variety.
 -->
 
 ---
 
 # The NGS marks
 
-- What came back for this corridor, and how many were usable
-- MARK NOT FOUND is a report with a date on it, not a verdict
-- A mark somebody looked for and could not find is control you may have to set
-- Counted separately from the marks reported present, and here is why
+- **11 marks in the corridor. All 11 read `MARK NOT FOUND`**
+- That is a report with a date on it, not a verdict
+- Somebody looked and did not find it. You may have to set it
+- **11 is not 11 pieces of control you have.** It is 11 you may set
+- Nothing here was *condition unknown* — nobody-looked is a third answer
 
-> **To be written** — #83
+project-sh16/screening.json
 
 <!--
 0:57–1:18 · 21 min · Act II — Find the control
 
 The distinction in bullets two and three is the one an estimator gets wrong.
 A count of marks reads as control you have.
+
+**All eleven is the number that lands.** Not several, not most -- every
+published NGS mark inside this corridor was last reported as not found. An
+estimate built on "eleven marks are out there" is an estimate for recovering
+control that may not be there to recover.
+
+The word to be careful with is "destroyed", and it is not the word NGS used.
+`MARK NOT FOUND` says somebody looked on a date and did not find it. It may
+still be under six inches of caliche. TxDOT publishes a *destroyed* for its
+own monuments, which is the stronger claim, and that is the next slide.
+
+Zero `condition unknown` here, and say that rather than skipping it. It is
+the third answer -- nobody looked at all -- and a corridor where it is not
+zero is a corridor with a gap nobody has measured.
 -->
 
 ---
 
 # The TxDOT control points
 
-- What the state publishes about its own monuments on this route
-- Monument destroyed is a stronger claim than MARK NOT FOUND. Both cost a trip
-- Condition unknown is neither. Nobody looked, so nobody knows
-- Two records can name one monument, so a record count is not a monument count
+- **4 records in the corridor. They name 2 distinct monuments**
+- A crew drives to the monument. An estimator must not count it twice
+- All 4 published `Good`. **None carries a recovery date**
+- None destroyed and none unknown here — but *good* on what day?
+- *Monument destroyed* is a stronger claim than `MARK NOT FOUND`
+- *Condition unknown* is neither. Nobody looked, so nobody knows
 
-> **To be written** — #83
+project-sh16/screening.json
 
 <!--
 0:57–1:18 · 21 min · Act II — Find the control
 
 Distinct stations against record count is the detail that makes a surveyor
 trust the rest of the output. Do not skip it for time.
+
+Four records, two monuments, and the tool reports both numbers rather than
+picking one. The service holds two records for 274 of its 492 stations, so
+this is the ordinary case and not a quirk of this corridor. Do not call that
+a statewide figure -- this service is the **San Antonio District's** control,
+and docs/data-sources/txdot-control-points.md is blunt that no statewide
+TxDOT primary control service was found.
+
+**The third bullet is the one to land.** All four read `Good` and not one of
+them carries a recovery date -- `last_recovered` is empty on every record. The
+NGS marks on the slide before this are the opposite: a harder word, with a
+date attached. An undated `Good` is a weaker thing to build a bid on than a
+dated `MARK NOT FOUND`, and this room will get that immediately.
+
+**Bullets five and six describe words, not findings.** Neither destroyed nor
+condition unknown turned up here. Say so, because a room that hears the
+definitions will assume they were found. They are on the slide because they
+are three different statements about a monument and only one of them means
+you have it.
+
+The contrast with the previous slide is the point of the pair: eleven NGS
+marks nobody could find, and two TxDOT monuments called good by nobody on no
+date. Same corridor, two agencies -- and only the query happened on one day.
 -->
 
 ---
 
 # The right-of-way map sheets
 
-- The historical record drawings the corridor crosses, and their dates
-- A corridor figure and a county figure answer different questions
-- Sheets from the 1940s and sheets from the 1990s are not the same document
-- What the tool reports, and what still has to be ordered by hand
+- **69 sheets reach this corridor. 15 of them are SH16's own**
+- The other 54 belong to the crossing routes at the interchanges
+- SH16's 15 date **1944 to 1998** — fifty-four years of drawing
+- Across all of Bexar County SH16 has **27**, 1937–1998. Both are right
+- **Say which question you are answering.** Corridor, or county
 
-> **To be written** — #83
+docs/data-sources/row-map-sheets.md
 
 <!--
 0:57–1:18 · 21 min · Act II — Find the control
 
 docs/data-sources/row-map-sheets.md works the corridor-against-county
 difference through properly. Take the numbers from there.
+
+**69 and 27 are both true and they answer different questions.** 69 is what
+reaches this corridor, because the right of way at an interchange is drawn on
+the crossing route's sheets -- IH0410 contributes 24, Loop 1604 nineteen,
+FM0471 eight, FM1560 three. 27 is SH16 across the whole county, over three
+control sections, 15 + 8 + 4. Quote one, say which, and do not let the room
+hear the other as a correction.
+
+This row of the run of show was wrong until 2026-09-13 and said 27 as if it
+were the corridor figure. The account is issue #80. If somebody has an older
+handout, that is why.
+
+The tool reports sheet numbers and dates. **It does not fetch the drawings.**
+Those come from the Real Property Asset Map, and anything not there is an Open
+Records Request. Say that plainly -- it is a real gap and it costs real days.
 -->
 
 ---
@@ -733,16 +798,27 @@ the GEOID03 records are in project-sh16/cache/txdot-primary-control-points.
 
 - Everything so far came off the disk, captured in September, and we said so
 - This one goes out to the network now, in front of you
+- Last time: **5 marks in both, and all 5 conditions agreed**
 - If it fails, that is also true, and we will say that too
 - One live moment is what proves the rest is not a movie
-
-> **To be written** — #83
 
 <!--
 0:57–1:18 · 21 min · Act II — Find the control
 
 NGS /radial was the most reliable endpoint tested. If it does not answer, say
 so and move on - losing it costs the live moment and nothing else.
+
+**It is a cross-check, not a recording agreeing with itself.** The live call
+asks NGS today; the capture is what NGS said on 13 September. Five marks
+appear in both and all five conditions matched -- MARK NOT FOUND on every one.
+That is the claim worth making: the cache is not stale in the way that would
+matter.
+
+Five is what it found last time, not a promise. It is a live call.
+
+It is a separate command rather than a mode, on purpose, so the worst a dead
+network can do is cost this moment. The screening run is unaffected either
+way, and the command says so itself when there is no network.
 -->
 
 ---

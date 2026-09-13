@@ -25,6 +25,8 @@ its time pattern to a whole cell, `test_deck` searches for one inside a line of
 prose. Sharing those would be sharing a coincidence.
 """
 
+import json
+
 from corridor_screen.cache import long_path
 
 
@@ -90,3 +92,13 @@ def table_rows(markdown):
             continue
         rows.append([cell.strip() for cell in line.strip("|").split("|")])
     return rows
+
+
+def json_of(path):
+    """A committed JSON file, read through the same door as a markdown one.
+
+    Three test files were spelling this out, each with its own `SCREENING`
+    constant and its own `open(long_path(...))`. The SH16 run is the thing
+    they all load and it is read the same way every time.
+    """
+    return json.loads(text_of(path))

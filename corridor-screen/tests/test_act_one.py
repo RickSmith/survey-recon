@@ -31,7 +31,7 @@ would drift the first time somebody fixed one of them.
 import re
 import unittest
 
-from .deck_reader import REPO, noted, slide_headed, slides, with_markup
+from .deck_reader import A_PATH, REPO, note, on_screen, slides_in_block, with_markup
 from .markdown_docs import flat, text_of
 
 CAPTURES = REPO / "corridor-screen" / "captures" / "the-grilling"
@@ -79,22 +79,11 @@ def seconds_they_took():
 def act_one():
     """The five content slides of the block.
 
-    The section break at its head belongs to the block too and carries the same
-    note, so it is dropped here -- what this file checks is the slides that
+    The section break at its head belongs to the block too and carries the
+    same note, so it is dropped -- what this file checks is the slides that
     carry content, and a break carries a name and a clock.
     """
-    return [s for s in slides()
-            if noted(s) and noted(s).label == BLOCK and not s.is_a_break]
-
-
-def on_screen(heading):
-    """What the room sees on one slide, markup and all, note taken out."""
-    return with_markup([slide_headed(heading)])
-
-
-def note(heading):
-    """That slide's note as one line, so a phrase survives the hard wrapping."""
-    return flat(slide_headed(heading).note)
+    return slides_in_block(BLOCK)
 
 
 class TestTheNumbersAreTheGrillingS(unittest.TestCase):
@@ -231,11 +220,9 @@ class TestEveryOnSlideSourceIsAPathThatOpens(unittest.TestCase):
     which is not where that folder is.
     """
 
-    A_PATH = re.compile(r"(?<![\w/.-])((?:corridor-screen|docs|project-sh16)/[\w./-]+)")
-
     def test_every_path_on_an_act_one_slide_is_committed(self):
         for slide in act_one():
-            for named in self.A_PATH.findall(with_markup([slide])):
+            for named in A_PATH.findall(with_markup([slide])):
                 with self.subTest(slide=slide.heading, path=named):
                     self.assertTrue(
                         (REPO / named).exists(),
