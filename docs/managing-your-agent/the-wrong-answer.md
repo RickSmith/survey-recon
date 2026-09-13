@@ -157,7 +157,7 @@ it away from you:
 python -m corridor_screen.elevation_trap --show
 ```
 
-Nine responses are committed in `corridor-screen/captures/silent-nodata/`, with
+Twelve responses are committed in `corridor-screen/captures/silent-nodata/`, with
 the exact request each came from. **Every one of them answered HTTP 200** — that
 is the point of the set. Not one is an error by the only test most code applies.
 

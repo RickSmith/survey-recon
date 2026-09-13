@@ -7,11 +7,15 @@ checked against what was actually served.
 
 **Nothing here is edited.** Each file is exactly the bytes that came back.
 
-All ten were fetched on **2026-09-13**, and **every one answered HTTP 200.**
+All twelve were fetched on **2026-09-13**, and **every one answered HTTP 200.**
 That is the point of the set: not one of them is an error by the only test most
 callers apply. The statuses were read off the wire by re-requesting each one;
 a saved body carries no headers of its own, so `elevation_trap.CAPTURES` states
 them rather than parsing them.
+
+The last row of the table below is `the-beat.txt`, which is a rendering rather
+than a response. It is outside that count, and it is where the count went wrong
+three times before a test was put on it.
 
 | File | Request | What came back |
 |---|---|---|
