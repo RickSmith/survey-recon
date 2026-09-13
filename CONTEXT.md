@@ -172,3 +172,6 @@ they are collected here so no page has to stop and explain them twice.
 | Code review | Checking the work before it goes out the door |
 | Rewriting history | Going back and altering field book entries already made |
 | Force push | Tearing a page out of the field book and writing a new one in its place |
+| Markdown | A field book: plain text, no proprietary format, opens in nine years |
+| Context window | What is spread on the desk right now. Anything off it might as well not exist |
+| Token | The unit on the invoice, like a crew-hour — it is what gets counted and billed |

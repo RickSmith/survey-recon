@@ -1,6 +1,6 @@
 """The concept slides, held to the audience rule and to what they ported.
 
-Issue #31. Eight slides across two blocks — *What is an agent* at `0:08–0:20`
+Issue #31. Nine slides across two blocks — *What is an agent* at `0:08–0:20`
 and *Vocabulary of managing one* at `0:20–0:30`. They are the only part of the
 session that teaches software rather than surveying, to a room of licensed
 professionals who mostly have never opened a terminal and have no patience for
@@ -34,12 +34,20 @@ cut marks, the canvas — is `test_deck.py`'s.
 
 import re
 import unittest
+from pathlib import Path
 
-from tests.deck_reader import block_headed, slide_headed, visible
+from tests.deck_reader import block_headed, slide_headed, visible, with_markup
 from tests.markdown_docs import flat, markdown_section, table_rows, text_of
-from tests.test_deck import PLAN, REPO
 
+# Declared here rather than imported from `test_deck`, which is where an
+# earlier draft took them from. `test_plan_of_record.py` records that exact
+# decision being reversed: importing through another test file "made this file
+# look as though it depended on the fallback card's tests, which it does not."
+# Every other test file in this folder declares its own two lines, and shared
+# readers come from `markdown_docs`, `deck_reader` and `build_up_figures`.
+REPO = Path(__file__).resolve().parents[2]
 CONTEXT = REPO / "CONTEXT.md"
+PLAN = REPO / "docs" / "plan-of-record.md"
 
 # The two blocks these eight slides live in, by the heading of their break
 # slide. Found through the deck for `deck_reader.block_headed`'s reason.
@@ -56,7 +64,10 @@ THE_BLOCKS = ("what is an agent", "vocabulary of managing one")
 CONCEPTS = (
     ("LLM basics", "predicts the next word", "at scale"),
     ("chatbot to copilot to agent", "chatbot", "doing the work"),
-    ("the agentic loop", "the loop", ("goal", "reason", "act", "observe")),
+    # The four steps as whole words. `act` as a plain substring also matches
+    # "fact", "acts" and "Act I", which makes it the one of the four a rewrite
+    # could satisfy without meaning to.
+    ("the agentic loop", "the loop", (r"\bgoal\b", r"\breason\b", r"\bact\b", r"\bobserve\b")),
     # Not "#": every slide's own heading is a hash, so that check passed on
     # the placeholder. The syntax table is what the source slide carried, and
     # naming two of its rows is the smallest honest sign the port kept it.
@@ -117,20 +128,29 @@ def bullets(slide):
     a title cannot introduce anything -- the bullets under it do that. Leaving
     headings in failed every slide that names its own subject, which is all of
     them.
+
+    Grouped off the marked-up text and stripped afterwards. Stripping first
+    turns the Markdown slide's backticked `- ` -- an example of what starts a
+    list item -- into a line beginning with a dash, which then reads as a new
+    bullet and breaks in half the bullet it belongs to.
     """
     found, current = [], []
-    for line in visible([slide]).splitlines():
+    for line in with_markup([slide]).splitlines():
         if not line.strip():
             continue
-        if line.lstrip().startswith(("-", "#")) or re.match(r"^\s*\d+\.", line):
+        starts_one = line.lstrip().startswith(("-", "#")) or re.match(
+            r"^\s*\d+\.", line
+        )
+        if starts_one:
             if current:
-                found.append(flat(" ".join(current)))
+                found.append(" ".join(current))
             current = [line]
         else:
             current.append(line)
     if current:
-        found.append(flat(" ".join(current)))
-    return [one for one in found if not one.lstrip().startswith("#")]
+        found.append(" ".join(current))
+    plain = [flat(one.replace("**", "").replace("*", "").replace("`", "")) for one in found]
+    return [one for one in plain if not one.lstrip().startswith("#")]
 
 
 def a_stem(term):
@@ -181,9 +201,8 @@ class EachConceptCarriesItsSubstance(unittest.TestCase):
             seen = flat(visible([slide])).lower()
             for phrase in (wanted,) if isinstance(wanted, str) else wanted:
                 with self.subTest(concept=concept, phrase=phrase):
-                    self.assertIn(
-                        phrase.lower(),
-                        seen,
+                    self.assertIsNotNone(
+                        re.search(phrase, seen, re.IGNORECASE),
                         f"the slide for {concept!r} never says {phrase!r}, which "
                         f"is the part of it worth porting",
                     )
@@ -200,28 +219,31 @@ class EverySoftwareTermArrivesWithItsSurveyEquivalent(unittest.TestCase):
         first. Read from `CONTEXT.md`'s table, so a row added there is enforced
         here without anybody remembering to.
 
-        **Checked bullet by bullet, not slide by slide.** The first draft
+        **The rule is about the first bullet that says the term, not every
+        one.** Two drafts got this wrong in opposite directions. The first
         searched the whole slide, and the repo-and-git slide passed with the
-        survey words stripped off its commit bullet -- because a *different*
-        bullet on the same slide still said "field book". A term is introduced
-        by its equivalent or it is not; being on a slide where some other line
-        got it right is not being introduced.
+        survey words stripped off its commit bullet, because a *different*
+        bullet still said "field book". The second wanted the equivalent in
+        every bullet, which failed the token slide for using the word a second
+        time in its own example. A term is introduced once. After that it is
+        just the word.
         """
         for software, survey in translation_table().items():
             pattern, wanted = a_stem(software), survey_words(survey)
             for slide in content_of(the_slides()):
-                for bullet in bullets(slide):
-                    if not pattern.search(bullet):
-                        continue
-                    for word in wanted:
-                        with self.subTest(term=software, slide=slide.number):
-                            self.assertIn(
-                                word,
-                                bullet.lower(),
-                                f"slide {slide.number} says {software!r} with "
-                                f"no sign of {survey!r} in the same bullet: "
-                                f"{bullet!r}",
-                            )
+                introduced = next(
+                    (line for line in bullets(slide) if pattern.search(line)), None
+                )
+                if introduced is None:
+                    continue
+                for word in wanted:
+                    with self.subTest(term=software, slide=slide.number):
+                        self.assertIn(
+                            word,
+                            introduced.lower(),
+                            f"slide {slide.number} first says {software!r} in "
+                            f"{introduced!r}, with no sign of {survey!r} there",
+                        )
 
 
 class NothingCondescends(unittest.TestCase):

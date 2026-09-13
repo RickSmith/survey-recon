@@ -93,7 +93,7 @@ Justified: the TxDOT ROW map server blocks intermittently, USGS elevation timed 
 | Time | Min | Block |
 |---|---|---|
 | 0:00–0:08 | 8 | **Cold open.** Hand the agent the SH16 job; let it run while you introduce yourselves. |
-| 0:08–0:20 | 12 | **What is an agent.** Prediction → chatbot/copilot/agent → the loop. |
+| 0:08–0:20 | 12 | **What is an agent.** Prediction → chatbot/copilot/agent → the loop → where it breaks. |
 | 0:20–0:30 | 10 | **Vocabulary of managing one.** Markdown · repo & git · issues · context. One token slide. |
 | 0:30–0:46 | 16 | **Act I — The grilling.** `/grill-with-docs` live → `/to-spec` → `/to-tickets` → real issues on the projector. *The hinge.* |
 | 0:46–0:52 | 6 | **The money slide.** Billable-hour math. Rework, not speed. "Cannot be invoiced." |

@@ -67,9 +67,10 @@ then the loop, then where it breaks. Nothing here is about survey work yet,
 which is deliberate: the room needs the mechanism before it will believe the
 demo.
 
-**The fourth slide is the one not to cut.** The limits belong here, before the
-demo rather than after it — a room that has watched something impressive and
-*then* hears the caveats has already stopped listening to them.
+**The fourth slide is where it breaks**, and it belongs here rather than at the
+end: a room that has watched something impressive and *then* hears the caveats
+has already stopped listening to them. Nothing in this block is on the cut
+line — §7 drops Hermes, the build-up and the token slide, in that order.
 -->
 
 ---
@@ -79,8 +80,7 @@ demo rather than after it — a room that has watched something impressive and
 - It predicts the next word. Then the next one. That is the whole mechanism
 - Run that at scale — books, code, manuals, and yes, survey documentation
 - **The survey parallel: a traverse.** One trivial operation, repeated enough
-  times to produce something you can build on
-- Nobody programmed the skills in. They fell out of prediction at scale
+- Skills nobody wrote in — grammar, arithmetic, code — appeared as it got bigger
 - Which is why a wrong answer arrives in the same voice as a right one
 
 <!--
@@ -127,7 +127,8 @@ cannot cost you anything. An agent can, because it acts.
 - **Reason** — it plans the next step
 - **Act** — it calls a tool: writes code, reads a file, queries a map service
 - **Observe** — it reads the result, adjusts, and goes round again
-- It stops when the work is done, or when it stops and asks
+- It runs until the work is done, until it is stuck, or until it asks
+- **You decide what "done" means, before the loop starts**
 
 <!--
 0:08–0:20 · 12 min · What is an agent
@@ -149,25 +150,34 @@ A human decides what "done" means, before the loop starts. That is Act I.
 
 # Where it breaks
 
-- **Confidently wrong.** It can invent a fact or a parameter with a straight face
-- **Runaway cost.** Retries and long documents are billed. Set limits
-- **Data.** Anything you type goes to a company's computers. Treat it as email
-- **Accountability is yours.** RPLS or LSLS — *the agent did it* is not a defense
-- Treat the output like a new hire's: trusted after you check it, not before
+- **Confidently wrong.** It invents a fact, or a setting that does not exist
+- **Fooled by what it reads.** Give it least access, not the run of the yard
+- **Data.** What you type goes to a company's computers. Treat it as email
+- **Accountability is yours.** *The agent did it* is not a defense
+
+**PAO 71** — TBPELS, 14 Nov 2024 · pels.texas.gov/nm/2024/pao-71-response.pdf
 
 <!--
 0:08–0:20 · 12 min · What is an agent
 
-**Do not cut this slide**, even running long. It is what separates a briefing
-from a sales pitch, and this room can smell the difference.
+This slide is not on the cut line — §7 of the plan of record drops Hermes, the
+crew-day build-up and the token slide, in that order, and none of them is this
+one. It is what separates a briefing from a sales pitch, and this room can
+smell the difference.
 
-The board has spoken about AI: TBPELS approved **Policy Advisory Opinion 71**
-on 14 November 2024. It is not a new rule — it says the rules you already have
-cover it. Full text and the four rule numbers are in
+**PAO 71 is not a new rule.** The board said the rules it already has cover
+AI, and named four of them. Full text and the rule numbers are in
 docs/governance/seal-and-responsible-charge.md.
 
-Say the last bullet in their words: you seal it, you own it. The close at 1:54
-is where it gets said properly.
+"Least access" in their words: a key to one gate rather than the whole yard.
+Give it what the job needs and nothing else.
+
+**Cost is off this slide on purpose** — retries and long documents are billed,
+and the money slide at 0:46 does that argument properly. Say it here only if
+somebody asks.
+
+Say the last bullet their way — you seal it, you own it. The close at 1:54 is
+where it gets said properly.
 -->
 
 ---
@@ -192,10 +202,9 @@ authority for the words used here.
 
 # Markdown
 
-- Plain text with a few marks. `#` makes a heading, `**this**` goes bold,
-  `- ` starts a list item
-- **The survey parallel: a field book**, not a CAD file
-- No proprietary format, and no version that will not open in nine years
+- **Markdown is a field book, not a CAD file** — plain text, no proprietary
+  format, and no version that will not open in nine years
+- A few marks do the formatting: `#` makes a heading, `**this**` goes bold
 - Everything in this session is written in it, including these slides
 
 <!--
@@ -252,9 +261,10 @@ settled, and it is the authority, not this slide.
 
 # Context
 
-- Everything the agent can see right now is its **context window**
+- The **context window** is what is spread on the desk right now. Anything off
+  the desk might as well not exist
 - Every word it writes, it **re-reads** that whole window first
-- A handbook committed in the repo is read every time. A conversation is not
+- A handbook committed in the repo is on the desk every time. A conversation is not
 - **The survey parallel:** written office standards against hallway advice
 
 <!--
@@ -273,8 +283,8 @@ conversation. Which is why the rules belong in a file, not in a chat.
 
 # Tokens
 
-- What the agent reads, writes and bills in. About **4 characters** each,
-  or three quarters of a word
+- A **token** is the unit on the invoice, like a crew-hour — it is what gets
+  counted and billed. About **4 characters**, or three quarters of a word
 - *"Understanding AI is fascinating!"* is **7 tokens**, not four words
 - Which is why a long document costs more to work on than a short one
 
@@ -284,11 +294,13 @@ conversation. Which is why the rules belong in a file, not in a chat.
 Cut 3 of 3. This slide goes to a footnote in the repo if the session is
 running long. Keep it to one slide so the cut is a single deletion.
 
-The example is the whole slide. "Understanding" splits into two pieces, and
-the space before a word travels with it. Nobody needs more than that.
+The example is the whole slide. It splits as Understand · ing · AI · is ·
+fascin · ating · ! — seven pieces for four words, because long words break up
+and the space before a word travels with it.
 
-Precision nobody needs here: the model never sees letters at all, only the
-numbers those pieces map to.
+**Say "about".** How a sentence splits depends on the model doing the
+splitting, and the seven above is one model's answer, not a law. Four
+characters is the rule of thumb worth remembering.
 -->
 
 ---
