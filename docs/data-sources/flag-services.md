@@ -163,8 +163,8 @@ its own data.
 
 ## Trap two — the pipeline service that holds no Texas data
 
-[The spec](../corridor-screen/spec.md) section 6 and
-[TxDOT research](../txdot-research.md) both name `NPMS_Pipelines_2022` on
+Until 2026-09-13, [the spec](../corridor-screen/spec.md) section 6 and
+[TxDOT research](../txdot-research.md) both named `NPMS_Pipelines_2022` on
 `services.arcgis.com/G4S1dGvn7PIgYd6Y` as the pipeline source.
 
 Read on 2026-09-12:
@@ -202,13 +202,17 @@ pipeline location.
 So zero pipelines on this corridor is a real answer from a source that plainly
 holds data there, rather than an empty answer from a source that holds none.
 
-!!! warning "This has not been ruled on"
-    Correcting a settled specification is not the agent's call. The tool follows
-    the service, the difference is recorded here and at the bottom of
-    `corridor-screen/corridor_screen/sources.py`, and section 6 is raised on the
-    [PR #53](https://github.com/RickSmith/survey-recon/pull/53), for the same
-    ruling that [PR #52](https://github.com/RickSmith/survey-recon/pull/52) gave
-    the parcel field names.
+!!! success "Ruled on 2026-09-13, on [PR #53](https://github.com/RickSmith/survey-recon/pull/53)"
+    Correcting a settled specification is not the agent's call, so the tool
+    followed the service, recorded the difference here and at the bottom of
+    `corridor-screen/corridor_screen/sources.py`, and raised section 6 for a
+    ruling — the same route
+    [PR #52](https://github.com/RickSmith/survey-recon/pull/52) took for the
+    parcel field names.
+
+    **Rick ruled that section 6 should name the source that holds Texas data.**
+    It now names TPMS, with a note recording the amendment. The specification
+    and the code agree again.
 
 ---
 

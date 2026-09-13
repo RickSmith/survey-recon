@@ -138,8 +138,8 @@ BEXAR_PARCEL_FIELDS = {
 # System, run by the Railroad Commission of Texas. Two different bodies, two
 # different datasets, and only one of them covers Texas.
 #
-# Specification section 6 and `docs/txdot-research.md` both name
-# `NPMS_Pipelines_2022` on `services.arcgis.com/G4S1dGvn7PIgYd6Y` as the
+# Until 2026-09-13, specification section 6 and `docs/txdot-research.md` both
+# named `NPMS_Pipelines_2022` on `services.arcgis.com/G4S1dGvn7PIgYd6Y` as the
 # pipeline source. Read on 2026-09-12, that service holds **543 records, all of
 # them in Chester County, Pennsylvania**. Its own extent is around longitude
 # -76, latitude 40. A query for Texas returns zero records and no error.
@@ -157,9 +157,12 @@ BEXAR_PARCEL_FIELDS = {
 #
 # Amending a settled spec is not the agent's call -- the precedent is the
 # `AcctNumb` correction above, which was raised on PR #52 and ruled on by Rick.
-# This follows the service rather than the document, says so here, and the
-# difference is raised for the same ruling on PR #53:
-# https://github.com/RickSmith/survey-recon/pull/53
+# This followed the service rather than the document and raised the difference
+# on PR #53: https://github.com/RickSmith/survey-recon/pull/53
+#
+# Rick ruled on 2026-09-13 that section 6 should name the source that holds
+# Texas data. It now names TPMS, with a note recording the amendment, so this
+# code and the specification agree again.
 
 USGS_CARTO = "https://carto.nationalmap.gov/arcgis/rest/services"
 RRC_PUBLIC = "https://gis.rrc.texas.gov/server/rest/services/rrc_public"

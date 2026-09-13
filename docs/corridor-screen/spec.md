@@ -1,7 +1,7 @@
 # Corridor screening — specification
 
 **Status:** settled 2026-09-12, from the grilling on [issue #5](https://github.com/RickSmith/survey-recon/issues/5).
-**Amended:** 2026-09-13 — section 8, how a returned record is tested against the corridor; section 10, the parcel field names. See the notes there.
+**Amended:** 2026-09-13 — section 6, the pipeline source; section 8, how a returned record is tested against the corridor; section 10, the parcel field names. See the notes there.
 **Scope of work for:** the `corridor-screen/` tool.
 
 A note on words. A **spec** is a scope of work. A **schema** is an agreed field list — the column headings on a parcel table that everybody uses the same way. An **endpoint** is the web address you ask a question of. A **cache** is a saved copy of an answer you already got. Everything else is in [CONTEXT.md](https://github.com/RickSmith/survey-recon/blob/main/CONTEXT.md).
@@ -127,9 +127,42 @@ Every endpoint below was queried live on 2026-09-12 and returned real results. F
 | ROW sheets | `ROW_Maps_CL_2017` on `maps.dot.state.tx.us` | 0 |
 | Cemeteries · Historic · Hospitals · Ambulance · Fire and EMS · Schools | USGS `structures` | 2 · 11 · 14 · 15 · 16 · 23 |
 | Railroads | USGS `transportation` | 38 |
-| Pipelines | NPMS `NPMS_Pipelines_2022` | 0 |
+| Pipelines | **TPMS** `rrc_public/tpms` on `gis.rrc.texas.gov`, the Railroad Commission of Texas | 0 |
 
 **Layer numbers are load-bearing.** Control is layer 67. TxDOT land parcels is layer 328. A tool that assumes layer 0 does not error — it returns the wrong data, quietly. Section 8 checks this at startup.
+
+!!! note "Amended 2026-09-13, on [PR #53](https://github.com/RickSmith/survey-recon/pull/53)"
+    Until then the pipeline row read `NPMS NPMS_Pipelines_2022`, on
+    `services.arcgis.com/G4S1dGvn7PIgYd6Y`. That service is real, and it holds no
+    Texas data at all.
+
+    Read live on 2026-09-12 while building
+    [#17](https://github.com/RickSmith/survey-recon/issues/17): **543 records in
+    total, zero in Texas, zero in Bexar County**, and every sample record in
+    Chester County, Pennsylvania. Its own extent sits around longitude −76,
+    latitude 40. A Texas query returns zero records and no error — which reads
+    exactly like "there are no pipelines here."
+
+    **NPMS** is the National Pipeline Mapping System, run by the federal Pipeline
+    and Hazardous Materials Safety Administration. **TPMS** is the Texas Pipeline
+    Mapping System, run by the Railroad Commission of Texas. Two bodies, two
+    datasets, similar acronyms, and only one of them covers Texas. That
+    similarity is most of how the wrong one got into this section.
+
+    TPMS holds **490,375 records**, 598 of them within a box around Bexar County,
+    and a genuine zero inside the SH16 corridor. So "no pipelines on this
+    corridor" is now a checked answer from a source that plainly holds data
+    there, rather than an empty answer from a source that holds none.
+
+    This is the second time this repo's research has named a national-sounding
+    service that covers one distant county. The first was `FEMA_Flood_Zones` on
+    services9 — *"ranks high in search but is Salem, MA only. Easy trap"* — which
+    was recorded in [TxDOT research](../txdot-research.md) **before** the pipeline
+    row was written. Writing a trap down is not the same as not falling into it.
+
+    Rick ruled on 2026-09-13 that this section should name the source that holds
+    Texas data. The full comparison is in
+    [the flag services page](../data-sources/flag-services.md).
 
 **Scope.** Bexar County only, for now. The Bexar field names live in one named block at the top of the parcel module rather than scattered through the code, so pointing this at another county later is an edit and not a rewrite. Building a general source-configuration system is explicitly out of scope.
 

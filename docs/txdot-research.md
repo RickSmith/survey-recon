@@ -130,11 +130,15 @@ Also: Bexar railroads/schools/school-districts MapServers · CoSA Cemetery Stewa
     inside the SH16 corridor. Full write-up in
     [the flag services page](data-sources/flag-services.md).
 
-    Spec section 6 still names NPMS. Correcting a settled spec is not the
-    agent's call, so it is raised on
-    [PR #53](https://github.com/RickSmith/survey-recon/pull/53), for the same
-    ruling the parcel field names got on
-    [PR #52](https://github.com/RickSmith/survey-recon/pull/52).
+    Correcting a settled spec is not the agent's call, so it was raised on
+    [PR #53](https://github.com/RickSmith/survey-recon/pull/53) — the same route
+    the parcel field names took on
+    [PR #52](https://github.com/RickSmith/survey-recon/pull/52). Rick ruled on
+    2026-09-13, and [spec section 6](corridor-screen/spec.md) now names TPMS.
+
+    The line in the table above is struck through rather than deleted. This
+    research note is the record of what was believed on 2026-09-12, and a record
+    that quietly edits out its own wrong turns is not a record.
 
 !!! warning "Also found 2026-09-12 — the USGS structures buffer answers for the wrong county"
     Asked with the SH16 Bexar **polyline and a distance**, `structures` layer 23
