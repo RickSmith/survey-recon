@@ -25,7 +25,9 @@ project-sh16/manual-pulls/*.pdf -text
 project-sh16/manual-pulls/*.dgn -text
 
 # The failure beats keep their evidence here, and the same sentence has to stay
-# true of it: these files are exactly the bytes that came back. The JSON ones
-# arrive from the GitHub API pretty-printed, so unlike the cached responses
-# there really are line endings here for git to rewrite on a Windows checkout.
+# true of it: these files are exactly the bytes that came back. Same reasoning
+# as the cached responses above, and the same state today -- every JSON file in
+# here arrives as one long line, so there is nothing yet for git to rewrite.
+# This is here so that a service, or `gh api`, which starts formatting its JSON
+# cannot quietly break the promise later.
 corridor-screen/captures/**/*.json -text
