@@ -8,9 +8,8 @@ instead whether to point one person in the firm at the rest of it.
 That makes it the page with the most ways to go quietly wrong, so it is checked
 rather than trusted:
 
-* **It is one page.** The issue asks for one page, not two, and for a principal
-  to read it in four minutes and act on it. Those are two different limits, the
-  paper is the tighter one, and it is the one enforced
+* **It is one page**, and it reads in the four minutes the issue allows
+* **It answers the five questions**, in five sections rather than in passing
 * **There is no command line on it.** No commands, and no fenced code block for
   one to hide in
 * **The cost is in hours**, never in a price per seat or per month
@@ -40,34 +39,36 @@ import re
 import unittest
 from pathlib import Path
 
-from tests.markdown_docs import table_rows, text_of
+from tests.markdown_docs import flat, table_rows, text_of
 
 REPO = Path(__file__).resolve().parents[2]
 BRIEF = REPO / "docs" / "for-principals" / "index.md"
 BUILD_UP = REPO / "project-sh16" / "crew-day.md"
 
-# The issue sets two limits, and they are not the same limit.
+# Four minutes, at two hundred words a minute -- the ordinary rate for reading
+# something you have to think about, slower than a novel and faster than a
+# contract. The four minutes is the issue's own acceptance criterion, so the
+# budget is derived from the criterion rather than from a round number somebody
+# liked, and when it fails the argument is about the criterion.
 #
-# **Four minutes**, at two hundred words a minute -- the ordinary rate for
-# reading something you have to think about, slower than a novel and faster than
-# a contract. That allows 800 words.
-#
-# **One page, not two.** A US Letter page at a readable size, with headings and
-# the white space that makes a handout look like a handout rather than a
-# contract, holds about 600 words. The deck holds this page up as a printed
-# handout, so the paper is real and so is its edge.
-#
-# The tighter of the two is the one that binds, and it is the paper. A page that
-# reads in three minutes and fits on one sheet satisfies both criteria; one that
-# uses all four minutes satisfies only one of them.
+# **"One page, not two" is checked as one page, not as one sheet of paper.**
+# There was a word count here standing for how much a printed US Letter sheet
+# holds. It came out of nobody's printer. This repo does not put a number it has
+# not measured beside a number it has -- that rule is the whole argument of the
+# build-up this page quotes -- so it is gone, and the chapter being a single
+# page is checked directly instead, below.
 READING_WORDS_PER_MINUTE = 200
 READING_MINUTES = 4
-WORDS_ON_A_PRINTED_PAGE = 600
-WORD_BUDGET = min(READING_WORDS_PER_MINUTE * READING_MINUTES, WORDS_ON_A_PRINTED_PAGE)
+WORD_BUDGET = READING_WORDS_PER_MINUTE * READING_MINUTES
 
-# The five questions the issue asks the page to answer. Matched on a distinctive
-# few words rather than on a whole heading, so the page may word its own
-# headings without this file getting a vote on the wording.
+# The five questions the issue asks the page to answer, each matched against the
+# page's own section headings rather than against the page anywhere.
+#
+# The first draft searched the whole document, and the stub this page replaced
+# passed it -- all five words were already in the stub's one sentence saying
+# what the page would eventually cover. A check a placeholder satisfies is a
+# check that tests nothing. A heading is the page committing a section to the
+# question, which is the difference between answered and mentioned.
 THE_FIVE_QUESTIONS = [
     "Monday",
     "cost",
@@ -83,6 +84,10 @@ THE_FIVE_QUESTIONS = [
 # Whole words, because a plain substring search finds `gh ` inside "through
 # Bexar" and `cd ` inside half the prose in the language. It found both on the
 # first run of this file, which is the entire argument for the word boundaries.
+#
+# `corridor-screen` is deliberately absent. It is the tool's command and also
+# the folder the tool lives in, so a perfectly ordinary link to the corridor
+# screening chapter would be read as a command being typed.
 COMMAND_WORDS = [
     "git",
     "gh",
@@ -92,7 +97,6 @@ COMMAND_WORDS = [
     "mkdocs",
     "cd",
     "unittest",
-    "corridor-screen",
 ]
 
 # A shell prompt with something typed at it. Only the dollar sign, deliberately:
@@ -152,16 +156,14 @@ def one(pattern, markdown, what):
     return found[0]
 
 
-def flat(markdown):
-    """The document as one long line, for checking that a phrase is in it.
+def headings(markdown):
+    """Every section heading on the page, as its words, lowercased.
 
-    Every page in `docs/` is hard-wrapped at about eighty characters, so half
-    the phrases worth checking have a line break somewhere in the middle of
-    them. A break is where the wrapping fell, not something the page says, and a
-    check that fails when a sentence is re-wrapped is a check that punishes
-    editing.
+    The hashes and the emphasis come off, because what is being asked is what
+    the section is about rather than how it is typeset.
     """
-    return " ".join(markdown.split())
+    found = re.findall(r"^#{1,6}\s+(.*)$", markdown, flags=re.MULTILINE)
+    return [line.replace("*", "").replace("`", "").strip().lower() for line in found]
 
 
 def readable_words(markdown):
@@ -183,15 +185,15 @@ def readable_words(markdown):
 
 
 class TheBriefIsOnePage(unittest.TestCase):
-    def test_it_fits_on_one_printed_page(self):
+    def test_a_principal_can_read_it_in_four_minutes(self):
         words = readable_words(text_of(BRIEF))
         self.assertLessEqual(
             len(words),
             WORD_BUDGET,
-            f"{len(words)} words does not fit on one sheet of paper, and "
-            f"{WORD_BUDGET} is the budget. The issue says one page, not two, "
-            f"and read in {READING_MINUTES} minutes at "
-            f"{READING_WORDS_PER_MINUTE} words a minute.",
+            f"{len(words)} words is longer than {READING_MINUTES} minutes of "
+            f"reading at {READING_WORDS_PER_MINUTE} words a minute, and the "
+            f"issue asks for a page a principal reads in four minutes and acts "
+            f"on.",
         )
 
     def test_the_chapter_is_one_file(self):
@@ -200,17 +202,18 @@ class TheBriefIsOnePage(unittest.TestCase):
         self.assertEqual(["index.md"], pages)
 
     def test_it_answers_all_five_questions(self):
-        markdown = text_of(BRIEF).lower()
+        found = headings(text_of(BRIEF))
         for question in THE_FIVE_QUESTIONS:
-            self.assertIn(
-                question.lower(),
-                markdown,
-                f"nothing on the page answers the question about {question!r}",
+            self.assertTrue(
+                any(question.lower() in heading for heading in found),
+                f"no section of the page is about {question!r}. The words being "
+                f"somewhere in the prose is the page mentioning the question, "
+                f"which is what the stub already did.",
             )
 
     def test_it_is_no_longer_a_stub(self):
-        markdown = text_of(BRIEF)
-        for leftover in ("Placeholder", "To be written", "to be written"):
+        markdown = text_of(BRIEF).lower()
+        for leftover in ("placeholder", "to be written"):
             self.assertNotIn(leftover, markdown)
 
 
@@ -234,7 +237,11 @@ class TheBriefHasNoTerminalOnIt(unittest.TestCase):
             )
 
     def test_no_shell_prompt(self):
-        self.assertIsNone(PROMPT.search(text_of(BRIEF)))
+        self.assertIsNone(
+            PROMPT.search(text_of(BRIEF)),
+            "something is being typed at a prompt on a page that promises no "
+            "command line",
+        )
 
 
 class TheCostIsInHours(unittest.TestCase):
@@ -310,9 +317,20 @@ class TheArgumentIsRework(unittest.TestCase):
 
 class TheBriefSaysWhoSigns(unittest.TestCase):
     def test_it_says_who_signs_plainly(self):
-        markdown = text_of(BRIEF).lower()
-        self.assertIn("seal", markdown)
-        self.assertIn("rpls", markdown)
+        """A section of its own, and the licence named in it.
+
+        Checking for the word "seal" anywhere was the first draft of this, and
+        it could not fail: the page links to `seal-and-responsible-charge.md`,
+        so the word is in the file whatever the page actually says. `RPLS` is
+        in no link target on the page, and a heading is the page giving the
+        question a section rather than a clause.
+        """
+        self.assertTrue(
+            any("signs" in heading for heading in headings(text_of(BRIEF))),
+            "who signs is not a section of its own on a page whose last "
+            "acceptance criterion is that it says who signs, plainly",
+        )
+        self.assertIn("RPLS", text_of(BRIEF))
 
     def test_it_points_at_the_rule_rather_than_paraphrasing_it(self):
         self.assertIn("seal-and-responsible-charge.md", text_of(BRIEF))

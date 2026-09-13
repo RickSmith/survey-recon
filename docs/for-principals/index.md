@@ -2,11 +2,12 @@
 
 **Four minutes. Nothing to install, and no command line on this page.**
 
-An agent screened a real TxDOT job from public records — SH16 through Bexar
-County, 8.69 miles — and produced a bid memo, a flagged parcel table with
-statutory notice periods, and a
+An **agent** — think of it as a capable new hire who reads fast, works
+overnight, and is sometimes confidently wrong — screened a real TxDOT job from
+public records. SH16 through Bexar County, 8.69 miles. It produced a bid
+memo, a flagged parcel table with statutory notice periods, and a
 [crew-day build-up](https://github.com/RickSmith/survey-recon/blob/main/project-sh16/crew-day.md)
-with its arithmetic shown. A licensed surveyor directed it and checked it.
+with its arithmetic shown. A licensed surveyor directed and checked it.
 
 *Not legal advice — a reading of public documents, so your counsel and carrier
 start from something concrete.*
@@ -24,11 +25,15 @@ start from something concrete.*
 
 In hours, the unit you already bill. This corridor came out at **38 crew-days**
 in the field — 299.29 hours, **2 people** to a crew — and **18 days in the
-office**, 138.26 hours. The two are never added: different people sell them.
+office**, 138.26 hours. The two are never added: they are bought from different
+people.
 
-The field figure is a **floor**. 2 lines of it have no total at all — nothing
-public counts manholes or culverts, so the traffic-control time is missing from
-it rather than zero in it.
+The field figure is a **floor**. 2 lines of it have no total at all, and those
+hours are missing from it rather than zero in it. Nobody has counted the
+manholes and culverts that decide how often traffic control goes out. And nobody
+has said how much of the retracement falls on the centerline — which is not only
+more hours, it is two shadow vehicles and two operators instead of the crew's own
+truck.
 
 **An agent works the office half, not the field half.** How much faster is not
 measured here, and this page will not invent a number.
