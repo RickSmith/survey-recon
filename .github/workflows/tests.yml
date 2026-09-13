@@ -1,0 +1,90 @@
+# Runs the test suite, where somebody will see it fail.
+#
+# The other two workflows in this folder build things - docs.yml publishes the
+# site, slides.yml renders the deck. Neither of them runs a test, so until this
+# file existed a pull request could break every check in the repo and still go
+# green. That is #78.
+#
+# It matters more here than it would elsewhere. A good half of these tests are
+# not about the code at all: they hold a document to the thing it describes.
+# The fallback card against the run of show, the deck against the same table,
+# the run of show's own figures against the SH16 run, each failure beat against
+# its committed transcript. Every one of those protects something that goes on
+# a projector on October 8, 2026, and a check nobody runs protects nothing.
+
+name: Run the tests
+
+# The same shape docs.yml uses, deliberately. A reader who understands one
+# workflow in this repo should understand the next one without learning a
+# second style.
+#
+#   push on main  : the merge commit, after it has landed
+#   pull_request  : the branch *merged into main*, before it lands. GitHub
+#                   builds that merge commit and tests it, which is the
+#                   question a reviewer is actually asking - not "does this
+#                   branch pass" but "does main pass once this lands"
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+# Read the code. Nothing else - this workflow publishes nothing and needs no
+# more permission than a person cloning the repo would have.
+permissions:
+  contents: read
+
+# Push twice to a pull request in a minute and the first run is testing a
+# commit nobody is waiting on any more, so it is canceled.
+#
+# A run on main is never canceled, whatever else is queued. Two merges landing
+# close together would otherwise leave the first commit on main with no answer
+# at all, and "a push to main runs the full suite" is the whole point of the
+# push trigger above. `cancel-in-progress` is GitHub's own spelling and stays
+# as GitHub spells it.
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Fetch the repo
+        uses: actions/checkout@v4
+
+      # 3.11 because that is the floor the tool states, and it states it for a
+      # reason: 3.11 is the first version that reads TOML without a library,
+      # and TOML is what every provenance record in this repo is written in.
+      # See corridor-screen/README.md.
+      - name: Install Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      # No install step, and that is deliberate rather than missing. The tool
+      # has no dependencies - standard library only - and CLAUDE.md is blunt
+      # about keeping it that way: attendees need git, a GitHub account and the
+      # Claude desktop app, and nothing else. A workflow that installed a test
+      # runner would put a dependency in front of the one thing in this repo
+      # that proves the rest of it works.
+      #
+      # The suite needs no network either. Only tests/test_offline.py touches
+      # the socket layer at all, and it does so to take the network away. So
+      # this job should never be flaky for network reasons - if it ever is,
+      # that is a finding rather than something to retry around.
+      #
+      # This is the same command corridor-screen/README.md hands a person,
+      # character for character, and a test holds the two to each other. If CI
+      # ran something narrower, the green tick would be about a different suite.
+      #
+      #   -s tests : where the tests are
+      #   -t .     : the folder imports resolve against, which has to be
+      #              corridor-screen or nothing imports corridor_screen at all
+      #
+      # Get either flag wrong and most of the suite is simply not collected -
+      # which reports as success.
+      - name: Run the suite
+        working-directory: corridor-screen
+        run: python -m unittest discover -s tests -t .
