@@ -29,3 +29,11 @@ Verified research notes live in
   the quiet kind: the condition field is called `LAST_COND` here and `condition`
   on NGS's other API, and asking for the wrong name returns nothing and raises
   nothing.
+- [The TxDOT ROW map sheet index](row-map-sheets.md) — how many record drawings
+  cover the corridor and how far back they go. Written under
+  [issue #16](https://github.com/RickSmith/survey-recon/issues/16). Its first
+  trap is the loud kind for once: the dates arrive as milliseconds, every sheet
+  older than 1970 is a negative number, and on Windows the obvious way to read
+  one raises an error rather than returning a wrong date. It also carries the
+  difference between a corridor figure and a county one, worked through with
+  both numbers cached.

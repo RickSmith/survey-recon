@@ -1,13 +1,13 @@
 # Provenance record. The response file beside this one is exactly what the
 # server sent and is never edited. Every parameter of the request is listed
 # under [request_params], so the call can be repeated and checked.
-service = "BCAD_Parcels"
-cache_key = "bcad-parcels/bcad-parcels-layer-0-metadata__aa18477a9cd5"
+service = "TxDOT_ROW_Maps"
+cache_key = "txdot-row-maps/txdot-row-maps-layer-0-metadata__d79fef6aef10"
 request_method = "GET"
-request_url = "https://services.arcgis.com/g1fRTDLeMgspWrYp/arcgis/rest/services/BCAD_Parcels/FeatureServer/0"
-captured_at = 2026-09-12T23:52:18-05:00
+request_url = "https://maps.dot.state.tx.us/arcgis/rest/services/ROW/ROW_Maps_CL_2017/MapServer/0"
+captured_at = 2026-09-12T23:52:20-05:00
 http_status = 200
-response_bytes = 35442
+response_bytes = 5922
 layer_id = 0
 warnings = []
 

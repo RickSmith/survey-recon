@@ -29,7 +29,8 @@ and the flags that hang off it, from
 | Lead time on every flag, with its citation | yes |
 | The longest wait on a parcel, without arithmetic | yes |
 | NGS marks in the corridor, carrying their condition | yes |
-| TxDOT control points, ROW map sheets, roadway facts | not yet, separate work orders |
+| ROW map sheets over the corridor, and how far back they go | yes |
+| TxDOT control points, roadway facts | not yet, separate work orders |
 | SVG renderings | not yet |
 
 ## What you need to run it
@@ -130,6 +131,7 @@ with the field list each one is expected to publish.
 | Railroads | USGS `transportation`, same server | **38** |
 | Pipelines | **TPMS**, Railroad Commission of Texas | 0 |
 | NGS marks | `NGS_Datasheets_Feature_Service` on `services2.arcgis.com` | 1 |
+| ROW map sheets | `ROW_Maps_CL_2017` on `maps.dot.state.tx.us` | 0 |
 
 The four flag services each have a quirk worth knowing, and two of them return
 a plausible wrong answer rather than an error. They are written up in
@@ -139,6 +141,13 @@ The NGS datasheets service has a quieter one: the condition field is called
 `LAST_COND` there and `condition` on NGS's other API, and asking for the wrong
 name returns nothing and raises nothing. It is written up on
 [the NGS datasheets page](../docs/data-sources/ngs-datasheets.md).
+
+The ROW map service has the loudest one in the tool. Its dates arrive as
+milliseconds rather than text, so every sheet older than 1970 is a **negative**
+number — and on Windows the obvious way to read one raises an error instead of
+returning a wrong date, on exactly the oldest sheets. It is written up on
+[the ROW map sheets page](../docs/data-sources/row-map-sheets.md), together with
+why this corridor reports 15 SH16 sheets where the county reports 27.
 
 **Layer numbers are load-bearing.** TxDOT's control points are layer 67 and its
 land parcels are layer 328. A query against layer 0 does not error — it answers

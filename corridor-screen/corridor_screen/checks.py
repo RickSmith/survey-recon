@@ -26,7 +26,11 @@ from .geometry import (
 
 # ArcGIS servers cap how many records they will hand over at once. A count that
 # lands exactly on a cap is far more likely to be the cap than a coincidence.
-PAGING_CAPS = (500, 1000, 2000)
+#
+# 5,000 is here because TxDOT's ROW map server publishes that as its own
+# maxRecordCount. A cap this list does not know about is a cap this check
+# cannot catch, so a new service means reading its maxRecordCount and adding it.
+PAGING_CAPS = (500, 1000, 2000, 5000)
 
 # How many parcels a square mile of Bexar County could plausibly hold. At this
 # figure the average parcel is about a sixth of an acre, which is a small city
@@ -170,23 +174,27 @@ def check_impossible_acres(service, parcels):
 
 
 def check_records_without_position(service, missing, total):
-    """A record the service sent with no point on it.
+    """A record the service sent with no shape on it.
 
     A mark with no position cannot be placed inside the corridor or outside it.
     It is not a mark that is absent and it is not a mark that is present, so it
     is counted and said out loud rather than quietly falling out of the list --
     which is the same rule as ``unknown`` against ``no``.
 
-    For the NGS datasheets service this has never tripped in testing. It is
-    here because "it has not happened yet" and "it cannot happen" are different
-    claims, and only one of them is checkable.
+    The same is true of a ROW map sheet with no line on it, which is why the
+    wording says "shape" rather than "point". A mark is a point and a sheet is
+    a line, and neither can be tested against the corridor without one.
+
+    For neither service has this tripped in testing. It is here because "it has
+    not happened yet" and "it cannot happen" are different claims, and only one
+    of them is checkable.
     """
     if not missing:
         return None
     return warning(
         "records arrived with no position",
         service,
-        f"{missing} of {total} records came back with no point on them, so they "
+        f"{missing} of {total} records came back with no shape on them, so they "
         f"could not be tested against the corridor.",
         "Those records are in neither the in-corridor list nor the count of ones "
         "outside it. Read them from the cached response before relying on the total.",
