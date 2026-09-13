@@ -34,12 +34,14 @@ Fallback if the command will not start: docs/presenting/fallbacks.md, row one.
 
 # The job we just handed it
 
-- The corridor: SH16, Loop 410 to Gibeaut Rd, Bexar County
-- 8.69 miles of a TxDOT right of way, scoped from public records only
-- What we asked for: what is out there, and what it costs in crew days
-- What it does next: reads, asks, and shows its work
+- **SH16, Loop 410 to Gibeaut Rd** — 8.69 miles, Bexar County
+- 300 ft each side of the centerline. We chose that; nothing derived it
+- Asked for: what is out there, and what it costs in crew days
+- 14 public map services. No client file was opened
+- Answers captured 12–13 September, not live off hotel Wi-Fi
+- Next: it reads, it asks, and it shows its work
 
-> **To be written** — #81
+Real code, captured data. Run it yourself: corridor-screen/README.md
 
 <!--
 0:00–0:08 · 8 min · Cold open
@@ -48,7 +50,28 @@ One slide only. The terminal is the thing on screen for this block; this is
 what goes up beside it, or behind it, while the run finishes.
 
 Do not explain the tool yet. The whole point of the cold open is that the room
-watches something real happen before anybody has defined a single term.
+watches something real happen before anybody has defined a single term. No
+slide in this block says what an agent is, and the next block is where that
+starts.
+
+Say the caching line out loud even though it is on the slide: "these were
+captured on the 12th and 13th of September, so we're not at the mercy of the
+hotel Wi-Fi. The code is live code and you can run it yourself." Undisclosed
+caching, if the room notices it, costs you the room.
+
+No count on this slide is a result. 8.69 miles and 300 ft are what went in;
+524 tracts is what comes back, and it comes back on the terminal beside you.
+Do not say it before the run does.
+
+"300 ft each side" is the half-width, and the point of the bullet is that a
+person chose it. Somebody will ask why not 200 or 500. The answer is that it
+is stated rather than derived, so it can be argued with -- which is a better
+answer than a number nobody can question.
+
+Fallback: docs/presenting/fallbacks.md, row one. The whole run replays off the
+disk with --mode cache-only and makes no network call at all. Do not retype
+that line; copy it from corridor-screen/README.md under "If the network is
+down".
 -->
 
 ---

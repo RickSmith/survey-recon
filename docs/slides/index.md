@@ -22,7 +22,7 @@ page is what was on the screen in the room.
 
 !!! note "It is a frame, not a talk"
     The deck is **46 slides** — one section break for every block of the two
-    hours, and outline slides under each. **22 of them are still placeholders**,
+    hours, and outline slides under each. **21 of them are still placeholders**,
     and each of those says so on its face and names the work order that will
     fill it.
 
@@ -30,9 +30,11 @@ page is what was on the screen in the room.
     session.
 
     The skeleton was built under
-    [issue #12](https://github.com/RickSmith/survey-recon/issues/12). Four
+    [issue #12](https://github.com/RickSmith/survey-recon/issues/12). Five
     pieces of content have landed, each checked against its own source on every
-    test run: the money slide under
+    test run: the cold-open slide under
+    [#81](https://github.com/RickSmith/survey-recon/issues/81), its figures
+    read out of the SH16 run; the money slide under
     [#32](https://github.com/RickSmith/survey-recon/issues/32), its figures read
     out of the crew-day build-up; the datum gap under
     [#33](https://github.com/RickSmith/survey-recon/issues/33), its counts read
@@ -41,9 +43,9 @@ page is what was on the screen in the room.
     translation table in `CONTEXT.md`; and Hermes under
     [#34](https://github.com/RickSmith/survey-recon/issues/34), whose day 21 is
     derived from the lead-time table rather than written on the slide. The rest
-    lands under [#81](https://github.com/RickSmith/survey-recon/issues/81)
-    through [#86](https://github.com/RickSmith/survey-recon/issues/86) (the cold
-    open, the three Acts, the failure beat and the close).
+    lands under [#82](https://github.com/RickSmith/survey-recon/issues/82)
+    through [#86](https://github.com/RickSmith/survey-recon/issues/86) (the
+    three Acts, the failure beat and the close).
 
 !!! info "What building the frame turned up"
     On **13 September 2026**, when the skeleton landed, the four work orders
@@ -65,6 +67,7 @@ page is what was on the screen in the room.
 | `docs/slides/themes/tsps.css` | Type sizes and colors. The canvas is 1920 x 1080 and nothing is smaller than 28pt |
 | `.github/workflows/slides.yml` | Renders the deck to HTML and PDF every time the repo is pushed |
 | `corridor-screen/tests/test_deck.py` | Holds the deck to the run of show. See below |
+| `corridor-screen/tests/test_cold_open.py` | Holds the cold-open slide to the SH16 run — and stops it announcing a figure the terminal has not reached yet |
 | `corridor-screen/tests/test_money_slide.py` | Holds the money slide to the crew-day build-up its figures come from |
 | `corridor-screen/tests/test_datum_gap.py` | Holds the datum-gap slide to the research note and the SH16 run |
 | `corridor-screen/tests/test_concept_slides.py` | Holds the concept slides to the translation table, and to what they ported |
