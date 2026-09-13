@@ -522,6 +522,9 @@ An agent that reads every standard before the crew rolls is aimed at rework;
 the time it saves is real and is the smaller argument.
 
 Never onlinemanuals.txdot.gov — that host is the failure beat later on.
+
+Fallback: docs/for-principals/index.md makes this argument and carries the same
+citation, on one page written for this room.
 -->
 
 ---
