@@ -43,11 +43,18 @@ Two pieces of vocabulary, because they are used throughout this page:
 ## Trap one: layer 0 does not do what we said it did
 
 [Spec section 6](../corridor-screen/spec.md), [the research
-note](../txdot-research.md) and issue #15 all say the same two things. The first
-is right: **control is layer 67.** The second is what we checked:
+note](../txdot-research.md) and issue #15 all said the same two things. The
+first is right: **control is layer 67.** The second is what we checked:
 
 > A tool that assumes layer 0 does not error — it returns the wrong data,
 > quietly.
+
+!!! success "Both documents now carry the correction"
+    Raised on issue #15 rather than patched over, and **Rick ruled on
+    2026-09-13** that specification section 6 should say what the services
+    actually do. It now does, with a note recording the amendment. The research
+    note carries a dated correction for the same claim. The account of what was
+    queried stays here.
 
 Asked for layer 0 on 2026-09-12, this service answers:
 

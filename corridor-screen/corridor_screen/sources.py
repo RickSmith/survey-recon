@@ -388,7 +388,10 @@ NGS_MARK_FIELDS = {
 #
 # The difference between what issue #15 says and what the service does is
 # recorded rather than quietly fixed, the same as `AcctNumb` on PR #52 and
-# `NPMS` on PR #53. Raised on the pull request for #15.
+# `NPMS` on PR #53. Raised on issue #15, and Rick ruled on 2026-09-13 that
+# specification section 6 should say what the services actually do. It now
+# does, with a note recording the amendment, so this code and the
+# specification agree again.
 #
 # ----
 #

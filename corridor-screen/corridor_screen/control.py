@@ -611,8 +611,10 @@ def block(
       which section 11 does not name either.
 
     None of the three is a change to something the specification settled; each
-    is a number it has no row for. Raised on the pull request for #15 so the
-    decision is Rick's rather than the agent's.
+    is a number it had no row for. Raised on issue #15 rather than slipped in,
+    and **Rick ruled on 2026-09-13 that all three stay**. Section 11 now names
+    them, with a note recording the amendment, so this code and the
+    specification agree again.
     """
     if marks is None:
         ngs_block = not_screened(detail or "the NGS datasheets service was not called")
