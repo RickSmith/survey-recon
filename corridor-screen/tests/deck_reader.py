@@ -279,6 +279,21 @@ def on_screen(heading, exactly=False):
     return with_markup([slide_headed(heading, exactly=exactly)])
 
 
+def seen(heading):
+    """The same, with the bold and the backticks taken off. `visible` of one.
+
+    `on_screen` above is for a check that wants a rate handle or a parameter
+    name -- `A4` and `units=Feet` are told apart from ordinary prose by their
+    backticks. Most checks want the opposite, because a phrase re-emphasized is
+    the same slide to the room and a different string to a test.
+
+    Written out as `visible([slide_headed(heading)])` four times in
+    `test_beat_slides.py` before that file's own review found it, which is the
+    second copy this module exists to stop.
+    """
+    return visible([slide_headed(heading)])
+
+
 def note(heading):
     """That slide's speaker note as one line.
 
