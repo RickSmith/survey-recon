@@ -218,7 +218,7 @@ is what [spec section 10](../corridor-screen/spec.md) asks for.
     **There are more keys than four.** `by_route`, `sheets_without_a_shape` and
     `notes`. Neither contradicts section 10; both are a superset of it.
 
-    Settled on the same ruling, because it is a judgement about what a reader
+    Settled on the same ruling, because it is a judgment about what a reader
     will quote rather than a fact: `sheet_count` and `date_range` cover
     **every** route reaching the corridor and stay that way, so on SH16 they
     read 69 and 1900–2005 while the corridor's own route reads 15 and

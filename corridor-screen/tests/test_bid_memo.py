@@ -49,7 +49,22 @@ def a_document(**overrides):
             ],
             "screened_for": ["cemetery", "pipeline", "railroad", "school"],
             "map_link": "https://www.openstreetmap.org/?mlat=29.5&mlon=-98.6",
-            "lead_times": {},
+            "lead_times": {
+                "cemetery": {
+                    "label": "Cemetery", "lead_time_days": 14,
+                    "lead_time_basis": "calendar days", "confirmed": True,
+                    "source": "Tex. Health & Safety Code § 711.041(c)(2)",
+                    "url": "https://statutes.capitol.texas.gov/Docs/HS/htm/HS.711.htm",
+                    "not_found": None,
+                },
+                "school": {
+                    "label": "School", "lead_time_days": None, "confirmed": False,
+                    "source": "Tex. Educ. Code § 22.0834",
+                    "url": "https://statutes.capitol.texas.gov/Docs/ED/htm/ED.22.htm",
+                    "not_found": "Not found: no published number of days. Looked in "
+                                 "Tex. Educ. Code and the TxDOT Survey Manual.",
+                },
+            },
         },
         "alignment": {
             "source_path": "SH0016-KG DFO 347.7 to 356.367",
@@ -90,7 +105,8 @@ def a_document(**overrides):
             "not_found_within_the_radius": [],
             "not_checked": [],
         },
-        "parcels": [a_parcel(), a_parcel(id="17920-009-0180", flags=[{"type": "school"}],
+        "parcels": [a_parcel(), a_parcel(id="17920-009-0180",
+                                        flags=[{"type": "cemetery"}],
                                         max_lead_time_days=14,
                                         max_lead_time_basis="calendar days",
                                         lead_time_driver="cemetery")],
@@ -131,8 +147,12 @@ class TestItIsBuiltFromTheRun(unittest.TestCase):
         self.assertIn("8.69", memo)
 
     def test_the_tract_count_is_the_number_of_rows(self):
-        memo = bid_memo.build(a_document())
-        self.assertIn("2", memo.split("## ")[0] + memo)
+        """Two parcels in, "2 tracts" out. The earlier version of this test
+        searched the whole memo for the digit 2 and could not fail."""
+        self.assertIn("**2 tracts**", bid_memo.build(a_document()))
+        document = a_document()
+        document["parcels"] = [a_parcel() for _ in range(7)]
+        self.assertIn("**7 tracts**", bid_memo.build(document))
 
     def test_a_different_run_produces_different_numbers(self):
         """The blunt check that nothing is hard-coded."""
@@ -186,8 +206,11 @@ class TestUncertaintyGetsItsOwnSection(unittest.TestCase):
         self.assertIn("livestock", memo)
 
     def test_a_step_the_tool_does_not_run_is_named(self):
+        """In plain words. `Roadway_Inventory_2023` is a service name, and a
+        principal reading a memo should not have to know it."""
         memo = bid_memo.build(a_document())
-        self.assertIn("Roadway_Inventory_2023", memo)
+        self.assertIn("existing right-of-way width was not read", memo)
+        self.assertNotIn("Roadway_Inventory_2023", memo)
 
     def test_a_flag_type_with_no_lead_time_is_named_rather_than_counted_as_zero(self):
         document = a_document()
@@ -255,6 +278,140 @@ class TestARunThatDidNotFinish(unittest.TestCase):
         ]
         memo = bid_memo.build(document)
         self.assertIn("records fall outside the corridor", memo)
+
+
+class TestNothingFoundIsQuietlyDropped(unittest.TestCase):
+    """Three things the first version of this memo silently lost.
+
+    None of them had a test, which is why none of them was noticed. Each one
+    would have produced a memo that read as complete while leaving out a real
+    finding.
+    """
+
+    def test_a_notice_period_never_appears_without_its_citation(self):
+        """CLAUDE.md names notice periods among the numbers that need a source.
+
+        The run carries the statute and the URL for every lead time. An earlier
+        version of this memo printed "14 calendar days" bare.
+        """
+        memo = bid_memo.build(a_document())
+        self.assertIn("14 calendar days", memo)
+        self.assertIn("Tex. Health & Safety Code", memo)
+        self.assertIn("statutes.capitol.texas.gov", memo)
+
+    def test_something_crossing_the_whole_corridor_is_reported(self):
+        """A pipeline on forty tracts is recorded once, against the run.
+
+        With the per-parcel flags empty, the first version of this memo said
+        "None of them carries a flag" — of a corridor with a pipeline through it.
+        """
+        document = a_document()
+        for parcel in document["parcels"]:
+            parcel["flags"] = []
+        document["corridor_flags"] = [
+            {"type": "pipeline", "name": "Some Gas Line", "parcel_count": 41}
+        ]
+        memo = bid_memo.build(document)
+        self.assertIn("pipeline", memo)
+        self.assertIn("Some Gas Line", memo)
+        self.assertIn("41", memo)
+
+    def test_a_control_block_that_was_never_read_still_gets_a_section(self):
+        """The memo's headline finding cannot vanish without a word."""
+        document = a_document()
+        document["control"] = {"status": "not-screened",
+                               "detail": "the NGS host was blocking at the ping"}
+        memo = bid_memo.build(document)
+        self.assertIn("### Control", memo)
+        self.assertIn("not read", memo.lower())
+        self.assertIn("blocking", memo)
+
+    def test_row_sheets_that_were_never_read_still_get_a_section(self):
+        document = a_document()
+        document["row_maps"] = {"status": "not-screened",
+                                "detail": "the TxDOT host was blocking"}
+        memo = bid_memo.build(document)
+        self.assertIn("Right-of-way records", memo)
+        self.assertIn("not read", memo.lower())
+
+    def test_where_somebody_already_looked_is_carried_through(self):
+        """"Not confirmed" throws away the useful half of a "not found"."""
+        document = a_document()
+        document["parcels"][1]["lead_time_not_found"] = ["school"]
+        memo = bid_memo.build(document)
+        self.assertIn("Tex. Educ. Code", memo)
+        self.assertIn("Survey Manual", memo)
+
+
+class TestDaysAreNeverComparedAcrossBases(unittest.TestCase):
+    """Two working days and two calendar days are different promises."""
+
+    def test_the_longest_is_reported_within_each_basis(self):
+        document = a_document()
+        document["parcels"] = [
+            a_parcel(id="A", flags=[{"type": "cemetery"}], max_lead_time_days=14,
+                     max_lead_time_basis="calendar days", lead_time_driver="cemetery"),
+            a_parcel(id="B", flags=[{"type": "pipeline"}], max_lead_time_days=2,
+                     max_lead_time_basis="working days", lead_time_driver="pipeline"),
+        ]
+        memo = bid_memo.build(document)
+        self.assertIn("14 calendar days", memo)
+        self.assertIn("2 working days", memo)
+
+    def test_a_bigger_number_in_another_basis_does_not_hide_the_smaller(self):
+        """Taking a plain maximum would report only the 45 and lose the 2."""
+        document = a_document()
+        document["parcels"] = [
+            a_parcel(id="A", flags=[{"type": "railroad"}], max_lead_time_days=45,
+                     max_lead_time_basis="calendar days", lead_time_driver="railroad"),
+            a_parcel(id="B", flags=[{"type": "pipeline"}], max_lead_time_days=2,
+                     max_lead_time_basis="working days", lead_time_driver="pipeline"),
+        ]
+        memo = bid_memo.build(document)
+        self.assertIn("45 calendar days", memo)
+        self.assertIn("2 working days", memo)
+
+
+class TestItDoesNotInventNumbersFromDefaults(unittest.TestCase):
+    """A missing figure reads as missing, never as zero."""
+
+    def test_a_missing_corridor_length_is_not_printed_as_zero(self):
+        document = a_document()
+        document["alignment"]["length_mi"] = None
+        memo = bid_memo.build(document)
+        self.assertNotIn("0.00 miles", memo)
+        self.assertIn("not recorded", memo)
+
+    def test_a_missing_corridor_area_is_not_printed_as_zero(self):
+        document = a_document()
+        document["corridor"] = {}
+        memo = bid_memo.build(document)
+        self.assertNotIn("0.00 square miles", memo)
+
+
+class TestItIsNotAMemoAboutOneHighway(unittest.TestCase):
+    """The route is read from the run, not written into this module."""
+
+    def test_another_corridor_gets_its_own_heading(self):
+        document = a_document()
+        document["alignment"]["source_path"] = "FM1560-KG DFO 10.0 to 14.0"
+        document["row_maps"]["by_route"] = {
+            "FM1560": {"sheet_count": 3,
+                       "date_range": {"from": "1957-03-01", "to": "1960-06-21"}}
+        }
+        memo = bid_memo.build(document)
+        self.assertIn("FM1560", memo)
+        self.assertNotIn("SH0016", memo)
+
+    def test_its_own_sheets_are_found_under_its_own_route(self):
+        document = a_document()
+        document["alignment"]["source_path"] = "FM1560-KG DFO 10.0 to 14.0"
+        document["row_maps"]["by_route"] = {
+            "FM1560": {"sheet_count": 3,
+                       "date_range": {"from": "1957-03-01", "to": "1960-06-21"}}
+        }
+        memo = bid_memo.build(document)
+        self.assertIn("3 of them are FM1560's own", memo)
 
 
 class TestItReadsLikeSomethingAFirmWouldSend(unittest.TestCase):

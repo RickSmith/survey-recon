@@ -469,7 +469,7 @@ The same is true of the NGS marks, which are asked about a box drawn around the 
 
     A doubt kept somewhere else is a doubt nobody reads at the moment they are about to quote it, which is why `notes` is in the file rather than only on that page.
 
-    Also settled here, because it is a judgement about what a reader will quote rather than a fact: the headline pair stays the corridor total across every route, with the notes saying what it covers. Ruling now was the cheap moment — [#22](https://github.com/RickSmith/survey-recon/issues/22), [#23](https://github.com/RickSmith/survey-recon/issues/23) and [#24](https://github.com/RickSmith/survey-recon/issues/24) all read this file field by field and none of them is built yet.
+    Also settled here, because it is a judgment about what a reader will quote rather than a fact: the headline pair stays the corridor total across every route, with the notes saying what it covers. Ruling now was the cheap moment — [#22](https://github.com/RickSmith/survey-recon/issues/22), [#23](https://github.com/RickSmith/survey-recon/issues/23) and [#24](https://github.com/RickSmith/survey-recon/issues/24) all read this file field by field and none of them is built yet.
 
     Raised on the pull request rather than patched over, the same as `AcctNumb` on [PR #52](https://github.com/RickSmith/survey-recon/pull/52), `NPMS` on [PR #53](https://github.com/RickSmith/survey-recon/pull/53) and the `not-screened` control blocks on [PR #54](https://github.com/RickSmith/survey-recon/pull/54). Rick ruled on 2026-09-13.
 

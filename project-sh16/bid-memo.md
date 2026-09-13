@@ -1,4 +1,4 @@
-# Desktop reconnaissance — SH 16, Bexar County
+# Desktop reconnaissance — SH0016, Bexar County
 
 **Corridor.** SH0016-KG DFO 347.7 to 356.367, 8.69 miles, screened 300 feet either side of the centerline.
 
@@ -23,17 +23,21 @@ Read this before the findings. Every item here is a gap this screening cannot cl
 - **Gated access** — no public source publishes gate locations or access restrictions.
 - **Livestock** — no public source publishes livestock presence.
 
-  A corridor is not clear of either of these because this memo does not mention them. Somebody has to look.
+A corridor is not clear of either of these because this memo does not mention them. Somebody has to look.
 
-**The existing right of way was not read.** Existing right-of-way width, lane count and traffic come from Roadway_Inventory_2023, which this pass does not call. So the corridor width used here is the one stated above, not the width TxDOT actually holds.
+**The existing right-of-way width was not read**, nor the lane count or the traffic. So the corridor width used here is the one stated above — a number somebody chose — and not the width TxDOT holds.
 
 **How much of each tract the corridor takes was not measured.** The tracts were counted and identified; the area of the take was not calculated. A count of tracts is not an acreage, and this memo does not offer one.
 
-**Right of entry is unknown on every tract, and deliberately so.** Right of entry is not a statutory right in Texas, and no parcel polygon establishes one. Nothing in this screening should be read as permission to enter.
+**Right of entry is unknown on every tract, and deliberately so.** Texas has no self-executing right of entry for a surveyor: an RPLS refused permission **may seek** a court order (Tex. Occ. Code § 1071.3585), while an LSLS acting officially **is entitled to** one (Tex. Occ. Code § 1071.358). No parcel polygon establishes either. Nothing in this screening should be read as permission to enter.
 
 **Whether TxDOT already owns a tract was not checked.** Some of the tracts counted below may already be in state hands.
 
 **No published notice period was confirmed for: school.** Those tracts carry the flag and no number. They are not zero-notice; they are unmeasured, and the difference matters to a schedule.
+
+- **School** — Not found: no published number of days for getting onto school district land. Looked in: Tex. Educ. Code § 22.0834, which sets background-check conditions and no notice period; the TxDOT Survey Manual (ESS, rev. April 2026), which does not address school access; and TxDOT ROW Preliminary Procedures Ch. 4. District board approval runs on a board's own meeting cycle, and badging follows approval — both real, neither published as a figure.
+
+**The oldest sheet date below may not be a date at all.** 1900-01-01 appears on 368 of that service's 20,276 records, and the service publishes no empty dates anywhere — which looks like a stand-in for a date nobody recorded. We could not confirm it: the same records include 501 dated after 1900-01-01 and before 1917. That date is on sheet SAT-052104-IH0410-19000101. Check it against the drawing before quoting the age of these records.
 
 ## What was found
 
@@ -41,19 +45,19 @@ Read this before the findings. Every item here is a gap this screening cannot cl
 
 **Every one of the 11 NGS marks in this corridor is recorded `MARK NOT FOUND`.** Somebody has looked for each of them and could not find it. These are not marks you have.
 
-Price this as setting new control, not as recovery. That is the single largest difference in this memo.
+On this evidence the control work is setting new, not recovering existing. That is the largest single difference in this memo, and it is a judgment for the surveyor who signs rather than a conclusion this tool draws.
 
-TxDOT publishes 4 control records in the corridor, covering **2 distinct monuments**. The counts are not added together — some monuments appear in both sets.
+TxDOT publishes 4 control records in the corridor, covering **2 distinct monuments**. The two counts are never added together — some monuments appear in both sets.
 
 ### Right-of-way records
 
-**15 ROW map sheets** cover this corridor on SH 16 itself, dating **1944-01-01 to 1998-03-06**.
+**69 ROW map sheets** reach this corridor, dating **1900-01-01 to 2005-04-30**.
 
-Sheets of that age mean hand retracement from scans that may be hard to read. That is drafting time somebody has to price, and it is not in any figure here.
+15 of them are SH0016's own, dating **1944-01-01 to 1998-03-06**. The rest belong to routes that cross this corridor — the interchanges. The right of way where those roads meet is drawn on their sheets, not on this route's, and a crew retracing an interchange will need them.
 
-A further 54 sheets belong to routes that cross this corridor — the interchanges. The right of way where those roads meet SH 16 is drawn on their sheets, not on SH 16's, and a crew retracing the interchange will need them.
+Sheets of that age mean hand retracement from scans that may be hard to read. That is drafting time somebody has to price, and it is in no figure here.
 
-No service publishes a link to the drawings themselves. They come from TxDOT's Real Property Asset Map, or by Open Records Request, quoting the sheet names in the screening file.
+No service publishes a link to the drawings themselves. They come through RPAM, TxDOT's Real Property Asset Map, or by Open Records Request, quoting the sheet names in the screening file.
 
 ### Tracts
 
@@ -61,16 +65,11 @@ No service publishes a link to the drawings themselves. They come from TxDOT's R
 
 **8 of them carry something that costs time** — cemetery, school.
 
-The longest notice period found is **14 calendar days**, driven by cemetery on tract 15664-003-0040. Working days and calendar days are different promises and are never converted into one another here.
+The longest notice period on any one tract, by the kind of days it counts:
 
-### Nearest help
+- **14 calendar days** — cemetery on tract 15664-003-0040 ([Tex. Health & Safety Code § 711.041(c)(2)](https://statutes.capitol.texas.gov/Docs/HS/htm/HS.711.htm))
 
-- **hospital** — Audie L Murphy Veterans Affairs Hospital, 2.05 miles from the centerline
-- **ambulance service** — Alamo Area Ambulance, 0.08 miles from the centerline
-- **fire or EMS station** — Helotes Fire Department, 0.08 miles from the centerline
-- **police station** — Leon Valley Police Department, 0.06 miles from the centerline
-
-Every distance here is a straight line, not a drive. Check the route before a crew goes out.
+Working days and calendar days are different promises and are never converted into one another here.
 
 ## What this memo is not
 
@@ -84,4 +83,4 @@ It is desktop reconnaissance: a first pass, from public data, to price a job aga
 
 ---
 
-*Built from `texas-bexar-sh0016-kg-20260913T070646` by corridor-screen 0.1.0. Every figure above traces to a saved response; the screening file beside this memo says which.*
+*Built from `texas-bexar-sh0016-kg-20260913T070646` by corridor-screen 0.1.0. Every figure above is read from that run, and every answer that run received is saved with the date it was obtained — the screening file beside this memo says which.*
