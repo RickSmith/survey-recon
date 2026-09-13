@@ -99,6 +99,12 @@ There is a second command, and it is a check rather than a screening run. It com
 python -m corridor_screen.replay one-run/screening.json another-run/screening.json
 ```
 
+And a third, which is the one genuinely live call — section 14's "one live moment proves it isn't a movie," kept as its own act rather than folded into a run that must not fail:
+
+```bash
+python -m corridor_screen.live_check --out project-sh16/
+```
+
 !!! note "Added 2026-09-13, on [PR #58](https://github.com/RickSmith/survey-recon/pull/58)"
     Until then this section showed one command, and no section named a second.
 
