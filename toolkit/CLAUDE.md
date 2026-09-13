@@ -33,11 +33,24 @@ supervision, regardless of who or what performed it. This firm treats an agent a
 somebody working under supervision. It is not a second opinion, it is not a
 co-signer, and it cannot carry any part of the liability.
 
-**«Put your own citation here — the rule, the section, and the date you checked
-it — and have your counsel or your carrier confirm it.»** As of «DATE», we have
-not found guidance from TBPELS addressing AI specifically. "Not found" is not
-"does not exist," and this is a template, not legal advice. The sentence above is
-this firm's own standing rule and it holds either way.
+Three sources, checked on «DATE». Have your counsel or your carrier confirm them.
+
+- **22 Tex. Admin. Code § 138.33(b)** — a surveyor may seal only work done by
+  them or performed under their direct supervision. "Upon sealing, surveyors take
+  full professional responsibility for that work"
+- **22 Tex. Admin. Code § 131.2(11) and (38)** — "responsible charge" and "direct
+  supervision" are the same standard. It requires the surveyor to personally
+  review and approve proposed decisions **before** they are acted on
+- **TBPELS Policy Advisory Opinion 71**, approved 14 November 2024 — AI software
+  is a tool, nothing bans it, and "licensees are ultimately responsible for any
+  work product they sign and seal."
+  <https://pels.texas.gov/nm/2024/pao-71-response.pdf>
+
+Cite **Chapter 138**, not Chapter 663. The land surveying conduct rules moved when
+the boards merged, and the old chapter is still all over the internet.
+
+This is a template, not legal advice. The rule above is this firm's own standing
+rule, and it holds whatever your counsel adds to it.
 
 Practically, for the agent:
 

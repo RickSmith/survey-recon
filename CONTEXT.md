@@ -30,7 +30,10 @@ They are buyers and risk-owners. They are not going to install things themselves
 | **TBPELS** | Texas Board of Professional Engineers and Land Surveyors — the licensing board |
 | **TSPS** | Texas Society of Professional Surveyors — the professional association hosting the session |
 | **Seal** | The surveyor's stamp. To seal a document is to take personal professional responsibility for it |
-| **Responsible charge** | The doctrine that the sealing surveyor is accountable for work done under their supervision — regardless of who or what performed it |
+| **Responsible charge** | The doctrine that the sealing surveyor is accountable for work done under their supervision — regardless of who or what performed it. In the Texas rules it is **the same standard as direct supervision**, not a looser one: 22 Tex. Admin. Code § 131.2(38) |
+| **Direct supervision** | 22 Tex. Admin. Code § 131.2(11). Control over, and detailed professional knowledge of, the work — and personally reviewing and approving proposed decisions **before they are acted on**. The "before" is the part that shapes how an agent must be worked |
+| **PAO** | Policy Advisory Opinion. TBPELS answering a question in public, in writing, about how its existing rules apply to something. Not a new rule. **PAO 71** (14 Nov 2024) is the one on AI |
+| **22 TAC** | Title 22 of the Texas Administrative Code — the board rules, as opposed to the statute. Surveyor conduct and sealing rules live in **Chapter 138**. They used to be Chapter 663, which is superseded and still all over the internet |
 | **Recon** | Desktop reconnaissance before pricing a job. The repo is named for this |
 | **Retracement** | Re-establishing a boundary that was surveyed before, from records and recovered monuments |
 | **Monument** | A physical marker of a surveyed point — a disk, a rod, a capped rebar |

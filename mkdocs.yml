@@ -41,11 +41,16 @@ nav:
   - Managing your agent:
       - managing-your-agent/index.md
       - The rule we broke on day one: managing-your-agent/the-force-push.md
+      - The claim we got wrong: managing-your-agent/the-claim-we-got-wrong.md
   - The worked example - SH16: scenarios/sh16/index.md
   - Corridor screening: corridor-screen/spec.md
   - Data sources: data-sources/index.md
   - Toolkit: toolkit/index.md
-  - Governance: governance/index.md
+  - Governance:
+      - governance/index.md
+      - A firm AI-use policy: governance/ai-use-policy.md
+      - What never leaves the office: governance/what-never-leaves.md
+      - The seal and responsible charge: governance/seal-and-responsible-charge.md
   - Going further: going-further/index.md
   - Slides: slides/index.md
   - How this repo was built:

@@ -110,7 +110,9 @@ Placed **after** an hour of the agent succeeding — that's when it lands.
 1. **The superseded manual.** Search still points at dead `onlinemanuals.txdot.gov` URLs while content moved to `txdot.gov/manuals/row/ess/`. The agent confidently cites a revision no longer in force. *"It didn't lie to you. It found the wrong document and believed it — which is exactly what a new hire does."*
 2. **The silent `NoData`.** USGS 3DEP ignored the coordinate-system parameter, read lon/lat as Web Mercator meters, and returned a plausible non-answer instead of an error. *"It didn't fail. It answered. That's worse."*
 
-Punchline for owners: **you seal it, you own it.** TBPELS hasn't spoken directly to AI; responsibility doctrine already covers it.
+Punchline for owners: **you seal it, you own it.** TBPELS *has* spoken directly to AI — [PAO 71](https://pels.texas.gov/nm/2024/pao-71-response.pdf), 14 Nov 2024 — and its answer is that AI is a tool and the licensee is responsible for whatever they sign and seal. The existing responsibility doctrine is the answer, from the board's own mouth.
+
+*(This line said the opposite until 2026-09-12, on four pages. The correction is recorded at [The claim we got wrong](managing-your-agent/the-claim-we-got-wrong.md).)*
 
 ### The close (1:54–2:00)
 Open **one** GitHub issue live, doing three jobs at once:
