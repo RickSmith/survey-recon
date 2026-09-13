@@ -100,7 +100,7 @@ Justified: the TxDOT ROW map server blocks intermittently, USGS elevation timed 
 | 0:52–0:57 | 5 | Stretch + questions |
 | 0:57–1:18 | 21 | **Act II — Find the control.** 13 NGS marks (several `MARK NOT FOUND`), 18 TxDOT control points, 27 ROW sheets 1937–1998. |
 | 1:18–1:36 | 18 | **Act III — The estimate package.** Bid memo + flagged parcel table with statutory lead times + crew-day build-up. |
-| 1:36–1:48 | 12 | **Review, seal — and the two failures.** |
+| 1:36–1:48 | 12 | **Review, seal — and the three failures.** |
 | 1:48–1:54 | 6 | **Hermes.** The second ROE letter that sends itself on day 21. |
 | 1:54–2:00 | 6 | **Accountability · Monday morning · the live issue.** |
 
@@ -109,10 +109,17 @@ Placed **after** an hour of the agent succeeding — that's when it lands.
 
 1. **The superseded manual.** Search still points at dead `onlinemanuals.txdot.gov` URLs while content moved to `txdot.gov/manuals/row/ess/`. The agent confidently cites a revision no longer in force. *"It didn't lie to you. It found the wrong document and believed it — which is exactly what a new hire does."*
 2. **The silent `NoData`.** USGS 3DEP ignored the coordinate-system parameter, read lon/lat as Web Mercator meters, and returned a plausible non-answer instead of an error. *"It didn't fail. It answered. That's worse."*
+3. **The error in the work order — ours.** [Issue #7](https://github.com/RickSmith/survey-recon/issues/7) instructed the agent, in writing, to publish "TBPELS has not spoken directly to AI." That is a false statement of law, and it was already on four pages of this repo. The agent went looking for the citation our own rules demand, found [PAO 71](https://pels.texas.gov/nm/2024/pao-71-response.pdf) — 14 Nov 2024, public for nearly two years — and stopped rather than write it. *"A licensed human wrote that error. The agent caught it. If your checking only runs one direction, you've built half of it."*
 
-Punchline for owners: **you seal it, you own it.** TBPELS *has* spoken directly to AI — [PAO 71](https://pels.texas.gov/nm/2024/pao-71-response.pdf), 14 Nov 2024 — and its answer is that AI is a tool and the licensee is responsible for whatever they sign and seal. The existing responsibility doctrine is the answer, from the board's own mouth.
+**Beat 3 is the one that changes the shape of the talk**, so do not let it get cut for time. Beats 1 and 2 say the agent is confidently wrong and the human catches it, which is the thing everyone already half-believes walking in. Beat 3 reverses it in front of them, using this repo's own public history, and it is checkable from the projector — the issue, the comment, the commit and the correction page are all there.
 
-*(This line said the opposite until 2026-09-12, on four pages. The correction is recorded at [The claim we got wrong](managing-your-agent/the-claim-we-got-wrong.md).)*
+What saved it was not cleverness. It was a rule written in `CLAUDE.md` for a different purpose entirely: *never invent a requirement — cite the section and its URL, or say you could not confirm it.* The claim had no citation, so the agent went to find one, and the search that was meant to confirm it disproved it. **The rule that catches an error is usually boring and was written for something else.** That is the argument for writing the handbook before you need it.
+
+Punchline for owners: **you seal it, you own it.** TBPELS *has* spoken directly to AI — PAO 71 — and its answer is that AI is a tool and the licensee is responsible for whatever they sign and seal. The existing responsibility doctrine is the answer, from the board's own mouth.
+
+*(That punchline said the opposite until 2026-09-12, on four pages. The account is at [The claim we got wrong](managing-your-agent/the-claim-we-got-wrong.md), beside the force-push record.)*
+
+**Timing warning.** This block is 12 minutes and now carries review, seal and three failures. Beat 3 needs about three minutes to land, because the audience has to see the work order before they see the catch. If the run is behind by 1:36, cut **beat 2** — the silent `NoData` is the most technical of the three and the least about accountability.
 
 ### The close (1:54–2:00)
 Open **one** GitHub issue live, doing three jobs at once:
@@ -161,7 +168,7 @@ survey-recon/
 | **Sep 15–17** | Corridor-screening tool | Buffer an alignment → hit the verified services → flagged parcel list with lead times |
 | **Sep 18–23** | Acts I–III + cache | Full SH16 run; cache captured and committed; outputs built |
 | **Sep 24–28** | Toolkit · Day 0 · for-principals · governance | Take-home kit complete |
-| **Sep 29–Oct 2** | Slides · Hermes · failure beat | Deck drafted; ROE-letter demo working; both failures scripted and reproducible |
+| **Sep 29–Oct 2** | Slides · Hermes · failure beat | Deck drafted; ROE-letter demo working; all three failures scripted and reproducible |
 | **Oct 3–5** | **Dry run** | Full 2 hours in front of Seneca + CBI staff. Cut against the clock. |
 | **Oct 6–7** | Freeze | Tag teaching-moment PRs, freeze repo, print handout with QR |
 | **Oct 8** | Deliver | |
