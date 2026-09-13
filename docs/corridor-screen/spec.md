@@ -1,7 +1,7 @@
 # Corridor screening — specification
 
 **Status:** settled 2026-09-12, from the grilling on [issue #5](https://github.com/RickSmith/survey-recon/issues/5).
-**Amended:** 2026-09-13 — section 5, the crew safety step; section 6, the pipeline source and the crew safety layers; section 8, how a returned record is tested against the corridor; section 10, the parcel field names, the ROW map block, the `crew_safety` block, and nine additions for the flags. See the notes there.
+**Amended:** 2026-09-13 — section 3.6, the offline and comparison commands; section 5, the crew safety step; section 6, the pipeline source and the crew safety layers; section 8, how a returned record is tested against the corridor; section 10, the parcel field names, the ROW map block, the `crew_safety` block, and nine additions for the flags. See the notes there.
 **Scope of work for:** the `corridor-screen/` tool.
 
 A note on words. A **spec** is a scope of work. A **schema** is an agreed field list — the column headings on a parcel table that everybody uses the same way. An **endpoint** is the web address you ask a question of. A **cache** is a saved copy of an answer you already got. Everything else is in [CONTEXT.md](https://github.com/RickSmith/survey-recon/blob/main/CONTEXT.md).
@@ -86,6 +86,27 @@ The existing right-of-way width is read from `Roadway_Inventory_2023` (`ROW_MIN`
 ```bash
 corridor-screen --alignment sh16.kmz --half-width 300 --mode cache-first --out project-sh16/
 ```
+
+**Away from a working network,** which is what a conference venue should be assumed to be:
+
+```bash
+corridor-screen --alignment sh16.kmz --out project-sh16/ --mode cache-only
+```
+
+There is a second command, and it is a check rather than a screening run. It compares two output files and says whether they found the same things:
+
+```bash
+python -m corridor_screen.replay one-run/screening.json another-run/screening.json
+```
+
+!!! note "Added 2026-09-13, on [PR #58](https://github.com/RickSmith/survey-recon/pull/58)"
+    Until then this section showed one command, and no section named a second.
+
+    [#19](https://github.com/RickSmith/survey-recon/issues/19) asked that "output from cache matches output from live." It did not ask for a command, and the review on PR #58 was right to call the command scope creep and put it to Rick rather than let it in quietly.
+
+    It was accepted on 2026-09-13, for the reason it was built: a criterion that says two things **match** needs something runnable to keep proving it, or it is true on the day somebody checks by hand and unverified every day after. It is also what a presenter runs to satisfy themselves before walking on stage.
+
+    What it compares is narrow and stated in `corridor_screen/replay.py`: a run and a replay **of that same capture**. Two runs of the same corridor are never byte-identical — on SH16 they differ in 74 places, every one of them the run's account of itself rather than a finding — and that list is named once, with a reason beside each entry, so it can be argued with.
 
 ## 4. The corridor
 

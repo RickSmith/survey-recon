@@ -203,6 +203,19 @@ class Fetcher:
 
         Returns ``(data, record)``. The record is the provenance of this one
         call, which the honesty block in the output is built from.
+
+        **This function is the only place in the tool where live and replayed
+        runs differ, and that is the whole design.** Everything above it --
+        every query, every filter, every count, every warning -- runs the same
+        code and cannot tell which it got. There is no replay mode of the tool;
+        there is one tool, and one function that decides where a response comes
+        from. That is what issue #19 means by "the live and cached paths share
+        the same logic," and it is why a cache-only run is a replay rather than
+        a recording.
+
+        The record carries ``status: from-cache`` and the capture date, so a
+        replayed run says how old its data is rather than implying it is fresh.
+        ``corridor_screen.replay`` is the check that the two really do agree.
         """
         entry = self.cache.entry(source_name, readable, url, params, method=method)
         cached = self.cache.read(entry) if self.mode != "live" else None

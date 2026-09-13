@@ -31,6 +31,7 @@ and the flags that hang off it, from
 | NGS marks in the corridor, carrying their condition | yes |
 | ROW map sheets over the corridor, and how far back they go | yes |
 | The crew safety sheet — nearest hospital, EMS and police | yes |
+| The whole tool replaying offline, checked against the live run | yes |
 | TxDOT primary control points, on layer 67 | yes |
 | Roadway facts — ROW_MIN, lanes, traffic | not yet, a separate work order |
 | SVG renderings | not yet |
@@ -62,13 +63,57 @@ python -m corridor_screen --route SH0016-KG --begin-dfo 347.7 --end-dfo 356.367 
 | `--out` | Where the output file and the cache are written |
 | `--yes` | Never ask about a dead service. Stop instead. Use for unattended runs |
 
-**`cache-only` is the mode that makes a run repeatable away from a working
-network.** It makes no network calls at all, not even the ping. If a request
-was never captured, it says which one and stops rather than guessing.
+## If the network is down
+
+**This is the line to run.** From this directory, nothing else needed:
+
+```bash
+python -m corridor_screen --route SH0016-KG --begin-dfo 347.7 --end-dfo 356.367 --out ../project-sh16 --mode cache-only
+```
+
+It makes **no network calls at all**, not even the reachability ping. Every
+answer comes off the disk, from the capture committed in this repo. You should
+see `ping  ... skipped` on every service, and the run should finish with
+`parcels     524`.
+
+If a request was never captured, it names that exact request and stops. It
+never guesses and it never quietly returns a shorter list.
 
 The cache never expires on its own. `--mode live` is the only refresh, because
 a cache that quietly re-fetches on the morning of a session is a hazard rather
 than a feature.
+
+### Why you can trust the cached numbers
+
+Because it is checked, not asserted. A live run and a cache-only run of SH16
+were compared on 2026-09-13 and differed in exactly **74 places, every one of
+them the run's own account of itself** — when it started and finished, its run
+id, its mode, and five fields on each of the fourteen services saying whether
+each host was pinged, how many times it was asked, and whether the answer came
+off the disk. Every parcel, flag, lead time, survey mark, ROW sheet and the
+whole crew safety sheet were identical.
+
+The comparison is a command you can run:
+
+```bash
+python -m corridor_screen.replay one-run/screening.json another-run/screening.json
+```
+
+It prints what differs, then prints what it allowed to differ and why. It
+finishes successfully only when every finding matches.
+
+**What to compare against what.** It answers one question: did a replay find
+what the live run found. So compare a live run against a replay **of that same
+capture** — the two runs either side of one `--mode live`. Comparing a fresh
+live run against a replay of an older capture will report differences, and it
+should: the two ran against the services on different days, and `captured_at`
+says so on every service. That is the field working, not the check failing.
+
+The same comparison runs in the test suite against the committed capture, **with
+the network taken away** — not politely asked for, actually removed, at the
+level below every library that could reach for it. See `tests/test_offline.py`.
+That test is the one that would catch a stray live call before a session rather
+than during one.
 
 ## Reading the output
 
