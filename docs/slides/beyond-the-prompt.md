@@ -62,41 +62,58 @@ watches something real happen before anybody has defined a single term.
 <!--
 0:08–0:20 · 12 min · What is an agent
 
-Twelve minutes, three slides. Prediction, then the three shapes of the tool,
-then the loop. Nothing here is about survey work yet, which is deliberate: the
-room needs the mechanism before it will believe the demo.
+Twelve minutes, four slides. Prediction, then the three shapes of the tool,
+then the loop, then where it breaks. Nothing here is about survey work yet,
+which is deliberate: the room needs the mechanism before it will believe the
+demo.
+
+**The fourth slide is the one not to cut.** The limits belong here, before the
+demo rather than after it — a room that has watched something impressive and
+*then* hears the caveats has already stopped listening to them.
 -->
 
 ---
 
 # It predicts the next word
 
-- What a language model is actually doing, in one plain sentence
-- Why that makes it fluent, fast, and sometimes confidently wrong
-- The survey parallel: a very well-read new hire who has never been on site
-
-> **To be written** — #31
+- It predicts the next word. Then the next one. That is the whole mechanism
+- Run that at scale — books, code, manuals, and yes, survey documentation
+- **The survey parallel: a traverse.** One trivial operation, repeated enough
+  times to produce something you can build on
+- Nobody programmed the skills in. They fell out of prediction at scale
+- Which is why a wrong answer arrives in the same voice as a right one
 
 <!--
 0:08–0:20 · 12 min · What is an agent
 
-Keep this to one idea. The room does not need the architecture; it needs to
-know why a wrong answer arrives in the same confident voice as a right one.
+Keep this fast. This room has heard of ChatGPT and does not need the
+architecture.
+
+Land the traverse analogy and move. A trivially simple operation, repeated at
+scale, produces something powerful — that is a sentence this room already
+believes about their own work.
+
+Flag the catch here rather than at the end: prediction has no idea when it is
+wrong. Beat 1 at 1:36 is where that lands.
 -->
 
 ---
 
 # Chatbot, copilot, agent
 
-- Chatbot: you ask, it answers, nothing happens afterward
-- Copilot: it suggests while you work, and you accept or reject
-- Agent: it plans, acts, checks its own work, and repeats
-- What changes at each step is not intelligence, it is what it may touch
-
-> **To be written** — #31
+- **Chatbot** — you ask, it answers. You do all the work
+- **Copilot** — it drafts, you drive every step and accept or reject each one
+- **Agent** — you state the outcome; it plans, acts, checks, and goes again
+- The shift is from writing *about* the work to actually doing the work
+- What changes is not intelligence. It is what the tool may touch
 
 <!--
 0:08–0:20 · 12 min · What is an agent
+
+The survey version, if the room wants one: chatbot is "how do I buffer a
+parcel layer?" Copilot writes the buffer while you watch every line. Agent is
+"here is the parcel data, produce the buffer and flag what is odd" — and it
+goes and does it, fixing its own errors on the way.
 
 The distinction that matters to a principal is the last bullet. A chatbot
 cannot cost you anything. An agent can, because it acts.
@@ -106,18 +123,51 @@ cannot cost you anything. An agent can, because it acts.
 
 # The loop
 
-- Read the assignment, plan the work, do a piece of it
-- Check the result, correct, go round again
-- It stops when the work is done or when it is stuck
-- A human decides what "done" means, before the loop starts
-
-> **To be written** — #31
+- **Goal** — you state the outcome
+- **Reason** — it plans the next step
+- **Act** — it calls a tool: writes code, reads a file, queries a map service
+- **Observe** — it reads the result, adjusts, and goes round again
+- It stops when the work is done, or when it stops and asks
 
 <!--
 0:08–0:20 · 12 min · What is an agent
 
-This is the slide the rest of the session refers back to. Draw the loop rather
-than list it if a drawing can be made to work at 1920 x 1080.
+This is the most important slide in the block. **The capability is not a
+smarter model. It is the loop.** It writes code, runs it, reads the error,
+fixes it, runs it again — and that self-correction is what the room is about
+to watch happen live.
+
+What the loop runs on, if anybody asks: a model, tools, the context it can
+see, and guardrails — what it may touch and what it has to ask about first.
+The guardrail example that lands: this one asks before it deletes anything or
+spends money.
+
+A human decides what "done" means, before the loop starts. That is Act I.
+-->
+
+---
+
+# Where it breaks
+
+- **Confidently wrong.** It can invent a fact or a parameter with a straight face
+- **Runaway cost.** Retries and long documents are billed. Set limits
+- **Data.** Anything you type goes to a company's computers. Treat it as email
+- **Accountability is yours.** RPLS or LSLS — *the agent did it* is not a defense
+- Treat the output like a new hire's: trusted after you check it, not before
+
+<!--
+0:08–0:20 · 12 min · What is an agent
+
+**Do not cut this slide**, even running long. It is what separates a briefing
+from a sales pitch, and this room can smell the difference.
+
+The board has spoken about AI: TBPELS approved **Policy Advisory Opinion 71**
+on 14 November 2024. It is not a new rule — it says the rules you already have
+cover it. Full text and the four rule numbers are in
+docs/governance/seal-and-responsible-charge.md.
+
+Say the last bullet in their words: you seal it, you own it. The close at 1:54
+is where it gets said properly.
 -->
 
 ---
@@ -142,89 +192,103 @@ authority for the words used here.
 
 # Markdown
 
-- Plain text a person can read and a machine can also read
-- No proprietary format, no version that will not open in nine years
-- The survey parallel: a field book, not a CAD file
+- Plain text with a few marks. `#` makes a heading, `**this**` goes bold,
+  `- ` starts a list item
+- **The survey parallel: a field book**, not a CAD file
+- No proprietary format, and no version that will not open in nine years
 - Everything in this session is written in it, including these slides
-
-> **To be written** — #31
 
 <!--
 0:20–0:30 · 10 min · Vocabulary of managing one
 
-Show this file on screen for ten seconds. Seeing the slide and the source
-side by side does more than a paragraph of explanation.
+Show this file on screen for ten seconds. Seeing the slide and the source side
+by side does more than a paragraph of explanation.
+
+Why it matters rather than what it is: an agent reads and writes markdown
+natively, so the instructions you give it and the work it hands back are the
+same kind of file. Plain text on any machine, no software to buy.
 -->
 
 ---
 
 # The repo, and git
 
-- A repo is the job folder. Git is the field book that never loses a page
-- A branch is a working copy nobody else is affected by
-- A commit is a field book entry, with a date and a name on it
-- Nothing is ever overwritten, so nothing is ever quietly lost
-
-> **To be written** — #31
+- A **repo** is the job folder. **Git** is the field book that never loses a page
+- A **branch** is a working copy nobody else is affected by
+- A **commit** is a field book entry, with a date and a name on it
+- Nothing is overwritten, so nothing is quietly lost
 
 <!--
 0:20–0:30 · 10 min · Vocabulary of managing one
 
 Do not teach git commands. This room is deciding whether to point somebody at
 this, not typing it themselves. Terms only, and the survey word first.
+
+The line that lands: every change to this session's own repo is a field book
+entry with a name and a date on it, and you are about to see the messy ones.
 -->
 
 ---
 
 # Issues, and pull requests
 
-- An issue is a work order: what to do, and how you will know it is done
-- A pull request is the check print you redline before anything is final
-- Merging is signing and sealing
+- An **issue** is a work order: what to do, and how you know it is done
+- A **pull request** is the check print you redline before anything is final
+- **Merging** is signing and sealing
 - Nothing reaches the job without somebody licensed looking at it
-
-> **To be written** — #31
 
 <!--
 0:20–0:30 · 10 min · Vocabulary of managing one
 
 This is the slide that sets up the whole accountability argument at the end.
 Land the last bullet slowly.
+
+Every word on this slide has a survey word beside it on purpose — the
+translation table in CONTEXT.md at the root of the repo is where they are
+settled, and it is the authority, not this slide.
 -->
 
 ---
 
 # Context
 
-- The agent only knows what is in front of it right now
-- A handbook in the repo is read every time; a conversation is not
-- The survey parallel: written office standards against hallway advice
-- Where the rules live decides whether they are followed
-
-> **To be written** — #31
+- Everything the agent can see right now is its **context window**
+- Every word it writes, it **re-reads** that whole window first
+- A handbook committed in the repo is read every time. A conversation is not
+- **The survey parallel:** written office standards against hallway advice
 
 <!--
 0:20–0:30 · 10 min · Vocabulary of managing one
 
 Beat 3 at 1:36 is the payoff for this slide. The rule that caught our own
-error was written in CLAUDE.md months before, for a different purpose.
+error was written in CLAUDE.md months before, for a different purpose — it was
+in the window every time, so it was applied every time.
+
+The failure mode worth naming if there is time: a window that is full has to
+drop something, and what gets dropped is usually the oldest part of the
+conversation. Which is why the rules belong in a file, not in a chat.
 -->
 
 ---
 
 # Tokens
 
-- The unit the tool reads and writes in, and the unit it bills in
-- Roughly three quarters of a word, which is all the precision needed here
-- Why a long document costs more to work on than a short one
-
-> **To be written** — #31
+- What the agent reads, writes and bills in. About **4 characters** each,
+  or three quarters of a word
+- *"Understanding AI is fascinating!"* is **7 tokens**, not four words
+- Which is why a long document costs more to work on than a short one
 
 <!--
 0:20–0:30 · 10 min · Vocabulary of managing one
 
 Cut 3 of 3. This slide goes to a footnote in the repo if the session is
 running long. Keep it to one slide so the cut is a single deletion.
+
+The example is the whole slide. "Understanding" splits into two pieces, and
+the space before a word travels with it. Nobody needs more than that.
+
+Precision nobody needs here: the model never sees letters at all, only the
+numbers those pieces map to.
 -->
 
 ---
