@@ -85,7 +85,16 @@ exactly one — the Act I spec — so if that file ever moves, this page will no
 notice and you will.
 
 A fallback page that is out of date is worse than no page, because it gets
-followed. This one fails the build instead.
+followed. This one fails the test suite instead.
+
+**Somebody still has to run that suite.** GitHub Actions builds this site and
+the deck on every push and does not run a single test — so the check above runs
+when a person types it, or when an agent does before a pull request. That gap
+is #78. Until it closes, run this before the dry run and before the day:
+
+```bash
+cd corridor-screen && python -m unittest discover -s tests -t .
+```
 
 Written under [issue #27](https://github.com/RickSmith/survey-recon/issues/27),
 which asked whether the set was complete. It was not, and the gaps above are
