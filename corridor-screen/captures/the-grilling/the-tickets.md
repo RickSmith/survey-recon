@@ -1,10 +1,18 @@
 # The work orders, and the 89 seconds they took
 
-The last move of Act I is `/to-tickets`, and this is what it did.
+The last move of Act I is `/to-tickets`. **This file is the result of such a
+run, not a recording of one** — and not of the grilling beside it, which never
+ran that command. Read
+[the README](README.md#the-half-of-act-i-this-does-not-cover) for how the two
+fit together, because the order is not the one the stage runs.
 
 **Thirty-five work orders, numbered 5 to 39, created between 20:32:08 and
 20:33:37 on 12 September 2026.** Eighty-nine seconds. The whole schedule of this
 project, written down, before anybody built anything.
+
+**Row one is issue #5, "Specify the corridor-screening tool."** That is the work
+order the grilling in this same folder was run against, hours later. The tickets
+came first.
 
 The times below are the ones GitHub stamped. They are the part of this file that
 is pinned to that minute and cannot be edited by anything that happened later.
@@ -64,10 +72,17 @@ because of. The list audits itself.
 when the batch was written, and nothing since can move them.
 
 **The titles, states and labels are today's.** This was captured with
-`gh issue list --state all` on 2026-09-13, so it shows where each work order
-stands now — closed, open, who it is waiting on — rather than how it read the
-minute it was created. GitHub does not keep the original title, so nobody can
-produce that view, and this file does not claim to.
+
+```bash
+gh issue list --state all --limit 100 --json number,title,createdAt,state,labels
+```
+
+on 2026-09-13, so it shows where each work order stands now — closed, open, who
+it is waiting on — rather than how it read the minute it was created. A title
+that was edited later would read here as if it had always said that. GitHub does
+record renames in an issue's timeline, so the original wording is recoverable
+one issue at a time; that was not done, and this file does not claim to be that
+view.
 
 **The bodies are not here.** Thirty-five acceptance-criteria blocks is a
 document, not a fallback. What Act I shows the room is that the work got written
