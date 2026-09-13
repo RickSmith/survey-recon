@@ -1,0 +1,74 @@
+$ gh issue view 7
+
+title:	Write the governance pages
+state:	CLOSED
+author:	RickSmith (Rick Smith)
+labels:	ready-for-agent
+comments:	1
+assignees:	
+projects:	
+milestone:	
+issue-type:	
+parent:	
+sub-issues:	
+sub-issues-completed:	
+blocked-by:	
+blocking:	
+number:	7
+--
+## What to build
+
+Write the governance pages a principal can hand to their insurer and to their staff.
+
+Three pieces: a firm AI-use policy they can adapt, a what-never-leaves-the-office checklist, and language covering the seal and responsible charge.
+
+For this audience governance is a primary take-home, not an appendix.
+
+## Acceptance criteria
+
+- [ ] A firm AI-use policy template a firm can adapt without a lawyer rewriting it
+- [ ] A what-never-leaves-the-office checklist, concrete enough to pin on a wall
+- [ ] Seal and responsible-charge language, citing code and section
+- [ ] It states plainly that TBPELS has not spoken directly to AI, and that responsibility doctrine already covers it
+- [ ] No invented requirement anywhere — every rule cites its source or says it could not be confirmed
+
+## Blocked by
+
+- None — can start immediately.
+
+
+================================================================
+
+$ gh issue view 7 --comments
+
+author:	RickSmith
+association:	owner
+edited:	false
+status:	none
+--
+**Correction: acceptance criterion 4 is factually wrong. Please do not restore it.**
+
+This issue asks the governance pages to state "plainly that TBPELS has not spoken directly to AI."
+
+TBPELS has spoken directly to AI. **Policy Advisory Opinion 71, "The Use of Artificial Intelligence (AI) Software By Licensees,"** approved in public session on **14 November 2024** — nearly two years before this issue was written.
+
+- The opinion: https://pels.texas.gov/nm/2024/pao-71-response.pdf
+- Listed as PAO 71 on the board's index: https://pels.texas.gov/policy.htm
+
+What it actually says:
+
+> AI software is a tool available to the public at large and the Board's licensees. Neither the Texas Engineering Practice Act, the Professional Land Surveying Practices Act, nor the associated Board rules directly ban the use of AI software.
+
+It sets three caveats — oversight and review, competence, and client data — and names the surveying rules behind each: §§ 138.33(b), 138.55(b), 138.59 and 138.61. Its conclusion is that no new opinion was needed, because the rules the board already has cover it.
+
+**The second half of criterion 4 survives, and gets stronger.** "Responsibility doctrine already covers it" is now the board's own stated conclusion rather than our inference.
+
+The same claim appeared in `README.md`, `docs/index.md`, `docs/plan-of-record.md` and `toolkit/CLAUDE.md`. All four are corrected on the branch, and the account is written up at `docs/managing-your-agent/the-claim-we-got-wrong.md`, beside the force-push record.
+
+Criteria 1, 2, 3 and 5 are met as written. Criterion 5 — "No invented requirement anywhere — every rule cites its source or says it could not be confirmed" — is what caught this one.
+
+Branch: `claude/mattpocock-skills-7-10ab60`
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+--

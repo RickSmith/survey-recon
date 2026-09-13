@@ -23,3 +23,9 @@ project-sh16/cache/**/*.json -text
 # So say it outright.
 project-sh16/manual-pulls/*.pdf -text
 project-sh16/manual-pulls/*.dgn -text
+
+# The failure beats keep their evidence here, and the same sentence has to stay
+# true of it: these files are exactly the bytes that came back. The JSON ones
+# arrive from the GitHub API pretty-printed, so unlike the cached responses
+# there really are line endings here for git to rewrite on a Windows checkout.
+corridor-screen/captures/**/*.json -text
