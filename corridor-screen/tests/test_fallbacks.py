@@ -40,11 +40,16 @@ from pathlib import Path
 from corridor_screen import cli
 from corridor_screen.cache import long_path
 
-# Borrowed rather than copied. `no_network` takes the network away below every
-# library that could reach for it, `a_copy_of_the_demo_cache` puts a run
-# somewhere that is not the committed demo artifact, and `quiet` keeps a whole
-# screening report out of the test output. Two copies of any of them would
-# drift the first time somebody fixed one of them.
+# Borrowed rather than copied, all of it, for the one reason: two copies of any
+# of them would drift the first time somebody fixed one of them.
+#
+# `markdown_docs` opens a committed page and reads a heading or a table out of
+# it, which `test_deck.py` one file over has to do as well. `no_network` takes
+# the network away below every library that could reach for it,
+# `a_copy_of_the_demo_cache` puts a run somewhere that is not the committed
+# demo artifact, and `quiet` keeps a whole screening report out of the test
+# output.
+from tests.markdown_docs import markdown_section, table_rows, text_of
 from tests.test_offline import a_copy_of_the_demo_cache, no_network, quiet
 
 REPO = Path(__file__).resolve().parents[2]
@@ -61,34 +66,6 @@ A_TIME = re.compile(r"^\d:\d\d\u2013\d:\d\d$")
 A_CODE_SPAN, GAP, NOTHING_LIVE = "`", "not recorded", "nothing live"
 
 
-def text_of(path):
-    """Read a committed file, through the door that survives a long path.
-
-    A surveyor's checkout sits under something like "OneDrive - Some Long Firm
-    Name\\Documents\\Projects", and this repo's own worktrees already push a
-    capture past the 260 characters Windows opens without being asked in the
-    extended form. `cache.long_path` is how every other read here gets in.
-    """
-    with open(long_path(path), "r", encoding="utf-8") as handle:
-        return handle.read()
-
-
-def table_rows(markdown):
-    """Every table row in a markdown file, as a list of stripped cells.
-
-    Header and divider rows come back too. The callers filter on the first
-    cell rather than on position, so a table growing a column above it does not
-    quietly change which row is which.
-    """
-    rows = []
-    for line in markdown.splitlines():
-        line = line.strip()
-        if not line.startswith("|"):
-            continue
-        rows.append([cell.strip() for cell in line.strip("|").split("|")])
-    return rows
-
-
 def run_of_show():
     """The blocks of the session, in order, read from the plan of record.
 
@@ -98,26 +75,6 @@ def run_of_show():
     """
     section = markdown_section(text_of(PLAN), "## 5. Run of show")
     return [row[0] for row in table_rows(section) if A_TIME.match(row[0])]
-
-
-def markdown_section(markdown, heading):
-    """Everything under one heading, up to the next heading of any depth.
-
-    Matched on how the heading starts rather than the whole of it. The plan of
-    record writes its running time into this one -- "## 5. Run of show (2:00)" --
-    and a heading that gains or loses a parenthesis should not fail a check
-    about fallbacks.
-    """
-    lines = markdown.splitlines()
-    for start, line in enumerate(lines):
-        if line.strip().startswith(heading):
-            break
-    else:
-        raise AssertionError(f"{heading!r} is not in that file")
-    for end in range(start + 1, len(lines)):
-        if lines[end].startswith("#"):
-            return "\n".join(lines[start + 1:end])
-    return "\n".join(lines[start + 1:])
 
 
 def card_rows():
