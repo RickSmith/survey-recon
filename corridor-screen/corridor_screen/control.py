@@ -71,6 +71,22 @@ RECOVERY_UNKNOWN = "condition unknown"
 # reads as a rounding error; a named row reads as the gap it is.
 NO_CONDITION = "(none published)"
 
+# The mark's full NGS datasheet: position, recovery history, and the description
+# of how to find it. `MARK NOT FOUND` is the beginning of a decision, not the end
+# of one, and this is where the rest of the story is.
+#
+# Checked on 2026-09-12 and the answer is cached at
+# `ngs-datasheet-page/ds-mark-plain-get-ay0713`: a plain link returns the whole
+# datasheet, carrying the PID, the designation `T 481` and `MARK NOT FOUND`.
+#
+# An earlier pass of this ticket wrote the opposite into the documentation --
+# that the page needed a POST and answered a plain link with an empty body. That
+# came from a `curl` in this repo's own working notes whose output path did not
+# exist, so nothing was written and nothing was downloaded, and the zero was
+# read as the server's answer. It was the measuring instrument. Re-running the
+# same request through this tool's own fetcher is what caught it.
+DATASHEET_URL = "https://geodesy.noaa.gov/cgi-bin/ds_mark.prl?PidBox={pid}"
+
 
 def recovery_of(condition):
     """What this tool is willing to say about getting this mark back.
@@ -97,6 +113,12 @@ def _recovered_on(value):
 
     The date matters as much as the condition beside it. ``GOOD`` recovered in
     1952 and ``GOOD`` recovered in 2019 are not the same promise.
+
+    This is the one field in a mark that is not verbatim, and the trade is the
+    same one ``output.write`` already makes with ``ensure_ascii=False``: the
+    output file is meant to be read by a person, so readability wins where the
+    change is total and the fallback is obvious. Both halves are testable and
+    the raw value is in the cached response either way.
     """
     if isinstance(value, str) and len(value) == 8 and value.isdigit():
         return f"{value[0:4]}-{value[4:6]}-{value[6:8]}"
@@ -117,18 +139,23 @@ def _point_of(feature):
     return [lon, lat]
 
 
-def to_mark(feature, distance_ft, fields=None):
-    """One NGS mark, in the shape the output file uses."""
-    fields = fields or NGS_MARK_FIELDS
+def to_mark(feature, point, distance_ft, source_name=None):
+    """One NGS mark, in the shape the output file uses.
+
+    Built complete. The position and the measured distance are passed in rather
+    than filled in afterwards, so no half-made record ever crosses a function
+    boundary waiting for somebody to finish it.
+    """
     attributes = feature.get("attributes") or {}
 
     def read(key):
         """One output field, from whichever service field ``sources.py`` names."""
-        return attribute(attributes, fields[key])
+        return attribute(attributes, NGS_MARK_FIELDS[key])
 
     condition = read("condition")
+    pid = read("pid")
     return {
-        "pid": read("pid"),
+        "pid": pid,
         # The field the ticket exists for. Verbatim, or absent when the service
         # published nothing -- never rewritten into a shorter list of values.
         "condition": condition,
@@ -148,18 +175,22 @@ def to_mark(feature, distance_ft, fields=None):
         "vertical_order": read("vertical_order"),
         "cors_id": read("cors_id"),
         "pacs_sacs": read("pacs_sacs"),
-        "longitude": None,
-        "latitude": None,
+        # Where the rest of the story is: position, recovery history, and the
+        # description of how to find it. `MARK NOT FOUND` starts a decision
+        # rather than ending one, and this is what the decision gets made from.
+        "datasheet_url": DATASHEET_URL.format(pid=pid) if pid else None,
+        "longitude": point[0],
+        "latitude": point[1],
         # How far off the centerline the crew will be walking. Zero means the
         # mark is on the line, and is written as a measurement rather than left
         # blank, because a blank in this column would read as unmeasured.
         "distance_from_centerline_ft": distance_ft,
-        "source_service": None,
+        "source_service": source_name,
         "warnings": [],
     }
 
 
-def select(features, alignment_paths, half_width_ft, plane, fields=None, source_name=None):
+def select(features, alignment_paths, half_width_ft, plane, source_name=None):
     """Every returned mark that is actually in the corridor, nearest first.
 
     Returns ``(marks, without_position)``. The second number is marks the
@@ -188,10 +219,7 @@ def select(features, alignment_paths, half_width_ft, plane, fields=None, source_
         miles = point_to_paths_miles(point, alignment_paths, plane)
         if miles is None or miles > limit_miles:
             continue
-        mark = to_mark(feature, round(miles * FEET_PER_MILE, 1), fields)
-        mark["longitude"], mark["latitude"] = point
-        mark["source_service"] = source_name
-        marks.append(mark)
+        marks.append(to_mark(feature, point, round(miles * FEET_PER_MILE, 1), source_name))
     marks.sort(key=lambda m: (m["distance_from_centerline_ft"], m["pid"] or ""))
     return marks, without_position
 
@@ -237,6 +265,27 @@ def block(marks, detail=None, without_position=0):
     service was never asked. Those two are different answers and the file says
     which it is: a run that found no marks writes an empty list, and a run that
     never looked writes a ``not-screened`` block naming why.
+
+    ----
+
+    A difference from the specification, recorded rather than quietly made
+    ====================================================================
+
+    Specification section 11 says ``ngs_marks`` and ``txdot_points`` are "each
+    an **array**." Here each is an array only when its service was asked. When
+    it was not -- ``txdot_points`` on every run until issue #15 lands, and
+    ``ngs_marks`` on a run whose host was blocking -- it is a ``not-screened``
+    block instead.
+
+    An empty array would be the one thing this whole tool exists to avoid: it
+    reads as "we looked and there is no control here," on a corridor nobody
+    looked at. That is ``unknown`` reported as ``no``, and ``CONTEXT.md`` is
+    blunt about which of those two words sends a crew somewhere for nothing.
+
+    Amending a settled specification is not the agent's call -- the precedent
+    is ``AcctNumb`` on PR #52 and ``NPMS`` on PR #53, both raised rather than
+    patched over. This difference is raised on the pull request for issue #14
+    and is Rick's to rule on.
     """
     if marks is None:
         return {

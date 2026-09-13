@@ -185,7 +185,7 @@ class Skipped(Exception):
     """A service a person chose to go on without."""
 
 
-def _run_stage(label, attempt, unattended, allow_skip=False):
+def _run_stage(label, attempt, unattended, skip_label=None):
     """Run one stage. If the service is dead, a person decides -- if one is there.
 
     Three automatic retries have already happened inside the fetcher by the
@@ -195,11 +195,15 @@ def _run_stage(label, attempt, unattended, allow_skip=False):
 
     Section 7 offers three answers -- retry, skip this service, or abort -- and
     which of them are honest depends on the stage. **Skipping is offered only
-    where it is offered**, which means the flag services. Skipping the route
-    leaves no alignment to buffer and skipping the buffer leaves no corridor to
-    find parcels in, so for the spine the only two honest answers are try again
-    or stop. Skipping a flag service costs one flag type, and that type then
-    stays off `screened_for`, so no parcel is reported as clear of it.
+    where the skip costs nothing but itself**, which means the flag services
+    and control. Skipping the route leaves no alignment to buffer and skipping
+    the buffer leaves no corridor to find parcels in, so for the spine the only
+    two honest answers are try again or stop.
+
+    ``skip_label`` is what the person is being offered, in their words -- "this
+    flag type", "the NGS marks". Passing it is what makes skipping available at
+    all, so a stage that must not be skipped cannot accidentally offer it, and
+    a stage that may be skipped cannot mislabel what is being given up.
     """
     while True:
         try:
@@ -210,9 +214,11 @@ def _run_stage(label, attempt, unattended, allow_skip=False):
             _say()
             _say(f"  {label}: {exc.service} did not answer after {exc.attempts} attempts")
             _say(f"    {exc.detail}")
-            choices = "[r]etry, [s]kip this flag type, or [a]bort? " if allow_skip else "try again? [y/N] "
+            choices = (
+                f"[r]etry, [s]kip {skip_label}, or [a]bort? " if skip_label else "try again? [y/N] "
+            )
             answer = input(f"  {choices}").strip().lower()
-            if allow_skip and answer in ("s", "skip"):
+            if skip_label and answer in ("s", "skip"):
                 raise Skipped(
                     f"{exc.service} did not answer after {exc.attempts} attempts, "
                     "and this run was told to go on without it"
@@ -301,6 +307,56 @@ def _flag_id(source, feature):
     return _identifier(feature, fields.get("id", "OBJECTID"))
 
 
+def _go_on_without(source, args, what, skip_label):
+    """Ask whether to go on without a service the ping already found blocking.
+
+    Section 7 says a person decides. Unattended, the run goes on without this
+    step rather than hanging, and says so twice -- in the honesty block, and by
+    leaving the step out of whatever list says what was checked.
+    """
+    if args.yes or not sys.stdin.isatty():
+        return
+    _say()
+    _say(f"  {what}: {source.name} was not answering at the ping")
+    answer = input(f"  [s]kip {skip_label}, or [a]bort the run? ").strip().lower()
+    if answer in ("a", "abort"):
+        raise ServiceDown(
+            source.name,
+            "the host was not answering at the ping, and this run was told to stop",
+            attempts=1,
+        )
+
+
+def _ask_about_extent(fetcher, args, source, extent, readable, what, skip_label):
+    """Confirm the layer, then ask it what is inside a box.
+
+    The two steps every service asked about an area goes through, in the order
+    specification section 8 puts them: the field list first, because a query
+    against the wrong layer answers without complaining.
+
+    ``checks.FieldListError`` is deliberately allowed out rather than turned
+    into a skipped service. A host that is blocking is the network's problem
+    and costs one step. A layer that is not the layer we think it is is **our**
+    problem, and section 8 makes it a hard error "because it is a configuration
+    bug and free to catch." Swallowing it here would turn the layer-67-not-0
+    trap into a quietly shorter screening, which is the one failure this repo
+    exists to teach people to look for.
+    """
+    metadata, _ = _run_stage(
+        f"{what} field list",
+        lambda: fetcher.layer_metadata(source),
+        args.yes,
+        skip_label=skip_label,
+    )
+    checks.confirm_fields(source, metadata)
+    return _run_stage(
+        what,
+        lambda: fetcher.query_all(source, _extent_query(source, extent), readable=readable),
+        args.yes,
+        skip_label=skip_label,
+    )
+
+
 def _screen_flags(fetcher, args, pings, blocked_hosts, parcel_features, plane):
     """Ask each flag service what sits on the corridor's parcels.
 
@@ -325,20 +381,7 @@ def _screen_flags(fetcher, args, pings, blocked_hosts, parcel_features, plane):
             )
             continue
         if source.name in blocked_hosts:
-            # Section 7 says a person decides -- retry, skip, or abort -- so a
-            # person is asked, if one is there. Unattended, the run goes on
-            # without this flag type rather than hanging, and says so twice: in
-            # the honesty block, and by leaving the type off `screened_for`.
-            if not args.yes and sys.stdin.isatty():
-                _say()
-                _say(f"  {flag_type}: {source.name} was not answering at the ping")
-                answer = input("  [s]kip this flag type, or [a]bort the run? ").strip().lower()
-                if answer in ("a", "abort"):
-                    raise ServiceDown(
-                        source.name,
-                        "the host was not answering at the ping, and this run was told to stop",
-                        attempts=1,
-                    )
+            _go_on_without(source, args, flag_type, "this flag type")
             entries.append(
                 output.skipped_service(
                     source,
@@ -350,30 +393,12 @@ def _screen_flags(fetcher, args, pings, blocked_hosts, parcel_features, plane):
             _say(f"  flag  {flag_type:<10} not checked -- the host was blocking at the ping")
             continue
         try:
-            metadata, _ = _run_stage(
-                f"{flag_type} field list",
-                lambda s=source: fetcher.layer_metadata(s),
-                args.yes,
-                allow_skip=True,
-            )
-            checks.confirm_fields(source, metadata)
-            features, records = _run_stage(
-                flag_type,
-                lambda s=source: fetcher.query_all(
-                    s, _extent_query(s, extent), readable=f"flag-{flag_type}"
-                ),
-                args.yes,
-                allow_skip=True,
+            features, records = _ask_about_extent(
+                fetcher, args, source, extent, f"flag-{flag_type}", flag_type, "this flag type"
             )
         except (ServiceDown, ServiceError, Skipped) as exc:
-            # A host that is blocking is the network's problem, and it costs one
-            # flag type. A layer that is not the layer we think it is is *our*
-            # problem, and `checks.FieldListError` is deliberately NOT caught
-            # here -- specification section 8 makes the field list check a hard
-            # error "because it is a configuration bug and free to catch."
-            # Catching it here would turn the layer-67-not-0 trap into a quietly
-            # shorter screening, which is the one failure this repo exists to
-            # teach people to look for.
+            # A blocked host costs one flag type and nothing else. A wrong layer
+            # is not caught here on purpose -- see `_ask_about_extent`.
             entries.append(output.skipped_service(source, str(exc), ping))
             _say(f"  flag  {flag_type:<10} not checked -- {exc}")
             continue
@@ -458,18 +483,7 @@ def _screen_control(fetcher, args, pings, blocked_hosts, alignment, plane):
     extent = _control_extent(alignment, args.half_width)
 
     if source.name in blocked_hosts:
-        # Section 7 says a person decides. Unattended, the run goes on without
-        # the marks rather than hanging, and the output says so.
-        if not args.yes and sys.stdin.isatty():
-            _say()
-            _say(f"  control: {source.name} was not answering at the ping")
-            answer = input("  [s]kip the NGS marks, or [a]bort the run? ").strip().lower()
-            if answer in ("a", "abort"):
-                raise ServiceDown(
-                    source.name,
-                    "the host was not answering at the ping, and this run was told to stop",
-                    attempts=1,
-                )
+        _go_on_without(source, args, "control", "the NGS marks")
         reason = (
             "the host was not answering when the run began, so no NGS mark was "
             "checked and this corridor is not reported as having no control"
@@ -478,23 +492,12 @@ def _screen_control(fetcher, args, pings, blocked_hosts, alignment, plane):
         return None, 0, output.skipped_service(source, reason, ping), []
 
     try:
-        metadata, _ = _run_stage(
-            "NGS field list",
-            lambda: fetcher.layer_metadata(source),
-            args.yes,
-            allow_skip=True,
-        )
-        # Not caught below, on purpose, and for the reason written out in
-        # `_screen_flags`: a layer that is not the layer we think it is is our
-        # configuration bug, and specification section 8 makes it a hard error.
-        checks.confirm_fields(source, metadata)
-        features, records = _run_stage(
-            "ngs marks",
-            lambda: fetcher.query_all(source, _extent_query(source, extent), readable="ngs-marks"),
-            args.yes,
-            allow_skip=True,
+        features, records = _ask_about_extent(
+            fetcher, args, source, extent, "ngs-marks", "ngs marks", "the NGS marks"
         )
     except (ServiceDown, ServiceError, Skipped) as exc:
+        # A blocked host costs the marks and nothing else. A wrong layer is not
+        # caught here on purpose -- see `_ask_about_extent`.
         _say(f"  ctrl  ngs marks  not checked -- {exc}")
         return None, 0, output.skipped_service(source, str(exc), ping), []
 

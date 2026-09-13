@@ -53,6 +53,8 @@ They are buyers and risk-owners. They are not going to install things themselves
 | **PID** | Permanent Identifier — an NGS mark's unique ID, e.g. `AY0713` |
 | **Datasheet** | NGS's record for a mark: position, datum, stamping, condition, recovery history |
 | **CORS** | Continuously Operating Reference Station — a permanent GNSS station |
+| **PACS / SACS** | Primary and Secondary Airport Control Stations — the marks tying an airport survey to the national framework. NGS flags them on a datasheet, and the corridor tool carries the flag through as `pacs_sacs` |
+| **MARK NOT FOUND** | The condition NGS records when somebody looked for a mark and could not find it. Not "destroyed" and not "gone" — a report, with a date on it. It is the value that turns a control estimate from recovery into setting new |
 | **OPUS** | NGS's Online Positioning User Service — submit GNSS observations, get a position back |
 | **NAD 83 / NAVD 88** | The current horizontal and vertical datums TxDOT requires |
 | **SPCS** | State Plane Coordinate System. Texas has multiple zones; Bexar County is Texas South Central |

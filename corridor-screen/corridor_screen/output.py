@@ -68,11 +68,17 @@ def service_entry(source, ping, status, records, record_count, warnings=(), used
         "captured_at": next((r.get("captured_at") for r in records if r.get("captured_at")), None),
         "cache_files": [r["cache_key"] for r in records],
         "warnings": list(warnings),
-        # For a flag service: how many of the records that came back were
-        # actually used. The services are asked about a box drawn around every
-        # parcel in the corridor, which is wider than the ribbon, so "39
-        # returned, 3 used" is a normal and honest pair of numbers. Hiding the
-        # first one would make the second look like the whole answer.
+        # How many of the records that came back were actually used. Any
+        # service asked about a box gets one, because the box is wider than the
+        # ribbon -- so "39 returned, 3 used" is a normal and honest pair of
+        # numbers. Hiding the first would make the second look like the whole
+        # answer.
+        #
+        # Specification section 10 says "flag services **only**". Control marks
+        # are asked the same way and have the same gap between returned and
+        # used, so the same pair is reported for them. The difference is raised
+        # on the pull request for issue #14 rather than patched into the spec --
+        # amending a settled spec is not the agent's call.
         "records_used": used,
     }
 

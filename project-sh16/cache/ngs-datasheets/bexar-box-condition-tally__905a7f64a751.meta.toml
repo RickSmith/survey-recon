@@ -1,0 +1,23 @@
+# Provenance record. The response file beside this one is exactly what the
+# server sent and is never edited. Every parameter of the request is listed
+# under [request_params], so the call can be repeated and checked.
+service = "NGS_Datasheets"
+cache_key = "ngs-datasheets/bexar-box-condition-tally__905a7f64a751"
+request_method = "POST"
+request_url = "https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/NGS_Datasheets_Feature_Service/FeatureServer/1/query"
+captured_at = 2026-09-12T22:41:19-05:00
+http_status = 200
+response_bytes = 67229
+layer_id = 1
+record_count = 910
+warnings = []
+
+[request_params]
+geometry = "{\"xmin\": -99.0, \"ymin\": 29.2, \"xmax\": -98.2, \"ymax\": 29.8, \"spatialReference\": {\"wkid\": 4326}}"
+geometryType = "esriGeometryEnvelope"
+inSR = 4326
+spatialRel = "esriSpatialRelIntersects"
+where = "1=1"
+outFields = "PID,LAST_COND,STABILITY"
+returnGeometry = "false"
+f = "json"

@@ -283,7 +283,9 @@ asked. Hiding them would make the 6 look like the whole world.
 | Of those, condition unknown | 0 |
 
 **Every NGS mark within 300 feet of this centerline is one NGS could not find.**
-The last recovery attempts run from 1995 to 2002. A run that reported "11 marks
+The last recovery attempts run from 1995 to 2002. Each row carries a
+`datasheet_url` straight to that mark's full NGS record, because `MARK NOT FOUND`
+starts a decision rather than ending one. A run that reported "11 marks
 in the corridor" and stopped there would have an estimator pricing recovery on
 eleven marks that three decades of looking could not turn up. That is the whole
 reason `condition` is carried through and never dropped.

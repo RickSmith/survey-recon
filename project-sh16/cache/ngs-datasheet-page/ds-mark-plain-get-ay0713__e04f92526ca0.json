@@ -1,0 +1,111 @@
+<!DOCTYPE html
+	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US" xml:lang="en-US">
+<head>
+<title>DATASHEETS</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+</head>
+<body>
+<tt>  </tt><h2>The NGS Data Sheet</h2><h5> See file <a href="https://geodesy.noaa.gov/DATASHEET/dsdata.pdf" target='_blank'>dsdata.pdf</a> for more information about the datasheet.</h5>
+
+<pre>
+PROGRAM = datasheet95, VERSION = 8.12.5.20
+Starting Datasheet Retrieval...
+1    National Geodetic Survey, Retrieval Date = SEPTEMBER 12, 2026 23:41:43 EDT
+ AY0713 ***********************************************************************
+ AY0713  DESIGNATION -  T 481
+ AY0713  PID         -  AY0713
+ AY0713  STATE/COUNTY-  TX/BEXAR
+ AY0713  COUNTRY     -  US
+ AY0713  USGS QUAD   -  SAN ANTONIO WEST (2019)
+ AY0713
+ AY0713                         *CURRENT SURVEY CONTROL
+ AY0713  ______________________________________________________________________
+ AY0713* NAD 83(1986) POSITION- 29 29 52.     (N) 098 37 22.     (W)   SCALED
+ AY0713* <a href="https://www.ngs.noaa.gov/datums/vertical/index.shtml#NAVD88" target="_blank">NAVD 88</a> ORTHO HEIGHT -   257.924 (meters)      846.21  (feet) ADJUSTED
+ AY0713  ______________________________________________________________________
+ AY0713  GEOID HEIGHT    -        -25.065 (meters)                     GEOID18
+ AY0713  DYNAMIC HEIGHT  -        257.548 (meters)      844.97  (feet) COMP
+ AY0713  MODELED GRAVITY -    979,178.3   (mgal)                       NAVD 88
+ AY0713
+ AY0713  VERT ORDER      -  FIRST     CLASS II
+ AY0713
+ AY0713.The horizontal coordinates were scaled from a map and have
+ AY0713.an estimated accuracy of +/- 6 seconds.
+ AY0713
+ AY0713.The orthometric height was determined by differential leveling and
+ AY0713.adjusted by the NATIONAL GEODETIC SURVEY
+ AY0713.in June 1991.
+ AY0713
+ AY0713.Significant digits in the geoid height do not necessarily reflect accuracy.
+ AY0713.GEOID18 height accuracy estimate available <a href="https://www.ngs.noaa.gov/GEOID/GEOID18/computation.html" target="_blank">here</a>.
+ AY0713
+ AY0713.Click <a href="https://geodesy.noaa.gov/cgi-bin/get_image.prl?PROCESSING=list&PID=AY0713" target="_blank">photographs</a> - Photos may exist for this station.
+ AY0713
+ AY0713.The dynamic height is computed by dividing the NAVD 88
+ AY0713.geopotential number by the normal gravity value computed on the
+ AY0713.Geodetic Reference System of 1980 (GRS 80) ellipsoid at 45
+ AY0713.degrees latitude (g = 980.6199 gals.).
+ AY0713
+ AY0713.The modeled gravity was interpolated from observed gravity values.
+ AY0713
+ AY0713;                    North         East    Units  Estimated Accuracy
+ AY0713;SPC TXSC     - 4,184,520.      636,570.      MT  (+/- 180 meters Scaled)
+ AY0713
+ AY0713_U.S. NATIONAL GRID SPATIAL ADDRESS: 14RNT365631(NAD 83)
+ AY0713
+ AY0713                          SUPERSEDED SURVEY CONTROL
+ AY0713
+ AY0713  NGVD 29 (??/??/92)  257.795  (m)          845.78   (f) ADJ UNCH    1 2
+ AY0713
+ AY0713.Superseded values are not recommended for survey control.
+ AY0713
+ AY0713.NGS no longer adjusts projects to the NAD 27 or NGVD 29 datums.
+ AY0713.See file <a href="https://geodesy.noaa.gov/DATASHEET/dsdata.pdf" target="_blank">dsdata.pdf</a> to determine how the superseded data were derived.
+ AY0713
+ AY0713_MARKER: DB = BENCH MARK DISK
+ AY0713_SETTING: 7 = SET IN TOP OF CONCRETE MONUMENT
+ AY0713_STAMPING: T 481 1935
+ AY0713_MARK LOGO: CGS
+ AY0713_STABILITY: C = MAY HOLD, BUT OF TYPE COMMONLY SUBJECT TO
+ AY0713+STABILITY: SURFACE MOTION
+ AY0713
+ AY0713  HISTORY     - Date     Condition        Report By
+ AY0713  HISTORY     - 1935     MONUMENTED       CGS
+ AY0713  HISTORY     - 1946     GOOD             CGS
+ AY0713  HISTORY     - 1953     MARK NOT FOUND   CGS
+ AY0713  HISTORY     - 19950413 MARK NOT FOUND   USPSQD
+ AY0713
+ AY0713                          STATION DESCRIPTION
+ AY0713
+ AY0713'DESCRIBED BY COAST AND GEODETIC SURVEY 1946
+ AY0713'10.5 MI NW FROM SAN ANTONIO.
+ AY0713'10.5 MILES NORTHWEST ALONG STATE HIGHWAY 16 FROM THE COUNTY COURTHOUSE
+ AY0713'AT SAN ANTONIO, 0.35 MILE NORTHWEST OF THE LEON VALLEY SCHOOL, 0.1
+ AY0713'MILE SOUTHEAST OF WOLFFS GULF SERVICE STATION, 157.0 FEET NORTHWEST OF
+ AY0713'THE CENTERLINE OF A GRAVEL ROAD LEADING SOUTHWEST AND WHICH HAS STONE
+ AY0713'PILLARS ON EACH SIDE AT THE JUNCTION WITH THE HIGHWAY, 31.5 FEET
+ AY0713'SOUTHWEST OF THE CENTERLINE OF THE HIGHWAY, ON THE RIGHT-OF-WAY FENCE
+ AY0713'LINE, SET IN THE TOP OF CONCRETE POST WHICH PROJECTS 0.5 FOOT ABOVE
+ AY0713'THE GROUND.
+ AY0713
+ AY0713                          STATION RECOVERY (1953)
+ AY0713
+ AY0713'RECOVERY NOTE BY COAST AND GEODETIC SURVEY 1953
+ AY0713'MARK NOT FOUND.
+ AY0713
+ AY0713                          STATION RECOVERY (1995)
+ AY0713
+ AY0713'RECOVERY NOTE BY US POWER SQUADRON 1995
+ AY0713'MARK NOT FOUND.
+
+
+
+
+ *** retrieval complete.
+ Elapsed Time = 00:00:23
+</pre>
+
+</body>
+</html>

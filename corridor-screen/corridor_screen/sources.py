@@ -264,14 +264,19 @@ FLAG_FIELDS = {
 # warned about in one line: "Field names differ from the NDE API."
 #
 # A tool that reads `condition` off this service finds nothing, raises nothing,
-# and reports every mark in the corridor as having no known condition. The
-# thirty-nine marks nobody could find would read as thirty-nine unknowns.
+# and reports every mark in the corridor as having no known condition. On SH16
+# the eleven marks nobody could find would read as eleven unknowns -- and an
+# unknown reads to an estimator as "go and look," which is the trip this field
+# exists to prevent.
 #
 # That the two are the same field was confirmed rather than assumed. Both
-# services were asked about PID `AY0713` on 2026-09-12. The API answered
-# `"condition": "MARK NOT FOUND"`; the feature service answered
-# `"LAST_COND": "MARK NOT FOUND"`. The mapping below records which name went
-# where, the same way `BEXAR_PARCEL_FIELDS` does.
+# services were asked about PIDs `AY0713`, `AY0710` and `AY1102` on 2026-09-12,
+# and answered the same condition and the same recovery date for all three. The
+# API calls it `condition`; the feature service calls it `LAST_COND`. The answer
+# is cached like any other, at
+# `ngs-data-explorer/pid-cross-check-ay0713-ay0710-ay1102`, so the claim can be
+# checked rather than taken. The mapping below records which name went where,
+# the same way `BEXAR_PARCEL_FIELDS` does.
 #
 # This is a field mapping, not a correction to the specification. Section 11
 # describes the output file, and the output file does carry `condition`.

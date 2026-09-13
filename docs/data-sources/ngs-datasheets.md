@@ -75,7 +75,9 @@ three PIDs on 2026-09-12:
 | `AY0710` | `MARK NOT FOUND` | `MARK NOT FOUND` |
 | `AY1102` | `MARK NOT FOUND` | `MARK NOT FOUND` |
 
-Same values, and the same recovery dates beside them. The mapping from
+Same values, and the same recovery dates beside them. The Data Explorer answer
+is cached at `ngs-data-explorer/pid-cross-check-ay0713-ay0710-ay1102`, beside the
+feature-service capture it is checked against. The mapping from
 `LAST_COND` to the output's `condition` is recorded in
 [`sources.py`](https://github.com/RickSmith/survey-recon/blob/main/corridor-screen/corridor_screen/sources.py),
 in `NGS_MARK_FIELDS`, next to the parcel mapping that does the same job.
@@ -98,9 +100,12 @@ in `NGS_MARK_FIELDS`, next to the parcel mapping that does the same job.
 Only these are requested. A service that stops publishing one of them fails the
 field-list check before a single query is sent.
 
+NGS's own definitions of these fields are at `geodesy.noaa.gov/api/nde/meta`,
+cached at `ngs-data-explorer/field-definitions-meta`.
+
 | Field | Output field | What it holds |
 |---|---|---|
-| `PID` | `pid` | the mark's Permanent Identifier, e.g. `AY0713`. This is what you look it up by |
+| `PID` | `pid` | the mark's Permanent Identifier, e.g. `AY0713`. This is what you look it up by, and what `datasheet_url` is built from |
 | `LAST_COND` | `condition` | **the reason we are here.** The condition at the last recovery |
 | `LAST_RECV` | `last_recovered` | when that recovery was, as `YYYYMMDD` |
 | `LAST_RECBY` | `last_recovered_by` | who reported it, e.g. `USPSQD` |
@@ -113,7 +118,7 @@ field-list check before a single query is sent.
 | `ORTHO_HT` | `ortho_height_m` | orthometric height in meters, published as a string |
 | `SPC_ZONE` | `spc_zone` | state plane zone. `TXSC` is Texas South Central, which is Bexar |
 | `POS_ORDER` / `VERT_ORDER` | `horizontal_order` / `vertical_order` | order of accuracy |
-| `CORS_ID` / `PACS_SACS` | `cors_id` / `pacs_sacs` | set where the mark is a CORS, or half of a PACS/SACS pair |
+| `CORS_ID` / `PACS_SACS` | `cors_id` / `pacs_sacs` | set where the mark is a CORS, or is flagged **PACS/SACS** — NGS's own wording is "Primary Airport Control Station(PACS) or Secondary Control Airport Station(SACS) indicator", the marks that tie an airport survey to the national framework |
 
 `last_recovered` is written out as `1995-04-13` when the service sends eight
 digits, because `19950413` on a projector reads as a number rather than a date.
@@ -128,7 +133,9 @@ and `GOOD` recovered in 2019 are not the same promise.
 
 Six of the 910 records in a box around Bexar County carry `" "` in `LAST_COND`
 — one space, not an empty string and not a null. Sixty-eight of them do the same
-in `STABILITY`.
+in `STABILITY`. That response is cached at
+`ngs-datasheets/bexar-box-condition-tally`, so the count can be checked rather
+than taken.
 
 Read carelessly that is a non-empty string, and a mark nobody has reported on
 since it was set goes into an estimate as a mark you have. The tool reads every
@@ -167,16 +174,40 @@ returned, 11 in the corridor.**
 
 ---
 
-## No direct datasheet link
+## The datasheet link, and the claim this page got wrong first
 
-The full NGS datasheet for a mark is at `geodesy.noaa.gov/cgi-bin/ds_mark.prl`.
-Asked with a plain link — `?PidBox=AY0713` — it answers **HTTP 200 with an empty
-body.** The page is a form that wants a POST.
+Every mark carries `datasheet_url`, a plain link to its full NGS datasheet —
+position, recovery history, and the description of how to find it:
 
-So the output carries the PID and no datasheet URL. A link that silently returns
-a blank page is worse than no link, and this tool does not write URLs it has not
-opened. Same shape of caveat as the ROW map sheets, where no field gives a direct
-PDF link either.
+```
+https://geodesy.noaa.gov/cgi-bin/ds_mark.prl?PidBox=AY0713
+```
+
+`MARK NOT FOUND` starts a decision rather than ending one, and this is what the
+decision gets made from.
+
+!!! warning "This page said the opposite, and was wrong"
+    The first draft of this page said the link did not work — that a plain
+    request answered **HTTP 200 with an empty body**, and that the page needed a
+    POST. The output carried no `datasheet_url` because of it.
+
+    That reading came from a `curl` in the working notes whose output file path
+    did not exist. Nothing was written, nothing was downloaded, and `curl`
+    truthfully reported **0 bytes**. The zero was the measuring instrument, not
+    the server.
+
+    It was caught by re-running the same request through the tool's own fetcher
+    while caching the evidence — which is the point of the caching rule. A claim
+    you cache is a claim somebody can check. The real answer is in the cache at
+    `ngs-datasheet-page/ds-mark-plain-get-ay0713`: **5,030 bytes** of datasheet,
+    carrying `AY0713`, the designation `T 481` and `MARK NOT FOUND`. (That file
+    holds HTML despite its `.json` name — the cache names every response the
+    same way, and the provenance record beside it says what it really is.)
+
+    Two agent errors of the same shape now sit in this repo: this one and the
+    [NPMS service](flag-services.md) holding Pennsylvania data. Both were
+    confident, both were plausible, and both were caught by checking rather than
+    by thinking harder.
 
 ---
 
@@ -199,6 +230,16 @@ most recent recovery attempt was 2002, the oldest 1995.
 That is the whole argument for pulling this field. A run that reported "11 NGS
 marks in the corridor" and stopped there would have an estimator pricing recovery
 on eleven marks that three decades of recovery attempts could not turn up.
+
+**31 returned here, 54 in the research note — both are right.** The note in
+[TxDOT research](../txdot-research.md) records "54 marks in corridor bbox" for
+this service. That box is `-98.66,29.45,-98.56,29.56`, a rectangle drawn by hand
+around the study area. The box this tool asks about is the alignment's own extent
+grown by the half-width: `-98.6905,29.4816,-98.5987,29.5753`. Different
+rectangles, so different counts. Both were re-run on 2026-09-12 and returned 54
+and 31 exactly as recorded. The tool's box is the one that follows the corridor,
+and the exact geometry it asked about is in the provenance record beside the
+cached response.
 
 **The two `GOOD` marks are outside the ribbon.** Of the 20 marks the corridor
 filter dropped, 18 are also `MARK NOT FOUND` and two are `GOOD`. They are real

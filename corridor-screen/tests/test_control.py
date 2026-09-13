@@ -56,6 +56,21 @@ class TestCarryingTheCondition(unittest.TestCase):
         self.assertEqual(marks[0]["condition"], "MARK NOT FOUND")
 
 
+class TestTheDatasheetLink(unittest.TestCase):
+    """``MARK NOT FOUND`` starts a decision. The datasheet is what it is made from."""
+
+    def test_a_mark_carries_a_link_to_its_own_datasheet(self):
+        marks, _ = select([mark_feature(PID="AY0713", LAST_COND="MARK NOT FOUND")])
+        self.assertEqual(
+            marks[0]["datasheet_url"],
+            "https://geodesy.noaa.gov/cgi-bin/ds_mark.prl?PidBox=AY0713",
+        )
+
+    def test_no_pid_means_no_link_rather_than_a_broken_one(self):
+        marks, _ = select([mark_feature(LAST_COND="GOOD")])
+        self.assertIsNone(marks[0]["datasheet_url"])
+
+
 class TestABlankCondition(unittest.TestCase):
     """A mark with no published condition is unknown. It is never a mark you have.
 
