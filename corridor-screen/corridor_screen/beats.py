@@ -23,6 +23,33 @@ of three hundred people.
 
 ----
 
+The shape a beat module has
+===========================
+
+`tests/test_beats.py` finds beat modules rather than listing them, and checks
+each against this. A module is a beat when it exports a callable ``beat``, and
+a beat is expected to export three more things:
+
+``beat()``
+    Returns the rendered beat, built through `render` and from committed
+    captures only -- it is checked with the network taken away at the socket.
+``CAPTURE_DIR``
+    Where its committed evidence lives. Built with `capture_dir`.
+``CAPTURES``
+    Its committed evidence. A tuple of records or a dict of them, whichever
+    suits the beat; each record carries at least ``file`` and the ``url`` it
+    came from, because **a capture nobody can repeat is not evidence**.
+``CHECKED_ON``
+    The date that evidence was checked, as ``YYYY-MM-DD``. Per beat, not
+    shared: it dates *that* beat's captures, and two beats checked on the same
+    day is a coincidence rather than a fact about beats.
+
+Written down because the checks read it. A third beat that exports ``beat`` and
+nothing else should be told which piece is missing, not die on an
+``AttributeError`` that reads like a broken test.
+
+----
+
 What is deliberately **not** here
 =================================
 
@@ -33,14 +60,22 @@ hands back the group for a beat to add its own to. A helper that owned the
 whole parser would have to grow a hook for `--check`, which is more machinery
 than two modules are worth.
 
-**`capture_text`.** The issue recorded it as byte-identical between the two,
-and measured on `747a7db` it was. It is not any more, and the divergence is the
-interesting kind: `elevation_trap` reads JSON as UTF-8, while `manual_links`
-reads bytes and decodes them as the page declares itself -- because the legacy
-manual says ``charset=ISO-8859-1`` in its own head, and reading it as UTF-8
-corrupts every byte above 127. Those are two different jobs wearing one name.
-Merging them would mean one function with a flag, which is the shape this repo
-keeps arguing against.
+**`capture_text`.** The issue lists it as byte-identical between the two. It is
+not, and **it was not at `747a7db` either** -- the commit the issue measured
+on. Read both there and they are different functions: `elevation_trap` reads
+JSON as UTF-8; `manual_links` reads bytes and decodes them as the page declares
+itself, because the legacy manual says ``charset=ISO-8859-1`` in its own head
+and reading it as UTF-8 corrupts every byte above 127.
+
+They share a name and a one-line summary, which is what makes a table of
+identical things easy to get wrong. Two different jobs wearing one name, and
+merging them would mean one function with a flag -- the shape this repo keeps
+arguing against.
+
+**`CHECKED_ON`.** Also listed, also left alone, for a reason worth stating:
+both beats say ``2026-09-13`` because both were checked that day, not because
+beats share a date. Sharing it would turn a coincidence into a fact and make a
+stale beat quietly inherit a fresh beat's date.
 
 **Anything for a third beat.** The issue is explicit that one may never exist,
 and that beat three's evidence is a different kind of thing -- issues, a
