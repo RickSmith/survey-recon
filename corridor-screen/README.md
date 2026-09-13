@@ -121,7 +121,7 @@ than during one.
 ## The renderings
 
 The screening run fetches once; separate commands read that one file and write
-what a person actually reads. The first is built:
+what a person actually reads. Two of the three are built:
 
 ```bash
 python -m corridor_screen.bid_memo --out ../project-sh16
@@ -135,6 +135,29 @@ it, rather than as a footnote under a total.
 It will not print a number the run did not measure. `acres_in_corridor` is not
 implemented, so the memo says the take was not measured rather than summing a
 column of nothing into "0.0 acres".
+
+The second is the flagged parcel table:
+
+```bash
+python -m corridor_screen.parcel_table --out ../project-sh16
+```
+
+It writes **two** files from the same data. `flagged-parcels.md` is the one a
+reader keeps and a pull request can diff. `flagged-parcels.svg` is the one that
+goes on a projector — SVG for the reason [spec section
+9](../docs/corridor-screen/spec.md) already gives: it "stays sharp on a projector
+at any size," commits as text, and needs nothing installed.
+
+**The interesting column is the one with no number in it.** On SH16, seven of
+the eight flagged tracts carry a school, and no published notice period was
+found for one — see [lead times](../docs/corridor-screen/lead-times.md), which
+records where it looked. That column never prints a blank, a dash or a zero. It
+prints `not found — school`, because an unmeasured wait and no wait are not the
+same statement, and the difference is worth more on a projector than anywhere
+else.
+
+The drawing shows twelve rows. A corridor with more says how many it did not
+show rather than quietly ending at twelve; the Markdown carries all of them.
 
 ## The one call that stays live
 
