@@ -105,8 +105,9 @@ kind = "field"
 assumption = true
 source = "Assumption. No published figure was used."
 why = """
-Charged against every tract the corridor touches. On SH16 that is 524 tracts,
-which makes this by a wide margin the largest line in the build-up.
+Charged against every tract the corridor touches. On a busy urban arterial
+that is hundreds of tracts, which makes this by a wide margin the largest line
+in the build-up. The count comes from the run, never from here.
 """
 disagree_with = """
 Start here. This assumes the crew works every tract the corridor clips. On an
@@ -157,6 +158,29 @@ occupations, and nothing in this run counts them — see the manhole and culvert
 lines. The rate itself is one crew setting cones on a conventional road.
 """
 
+[hours_per_centerline_mile]
+label = "Chaining the centerline, per mile"
+value = 5.0
+unit = "hours per mile"
+kind = "field"
+assumption = true
+source = "Assumption. No published figure was used."
+why = """
+Retracement work run down the centerline rather than from the shoulder. Kept as
+its own line because of what it does to the crew rather than what it does to
+the clock: TCP(S-3b) draws two shadow vehicles with TMA, one at each end of the
+work space, and past one hour that drawn configuration stands unless the
+Engineer approves barricades. It is the most expensive configuration in the
+family.
+"""
+disagree_with = """
+The quantity again, not the rate. How much of this corridor's retracement
+actually falls on the centerline is not in the run, so this line has no total.
+Put your own mileage against it and the number moves more than any other change
+on the page — and remember it buys two shadow trucks and two operators for
+every one of those hours, which this build-up does not price.
+"""
+
 
 # -- Office ------------------------------------------------------------------
 
@@ -169,8 +193,9 @@ assumption = true
 source = "Assumption. No published figure was used."
 why = """
 Reading a scanned sheet, picking up the baseline and the called monuments, and
-drawing them into a stakeout file by hand. The SH16 sheets run from 1944 to
-1998, and some of the corridor's 69 sheets are older still.
+drawing them into a stakeout file by hand. One flat rate covering whatever dates
+the run found; the build-up prints that date range beside this line so a reader
+can judge it.
 """
 disagree_with = """
 Legibility is the whole argument. A clean 1998 sheet is not a 1944 scan, and

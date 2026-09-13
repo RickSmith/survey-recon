@@ -194,7 +194,7 @@ class TestTheCommittedRateTable(unittest.TestCase):
                     self.assertTrue(rate.disagree_with)
 
 
-class TestEveryInputIsVisibleAndLabelled(unittest.TestCase):
+class TestEveryInputIsVisibleAndLabeled(unittest.TestCase):
     """Issue #24's first acceptance criterion, taken literally.
 
     Every quantity the arithmetic uses is listed with a label, a unit and the
@@ -299,9 +299,20 @@ class TestTheMathIsShownStepByStep(unittest.TestCase):
                 self.assertAlmostEqual(line["hours"], round(product, 2), places=2)
 
     def test_the_markdown_prints_the_arithmetic_and_not_only_the_answer(self):
+        """Both operands and the product, not just the product.
+
+        The first version of this test asserted `"x"` was in the Markdown,
+        which passes on any English prose and proved nothing.
+        """
         said = crew_day.build(a_document())
-        self.assertIn("8.691", said)
-        self.assertIn("x", said)
+        # 11 marks x 0.75 hours per mark = 8.25 hours
+        self.assertIn("11 marks", said)
+        self.assertIn("0.75 hours per mark", said)
+        self.assertIn("8.25 hours", said)
+        # and the three-factor line, all the way through
+        self.assertIn("8.691 miles", said)
+        self.assertIn("0.5 pairs per mile", said)
+        self.assertIn("13.04 hours", said)
 
 
 class TestFieldDaysAndOfficeDaysAreNeverAddedTogether(unittest.TestCase):
@@ -388,13 +399,130 @@ class TestTrafficControlComesFromTheSheetAndNotFromMemory(unittest.TestCase):
         self.assertNotIn("converts a two-person crew", lowered)
         self.assertNotIn("20-minute", lowered)
 
-    def test_it_says_a_lane_closure_is_a_different_sheet(self):
-        """S-1 draws only the two shoulder cases. A manhole in a travel lane is
-        S-2 or S-3 work, and those are the sheets that draw a shadow vehicle."""
-        self.assertIn("TCP(S-3)", self.said)
+    def test_it_names_the_sheet_that_actually_costs_money(self):
+        """S-1 draws only the two shoulder cases, so it is the cheap one."""
+        self.assertIn("TCP(S-3b)", self.said)
+
+    def test_it_carries_the_whole_case_table_rather_than_a_summary(self):
+        """The summary is where the error keeps happening.
+
+        An earlier draft said "TCP(S-2) or TCP(S-3) work, and those sheets draw
+        a shadow vehicle." True of S-2b and both S-3 cases. **Flatly wrong
+        about S-2a**, which `tcp-s-family.md` records as "**None** — flaggers
+        instead."
+        """
+        for case, _covers, _drawn in crew_day.SHEET_CASES:
+            with self.subTest(case=case):
+                self.assertIn(case, self.said)
+
+    def test_it_says_s2a_draws_no_protective_vehicle(self):
+        row = next(r for r in crew_day.SHEET_CASES if r[0] == "TCP(S-2a)")
+        self.assertIn("none", row[2].lower())
+        self.assertIn("flaggers", row[2].lower())
+
+    def test_it_says_s3b_draws_two(self):
+        """Two shadow vehicles with TMA, one at each end. The most expensive
+        configuration in the family, and the one a retracement crew chaining a
+        centerline lands on."""
+        row = next(r for r in crew_day.SHEET_CASES if r[0] == "TCP(S-3b)")
+        self.assertIn("2 shadow vehicles", row[2])
+
+    def test_the_sheet_is_cited_with_a_url_somebody_opened(self):
+        """CLAUDE.md: "Cite the manual section and its URL."
+
+        The module enforces exactly this on any *rate* naming TxDOT. A
+        traffic-control section citing only a local PDF would hold the prose to
+        a lower standard than the data file.
+        """
+        self.assertIn(crew_day.TCP_SHEET_URL, self.said)
+        self.assertIn(crew_day.TCP_SHEET_VERIFIED_ON, self.said)
+        self.assertNotIn("onlinemanuals", crew_day.TCP_SHEET_URL)
+
+    def test_claims_about_other_sheets_are_sourced_to_the_family_reading(self):
+        """`tcp-s-1-08a.md`: "Do not carry this paragraph across to another
+        sheet." So anything about S-2, S-3, S-4 or S-5 cites the document that
+        read all six."""
+        self.assertIn(crew_day.TCP_FAMILY_PATH, self.said)
 
     def test_it_says_the_family_does_not_cover_freeways(self):
         self.assertIn("Conventional Roads Only", self.said)
+
+
+class TestTheTwoThingsThatChangeTheCrewRatherThanTheHours(unittest.TestCase):
+    """From the owner's comment on #24, which the first draft missed.
+
+    Two unmeasured inputs do something the arithmetic cannot show. They do not
+    make the days longer; they change **who has to be on the road**. Both are in
+    the build-up without numbers on purpose: "The build-up is supposed to be
+    arguable, so an honest unknown belongs in it."
+    """
+
+    def setUp(self):
+        self.said = crew_day.build(a_document())
+
+    def test_centerline_work_is_its_own_line_item(self):
+        """"A retracement crew chaining a centerline lands on S-3b. That is the
+        line item that moves the number." """
+        line = next(x for x in crew_day.lines(a_document())
+                    if x["key"] == "centerline_work")
+        self.assertEqual(line["kind"], "field")
+        self.assertIsNone(line["hours"])
+        self.assertTrue(line["blocked_by"])
+
+    def test_the_centerline_line_says_it_buys_two_shadow_vehicles(self):
+        change = next(c for c in crew_day.CREW_CHANGES if c["sheet"] == "TCP(S-3b)")
+        self.assertIn("2 shadow vehicles", change["becomes"])
+        self.assertIn(change["becomes"], self.said)
+
+    def test_the_s5_contradiction_is_shown_and_not_resolved(self):
+        """#24's comment: "Show it as a range or a flagged assumption; do not
+        pick a reading." #72 asks the Engineer; this file may not answer for
+        them."""
+        change = next(c for c in crew_day.CREW_CHANGES if c["sheet"] == "TCP(S-5)")
+        self.assertIn("unresolved", change["becomes"].lower())
+        self.assertIn("issues/72", change["detail"])
+        # Both readings on the page, neither chosen.
+        self.assertIn("drawing", change["detail"].lower())
+        self.assertIn("notes", change["detail"].lower())
+        self.assertIn("does not pick", self.said.lower())
+
+    def test_both_say_what_was_never_measured(self):
+        for change in crew_day.CREW_CHANGES:
+            with self.subTest(sheet=change["sheet"]):
+                self.assertTrue(change["unmeasured"])
+                self.assertIn(change["unmeasured"], self.said)
+
+
+class TestNothingInTheOutputIsTypedByHand(unittest.TestCase):
+    """The last line of the build-up promises it, so it has to be true.
+
+    `bid_memo._route_key` sets the rule: derived rather than hard-coded, "so
+    this memo is not a memo about SH 16 that happens to compile for anything
+    else."
+    """
+
+    def test_the_sheet_age_note_is_read_from_the_run(self):
+        document = a_document()
+        document["row_maps"] = {"sheet_count": 4,
+                                "date_range": {"from": "1961-02-02",
+                                               "to": "1988-09-09"}}
+        said = crew_day.build(document)
+        self.assertIn("1961-02-02", said)
+        self.assertIn("1988-09-09", said)
+
+    def test_a_run_with_no_sheet_dates_says_so_rather_than_inventing_them(self):
+        document = a_document()
+        document["row_maps"] = {"sheet_count": 4}
+        said = crew_day.build(document)
+        self.assertIn("was not recorded by the run", said)
+
+    def test_no_corridor_is_named_in_the_rate_table(self):
+        """A rate card that mentions SH16 is a rate card for one corridor."""
+        table = (Path(crew_day.TABLE_PATH)).read_text(encoding="utf-8")
+        body = "\n".join(line for line in table.splitlines()
+                         if not line.lstrip().startswith("#"))
+        self.assertNotIn("SH16", body)
+        self.assertNotIn("SH0016", body)
 
 
 class TestAssumptionsCanBeDisagreedWithOneAtATime(unittest.TestCase):
@@ -422,6 +550,35 @@ class TestAssumptionsCanBeDisagreedWithOneAtATime(unittest.TestCase):
 
     def test_the_build_up_says_the_rates_are_nobodys_published_standard(self):
         self.assertIn("not a published", self.said.lower())
+
+    def test_the_claim_that_none_are_published_is_derived_not_asserted(self):
+        """It read "none of them is published by TxDOT or by anybody else"
+        unconditionally, while the table below it rendered a `Published:` cell
+        for any row the loader accepts as non-assumption. Both could not be
+        true at once, and the sentence a reader trusts is the one above the
+        table.
+
+        Every rate shipped today *is* an assumption, so the absolute sentence
+        is correct today. The test is that it stops being printed the moment it
+        stops being true.
+        """
+        rates = crew_day.load_rates()
+        self.assertIn("none of them is published", self.said.lower())
+
+        published = crew_day.Rate("x", a_rate(
+            source="TxDOT standard sheet TCP(S-1)-08A, Note 2",
+            assumption=False, disagree_with=None,
+            url="https://www.txdot.gov/manuals/row/ess/index.htm",
+            verified_on="2026-09-13",
+        ))
+        rates[crew_day.RATES_USED[0]] = published
+        mixed = crew_day.build(a_document(), rates)
+        self.assertNotIn("none of them is published", mixed.lower())
+        self.assertIn("carry a published source", mixed)
+
+    def test_the_console_summary_makes_the_same_claim_the_same_way(self):
+        rates = crew_day.load_rates()
+        self.assertIn("All are", crew_day.summary(a_document(), rates))
 
 
 class TestItSaysWhatItIsNot(unittest.TestCase):

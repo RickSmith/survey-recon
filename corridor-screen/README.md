@@ -34,7 +34,8 @@ and the flags that hang off it, from
 | The whole tool replaying offline, checked against the live run | yes |
 | One genuinely live call, cross-checked against the capture | yes |
 | The bid memo — the document a principal reads before pricing | yes |
-| The flagged parcel table, the crew-day build-up | not yet, separate work orders |
+| The flagged parcel table, with its projector drawing | yes |
+| The crew-day build-up, with every rate open to argument | yes |
 | TxDOT primary control points, on layer 67 | yes |
 | Roadway facts — ROW_MIN, lanes, traffic | not yet, a separate work order |
 | SVG renderings | not yet |
@@ -174,7 +175,7 @@ are written every run, so the capture [#27](https://github.com/RickSmith/survey-
 audits is recorded as the work happens rather than when somebody remembers a
 flag.
 
-**The output is not a number.** It is eleven labelled inputs, seven lines of
+**The output is not a number.** It is eleven labeled inputs, seven lines of
 arithmetic and two totals, because a room of firm owners is going to argue with
 it and that is the only thing that makes it worth anything. Every rate carries
 a handle — `A1` to `A11` — so a surveyor can disagree with one row out loud

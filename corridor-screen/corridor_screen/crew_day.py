@@ -19,8 +19,8 @@ whatever number is on the screen. That is not a problem to be managed. It is
 the only thing that makes the number worth anything, because every one of them
 prices work for a living and this tool has never been near the corridor.
 
-So the output is not "38 crew-days." It is eleven labelled inputs, seven lines
-of arithmetic, and a total anybody can rebuild on the back of an envelope. A
+So the output is not "38 crew-days." It is twelve labeled inputs, eight lines of
+arithmetic, and two totals anybody can rebuild on the back of an envelope. A
 surveyor who thinks the answer is wrong can put a finger on the row that is
 wrong and say so, by its handle, out loud, in the room.
 
@@ -57,9 +57,13 @@ though it were, by the person least able to tell the difference.
 Where the traffic control comes from
 ====================================
 
-``project-sh16/manual-pulls/tcp-s-1-08a.md``, which was written with the sheet
-open and rendered rather than text-extracted. Nothing here is read across from
-another standard.
+Two documents, and the split matters. ``tcp-s-1-08a.md`` is TCP(S-1)-08A read
+with that sheet open; ``tcp-s-family.md`` is the reading of all six. **Every
+claim here about a sheet other than S-1 is sourced to the family document**,
+because TCP(S-1) draws only the two shoulder cases and says so itself: "Do not
+carry this paragraph across to another sheet." Both were written from rendered
+pages rather than extracted text, which is how the drawn truck's TMA chevron —
+the thing that actually decides the cost — was seen at all.
 
 That distinction is not pedantry. Until 2026-09-13 this repo carried "a
 20-minute shot on a 55-mph highway converts a two-person crew into a crew plus
@@ -68,6 +72,13 @@ TCP(S-1) could not be fetched. The sheet says nothing of the kind: the duration
 line is **one hour**, crossing it costs a sign and a run of cones rather than a
 truck, and **no posted speed anywhere in the six-sheet family triggers a shadow
 vehicle.** There is a test here that this file never says otherwise.
+
+The overcorrection is just as easy, and an earlier draft of this module made it:
+"a lane closure is TCP(S-2) or TCP(S-3) work, and those sheets draw a shadow
+vehicle." True of S-2b and both S-3 cases. **Flatly wrong about S-2a, which
+draws no protective vehicle at all and uses flaggers.** So ``SHEET_CASES``
+carries the whole table rather than a summary, because the summary is where the
+error keeps happening.
 
 ----
 
@@ -95,6 +106,10 @@ import tomllib
 from pathlib import Path
 
 from .cache import long_path, write_text
+# The same fold-a-TOML-string-into-one-line helper the lead-time table
+# uses. Imported rather than copied: two identical private helpers reading
+# two sibling TOML files is one helper with a duplicate.
+from .lead_times import _tidy
 
 BUILD_UP_NAME = "crew-day.md"
 
@@ -124,6 +139,7 @@ RATES_USED = (
     "hours_per_tract_corner_recovery",
     "hours_per_flagged_tract_access",
     "hours_per_road_occupation",
+    "hours_per_centerline_mile",
     "hours_per_row_sheet_retracement",
     "office_hours_per_mile_drafting",
     "field_hours_per_crew_day",
@@ -149,17 +165,66 @@ TXDOT_CLAIMS = ("txdot", "tcp(", "tmutcd")
 
 # TCP(S-1)-08A, read with the sheet open. See the module docstring, and
 # `project-sh16/manual-pulls/tcp-s-1-08a.md` for the full account.
+#
+# The URL and the date are here because CLAUDE.md requires them of anything
+# making a TxDOT claim, and because `_check` requires them of any *rate* that
+# names TxDOT. A traffic-control section citing a local PDF and nothing else
+# would hold this module to a lower standard than it holds its own data file.
+# Both are read off `tcp-s-1-08a.pdf.meta.toml`, where the committed bytes were
+# verified by sha256 against the fetched bytes.
 TCP_SHEET = "TCP(S-1)-08A"
 TCP_SHEET_PATH = "project-sh16/manual-pulls/tcp-s-1-08a.pdf"
+TCP_SHEET_URL = (
+    "https://ftp.txdot.gov/pub/txdot-info/cmd/cserve/standard/traffic/tcps1.pdf"
+)
+TCP_SHEET_VERIFIED_ON = "2026-09-13"
+
+# The family, and `tcp-s-family.md` is where it was read. **Every claim about a
+# sheet other than S-1 is sourced here rather than to S-1**, which draws only
+# the two shoulder cases and says so: "Do not carry this paragraph across to
+# another sheet."
+TCP_FAMILY_PATH = "project-sh16/manual-pulls/tcp-s-family.md"
 
 # The duration line for a survey crew, on every sheet in the family. Under it,
 # the work is short duration; over it and inside one daylight period, short
 # term stationary.
 DURATION_LINE_HOURS = 1
 
+# What each case *draws*, which is what decides the cost. The legend gives the
+# truck mounted attenuator its own symbol, a small solid black chevron, and
+# `tcp-s-family.md` is blunt that "the symbol, not the note wording, is what
+# distinguishes a shadow vehicle from an ordinary work truck."
+#
+# This table is carried rather than summarized because the summary is where the
+# error keeps happening. An earlier draft of this module said "TCP(S-2) or
+# TCP(S-3) work, and those sheets draw a shadow vehicle" — true of S-2b and
+# both S-3 cases, and flatly wrong about **S-2a, which draws no protective
+# vehicle at all** and uses flaggers.
+SHEET_CASES = (
+    ("TCP(S-1a)", "Work off the shoulder or paved surface", "1 work vehicle"),
+    ("TCP(S-1b)", "Work on the shoulder", "1 work vehicle"),
+    ("TCP(S-2a)", "Road closed under 20 minutes, off-peak",
+     "**none** — flaggers instead"),
+    ("TCP(S-2b)", "Work in the roadway, off-peak",
+     "**1 shadow vehicle with TMA**"),
+    ("TCP(S-2c)", "A two-lane rural intersection, as determined by the Engineer",
+     "1 work vehicle"),
+    ("TCP(S-3a)", "Right lane closed", "**1 shadow vehicle with TMA**"),
+    ("TCP(S-3b)", "Work on centerline", "**2 shadow vehicles with TMA**"),
+    ("TCP(S-4a)", "Work off the right shoulder of a divided roadway",
+     "1 work vehicle"),
+    ("TCP(S-4b)", "Work in the median of a divided roadway",
+     "2 work vehicles (1 where a median barrier protects a side, Note 2)"),
+    ("TCP(S-5a)", "Work on the right shoulder of a divided roadway",
+     "1 work vehicle — *but the notes disagree, see below*"),
+    ("TCP(S-5b)", "Work on the median shoulder of a divided roadway",
+     "1 work vehicle — *same disagreement*"),
+)
+
 TRAFFIC_CONTROL = (
     {
         "topic": "One hour is the line, not twenty minutes",
+        "sheet": TCP_SHEET,
         "detail": (
             "Work occupying a location up to one hour is short duration. Past the "
             "hour, two reliefs lapse: the G20-2a END ROAD WORK sign may no longer "
@@ -171,17 +236,21 @@ TRAFFIC_CONTROL = (
     },
     {
         "topic": "Note 3 is the surveying-specific trap",
+        "sheet": TCP_SHEET,
         "detail": (
             "Where line-of-sight requirements will not allow the work vehicle to "
             "park where it protects the crew, the channelizing devices of Note 2 "
             "are required — so the under-an-hour relief does not apply and the "
             "devices stand whatever the duration. Sighting down a line is the "
             "job, so on a survey this is the ordinary case rather than the "
-            "exception, and the estimate below charges the setup either way."
+            "exception. The build-up cannot charge for it, because the number of "
+            "occupations is unmeasured, but a reader pricing this by hand should "
+            "assume the setup happens on every one of them."
         ),
     },
     {
         "topic": "No posted speed puts a shadow truck on this job",
+        "sheet": "all six sheets",
         "detail": (
             "Not found on any of the six TCP(S-*) sheets: 55 mph is an ordinary "
             "row in every spacing table. On TCP(S-1) the shadow vehicle with a "
@@ -191,25 +260,77 @@ TRAFFIC_CONTROL = (
         ),
     },
     {
-        "topic": "A lane closure is a different sheet, and a different cost",
+        "topic": "Where the work is decides the cost, not how fast traffic moves",
+        "sheet": "all six sheets",
         "detail": (
-            "TCP(S-1) draws only two cases, work off the shoulder and work on the "
-            "shoulder. Popping a manhole in a travel lane is not one of them: that "
-            "is TCP(S-2) or TCP(S-3) work, and those sheets *draw* a shadow "
-            "vehicle with a truck mounted attenuator — two of them on TCP(S-3b), "
-            "work on centerline. The permission to substitute an ordinary work "
-            "vehicle is granted for short duration work, so past the hour it "
-            "lapses. This is the real cost cliff, and it is driven by where the "
-            "work is rather than by how fast traffic is moving."
+            "TCP(S-1) draws only the two shoulder cases, so it is the cheap one. "
+            "A shadow vehicle with a truck mounted attenuator is drawn on exactly "
+            "two sheets — TCP(S-2b) and both TCP(S-3) cases — and on those the "
+            "permission to use an ordinary work vehicle instead is granted only "
+            "for short duration work, so past the hour it lapses. The accurate "
+            "sentence: **a survey crew working in a travel lane or on the "
+            "centerline for more than an hour is looking at a shadow vehicle with "
+            "a TMA, two of them on the centerline, unless the Engineer approves "
+            "barricades instead.** On a shoulder, off the pavement, or at a "
+            "two-lane rural intersection, it is not."
         ),
     },
     {
         "topic": "Conventional Roads Only",
+        "sheet": "all six sheets",
         "detail": (
             "Every sheet in the family carries that footnote, and none uses the "
             "words freeway or controlled access. Whether this corridor is any of "
             "those was not read by this run. Freeway coverage is not found, which "
             "is not the same as absent."
+        ),
+    },
+)
+
+# The two cases that change **who is on the truck** rather than how many hours
+# it takes. Both are quantities this run does not measure, and both are in the
+# build-up anyway, because issue #24 wants an honest unknown in it rather than a
+# tidy page: "The build-up is supposed to be arguable."
+CREW_CHANGES = (
+    {
+        "trigger": "Work on the centerline",
+        "sheet": "TCP(S-3b)",
+        "becomes": "2 shadow vehicles with TMA, and somebody to drive each",
+        "detail": (
+            "One at each end of the work space, 30 ft minimum clearance to each, "
+            "because traffic passes on both sides. It is the most expensive "
+            "configuration in the family, and **it is the one a retracement crew "
+            "chaining a centerline lands on.** Past one hour the drawn "
+            "configuration stands unless the Engineer approves Type III "
+            "barricades instead (S-3 Note 3) — which is a decision somebody else "
+            "makes, not one this build-up may assume."
+        ),
+        "unmeasured": (
+            "How much of this corridor's retracement falls on the centerline. "
+            "Nothing in this run says. It is the line item that moves the number "
+            "and this tool cannot put a quantity on it."
+        ),
+    },
+    {
+        "trigger": "Work on the shoulder of a divided roadway",
+        "sheet": "TCP(S-5)",
+        "becomes": "unresolved — the sheet contradicts itself",
+        "detail": (
+            "The **drawing** shows a plain work vehicle with no TMA chevron. The "
+            "**notes** are written about \"*the* Shadow Vehicle with TMA,\" "
+            "wording carried over verbatim from S-3, where one is actually drawn. "
+            "Two readings, two day rates, and this build-up **does not pick "
+            "one** — see "
+            "[#72](https://github.com/RickSmith/survey-recon/issues/72), which "
+            "asks the Engineer. Price it as a range: the low reading is the "
+            "ordinary work truck already in the crew, the high reading adds a "
+            "shadow vehicle with TMA and an operator for every day spent on a "
+            "divided shoulder."
+        ),
+        "unmeasured": (
+            "Whether this corridor is divided at all, and over how much of its "
+            "length. The roadway block of this run was never screened, so lane "
+            "count and configuration are unknown."
         ),
     },
 )
@@ -238,13 +359,6 @@ class Rate:
         self.verified_on = row.get("verified_on")
 
 
-def _tidy(text):
-    """Fold a TOML multi-line string back into one readable line."""
-    if text is None:
-        return None
-    return " ".join(str(text).split()) or None
-
-
 def _claims_txdot(source):
     lowered = str(source or "").lower()
     return any(word in lowered for word in TXDOT_CLAIMS)
@@ -271,7 +385,7 @@ def _check(key, row):
             f"crew rate [{key}] has kind {row['kind']!r}, which is not one of "
             f"{', '.join(KINDS)}. Field hours become crew-days and office hours "
             "never do, so a rate that will not say which is a rate that cannot "
-            "be totalled."
+            "be totaled."
         )
 
     value = row.get("value")
@@ -344,7 +458,7 @@ def load_rates(path=None, rows=None):
     return table
 
 
-def handle(key):
+def rate_handle(key):
     """The label a surveyor says out loud: A1, A2, A3.
 
     Returns ``None`` for a rate the build-up does not use, so a handle is never
@@ -356,11 +470,15 @@ def handle(key):
 # ------------------------------------------------------------------ the inputs
 
 
-def _count(key, label, value, unit, source, why_not=None):
-    """One labelled input, measured or not.
+def _count(key, label, value, unit, source, why_not=None, context=False):
+    """One labeled input, measured or not.
 
     ``value`` of ``None`` is the whole reason this helper exists: an unmeasured
     count carries the account of why nobody measured it, and never a zero.
+
+    ``context`` marks a count the build-up shows but does not multiply by
+    anything. A reader who cannot tell those apart will hunt the arithmetic for
+    a row that is not there and conclude the page dropped it.
     """
     return {
         "key": key,
@@ -370,14 +488,15 @@ def _count(key, label, value, unit, source, why_not=None):
         "source": source,
         "measured": value is not None,
         "why_not": why_not,
+        "context": context,
     }
 
 
 def counts(document):
-    """Every quantity the arithmetic uses, labelled and traced to the run.
+    """Every quantity the arithmetic uses, labeled and traced to the run.
 
     Issue #24's first criterion: "Every input to the estimate is visible and
-    labelled." ``source`` is the path in ``screening.json`` the number was read
+    labeled." ``source`` is the path in ``screening.json`` the number was read
     from, so a reader can check one without reading any Python.
     """
     alignment = document.get("alignment") or {}
@@ -402,23 +521,30 @@ def counts(document):
                "control.recovery_risk.marks_in_corridor"),
         _count("ngs_not_found", "Of those, recorded MARK NOT FOUND",
                recovery.get("mark_not_found"), "marks",
-               "control.recovery_risk.mark_not_found"),
+               "control.recovery_risk.mark_not_found", context=True),
+        # Context, not a multiplier. Listed because a reader deciding whether
+        # to argue with the new-control line needs to know what is already on
+        # the ground; the arithmetic does not subtract it, because whether two
+        # good TxDOT monuments can carry an 8.7-mile corridor is the surveyor's
+        # call and not this tool's.
         _count("txdot_points", "Distinct TxDOT control monuments",
                txdot.get("distinct_stations"), "monuments",
-               "control.txdot_control.distinct_stations"),
+               "control.txdot_control.distinct_stations", context=True),
         _count("row_sheets", "ROW map sheets reaching the corridor",
                row_maps.get("sheet_count"), "sheets", "row_maps.sheet_count"),
-        # The three the run cannot supply. Issue #24 asks for the first two by
+        # The five the run cannot supply. Issue #24 asks for the first two by
         # name, and the honest answer is that nobody published them.
         _count("manholes", "Manholes to pop", None, "manholes",
                "no service in this run publishes a manhole inventory",
                why_not="No public source screened here publishes manhole "
                        "locations. A count would have to come from a utility "
-                       "owner, from as-builts, or from somebody driving it."),
+                       "owner, from as-builts, or from somebody driving it.",
+               context=True),
         _count("culverts", "Culverts to locate", None, "culverts",
                "no service in this run publishes a culvert inventory",
                why_not="Same: not screened. TxDOT holds drainage inventories "
-                       "that this pass does not call."),
+                       "that this pass does not call.",
+               context=True),
         _count("road_occupations", "Times traffic control has to be set", None,
                "occupations",
                "derived from the manhole and culvert counts, which are unmeasured",
@@ -427,11 +553,23 @@ def counts(document):
                        "needing signing and devices. With neither count, this "
                        "number does not exist and the traffic-control line below "
                        "has no total."),
+        # The line item issue #24's own comment says "moves the number", and
+        # the one this tool is least able to measure. A retracement crew
+        # chaining a centerline is on TCP(S-3b), which draws two shadow
+        # vehicles with TMA -- the most expensive configuration in the family.
+        _count("centerline_miles", "Miles worked on the centerline", None,
+               "miles",
+               "nothing in this run says where the retracement falls",
+               why_not="Whether a crew works from the shoulder or down the "
+                       "centerline is a methodology choice nobody has made yet, "
+                       "and no map service publishes it. It decides which TCP "
+                       "sheet applies, and the two sheets are not close in cost."),
         _count("roadway", "Existing ROW width, lane count and traffic", None,
                "not screened", "roadway",
                why_not=roadway.get("detail") or
                        "Roadway_Inventory_2023 was not called by this pass. "
-                       "Which TCP sheet applies depends on it."),
+                       "Which TCP sheet applies depends on it.",
+               context=True),
     ]
 
 
@@ -461,7 +599,26 @@ def _factor(label, value, unit, source):
 def _rate_factor(rates, key):
     """One factor taken from the rate table, carrying its handle."""
     rate = rates[key]
-    return _factor(rate.label, rate.value, rate.unit, f"rate {handle(key)} ({key})")
+    return _factor(rate.label, rate.value, rate.unit, f"rate {rate_handle(key)} ({key})")
+
+
+def _sheet_age_note(document):
+    """How old this corridor's ROW sheets are, read from the run.
+
+    Derived rather than typed, on ``bid_memo._route_key``'s rule: "so this memo
+    is not a memo about SH 16 that happens to compile for anything else." The
+    first draft of this line said "1900 to 2005" in prose, in a file whose own
+    last line promises nothing was typed by hand.
+    """
+    span = ((document.get("row_maps") or {}).get("date_range") or {})
+    oldest, newest = span.get("from"), span.get("to")
+    if not oldest or not newest:
+        return ("How old this corridor's sheets are was not recorded by the run. "
+                "Scan legibility is what this rate turns on, so check the dates "
+                "before trusting it.")
+    return (f"Sheets in this corridor run from {oldest} to {newest}. Scans of "
+            "that age are read by eye, and the oldest date may not be a date at "
+            "all — the bid memo says why.")
 
 
 def _line(key, label, kind, factors, note=None):
@@ -469,7 +626,7 @@ def _line(key, label, kind, factors, note=None):
 
     ``hours`` is ``None`` when any factor has no value, and ``blocked_by`` then
     names the factor that stopped it. That is the manhole case, and it is the
-    reason a line is modelled as a chain rather than as a number: the
+    reason a line is modeled as a chain rather than as a number: the
     arithmetic can be shown complete while the answer is honestly absent.
     """
     missing = [f["label"] for f in factors if f["value"] is None]
@@ -549,12 +706,21 @@ def lines(document, rates=None):
                   "the time goes."),
         ),
         _line(
+            "centerline_work", "Chain the centerline", "field",
+            [count_factor("centerline_miles"),
+             _rate_factor(rates, "hours_per_centerline_mile")],
+            note=("**This is the line item that moves the number, and it has no "
+                  "total.** Work on the centerline is TCP(S-3b), which draws "
+                  "**two** shadow vehicles with TMA rather than the crew's own "
+                  "truck. Nothing in this run says how much of the retracement "
+                  "falls there. See *What changes the crew* below — this is not "
+                  "only more hours, it is a different crew."),
+        ),
+        _line(
             "row_retracement", "Hand-retrace the ROW map sheets", "office",
             [count_factor("row_sheets"),
              _rate_factor(rates, "hours_per_row_sheet_retracement")],
-            note=("Sheets in this corridor run from 1900 to 2005. Scans of that "
-                  "age are read by eye, and the oldest date may not be a date "
-                  "at all — the bid memo says why."),
+            note=_sheet_age_note(document),
         ),
         _line(
             "drafting", "Draft the deliverable", "office",
@@ -565,7 +731,7 @@ def lines(document, rates=None):
 
 
 def hours_for(kind, built):
-    """Total hours of one kind, and the lines that could not be totalled.
+    """Total hours of one kind, and the lines that could not be totaled.
 
     Returns ``(hours, blocked)``. A blocked line is never counted as zero and
     never silently dropped: it comes back so the caller has to say something
@@ -632,7 +798,7 @@ def _block(built, kind, rates, heading, day_rate_key, day_word):
     if blocked:
         out += [
             f"**That total is a floor.** {len(blocked)} line"
-            f"{'s' if len(blocked) > 1 else ''} above could not be totalled at "
+            f"{'s' if len(blocked) > 1 else ''} above could not be totaled at "
             "all, and the hours are missing from this figure rather than being "
             "zero in it: "
             + ", ".join(f"*{line['label']}*" for line in blocked) + ".",
@@ -666,12 +832,12 @@ def build(document, rates=None):
     out += [
         "**This is not an estimate. It is an estimate somebody can argue with.**",
         "",
-        "Every quantity below is read from `screening.json`. Every rate is an "
-        "assumption, **not a published standard** — TxDOT publishes no production "
-        "rates, and this tool has never been near the corridor. Nobody has walked "
-        "it. The rates carry handles, `A1` through "
-        f"`A{len(RATES_USED)}`, so a surveyor can disagree with one of them out "
-        "loud, by name, rather than disagreeing with the total.",
+        "Every quantity below is read from `screening.json`. The rates are "
+        "**not a published standard** — TxDOT publishes no production rates, and "
+        "this tool has never been near the corridor. Nobody has walked it. Each "
+        f"rate carries a handle, `A1` through `A{len(RATES_USED)}`, so a surveyor "
+        "can disagree with one of them out loud, by name, rather than "
+        "disagreeing with the total.",
         "",
         "An **RPLS** reads this and decides. The tool decides nothing.",
         "",
@@ -727,31 +893,76 @@ def build(document, rates=None):
 
     # --- traffic control
     out += [
-        "## Traffic control, from the sheet itself",
+        "## Traffic control, from the sheets themselves",
         "",
-        f"Everything in this section is read from **{TCP_SHEET}**, pulled by hand "
-        f"and committed at [`{TCP_SHEET_PATH}`](manual-pulls/tcp-s-1-08a.pdf). "
-        "Nothing is read across from another standard, which is how this repo got "
-        "it wrong once already.",
+        f"**{TCP_SHEET}** was pulled by hand and is committed at "
+        f"[`{TCP_SHEET_PATH}`](manual-pulls/tcp-s-1-08a.pdf), fetched from "
+        f"[{TCP_SHEET_URL}]({TCP_SHEET_URL}) and verified byte for byte on "
+        f"{TCP_SHEET_VERIFIED_ON}. **It covers the two shoulder cases and "
+        "nothing else**, so every claim below about another sheet is sourced to "
+        f"[`{TCP_FAMILY_PATH}`](manual-pulls/tcp-s-family.md), which is the "
+        "reading of all six. Nothing is read across from a standard outside the "
+        "family, which is how this repo got it wrong once already.",
         "",
+        "**What each case draws**, because the drawn vehicle is what decides the "
+        "cost and the note wording is what misleads:",
+        "",
+        "| Case | What it covers | Protective vehicle drawn |",
+        "|---|---|---|",
     ]
+    for case, covers, drawn in SHEET_CASES:
+        out.append(f"| **{case}** | {covers} | {drawn} |")
+    out.append("")
+
     for note in TRAFFIC_CONTROL:
-        out += [f"**{note['topic']}.** {note['detail']}", ""]
+        out += [f"**{note['topic']}** *({note['sheet']})*. {note['detail']}", ""]
 
     out += [
-        f"The duration line is **{DURATION_LINE_HOURS} hour**. Whether this "
-        "corridor's work crosses it, and how often, depends on the manhole and "
-        "culvert counts nobody has. That is why the traffic-control line above "
-        "has no total.",
+        f"The duration line is **{DURATION_LINE_HOURS} hour**. How often this "
+        "corridor's work crosses it depends on counts nobody has — see the "
+        "traffic-control and centerline lines above, neither of which has a "
+        "total.",
+        "",
+        "## What changes the crew, not just the hours",
+        "",
+        "Two of the unmeasured inputs do something the arithmetic above cannot "
+        "show. They do not make the days longer. They change **who has to be on "
+        "the road**, and that is a different kind of cost. Both are in this "
+        "build-up without numbers on purpose: an honest unknown belongs in a "
+        "document that is supposed to be argued with.",
         "",
     ]
+    for change in CREW_CHANGES:
+        out += [
+            f"### {change['trigger']} — {change['sheet']}",
+            "",
+            f"**The crew becomes: {change['becomes']}.**",
+            "",
+            change["detail"],
+            "",
+            f"**Not measured:** {change['unmeasured']}",
+            "",
+        ]
 
     # --- the assumptions, one row each
+    #
+    # **The standfirst is derived, not asserted.** It used to read "none of them
+    # is published by TxDOT or by anybody else" unconditionally, while the table
+    # below it renders a `Published:` cell for any row `_check` accepts as
+    # non-assumption. Both could not be true at once, and the sentence a reader
+    # trusts is the one above the table.
+    published = [k for k in RATES_USED if not rates[k].assumption]
     out += [
-        "## Every assumption, with its handle",
+        "## Every rate, with its handle",
         "",
-        "Disagree with a row, not with the total. Each of these is somebody's "
-        "judgment, and none of them is published by TxDOT or by anybody else.",
+        "Disagree with a row, not with the total. "
+        + ("Every one of these is somebody's judgment, and **none of them is "
+           "published by TxDOT or by anybody else** — the standard sheets say "
+           "what goes on the road, not how long it takes to put it there."
+           if not published else
+           f"{len(RATES_USED) - len(published)} of these {len(RATES_USED)} are "
+           f"somebody's judgment; {len(published)} carry a published source, "
+           "named in the last column."),
         "",
         "| | Rate | Value | What to argue with |",
         "|---|---|---|---|",
@@ -759,8 +970,10 @@ def build(document, rates=None):
     for key in RATES_USED:
         rate = rates[key]
         argue = rate.disagree_with if rate.assumption else (
-            f"Published: {rate.source}")
-        out.append(f"| `{handle(key)}` | {rate.label} | {rate.value:g} "
+            f"Published: {rate.source}"
+            + (f" ([source]({rate.url}), read {rate.verified_on})"
+               if rate.url else ""))
+        out.append(f"| `{rate_handle(key)}` | {rate.label} | {rate.value:g} "
                    f"{rate.unit} | {argue} |")
     out.append("")
     out += [
@@ -818,6 +1031,7 @@ def summary(document, rates=None):
     office_hours, _ = hours_for("office", built)
     field_days = days(field_hours, rates["field_hours_per_crew_day"].value)
     office_days = days(office_hours, rates["office_hours_per_day"].value)
+    assumed = sum(1 for k in RATES_USED if rates[k].assumption)
 
     out = [
         f"  Crew-day build-up  {alignment.get('source_path', 'this corridor')}",
@@ -849,8 +1063,11 @@ def summary(document, rates=None):
         out.append("")
 
     out += [
-        f"  Every rate is an assumption with a handle, A1 to A{len(RATES_USED)}.",
-        "  None of them is published by TxDOT. Disagree with a row, not a total.",
+        # Derived, for the reason the Markdown's own standfirst is derived: the
+        # loader accepts a published row, so this may not assert there are none.
+        f"  Every rate has a handle, A1 to A{len(RATES_USED)}. "
+        + (f"{assumed} of them are" if assumed != len(RATES_USED) else "All are"),
+        "  somebody's assumption, not TxDOT's. Argue with a row, not a total.",
         f"  Traffic control read from {TCP_SHEET}: the duration line is",
         f"  {DURATION_LINE_HOURS} hour, and no posted speed anywhere in the family",
         "  puts a shadow truck on the job.",
@@ -885,8 +1102,8 @@ def main(argv=None):
     args = parser.parse_args(argv)
 
     source = Path(args.out) / "screening.json"
-    with open(long_path(source), "r", encoding="utf-8") as handle_:
-        document = json.load(handle_)
+    with open(long_path(source), "r", encoding="utf-8") as handle:
+        document = json.load(handle)
 
     rates = load_rates()
     for path in write(document, args.out, rates):

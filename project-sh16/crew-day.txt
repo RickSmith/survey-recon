@@ -7,6 +7,7 @@
     Recover corners, tract by tract        524 tracts x 0.5 hours per tract = 262.00 hours
     Extra time on the flagged tracts       8 tracts x 2 hours per tract = 16.00 hours
     Set and retrieve traffic control       not measured x 1.25 hours per occupation = not measured
+    Chain the centerline                   not measured x 5 hours per mile = not measured
 
   OFFICE
     Hand-retrace the ROW map sheets        69 sheets x 1.5 hours per sheet = 103.50 hours
@@ -16,13 +17,14 @@
   office    138.26 hours  =  18 office days
   The two are never added together.
 
-  1 line above has no total at all, because
+  2 lines above have no total at all, because
   an input was never measured. Those hours are missing from
   the figures above, not zero in them:
     Set and retrieve traffic control: Times traffic control has to be set is not measured
+    Chain the centerline: Miles worked on the centerline is not measured
 
-  Every rate is an assumption with a handle, A1 to A11.
-  None of them is published by TxDOT. Disagree with a row, not a total.
+  Every rate has a handle, A1 to A12. All are
+  somebody's assumption, not TxDOT's. Argue with a row, not a total.
   Traffic control read from TCP(S-1)-08A: the duration line is
   1 hour, and no posted speed anywhere in the family
   puts a shadow truck on the job.
