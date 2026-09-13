@@ -150,7 +150,7 @@ A human decides what "done" means, before the loop starts. That is Act I.
 
 # Where it breaks
 
-- **Confidently wrong.** It invents a fact, or a setting that does not exist
+- **Confidently wrong.** It invents things, and it believes stale things it finds
 - **Fooled by what it reads.** Give it least access, not the run of the yard
 - **Data.** What you type goes to a company's computers. Treat it as email
 - **Accountability is yours.** *The agent did it* is not a defense
@@ -186,7 +186,7 @@ where it gets said properly.
 
 # Vocabulary of managing one
 
-## Four words, each with a survey equivalent
+## Every word here has a survey equivalent
 
 <!--
 0:20–0:30 · 10 min · Vocabulary of managing one
@@ -202,9 +202,9 @@ authority for the words used here.
 
 # Markdown
 
-- **Markdown is a field book, not a CAD file** — plain text, no proprietary
+- **Markdown is plain text with a few marks** — not a CAD file, no proprietary
   format, and no version that will not open in nine years
-- A few marks do the formatting: `#` makes a heading, `**this**` goes bold
+- The marks do the formatting: `#` makes a heading, `**this**` goes bold
 - Everything in this session is written in it, including these slides
 
 <!--
@@ -225,7 +225,7 @@ same kind of file. Plain text on any machine, no software to buy.
 - A **repo** is the job folder. **Git** is the field book that never loses a page
 - A **branch** is a working copy nobody else is affected by
 - A **commit** is a field book entry, with a date and a name on it
-- Nothing is overwritten, so nothing is quietly lost
+- Nothing is overwritten by accident, so nothing is quietly lost
 
 <!--
 0:20–0:30 · 10 min · Vocabulary of managing one
@@ -283,8 +283,9 @@ conversation. Which is why the rules belong in a file, not in a chat.
 
 # Tokens
 
-- A **token** is the unit on the invoice, like a crew-hour — it is what gets
-  counted and billed. About **4 characters**, or three quarters of a word
+- A **token** is a crew-hour for the machine — what the tool counts and bills
+  *you* in. Never the unit you bill a client in
+- About **4 characters**, or three quarters of a word
 - *"Understanding AI is fascinating!"* is **7 tokens**, not four words
 - Which is why a long document costs more to work on than a short one
 
@@ -301,6 +302,10 @@ and the space before a word travels with it.
 **Say "about".** How a sentence splits depends on the model doing the
 splitting, and the seven above is one model's answer, not a law. Four
 characters is the rule of thumb worth remembering.
+
+**Do not let the room hear "so I bill my client in tokens."** They do not. The
+money slide at 0:46 is in crew-hours and stays in crew-hours. A token is what
+the tool costs *you*, which is the smaller of the two numbers by a distance.
 -->
 
 ---
