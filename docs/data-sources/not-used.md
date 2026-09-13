@@ -76,6 +76,52 @@ parse. Note that **the exact text varies between runs**: an earlier attempt the
 same day returned `Call failed.  [Failed cloud operation: Open, Path:
 /vsimem/_00000376.aux.xml]` instead. Do not match on the message.
 
+### The unit is not honored either, and that one hands you a number
+
+Found on 2026-09-13 under
+[issue #26](https://github.com/RickSmith/survey-recon/issues/26), and it is a
+worse trap than either of the two above because it answers.
+
+Same point, same second, one word different:
+
+| `units` value | `value` in the response | JSON type | Actually |
+|---|---|---|---|
+| `Feet` | `866.8668528742528` | number | feet |
+| `Meters` | `"264.221008301"` | string | meters |
+| `US_Feet` | `"264.221008301"` | string | **meters** |
+| `ft` | `"264.221008301"` | string | **meters** |
+| `Furlongs` | `"264.221008301"` | string | **meters** |
+| *(omitted)* | `"264.221008301"` | string | **meters** |
+
+866.8668528742528 / 264.221008301 = 3.28084, which is feet per meter. Every
+unrecognized value returns the metric answer, unchanged, with no error.
+
+**It is not case sensitivity.** Lowercase `feet` returns 866.87, the same as
+`Feet`. The service has a short list of words it knows, and everything else —
+including the surveyor's own unit — falls through to meters. Knowing that
+matters, because "just match the capitalization" is the wrong lesson and would
+leave you exposed.
+
+**`US_Feet` is the one that matters.** It is not a typo — it is the US survey
+foot, what EPSG numbers `9003` and what the TxDOT survey specification is
+written in. A surveyor asking in the unit of their own profession gets meters.
+
+**There is no field to check.** The response carries a `spatialReference` for
+the *coordinate* system and nothing at all for the unit of the answer. The only
+thing that differs is the JSON type, which is a coincidence rather than a
+warning.
+
+This is the **same mechanism** as the `9003` trap on
+[the geometry service](arcgis-geometry-service.md), which "appears to treat an
+unrecognized unit as meters and say nothing about it." Two independent services,
+two different vendors, the same silence, both triggered by the surveyor's own
+unit. Both were caught by asking twice rather than by reading the answer harder.
+
+Requested five times each on 2026-09-13; `Feet` and `US_Feet` were identical
+every time. The responses are committed at
+`corridor-screen/captures/silent-nodata/`, and
+`python -m corridor_screen.elevation_trap --show` replays the comparison offline.
+
 ### What we are and are not saying
 
 We are saying what this endpoint did on 2026-09-13, from two machines, on one

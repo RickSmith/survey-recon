@@ -80,6 +80,10 @@ The most expensive kind. No error, no delay, no clue.
 - **A unit code that is accepted and answered differently.** `9003` is the EPSG
   code for the US survey foot, and the parcel query takes it and hands back a
   different corridor — [the geometry service](arcgis-geometry-service.md)
+- **The same silence on a second, unrelated service.** The USGS elevation
+  endpoint takes `US_Feet` — the surveyor's own unit — and answers in meters,
+  as a believable number, with no field anywhere saying which unit it is —
+  [sources we did not use](not-used.md)
 
 ### The field is not called what the document says
 

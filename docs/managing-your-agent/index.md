@@ -14,3 +14,8 @@ worked example — including the ones that got sent back.
 - **[The rule we broke on day one](the-force-push.md)** — this repo has a rule
   against altering its own history. Fifteen minutes in, we broke it on purpose.
   What happened, what it cost, and who made the call.
+- **[The answer that was wrong rather than missing](the-wrong-answer.md)** — ask
+  the USGS elevation service in `US_Feet`, the unit a Texas surveyor works in,
+  and it answers in meters. No error, valid JSON, a believable number three and
+  a quarter times too small. Failure beat two, and why a wrong answer is worse
+  than a broken one.

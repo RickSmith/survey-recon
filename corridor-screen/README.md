@@ -162,6 +162,32 @@ else.
 The drawing shows twelve rows. A corridor with more says how many it did not
 show rather than quietly ending at twelve; the Markdown carries all of them.
 
+## The beat about the answer you cannot check
+
+```bash
+python -m corridor_screen.elevation_trap --show
+```
+
+Failure beat two, running entirely from files committed in
+`captures/silent-nodata/` — so a hotel network cannot take it away.
+
+Ask the USGS elevation service for the height of SH16 at Bandera Road, twice,
+one word apart. `units=Feet` gives **866.8668528742528**. `units=US_Feet` gives
+**"264.221008301"**. The ratio is 3.28084, which is feet per meter: it is the
+same ground, answered in meters, with no error and **no field anywhere in the
+response saying which unit it is**.
+
+`US_Feet` is not a typo. It is the US survey foot — what EPSG numbers `9003`,
+and what [the geometry service](../docs/data-sources/arcgis-geometry-service.md)
+also accepts and silently treats as meters, returning 2,132 parcels where the
+right unit returned 658. Two services, same silence.
+
+The same endpoint *can* fail loudly — a point in the Gulf of Mexico returns a
+200 carrying plain text, which breaks any parser and gets noticed in a second.
+That comparison is the beat: the broken answer is caught by anything that reads
+it, and the plausible one is caught by nothing. The full account is
+[the wrong answer](../docs/managing-your-agent/the-wrong-answer.md).
+
 ## The one call that stays live
 
 Everything above replays from disk. This one goes out to NGS while you watch:
