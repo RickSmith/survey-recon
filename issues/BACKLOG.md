@@ -28,8 +28,8 @@ Phases match the schedule. **The dates are real and the deadline does not move.*
 - Build the crew-day build-up, with the math shown and arguable
 - Capture and commit the complete demo cache
 - Record fallback captures for every demo step, as the work happens rather than afterward
-- Script the failure beat: the superseded `onlinemanuals.txdot.gov` citation, and the silent USGS `NoData`
-- Verify both failures are reproducible on demand
+- Script the failure beat: the superseded `onlinemanuals.txdot.gov` citation, the silent USGS `NoData`, and the false TBPELS claim the agent caught in its own work order (issue #7)
+- Verify all three failures are reproducible on demand. Beat 3 is reproducible by reading, not by running - the issue, its correction comment, the commit and `docs/managing-your-agent/the-claim-we-got-wrong.md` are the artefacts
 
 ## Phase: Take-home kit — Sep 24–28
 
