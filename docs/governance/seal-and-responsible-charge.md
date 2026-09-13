@@ -33,21 +33,31 @@ The opinion says, in the board's own words:
 > Surveying Practices Act, nor the associated Board rules directly ban the use of
 > AI software.
 
-It then sets three caveats. These are the operative sentences:
+It then sets three caveats. These are the operative sentences, and the board names
+the rule behind each one:
 
 > As with any other software tool, AI software should not be relied upon without
 > oversight and review by the licensee. Licensees are ultimately responsible for
 > any work product they sign and seal and if using AI software as a tool in their
 > practice, they should review the outputs to ensure they are complete, accurate,
 > and consistent with generally accepted engineering and surveying concepts and
-> principles.
+> principles. (See […] Board Rules 138.33(b) and 138.55(b) for professional land
+> surveyors).
 
 > Licensees should not use AI software to work on a project in which they do not
-> already have established competence through education or experience.
+> already have established competence through education or experience. (See […]
+> Board Rules 138.59 for professional land surveyors).
 
 > Licensees should also be aware of how any AI software utilizes and stores data
 > that is provided to it to ensure that the confidentiality of any client's data
-> is maintained.
+> is maintained. (See […] 138.61 for professional land surveyors.)
+
+**The only thing the `[…]` marks is the parallel citation for professional
+engineers**, which this page drops because the audience is surveyors. Nothing else
+is left out of those three sentences.
+
+So the board has already told you which four rules govern this: **§ 138.33(b)**,
+**§ 138.55(b)**, **§ 138.59** and **§ 138.61**. All four are quoted below.
 
 And the board's conclusion:
 
@@ -170,15 +180,41 @@ label.
 
 ### Competence
 
-**22 Tex. Admin. Code § 138.59(a) and (b):**
+**22 Tex. Admin. Code § 138.59(a) and (b), in full:**
 
-> Surveyors shall practice only in their areas of competence.
+> (a) Surveyors shall practice only in their areas of competence.
 
-> The surveyor shall not perform any surveying assignment for which the surveyor is
-> not qualified by education or experience to perform adequately and competently.
+> (b) The surveyor shall not perform any surveying assignment for which the
+> surveyor is not qualified by education or experience to perform adequately and
+> competently. However, a surveyor may accept an assignment which includes phases
+> outside of the surveyor's area of competence if those other phases are performed
+> by qualified registered professionals, consultants, associates, or employees.
 
 This is the rule PAO 71 points at when it says not to use AI on work you are not
-already competent to do. **An agent is not a way into an unfamiliar kind of job.**
+already competent to do.
+
+**Read the second sentence of (b) carefully, because it is the one somebody will
+try to use.** It lets you take on a job with phases outside your competence — but
+only where those phases are performed by "qualified registered professionals,
+consultants, associates, or employees." PAO 71 calls AI software **a tool**, and a
+tool is none of those four things. On a plain reading, the carve-out does not
+reach it. **We did not find a board opinion or a ruling on that point**, so treat
+it as a reading and not a holding — but do not lean on it.
+
+**An agent is not a way into an unfamiliar kind of job.**
+
+### Do not put the public at risk
+
+**22 Tex. Admin. Code § 138.55(b)** — the second rule PAO 71 names on oversight:
+
+> Surveyors shall not perform any surveying function which, when measured by
+> generally accepted surveying standards or procedures, is reasonably likely to
+> result in the endangerment of lives, health, safety, property, or welfare of the
+> public. Any act or conduct which constitutes incompetence or gross negligence, or
+> a criminal violation of law, constitutes misconduct and shall be subject to
+> disciplinary action by the board.
+
+Note that **gross negligence is enough**. Nobody has to show you meant it.
 
 ---
 
@@ -226,9 +262,13 @@ ceilings.
 | Failure to sign, seal, date, include caveat, or include firm identification on work | §§ 138.33(e), (f), (h), (m), 138.35(a), (b); 138.91(d) | Reprimand / $500 |
 | Work performed by more than one surveyor not attributed to each surveyor | § 138.33(g) | Reprimand / $500 |
 
-**Source:** 22 Tex. Admin. Code § 139.37(b), "Sanctions and Penalties —
-Surveying," as printed in the TBPELS *Acts and Rules* effective 18 June 2026,
-page 110 — <https://pels.texas.gov/downloads/lawrules.pdf>.
+**Source:** 22 Tex. Admin. Code § 139.37, "Sanctions and Penalties — Surveying,"
+as printed in the TBPELS *Acts and Rules* effective 18 June 2026 — subsection (a)
+on page 107, the table at subsection (b) on page 110.
+<https://pels.texas.gov/downloads/lawrules.pdf>
+
+Note there is a near-identical table for **engineers** at § 139.35, pages 104–106.
+Make sure you are reading the surveying one.
 
 Three numbers from § 139.37(a) that matter more than the table does:
 

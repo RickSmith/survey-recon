@@ -61,11 +61,11 @@ thing and names the rules.
 
 **You seal it, you own it.**
 
-That was true before AI and it is true now. The board rule is
-22 Tex. Admin. Code § 138.33(b): you may seal only work you did or **directly
-supervised**. And direct supervision, under § 131.2(11), means you
-"personally review and approve proposed decisions **prior to their
-implementation**."
+That was true before AI and it is true now. Two rules put it beyond argument, and
+[the seal page](seal-and-responsible-charge.md) quotes both in full:
+22 Tex. Admin. Code § 138.33(b), which lets you seal only work you did or
+**directly supervised**, and § 131.2(11), which defines that supervision as
+approving decisions **before they are acted on**.
 
 Which is why the way of working this session teaches — a written scope, small
 pieces, a check before anything is accepted — is not a software habit borrowed for
@@ -74,6 +74,9 @@ show. **It is the shape the rule already asks for.**
 ---
 
 ## What to do with these, in order
+
+The three cards above are in browsing order, heaviest last. This is the order to
+actually work through them.
 
 1. **Read [the seal page](seal-and-responsible-charge.md) yourself.** Twenty
    minutes. It is the one with the citations, and you are the one who signs

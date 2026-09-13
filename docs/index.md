@@ -56,7 +56,8 @@ Software developers already built that discipline. This repo borrows it and
 translates it. The [vocabulary](vocabulary/index.md) page has the full table.
 
 **The accountability never moves.** TBPELS addressed AI directly in
-[Policy Advisory Opinion 71](governance/seal-and-responsible-charge.md), approved
-14 November 2024: AI software is a tool, nothing bans it, and "licensees are
-ultimately responsible for any work product they sign and seal." You seal it, you
-own it.
+[Policy Advisory Opinion 71](https://pels.texas.gov/nm/2024/pao-71-response.pdf),
+approved 14 November 2024: AI software is a tool, nothing bans it, and "licensees
+are ultimately responsible for any work product they sign and seal." You seal it,
+you own it. What that means for your firm is on the
+[Governance](governance/index.md) pages.

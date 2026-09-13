@@ -58,6 +58,11 @@ Approved here, today:
 - «Summarising long documents we already hold»
 - «ADD YOUR OWN»
 
+> *Firm choice.* Nothing requires a firm to keep a list like this, and nothing
+> restricts what may be on it beyond sections 3 and 4. It exists so that "am I
+> allowed to use it for this?" has an answer on paper instead of in somebody's
+> memory.
+
 ## 3. What we do not use AI tools for
 
 - **Work in a field this firm is not already competent in.** An AI tool is not a
@@ -181,6 +186,14 @@ information goes somewhere it should not:
 **Nobody is disciplined here for reporting an AI error promptly.** People are
 disciplined for hiding one.
 
+> *Firm choice.* The same-day rule, the write-it-down step and the no-blame
+> sentence are ours. Set your own and put your own name on them.
+> *Rule*, for one part of it. 22 Tex. Admin. Code § 138.55(c): surveyors "shall
+> first notify involved parties of any land surveying decisions or practices that
+> might endanger the health, safety, property or welfare of the public," and shall
+> report to the board or the authorities where a risk remains unresolved. Where
+> the error reaches that threshold, telling people is not a firm preference.
+
 ## 10. Review
 
 This policy is reviewed every «SIX MONTHS» by «RPLS NAME», and immediately if
@@ -190,6 +203,11 @@ The board said in PAO 71 that it "will continue to monitor artificial intelligen
 software and its impact on the Board's licensees and update and amend this policy
 statement as warranted." **Check <https://pels.texas.gov/policy.htm> at each
 review.**
+
+> *Firm choice*, resting on board guidance. No rule sets a review interval. Six
+> months is ours, chosen because PAO 71 says in its own words that the board
+> expects to revisit this. Pick your own interval — just pick one, because a policy
+> nobody re-reads is how a firm ends up following guidance that changed.
 
 ---
 

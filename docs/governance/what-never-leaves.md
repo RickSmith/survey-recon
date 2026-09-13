@@ -90,8 +90,15 @@ paste.
 
 **Ask «RPLS NAME» before you type it, not after.**
 
-There is no penalty here for asking. There is a real one for guessing — it starts
-at a reprimand and a $1,000 fine, and that is only the board's part.
+There is no penalty here for asking. There is a real one for guessing.
+
+Letting client confidences out breaks **22 Tex. Admin. Code § 138.61**. The
+board's suggested sanction is **a reprimand and $1,000**, and it may impose more
+— 22 Tex. Admin. Code § 139.37(a), (b), in the TBPELS *Acts and Rules* effective
+18 June 2026, page 110, <https://pels.texas.gov/downloads/lawrules.pdf>.
+
+That is the board's part alone. It says nothing about the client, the contract, or
+our carrier.
 
 </div>
 
@@ -132,16 +139,20 @@ ask the vendor in writing, and to ask again when you change tools.
 
 ### The $1,000 figure
 
-TBPELS's table of suggested sanctions for surveyors sets the starting sanction for
-"Reveal confidences and private information," under § 138.61(a), (b) and (c), at
-**reprimand and $1,000**. The board may impose more or less.
+The $1,000 in the box is the **suggested** sanction for "Reveal confidences and
+private information," under § 138.61(a), (b) and (c). Three things about it that
+would not fit on a poster, all from 22 Tex. Admin. Code § 139.37(a):
 
-**Source:** 22 Tex. Admin. Code § 139.37(b), as printed in the TBPELS *Acts and
-Rules* effective 18 June 2026, page 110 —
-<https://pels.texas.gov/downloads/lawrules.pdf>.
+- The board "may arrive at a greater or lesser sanction than suggested"
+- The statutory maximum is **$1,500 per violation**
+- **"Each day a violation continues or occurs is considered a separate violation
+  for the purpose of assessing an administrative penalty"**
 
-That is the board's part alone. It says nothing about the client, the contract, or
-your carrier.
+Read the second and third together before you decide the number is small.
+
+**Source:** 22 Tex. Admin. Code § 139.37(a), (b), as printed in the TBPELS *Acts
+and Rules* effective 18 June 2026 — subsection (a) on page 107, the table row on
+page 110. <https://pels.texas.gov/downloads/lawrules.pdf>
 
 ### What is a firm choice here, and what is not
 
