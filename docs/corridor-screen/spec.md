@@ -122,14 +122,29 @@ Every endpoint below was queried live on 2026-09-12 and returned real results. F
 | TxDOT-owned land | `2025_Land_Parcels` | **328** |
 | Roadway facts | `Roadway_Inventory_2023` | 0 |
 | Route geometry | `TxDOT_Roadways` | 0 |
-| Control | `Primary_Control_Points` | **67** |
+| Control | `Primary_Control_Points` — **the San Antonio district's**, see below | **67** |
 | Control | NGS Data Explorer `/radial`, and the NGS datasheets feature service | 1 |
 | ROW sheets | `ROW_Maps_CL_2017` on `maps.dot.state.tx.us` | 0 |
 | Cemeteries · Historic · Hospitals · Ambulance · Fire and EMS · Schools | USGS `structures` | 2 · 11 · 14 · 15 · 16 · 23 |
 | Railroads | USGS `transportation` | 38 |
 | Pipelines | **TPMS** `rrc_public/tpms` on `gis.rrc.texas.gov`, the Railroad Commission of Texas | 0 |
 
-**Layer numbers are load-bearing.** Control is layer 67. TxDOT land parcels is layer 328. A tool that assumes layer 0 does not error — it returns the wrong data, quietly. Section 8 checks this at startup.
+**Layer numbers are load-bearing.** Control is layer 67. TxDOT land parcels is layer 328. Section 8 checks this at startup, before any query is sent.
+
+**The quiet wrong answer is a wrong *service*, not a wrong layer number.** `TxDOT_Control_Sections/FeatureServer/0` exists, is layer 0, answers a corridor query without erroring, and holds numbered highway segments rather than survey monuments. The field-list check catches that too.
+
+**`Primary_Control_Points` is one district's control, not the state's.** Its published title is *San Antonio District Primary Control Points*, and **715 of its 766 records are in district 15**; Bexar County alone holds 376. That is the right dataset for the worked example and a complete one. Pointed at a corridor in another part of Texas it returns nothing — and nothing reads as "TxDOT has set no control here," which is `unknown` reported as `no`. The tool's `area` is `texas-bexar`, so the limit does not bite today. A statewide equivalent was looked for on 2026-09-12 and **not found**; where we looked is on [the data-sources page](../data-sources/txdot-control-points.md).
+
+!!! note "Amended 2026-09-13, on [#15](https://github.com/RickSmith/survey-recon/issues/15)"
+    Until then this paragraph read: "A tool that assumes layer 0 does not error — it returns the wrong data, quietly."
+
+    **Checked live on 2026-09-12 while building #15, that is not true of either service named here.** Both answer a request for layer 0 with `HTTP 400 — The requested layer (layerId: 0) was not found`, because on each of them the numbered layer is the only layer there is. A hardcoded layer 0 fails loudly and immediately against `Primary_Control_Points` and against `2025_Land_Parcels`.
+
+    The trap is real; it is one step further out, and it is worse. Two TxDOT datasets are both called "control" — one is a monument, the other is a numbered stretch of highway — and the one that is not survey control *does* answer at layer 0, without complaint. An agent told to find "TxDOT control" and reaching for layer 0 lands there and gets a plausible answer to the wrong question.
+
+    That makes the field-list check more load-bearing than this section implied, not less: it is the only thing standing between a run and a plausible wrong answer, because the layer number alone will not give the game away.
+
+    The full account, with the queries, is on [the TxDOT control points page](../data-sources/txdot-control-points.md). `docs/txdot-research.md` carries a dated correction for the same claim. Raised rather than patched over; Rick ruled on 2026-09-13.
 
 !!! note "Amended 2026-09-13, on [PR #53](https://github.com/RickSmith/survey-recon/pull/53)"
     Until then the pipeline row read `NPMS NPMS_Pipelines_2022`, on
@@ -184,13 +199,28 @@ The checks are blunt on purpose:
 
 | Check | What it catches |
 |---|---|
-| Field list confirmed at startup, before any query | the wrong layer — the "layer 67, not 0" trap. **Hard error**, because it is a configuration bug and free to catch |
+| Field list confirmed at startup, before any query | the wrong layer **or the wrong service** — the "layer 67, not 0" trap. **Hard error**, because it is a configuration bug and free to catch |
 | Record count is exactly 500, 1000 or 2000 | a paging cap mistaken for an answer |
 | More parcels than a corridor this long can hold | the distance was ignored and we got the county |
 | **Any part** of every returned record falls within the half-width plus a stated margin of the centerline | the spatial filter failed |
 | Impossible values — negative acreage, a recovery date in the future | a coordinate or a unit was misread |
+| Records arrived with no position on them | a record that can be placed neither inside the corridor nor outside it |
+| A service's own published coordinates agree with the geometry it returned | **the projection was not applied** — the answer is right, in the wrong units |
 
 Every warning that trips is written into the output next to the data it doubts. **The tool does not hide it and does not fix it.**
+
+!!! note "Amended 2026-09-13, on [#15](https://github.com/RickSmith/survey-recon/issues/15)"
+    Two rows added, and one row's wording widened.
+
+    **The widened row.** "The wrong layer" became "the wrong layer **or the wrong service**." Section 6 records why: a hardcoded layer 0 *errors* on both services this specification names, and the answer that arrives looking fine comes from a differently named service that does answer at layer 0. The field-list check catches both, and it is the only thing that does.
+
+    **The two added rows were already in the tool** and this table had never named them. `check_records_without_position` came in with the NGS marks under [#14](https://github.com/RickSmith/survey-recon/issues/14).
+
+    `check_published_position` is new under #15, and it is here because TxDOT's control layer stores its geometry in **WKID 103161** — Texas South Central, in US Survey Feet — and publishes `STATN_LAT` and `STATN_LON` as plain attributes in degrees beside it. A query that forgets `outSR=4326` gets a real position back, correctly returned, in the units it was stored in. **Nothing errors.** Every point then lands far outside the corridor and the corridor reports no control in it.
+
+    Because the service answers the same question twice in two ways, the two answers can be held against each other. Two independent pieces of geometry agreeing is the strongest thing a screening run can say for itself — the same argument the parcel check makes above. On the SH16 run they agree to about three feet on every point.
+
+    A warning, not a hard error, like every check here but the first. [ADR 0001](../adr/0001-sanity-checks-warn-dead-services-stop.md) has the reasoning.
 
 !!! note "Amended 2026-09-13, on [PR #52](https://github.com/RickSmith/survey-recon/pull/52)"
     That fourth check used to read "every returned **point** falls inside the
@@ -318,7 +348,22 @@ The same is true of the NGS marks, which are asked about a box drawn around the 
 
 `ngs_marks` and `txdot_points`. **Each is an array when its service was asked, and a `not-screened` block when it was not.**
 
-**The `condition` field is carried through, never dropped** — a mark stamped `MARK NOT FOUND` is visible recovery risk, and it is the whole reason to look. `recovery_risk` counts them.
+**The `condition` field is carried through, never dropped** — a mark stamped `MARK NOT FOUND` is visible recovery risk, and a TxDOT monument recorded `Destroyed` is the same kind of risk. It is the whole reason to look.
+
+**The two services are counted separately and never summed.** `recovery_risk` counts the NGS marks; `txdot_control` counts the TxDOT points. 98 of TxDOT's 766 records carry an NGS PID, so some monuments are on both lists, and one total would quietly count those twice.
+
+`txdot_control` carries `points_in_corridor`, **`distinct_stations`**, `destroyed`, `condition_unknown`, `by_condition` and `points_without_position`.
+
+!!! note "Amended 2026-09-13, on [#15](https://github.com/RickSmith/survey-recon/issues/15)"
+    Until then this section said only "`recovery_risk` counts them," of both services, and named no other field in the block.
+
+    Issue #15 added three the section had no row for, and Rick ruled on 2026-09-13 that all three stay:
+
+    - **`txdot_control`** — a sibling of `recovery_risk`, not part of it. Counting the two services into one number would sum two overlapping lists. The overlap is real and measured: 98 of the 766 TxDOT records carry an NGS PID.
+    - **`distinct_stations`** — the monuments, as against the records. The TxDOT service holds 766 records carrying only 492 station names; 274 names appear twice. On SH16 that is four records naming two monuments. **A crew drives to the monument, not to the record**, so reporting the record count alone would double the control an estimator believes is already set. Both numbers are reported and no record is dropped — all 274 duplicated pairs agree on condition, so there is no call to make about which to believe, only a count to be honest about.
+    - **`points_without_position`** — the mirror of `marks_without_position`, which this section never named either.
+
+    None of the three changed something the specification had settled; each is a number it had no row for. Raised on issue #15 rather than slipped in, which is the precedent [PR #53](https://github.com/RickSmith/survey-recon/pull/53) set for additions the file carries and a section never named.
 
 !!! note "Amended 2026-09-13, on [PR #54](https://github.com/RickSmith/survey-recon/pull/54)"
     Until then this section read "`ngs_marks` and `txdot_points`, **each an array**."

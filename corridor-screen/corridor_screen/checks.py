@@ -4,10 +4,23 @@ There are two kinds of check here and the difference is deliberate. It is
 recorded in ``docs/adr/0001-sanity-checks-warn-dead-services-stop.md``.
 
 **The field list check is a hard error.** It runs before any query is sent and
-it stops the run. Pointing at the wrong layer is a configuration bug, it costs
-nothing to catch, and it is the trap this repo keeps pointing at: TxDOT's
-control points are layer 67 and its land parcels are layer 328. A tool that
-assumes layer 0 does not error. It returns the wrong data, quietly.
+it stops the run. Pointing at the wrong layer is a configuration bug, and it
+costs nothing to catch.
+
+It is the trap this repo keeps pointing at: TxDOT's control points are layer 67
+and its land parcels are layer 328. What this file used to say next was that "a
+tool that assumes layer 0 does not error -- it returns the wrong data,
+quietly." **Checked on 2026-09-12, that is not true of either of those two
+services.** Both answer a request for layer 0 with HTTP 400, "The requested
+layer (layerId: 0) was not found," because on each of them the numbered layer
+is the only layer there is.
+
+The quiet wrong answer is one step further out, and this check catches it just
+the same. It is not the wrong layer, it is the wrong *service*:
+``TxDOT_Control_Sections/FeatureServer/0`` exists, is layer 0, answers a
+corridor query without erroring, and holds numbered highway segments rather
+than survey monuments. Reading its field list is what stops that run. The whole
+account is in ``sources.py`` and on the data-sources page for layer 67.
 
 **Every other check records a warning and the run carries on.** A screening
 run that halts on a doubt produces nothing. A screening run that reports its
@@ -15,6 +28,8 @@ doubts beside the data produces something an RPLS can read and judge. The
 warning is written into the output next to the data it doubts. The tool does
 not hide it and does not fix it.
 """
+
+import math
 
 from .geometry import (
     FEET_PER_MILE,
@@ -205,6 +220,67 @@ def check_records_without_position(service, missing, total):
         f"could not be tested against the corridor.",
         "Those records are in neither the in-corridor list nor the count of ones "
         "outside it. Read them from the cached response before relying on the total.",
+    )
+
+
+# How far a service's own published coordinates may sit from the position it
+# returned before the pair is doubted, in feet. Generous on purpose: this is
+# here to catch a projection that was not applied, which is wrong by miles, not
+# to audit a service's rounding.
+DEFAULT_POSITION_TOLERANCE_FT = 100.0
+
+
+def check_published_position(service, positions, plane, tolerance_ft=DEFAULT_POSITION_TOLERANCE_FT):
+    """Where a service publishes its own coordinates, they should match the ones it returned.
+
+    ``positions`` is a list of ``(identifier, returned_point, published_point)``,
+    each point a ``[longitude, latitude]`` pair. Records that publish no
+    position of their own are skipped -- there is nothing to compare.
+
+    **This is the check for the projection trap.** TxDOT's layer 67 stores its
+    geometry in WKID 103161, which is Texas South Central in US Survey Feet. Ask
+    it for features without ``outSR=4326`` and it answers with coordinates like
+    ``x: 2166836.612`` -- a real position, correctly returned, in the units it
+    was stored in. Nothing errors. The tool then reads that as a longitude,
+    every point lands far outside the corridor, and the corridor comes back with
+    no control in it.
+
+    The layer publishes ``STATN_LAT`` and ``STATN_LON`` as plain attributes as
+    well, always in degrees. So the service answers the same question twice, in
+    two ways, and the two answers can be held against each other. Two
+    independent pieces of geometry agreeing is the strongest thing a screening
+    run can say for itself -- the same argument the parcel check makes on
+    PR #52.
+
+    A warning rather than a hard error, like every check here but the field
+    list. ADR 0001 has the reasoning.
+    """
+    if not positions:
+        return None
+    limit_miles = float(tolerance_ft) / FEET_PER_MILE
+    apart = []
+    for identifier, returned, declared in positions:
+        if not returned or not declared:
+            continue
+        if declared[0] is None or declared[1] is None:
+            continue
+        rx, ry = plane.xy(returned)
+        dx, dy = plane.xy(declared)
+        if math.hypot(rx - dx, ry - dy) > limit_miles:
+            apart.append(identifier)
+    if not apart:
+        return None
+    return warning(
+        "returned position disagrees with the published one",
+        service,
+        f"{len(apart)} of {len(positions)} records sit more than {tolerance_ft:g} ft "
+        f"from the latitude and longitude the same record publishes -- including "
+        f"{apart[0]}.",
+        "The service may have answered in its own coordinate system -- state "
+        "plane feet -- rather than in longitude and latitude. Treat every "
+        "position on this run as unreliable until that is ruled out. In the "
+        "cached request beside this warning, the parameter that asks for "
+        "degrees is `outSR`, and it should read 4326.",
     )
 
 

@@ -35,6 +35,30 @@ All of the following were **queried live and returned real results**.
 
 **Layer IDs are frequently NOT 0** (control = 67, land parcels = 328). An agent that hardcodes `/FeatureServer/0` fails silently. Always read `FeatureServer?f=json` first. *Good teaching moment.*
 
+!!! warning "Corrected 2026-09-12, while building [#15](https://github.com/RickSmith/survey-recon/issues/15)"
+    Four claims on this page about `Primary_Control_Points` did not survive being
+    queried. The full account is on [the TxDOT control points
+    page](data-sources/txdot-control-points.md); in short:
+
+    1. **"An agent that hardcodes `/FeatureServer/0` fails silently" is not true
+       of either service named.** Both `Primary_Control_Points` and
+       `2025_Land_Parcels` answer a request for layer 0 with `HTTP 400 — The
+       requested layer was not found`, because on each the numbered layer is the
+       only layer there is. The quiet wrong answer is a *different service*:
+       `TxDOT_Control_Sections/FeatureServer/0` exists, answers without erroring,
+       and holds numbered highway segments rather than monuments. Still a good
+       teaching moment — a better one — but not the one written here.
+    2. **`SRVY_CTRL_DCMNT_ADDR` is not a PDF link.** It is null on all 766
+       records. The control sheets are ArcGIS *attachments*; `queryAttachments`
+       resolves them.
+    3. **"766 statewide" is the record count, not the coverage.** The service's
+       own title is *San Antonio District* Primary Control Points, and 715 of the
+       766 records are in district 15.
+    4. **766 records carry only 492 distinct station names.** 274 stations appear
+       twice. A count of records is not a count of monuments.
+
+    The `outSR=4326` note was right and is load-bearing.
+
 **TxDOT ROW map index — the standout find**
 ```
 https://maps.dot.state.tx.us/arcgis/rest/services/ROW/ROW_Maps_CL_2017/MapServer/0

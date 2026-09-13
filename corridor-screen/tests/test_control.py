@@ -182,14 +182,240 @@ class TestTheRecoveryRiskCount(unittest.TestCase):
         self.assertEqual(counted["marks_in_corridor"], 4)
 
 
+# -- TxDOT primary control points -------------------------------------------
+#
+# Issue #15. The same strict corridor test and the same recovery vocabulary as
+# the NGS marks above, against a service that spells almost everything
+# differently -- and that writes the string ``N/A`` where NGS writes a blank.
+
+
+def control_feature(lon=-98.65, lat=29.545, **attributes):
+    """One TxDOT control point, in the shape layer 67 answers with."""
+    return {"attributes": attributes, "geometry": {"x": lon, "y": lat}}
+
+
+def select_txdot(features, half_width_ft=HALF_WIDTH_FT, pdf_urls=None):
+    return control.select_txdot(
+        features, ALIGNMENT, half_width_ft, PLANE, pdf_urls=pdf_urls
+    )
+
+
+class TestTheNotApplicablePlaceholder(unittest.TestCase):
+    """``N/A`` is this service's blank, and it is a non-empty string.
+
+    The NGS service writes a single space where it has nothing, and
+    ``arcgis.attribute`` strips that away. This service writes the three
+    characters ``N/A`` instead -- on 649 of its 766 ``NGS_PERM_ID`` values and
+    on 24 of its conditions. Stripped, that is still a non-empty string. So a
+    tool that only trims whitespace reports a condition of ``N/A`` as a
+    condition that somebody reported, and a monument nobody has assessed goes
+    into an estimate as control you have.
+    """
+
+    def test_a_not_applicable_condition_is_absent_not_a_value(self):
+        points, _ = select_txdot([control_feature(STATN_NM="A", MONUMENT_COND_DSCR="N/A")])
+        self.assertIsNone(points[0]["condition"])
+
+    def test_a_not_applicable_condition_is_unknown_never_reported(self):
+        points, _ = select_txdot([control_feature(STATN_NM="A", MONUMENT_COND_DSCR="N/A")])
+        self.assertEqual(points[0]["recovery"], control.RECOVERY_UNKNOWN)
+
+    def test_a_not_applicable_ngs_id_is_not_carried_as_a_pid(self):
+        """649 of 766 records say ``N/A`` here. None of them is an NGS mark."""
+        points, _ = select_txdot([control_feature(STATN_NM="A", NGS_PERM_ID="N/A")])
+        self.assertIsNone(points[0]["ngs_pid"])
+
+    def test_a_real_ngs_id_is_carried_so_the_two_services_can_be_joined(self):
+        points, _ = select_txdot([control_feature(STATN_NM="A", NGS_PERM_ID="AY2100")])
+        self.assertEqual(points[0]["ngs_pid"], "AY2100")
+
+
+class TestWhatTheConditionMeansForRecovery(unittest.TestCase):
+    """TxDOT's condition vocabulary, mapped onto the same recovery answers.
+
+    ``Destroyed`` gets its own answer rather than being folded in with the NGS
+    ``MARK NOT FOUND``. They are different claims: one says somebody looked and
+    could not find it, the other says it is gone. Both cost a crew the same
+    trip, and merging them would lose which of the two was actually said.
+    """
+
+    def test_destroyed_is_named_rather_than_reported_as_a_condition(self):
+        points, _ = select_txdot(
+            [control_feature(STATN_NM="A", MONUMENT_COND_DSCR="Destroyed")]
+        )
+        self.assertEqual(points[0]["recovery"], control.RECOVERY_DESTROYED)
+
+    def test_the_service_answers_in_mixed_case_and_is_read_anyway(self):
+        """NGS writes ``GOOD``. This service writes ``Good``. Both are read."""
+        points, _ = select_txdot([control_feature(STATN_NM="A", MONUMENT_COND_DSCR="Good")])
+        self.assertEqual(points[0]["recovery"], control.RECOVERY_REPORTED)
+        self.assertEqual(points[0]["condition"], "Good")
+
+    def test_a_condition_of_unknown_is_unknown_not_a_reported_condition(self):
+        """Nine records say this. "Condition reported: Unknown" would be a lie."""
+        points, _ = select_txdot(
+            [control_feature(STATN_NM="A", MONUMENT_COND_DSCR="Unknown")]
+        )
+        self.assertEqual(points[0]["recovery"], control.RECOVERY_UNKNOWN)
+
+    def test_poor_is_reported_and_left_to_the_surveyor_who_signs(self):
+        points, _ = select_txdot([control_feature(STATN_NM="A", MONUMENT_COND_DSCR="Poor")])
+        self.assertEqual(points[0]["recovery"], control.RECOVERY_REPORTED)
+        self.assertEqual(points[0]["condition"], "Poor")
+
+
+class TestTheRecoveryDate(unittest.TestCase):
+    """This service publishes a date as milliseconds since 1970. NGS does not."""
+
+    def test_an_epoch_date_is_written_as_a_date_a_person_can_read(self):
+        points, _ = select_txdot(
+            [control_feature(STATN_NM="A", LAST_RCOV_DT=1159660800000)]
+        )
+        self.assertEqual(points[0]["last_recovered"], "2006-10-01")
+
+    def test_no_recovery_date_stays_absent_rather_than_becoming_1970(self):
+        """752 of 766 records publish none. A zero here would read as New Year 1970."""
+        points, _ = select_txdot([control_feature(STATN_NM="A")])
+        self.assertIsNone(points[0]["last_recovered"])
+
+
+class TestTheIntervisiblePartner(unittest.TestCase):
+    """TxDOT requires primary control in intervisible pairs, so the partner is data."""
+
+    def test_the_partner_station_is_carried_through(self):
+        points, _ = select_txdot(
+            [control_feature(STATN_NM="Z0151155AZ", INTERVSBL_STATN_NM="Z0151155")]
+        )
+        self.assertEqual(points[0]["intervisible_station"], "Z0151155")
+
+
+class TestTheControlSheetPdf(unittest.TestCase):
+    """The field the research note calls a PDF link is empty. The PDF is an attachment."""
+
+    def test_a_point_carries_the_link_to_its_own_control_sheet(self):
+        points, _ = select_txdot(
+            [control_feature(STATN_NM="A", OBJECTID=10, PDF_Filename="SCP_32.pdf")],
+            pdf_urls={10: "https://example.test/67/10/attachments/538"},
+        )
+        self.assertEqual(
+            points[0]["control_sheet_url"], "https://example.test/67/10/attachments/538"
+        )
+
+    def test_a_point_with_no_attachment_carries_nothing_rather_than_a_broken_link(self):
+        points, _ = select_txdot([control_feature(STATN_NM="A", OBJECTID=11)])
+        self.assertIsNone(points[0]["control_sheet_url"])
+
+
+class TestWhichControlPointsAreInTheCorridor(unittest.TestCase):
+    """The same strict point test the NGS marks get, for the same reason."""
+
+    def test_a_point_beyond_the_half_width_is_out(self):
+        points, skipped = select_txdot([control_feature(lat=29.548, STATN_NM="FAR")])
+        self.assertEqual(points, [])
+        self.assertEqual(skipped, 0)
+
+    def test_a_point_with_no_position_is_counted_never_dropped(self):
+        points, skipped = select_txdot(
+            [{"attributes": {"STATN_NM": "A"}, "geometry": None}]
+        )
+        self.assertEqual(points, [])
+        self.assertEqual(skipped, 1)
+
+    def test_nearest_the_centerline_comes_first_then_the_station_name(self):
+        points, _ = select_txdot(
+            [
+                control_feature(lat=29.5455, STATN_NM="FURTHER"),
+                control_feature(STATN_NM="B"),
+                control_feature(lon=-98.66, STATN_NM="A"),
+            ],
+            half_width_ft=1000,
+        )
+        self.assertEqual([p["station"] for p in points], ["A", "B", "FURTHER"])
+
+
+class TestTheTxdotControlCount(unittest.TestCase):
+    """What an estimator reads before pricing TxDOT control."""
+
+    def points(self):
+        found, _ = select_txdot(
+            [
+                control_feature(STATN_NM="A", MONUMENT_COND_DSCR="Good"),
+                control_feature(lon=-98.66, STATN_NM="B", MONUMENT_COND_DSCR="Destroyed"),
+                control_feature(lon=-98.67, STATN_NM="C", MONUMENT_COND_DSCR="N/A"),
+                control_feature(lon=-98.64, STATN_NM="D", MONUMENT_COND_DSCR="Unknown"),
+            ]
+        )
+        return found
+
+    def test_it_counts_the_monuments_that_are_gone(self):
+        counted = control.txdot_recovery_risk(self.points())
+        self.assertEqual(counted["destroyed"], 1)
+
+    def test_unknown_covers_both_the_word_and_the_placeholder(self):
+        counted = control.txdot_recovery_risk(self.points())
+        self.assertEqual(counted["condition_unknown"], 2)
+
+    def test_every_condition_the_service_returned_is_tallied(self):
+        counted = control.txdot_recovery_risk(self.points())
+        self.assertEqual(
+            counted["by_condition"],
+            {"Good": 1, "Destroyed": 1, "Unknown": 1, "(none published)": 1},
+        )
+
+    def test_the_total_is_the_points_in_the_corridor(self):
+        counted = control.txdot_recovery_risk(self.points())
+        self.assertEqual(counted["points_in_corridor"], 4)
+
+
+class TestTheSameMonumentTwice(unittest.TestCase):
+    """This service holds two records for a great many of its monuments.
+
+    Read on 2026-09-12: 766 records carrying only 492 distinct station names.
+    274 names appear twice, which is 548 of the 766 records. On the SH16
+    corridor it is four records naming two monuments.
+
+    A crew drives to the monument, not to the record. Reporting four where
+    there are two doubles the control an estimator thinks is already set, and
+    that is a discount on a price nobody chose to give.
+
+    Both numbers are reported and neither record is dropped. The service said
+    what it said, and all 274 duplicated pairs agree on condition, so there is
+    no call to make about which of the two to believe -- only a count to be
+    honest about.
+    """
+
+    def points(self):
+        found, _ = select_txdot(
+            [
+                control_feature(STATN_NM="Z0151105", MONUMENT_COND_DSCR="Good"),
+                control_feature(lon=-98.6501, STATN_NM="Z0151105", MONUMENT_COND_DSCR="Good"),
+                control_feature(lon=-98.66, STATN_NM="Z0151225", MONUMENT_COND_DSCR="Good"),
+            ]
+        )
+        return found
+
+    def test_every_record_the_service_sent_stays_on_the_list(self):
+        self.assertEqual(len(self.points()), 3)
+
+    def test_the_monument_count_is_reported_beside_the_record_count(self):
+        counted = control.txdot_recovery_risk(self.points())
+        self.assertEqual(counted["points_in_corridor"], 3)
+        self.assertEqual(counted["distinct_stations"], 2)
+
+
 class TestTheControlBlock(unittest.TestCase):
     """What the output file carries under ``control``."""
 
-    def test_txdot_points_are_named_as_not_screened_rather_than_left_out(self):
-        """A block that is absent looks like an oversight. #15 is not done yet."""
-        block = control.block([])
+    def test_a_run_that_never_asked_txdot_says_so_rather_than_reporting_none(self):
+        """Zero points and never-looked are different answers, same as the marks."""
+        block = control.block([], txdot_detail="the host was not answering")
         self.assertEqual(block["txdot_points"]["status"], "not-screened")
-        self.assertIn("15", block["txdot_points"]["detail"])
+        self.assertEqual(block["txdot_points"]["detail"], "the host was not answering")
+
+    def test_a_run_that_asked_txdot_and_found_nothing_reports_an_empty_list(self):
+        block = control.block([], txdot_points=[])
+        self.assertEqual(block["txdot_points"], [])
+        self.assertEqual(block["txdot_control"]["points_in_corridor"], 0)
 
     def test_a_run_that_never_asked_says_so_rather_than_reporting_no_marks(self):
         """Zero marks and never-looked are different answers. ``unknown`` vs ``no``."""

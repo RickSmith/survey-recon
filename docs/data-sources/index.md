@@ -29,6 +29,13 @@ Verified research notes live in
   the quiet kind: the condition field is called `LAST_COND` here and `condition`
   on NGS's other API, and asking for the wrong name returns nothing and raises
   nothing.
+- [The TxDOT control points service](txdot-control-points.md) — TxDOT's own
+  primary control, on the famous layer 67. Written under
+  [issue #15](https://github.com/RickSmith/survey-recon/issues/15). It carries
+  four traps, and the first is that the trap this repo kept warning about is not
+  the one that is actually there: layer 0 hard-errors on this service. The quiet
+  wrong answer comes from a differently named service that *does* answer at
+  layer 0 and holds highway segments rather than monuments.
 - [The TxDOT ROW map sheet index](row-map-sheets.md) — how many record drawings
   cover the corridor and how far back they go. Written under
   [issue #16](https://github.com/RickSmith/survey-recon/issues/16). Its first
