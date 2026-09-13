@@ -7,9 +7,11 @@ checked against what was actually served.
 
 **Nothing here is edited.** Each file is exactly the bytes that came back.
 
-All five were fetched on **2026-09-13**, and **every one answered HTTP 200.**
+All ten were fetched on **2026-09-13**, and **every one answered HTTP 200.**
 That is the point of the set: not one of them is an error by the only test most
-callers apply.
+callers apply. The statuses were read off the wire by re-requesting each one;
+a saved body carries no headers of its own, so `elevation_trap.CAPTURES` states
+them rather than parsing them.
 
 | File | Request | What came back |
 |---|---|---|
@@ -18,6 +20,13 @@ callers apply.
 | `units-meters.json` | `?x=-98.644635&y=29.528488&wkid=4326&units=Meters` | `"value": "264.221008301"` — byte-identical to the one above |
 | `no-data-gulf.txt` | `?x=-92.0&y=25.0&wkid=4326&units=Feet` | 77 bytes of plain text inside a 200 |
 | `wkid-mismatch.txt` | `?x=-98.644635&y=29.528488&wkid=3857&units=Feet` | 77 bytes of plain text inside a 200 |
+| `units-lowercase-feet.json` | `...&units=feet` | `866.8668528742528` — a **number**, in feet. This is what rules out case sensitivity as the explanation |
+| `units-ft.json` | `...&units=ft` | `"264.221008301"` — meters |
+| `units-furlongs.json` | `...&units=Furlongs` | `"264.221008301"` — meters. A unit nobody means seriously, kept because it shows the rule |
+| `units-omitted.json` | *(no `units` at all)* | `"264.221008301"` — meters, with no default stated anywhere |
+| `sr-4326-ignored.json` | `...&units=Feet&sr=4326` | `866.8668528742528` — identical to `sr=3857` and to sending nothing. `sr` is discarded in silence |
+| `sr-3857-ignored.json` | `...&units=Feet&sr=3857` | `866.8668528742528` — the control for the row above |
+| `wkid-3857-mercator.json` | `?x=-10981070.536&y=3443084.221&wkid=3857&units=Feet` | `866.8668528742528` — the same point in Web Mercator meters, correctly declared. **`wkid` is honored**, which is what makes the `sr` silence a trap |
 | `the-beat.txt` | — | The beat as `--show` renders it, written by `python -m corridor_screen.elevation_trap --write-fallback` and pinned to the code by a test. The fallback for a podium where Python will not start |
 
 The point is `-98.644635, 29.528488` — SH16 at Bandera Road, which is the

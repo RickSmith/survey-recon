@@ -22,8 +22,9 @@ This is failure beat two, written under
 That is the part that should worry you.
 
 It is not a programmer fat-fingering `Feet`. **It is what you call the unit you
-work in.** It is the US survey foot — the one EPSG numbers `9003`, the one the
-TxDOT survey specification is written in, the one on your data collector.
+work in.** It is the US survey foot — the one EPSG numbers `9003`, and the one TxDOT's
+Survey Manual requires in deliverables
+([TxDOT Survey Manual, Ch. 3, Control Points](https://www.txdot.gov/manuals/row/ess/index.html)).
 
 A surveyor asking for elevations in the unit of their own profession gets
 meters, and is told nothing.
@@ -63,43 +64,97 @@ Ask about a point in the Gulf of Mexico:
 
 ```
 HTTP 200
-Call failed.  [Failed cloud operation: Open, Path: /vsimem/_00002B0B.aux.xml]
+Call failed.  [Failed cloud operation: Open, Path: /vsimem/_000011B4.aux.xml]
 ```
 
 Still a 200. But it is **not JSON**, so `json.loads` raises, and whoever wrote
 the caller finds out inside a second.
+
+!!! note "Do not match on that message"
+    Those are the exact bytes of `captures/silent-nodata/no-data-gulf.txt`, and
+    **the text varies between runs.** An earlier draft of this page quoted
+    `_00002B0B.aux.xml` — a real response, from a live call made while
+    researching this, but not the one committed here. Quoting something other
+    than the evidence is the failure this page is about, so it is recorded
+    rather than quietly corrected.
+
+    [Sources we did not use](../data-sources/not-used.md) records the same
+    endpoint answering `Invalid or missing input parameters.` for the same
+    condition on the same day. The check that keeps working is whether the body
+    parses as JSON at all.
+
+!!! note "Do not match on that message"
+    That is the exact body of the committed capture. **The text varies between
+    runs** — an earlier draft of this page quoted a different 
+    from a live call rather than from the evidence, and
+    [sources we did not use](../data-sources/not-used.md) records this endpoint
+    giving  for the same condition on the
+    same day. The check that works is whether the body parses as JSON at all.
 
 Put the two side by side and the beat is the comparison:
 
 | | What happens | Who notices |
 |---|---|---|
 | **Gulf of Mexico** | 200 carrying plain text | Anything that parses it. Immediately |
-| **`units=US_Feet`** | 200 carrying valid JSON and a real number | **Nobody** |
+| **`units=US_Feet`** | 200 carrying valid JSON and a real number | Only somebody who knows this county |
 
 > **The broken answer is caught by anything that reads it, and the plausible one
-> is caught by nothing until somebody has sealed it.**
+> is caught only by somebody who already knew what this ground is.**
 
-That is the whole argument for beat two. An error message is a service doing you
-a favor. This is the other thing.
+That last clause was not in the first draft of this page, and finding out why is
+the best thing in it.
+
+**264.22 feet is below the floor of Bexar County**, which runs roughly 400 to
+2,000. So a range check catches this — *if* the range is this county's. A range
+check against the Earth, which is what you write when you do not know where the
+job is, sails straight past it.
+
+The first version of the code behind this page had a single check written
+`0 < feet < 5000`, above a comment saying Bexar runs 400 to 2,000. The two did
+not agree, and the wider bound was quietly doing the work — the function had
+been calibrated, without anyone deciding to, so the answer came out the way the
+argument wanted. The review caught it.
+
+There are now two functions, `survives_a_generic_check` and
+`survives_a_local_check`, and the honest claim is the narrower one:
+
+> General care does not catch it. Knowing your own ground does.
+
+Which is this repo's whole argument, arrived at from the wrong end.
 
 ## What the ticket expected, and what is actually there
 
 Worth recording, because it is the repo's own rule about dated research.
 
 [Issue #26](https://github.com/RickSmith/survey-recon/issues/26) describes the
-service ignoring **the coordinate-system parameter** and reading longitude and
-latitude as Web Mercator meters. Checked on 2026-09-13, that is not what this
-endpoint does now — `wkid` is honored. Ask in Web Mercator meters with
-`wkid=3857` and the right elevation comes back; ask in degrees while claiming
-`3857` and you get plain text rather than a wrong number.
+service ignoring **the coordinate-system parameter**. It still does. And an
+earlier draft of this page said it did not — because it tested the wrong
+parameter.
 
-**The hazard did not go away. It moved** — from the coordinate system to the
-units. Same failure, different clothes: a parameter accepted, quietly not
-applied, and answered around.
+**There are two spellings, and only one of them does anything.** Checked
+2026-09-13, all captured:
 
-[Sources we did not use](../data-sources/not-used.md) already records this
-endpoint changing shape once between the original research and a re-test, and
-says so rather than quietly updating the note. This is the second time.
+| Sent | Answer |
+|---|---|
+| `sr=4326` | `866.8668528742528` |
+| `sr=3857` | `866.8668528742528` |
+| no coordinate system at all | `866.8668528742528` |
+| `wkid=3857` with Web Mercator meters | correct elevation |
+
+`sr` is the parameter this repo's original research named, and it is discarded
+in silence — sending `4326`, sending `3857`, and sending nothing are the same
+request. `wkid` is honored.
+
+So one letter separates a parameter that works from one thrown away without
+comment, and **nothing in the response tells you which you used.** That is worse
+than the ticket describes, not different from it.
+
+!!! note "The correction is kept, not tidied away"
+    [Sources we did not use](../data-sources/not-used.md) had the `sr` half
+    right the whole time — "`sr=4326` is silently ignored, which is the original
+    hazard, still here." The draft of this page that contradicted it was wrong,
+    and testing `wkid` and concluding something about `sr` is exactly the shape
+    of error these pages exist to teach.
 
 ## Run it yourself
 
@@ -110,7 +165,7 @@ it away from you:
 python -m corridor_screen.elevation_trap --show
 ```
 
-Five responses are committed in `corridor-screen/captures/silent-nodata/`, with
+Nine responses are committed in `corridor-screen/captures/silent-nodata/`, with
 the exact request each came from. **Every one of them answered HTTP 200** — that
 is the point of the set. Not one is an error by the only test most code applies.
 
@@ -118,9 +173,12 @@ is the point of the set. Not one is an error by the only test most code applies.
 
 Nothing clever, and nothing this repo can do for you.
 
-**Ask twice.** The only thing that separates 866.87 from 264.22 is a second
-request in a unit you are sure of, and a ratio you check yourself. That is what
-`elevation_trap.value_of` does, and it is the entire defense.
+**Ask twice.** A second request in a unit you are sure of, and a ratio you check
+yourself. If the two answers differ by 3.28, you have found it.
+
+**And check against your own county, not against the planet.** That is the check
+that caught this one, and it is not a programming skill. It is knowing that
+Bandera Road does not sit at 264 feet.
 
 **And do not use this service on anything that matters.** The corridor tool does
 not call it at all — elevation is not something a corridor screening needs, and

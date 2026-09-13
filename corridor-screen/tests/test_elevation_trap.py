@@ -15,8 +15,8 @@ Ask the elevation of SH16 at Bandera Road, twice, one word apart:
 
 866.87 / 264.22 is 3.28084, which is feet per meter. It is the same elevation.
 And ``US_Feet`` is not a typo a programmer would make -- **it is what a Texas
-surveyor calls the unit they work in**, the one EPSG numbers 9003 and the one
-the TxDOT survey specification is written in.
+surveyor calls the unit they work in**: the one EPSG numbers 9003, and the one
+TxDOT's Survey Manual requires in deliverables (Ch. 3, Control Points).
 
 No error. HTTP 200. Valid JSON. A number that is a perfectly plausible elevation
 for San Antonio, three and a quarter times too small, with nothing anywhere in
@@ -73,11 +73,41 @@ class TestTheUnitThatIsNotHonored(unittest.TestCase):
         self.assertIsInstance(json.loads(elevation_trap.capture_text("us_feet"))["value"], str)
 
 
+class TestTheCoordinateSystemHasTwoNames(unittest.TestCase):
+    """The ticket's own premise, still live -- and an earlier draft of this
+    module said it was not, because it tested `wkid` and the research named
+    `sr`. `docs/data-sources/not-used.md` had it right the whole time."""
+
+    def test_sr_is_ignored_whatever_it_is_set_to(self):
+        self.assertEqual(elevation_trap.raw_value("sr_4326"),
+                         elevation_trap.raw_value("sr_3857"))
+
+    def test_sr_makes_no_difference_at_all(self):
+        """Same answer as sending no coordinate system, so it is discarded."""
+        self.assertEqual(elevation_trap.raw_value("sr_4326"),
+                         elevation_trap.raw_value("feet"))
+
+    def test_wkid_by_contrast_is_honored(self):
+        """Web Mercator meters, correctly declared, give the right elevation --
+        which is what makes the `sr` silence a trap rather than an unsupported
+        option quietly declined."""
+        self.assertAlmostEqual(elevation_trap.value_of("wkid_mercator"),
+                               elevation_trap.value_of("feet"), places=6)
+
+
 class TestTheOtherHalfThatAtLeastBreaks(unittest.TestCase):
     """A 200 carrying plain text. Ugly, and much safer than the above."""
 
     def test_a_point_with_no_elevation_data_still_answers_two_hundred(self):
-        self.assertEqual(elevation_trap.CAPTURES["no_data"]["http_status"], 200)
+        self.assertEqual(elevation_trap.CAPTURES["no_data"]["http_status"],
+                         elevation_trap.ALL_ANSWERED)
+
+    def test_every_single_capture_answered_two_hundred(self):
+        """That is the point of the set: not one of these is an error by the
+        only test most callers apply. Re-requested and read off the wire on
+        2026-09-13; a saved body carries no headers of its own."""
+        statuses = {c["http_status"] for c in elevation_trap.CAPTURES.values()}
+        self.assertEqual(statuses, {elevation_trap.ALL_ANSWERED})
 
     def test_that_answer_is_not_json_at_all(self):
         with self.assertRaises(ValueError):
@@ -106,12 +136,27 @@ class TestWhyTheWrongAnswerIsWorse(unittest.TestCase):
 
     def test_the_error_half_is_caught_by_an_ordinary_caller(self):
         """Plain text in a 200 breaks `json.loads`. Somebody finds out."""
-        self.assertFalse(elevation_trap.survives_a_careful_caller("no_data"))
+        self.assertFalse(elevation_trap.survives_a_generic_check("no_data"))
 
-    def test_the_wrong_number_half_is_not(self):
-        """It parses, it is the right type of thing, it is in range. Nothing a
-        caller can do at the point of the call will catch it."""
-        self.assertTrue(elevation_trap.survives_a_careful_caller("us_feet"))
+    def test_general_care_does_not_catch_the_wrong_number(self):
+        """It parses, it is the right type, it is a real elevation of real
+        ground. Nothing you would write without local knowledge finds it."""
+        self.assertTrue(elevation_trap.survives_a_generic_check("us_feet"))
+
+    def test_knowing_the_county_does_catch_it(self):
+        """**The correction.** An earlier version claimed nothing at the point
+        of the call could catch this, on the strength of a range written as
+        `0 < feet < 5000` above a comment saying Bexar runs 400 to 2,000. The
+        two disagreed and the wider one was doing the work.
+
+        264.22 is below the county floor. A caller who checks against this
+        county catches it, and that check needed somebody who knew the ground."""
+        self.assertFalse(elevation_trap.survives_a_local_check("us_feet"))
+
+    def test_the_right_answer_passes_both(self):
+        """Otherwise the local check is just a stricter filter, not a test."""
+        self.assertTrue(elevation_trap.survives_a_generic_check("feet"))
+        self.assertTrue(elevation_trap.survives_a_local_check("feet"))
 
     def test_the_beat_says_so_in_one_sentence(self):
         self.assertIn(elevation_trap.VERDICT, elevation_trap.beat())

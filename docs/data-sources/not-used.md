@@ -96,15 +96,18 @@ Same point, same second, one word different:
 866.8668528742528 / 264.221008301 = 3.28084, which is feet per meter. Every
 unrecognized value returns the metric answer, unchanged, with no error.
 
+**Every row above is a committed response**, at
+`corridor-screen/captures/silent-nodata/`, with the exact request beside it.
+
 **It is not case sensitivity.** Lowercase `feet` returns 866.87, the same as
-`Feet`. The service has a short list of words it knows, and everything else —
+`Feet` (`units-lowercase-feet.json`). The service has a short list of words it knows, and everything else —
 including the surveyor's own unit — falls through to meters. Knowing that
 matters, because "just match the capitalization" is the wrong lesson and would
 leave you exposed.
 
 **`US_Feet` is the one that matters.** It is not a typo — it is the US survey
-foot, what EPSG numbers `9003` and what the TxDOT survey specification is
-written in. A surveyor asking in the unit of their own profession gets meters.
+foot, what EPSG numbers `9003` and what TxDOT's Survey Manual requires in
+deliverables ([TxDOT Survey Manual, Ch. 3, Control Points](https://www.txdot.gov/manuals/row/ess/index.html)). A surveyor asking in the unit of their own profession gets meters.
 
 **There is no field to check.** The response carries a `spatialReference` for
 the *coordinate* system and nothing at all for the unit of the answer. The only
@@ -116,6 +119,12 @@ This is the **same mechanism** as the `9003` trap on
 unrecognized unit as meters and say nothing about it." Two independent services,
 two different vendors, the same silence, both triggered by the surveyor's own
 unit. Both were caught by asking twice rather than by reading the answer harder.
+
+**And `wkid` is honored, which is what makes the `sr` silence above a trap.**
+Ask in Web Mercator meters with `wkid=3857` correctly declared and the right
+elevation comes back (`wkid-3857-mercator.json`). So this endpoint has two names
+for the coordinate system: one applied, one discarded without comment, and
+nothing in the answer saying which you used.
 
 Requested five times each on 2026-09-13; `Feet` and `US_Feet` were identical
 every time. The responses are committed at
