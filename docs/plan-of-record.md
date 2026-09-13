@@ -133,7 +133,9 @@ and reads like a record count, and 27 is the county figure. The account is
 Placed **after** an hour of the agent succeeding — that's when it lands.
 
 1. **The superseded manual.** Search still points at dead `onlinemanuals.txdot.gov` URLs while content moved to `txdot.gov/manuals/row/ess/`. The agent confidently cites a revision no longer in force. *"It didn't lie to you. It found the wrong document and believed it — which is exactly what a new hire does."*
-2. **The silent `NoData`.** USGS 3DEP ignored the coordinate-system parameter, read lon/lat as Web Mercator meters, and returned a plausible non-answer instead of an error. *"It didn't fail. It answered. That's worse."*
+2. **Wrong, not missing.** USGS 3DEP ignores the unit it was asked for. `units=Feet` answers `866.8668528742528` — a JSON number, in feet. `units=US_Feet`, which is the unit a Texas surveyor works in, answers `"264.221008301"` — a JSON string, the same ground in meters. HTTP 200 and no error either time, and no field anywhere in the reply says which unit it is. Every figure here is a committed capture in `corridor-screen/captures/silent-nodata/`, and the beat is written up at [The answer that was wrong rather than missing](managing-your-agent/the-wrong-answer.md). *"It didn't fail. It answered. That's worse."*
+
+    *(This bullet described a different run until 2026-09-13, and so did the glossary. The account is [The description that outlived its evidence](managing-your-agent/the-description-that-outlived-its-evidence.md), beside the other corrections.)*
 3. **The error in the work order — ours.** [Issue #7](https://github.com/RickSmith/survey-recon/issues/7) instructed the agent, in writing, to publish "TBPELS has not spoken directly to AI." That is a false statement of law, and it was already on four pages of this repo. The agent went looking for the citation our own rules demand, found [PAO 71](https://pels.texas.gov/nm/2024/pao-71-response.pdf) — 14 Nov 2024, public for nearly two years — and stopped rather than write it. *"A licensed human wrote that error. The agent caught it. If your checking only runs one direction, you've built half of it."*
 
 **Beat 3 is the one that changes the shape of the talk**, so do not let it get cut for time. Beats 1 and 2 say the agent is confidently wrong and the human catches it, which is the thing everyone already half-believes walking in. Beat 3 reverses it in front of them, using this repo's own public history, and it is checkable from the projector — the issue, the comment, the commit and the correction page are all there.
@@ -144,7 +146,7 @@ Punchline for owners: **you seal it, you own it.** TBPELS *has* spoken directly 
 
 *(That punchline said the opposite until 2026-09-12, on four pages. The account is at [The claim we got wrong](managing-your-agent/the-claim-we-got-wrong.md), beside the force-push record.)*
 
-**Timing warning.** This block is 12 minutes and now carries review, seal and three failures. Beat 3 needs about three minutes to land, because the audience has to see the work order before they see the catch. If the run is behind by 1:36, cut **beat 2** — the silent `NoData` is the most technical of the three and the least about accountability.
+**Timing warning.** This block is 12 minutes and now carries review, seal and three failures. Beat 3 needs about three minutes to land, because the audience has to see the work order before they see the catch. If the run is behind by 1:36, cut **beat 2** — wrong, not missing is the most technical of the three and the least about accountability.
 
 ### The close (1:54–2:00)
 Open **one** GitHub issue live, doing three jobs at once:

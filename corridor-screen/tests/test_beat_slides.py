@@ -40,7 +40,7 @@ from tests.deck_reader import (
     slide_headed,
     slides_in_block,
 )
-from tests.markdown_docs import flat, table_rows, text_of
+from tests.markdown_docs import flat, markdown_section, plain, table_rows, text_of
 
 BLOCK = "Review, seal — and the three failures"
 
@@ -49,6 +49,12 @@ THE_CLAIM = REPO / "docs" / "managing-your-agent" / "the-claim-we-got-wrong.md"
 SEAL = REPO / "docs" / "governance" / "seal-and-responsible-charge.md"
 WORK_ORDER = REPO / "corridor-screen" / "captures" / "the-work-order" / "issue-7.txt"
 CARD = REPO / "docs" / "presenting" / "fallbacks.md"
+PLAN = REPO / "docs" / "plan-of-record.md"
+GLOSSARY = REPO / "CONTEXT.md"
+
+# `NoData` as a word rather than as part of one, so that the folder name
+# `silent-nodata` -- which stays -- does not count as saying it. #104.
+A_BARE_NODATA = re.compile(r"(?<![\w-])nodata")
 
 # The five slides this work order owns, in the order the block runs them. The
 # beat headings are matched on `Beat N` rather than on their whole titles, so a
@@ -293,11 +299,12 @@ class TestBeatTwo(unittest.TestCase):
         renaming committed evidence to match a corrected story is its own kind
         of tidying-up. So the word is looked for as a word, which is why a
         hyphen in front of it does not count."""
-        a_word = re.compile(r"(?<![\w-])nodata")
         for name in elevation_trap.CAPTURES:
             with self.subTest(capture=name):
-                self.assertIsNone(a_word.search(elevation_trap.capture_text(name).lower()))
-        self.assertIsNone(a_word.search(self.seen.lower().replace("`", "")))
+                self.assertIsNone(
+                    A_BARE_NODATA.search(elevation_trap.capture_text(name).lower())
+                )
+        self.assertIsNone(A_BARE_NODATA.search(self.seen.lower().replace("`", "")))
 
     def test_the_slide_does_not_blame_the_coordinate_system(self):
         """`wkid` is honored -- `wkid_mercator` is the capture that proves it,
@@ -443,6 +450,113 @@ class TestTheFallbackCardAgreesWithTheDeck(unittest.TestCase):
                     {heading.replace("`", "") for heading in headings},
                     f"the card calls it {named!r} and no slide is headed that",
                 )
+
+
+class TestThePlanAndTheGlossaryAgreeWithTheDeck(unittest.TestCase):
+    """The other two documents that carried the old account of beat 2.
+
+    The card was held to the deck above. The plan of record and `CONTEXT.md`
+    were not, and both went on describing a run nobody captured. The skeleton
+    slide for this beat was written out of the glossary rather than out of the
+    captures, and inherited every error in it.
+
+    **That is why these two pages get checked and a third does not.**
+    `CONTEXT.md` is the glossary every other page is told to trust, and the
+    plan of record is the page that gets read out loud.
+
+    Issue #104. What was wrong and how it survived is the account at
+    `docs/managing-your-agent/the-description-that-outlived-its-evidence.md`,
+    which is the place to change it rather than here.
+    """
+
+    def setUp(self):
+        self.section = markdown_section(text_of(PLAN), "### The failure beat")
+        self.beat = plain(self.section)
+
+    def short_name(self):
+        """`wrong, not missing` -- the deck's own name for beat 2, read off the
+        slide rather than written down a second time here.
+
+        Guarded, because an unguarded `partition` that misses returns an empty
+        string and every caller degrades to `assertIn("", ...)` -- a check that
+        can only pass, which is what this whole file exists to not be."""
+        heading = next(slide.heading for slide in block() if "Beat 2" in slide.heading)
+        _, dash, after = heading.partition("—")
+        self.assertTrue(dash, f"beat 2 is headed {heading!r} and carries no short name")
+        self.assertTrue(after.strip(), f"beat 2 is headed {heading!r}")
+        return after.strip().lower()
+
+    def glossary_entry(self):
+        """The `NoData` row of `CONTEXT.md`, by its term rather than by where
+        in the table it sits."""
+        return next(
+            row[1] for row in table_rows(text_of(GLOSSARY))
+            if len(row) > 1 and row[0].replace("*", "").replace("`", "") == "NoData"
+        )
+
+    def test_the_plan_names_beat_two_the_way_the_slide_is_headed(self):
+        """Scoped to the numbered bullet rather than to the section, so that it
+        can fail on its own. The timing-warning check below reads the same name
+        out of the same section, and a section-wide check here would have been
+        passed by the warning alone."""
+        bullet = next(
+            line for line in self.section.splitlines() if line.startswith("2. ")
+        )
+        self.assertIn(self.short_name(), plain(bullet).lower())
+
+    def test_the_timing_warning_names_the_beat_it_offers_to_cut(self):
+        """It is the sentence a presenter acts on at 1:36, so it has to name
+        the beat by the name that is on the slide in front of them."""
+        _, marker, warning = flat(self.section).partition("Timing warning.")
+        self.assertTrue(marker, "the failure-beat section carries no timing warning")
+        self.assertIn(self.short_name(), plain(warning).lower())
+
+    def test_the_plan_stops_naming_the_beat_after_a_word_no_capture_contains(self):
+        """The whole failure-beat section, not just beat 2 -- the old name was
+        in the beat and in the timing warning that offers to cut it, and both
+        get read out loud.
+
+        Not the whole page, though, because the ban is on the *claim* and not
+        on the token. `NoData` stays a term worth defining -- see the glossary
+        check below -- and a page-wide ban would forbid defining it."""
+        self.assertIsNone(A_BARE_NODATA.search(self.beat.lower()))
+
+    def test_the_glossary_keeps_the_term_and_drops_the_claim(self):
+        """`NoData` is a real thing an elevation service returns, so the entry
+        stays. What goes is this service having returned one here, and the two
+        details that were invented around it."""
+        entry = self.glossary_entry()
+        self.assertIn("no capture", entry.lower())
+        for invented in ("Atlantic", "Web Mercator"):
+            with self.subTest(claim=invented):
+                self.assertNotIn(invented.lower(), entry.lower())
+
+    def test_the_plan_blames_the_unit_rather_than_the_coordinate_system(self):
+        """`wkid` is honored, so a page still saying the coordinate system moved
+        the point is describing the ticket rather than the run.
+
+        Section-wide again, for the same reason as the check above: the run of
+        show is three beats and a timing warning, and none of the other two is
+        about a coordinate system either."""
+        self.assertIn("us_feet", self.beat.lower())
+        self.assertNotIn("web mercator", self.beat.lower())
+
+    def test_the_glossary_entry_carries_both_captured_answers(self):
+        """Every sentence in the entry has to be supported by a capture. The
+        two numbers are the part a reader can check, so they are read back out
+        of the captures rather than trusted."""
+        entry = self.glossary_entry()
+        feet, us_feet = captured_elevations()
+        self.assertIn(str(feet), entry)
+        self.assertIn(str(us_feet), entry)
+
+    def test_the_glossary_points_at_the_account_of_the_correction(self):
+        entry = flat(text_of(GLOSSARY))
+        self.assertIn("the-description-that-outlived-its-evidence.md", entry)
+        named = REPO / "docs" / "managing-your-agent" / (
+            "the-description-that-outlived-its-evidence.md"
+        )
+        self.assertTrue(named.exists(), f"{named} is linked and not committed")
 
 
 class TestThePathsOnTheseSlidesAreReal(unittest.TestCase):
