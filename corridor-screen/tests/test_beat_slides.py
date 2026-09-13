@@ -36,9 +36,9 @@ from tests.deck_reader import (
     REPO,
     note,
     on_screen,
+    seen,
     slide_headed,
     slides_in_block,
-    visible,
 )
 from tests.markdown_docs import flat, table_rows, text_of
 
@@ -46,7 +46,6 @@ BLOCK = "Review, seal — and the three failures"
 
 FORCE_PUSH = REPO / "docs" / "managing-your-agent" / "the-force-push.md"
 THE_CLAIM = REPO / "docs" / "managing-your-agent" / "the-claim-we-got-wrong.md"
-WRONG_ANSWER = REPO / "docs" / "managing-your-agent" / "the-wrong-answer.md"
 SEAL = REPO / "docs" / "governance" / "seal-and-responsible-charge.md"
 WORK_ORDER = REPO / "corridor-screen" / "captures" / "the-work-order" / "issue-7.txt"
 CARD = REPO / "docs" / "presenting" / "fallbacks.md"
@@ -62,8 +61,12 @@ OWNED = (
     "You seal it",
 )
 
-# A figure the room is asked to trust, written the way a slide writes it.
-A_FIGURE = re.compile(r"\d[\d,]*\.?\d*")
+# `866.87 / 264.22 = 3.28084` on a slide, whichever sign it uses for divide.
+# A slide that prints the division invites the room to do it, so the figures it
+# prints have to survive being divided at the precision it printed them.
+A_DIVISION = re.compile(
+    r"([\d.]+)\s*(?:/|÷)\s*([\d.]+)\s*=\s*\*{0,2}([\d.]+)"
+)
 
 
 def block():
@@ -155,7 +158,7 @@ class TestWhereTheWorkGotSentBack(unittest.TestCase):
         """`CLAUDE.md` says it was broken once, deliberately, and that the
         account is a record rather than a precedent. A slide that rounded that
         up to a habit, or down to nothing, would misread the page it points at."""
-        self.assertIn("once", visible([slide_headed("Where the work got sent back")]).lower())
+        self.assertIn("once", seen("Where the work got sent back").lower())
 
     def test_the_force_push_page_still_says_a_human_made_that_call(self):
         """The slide's point is not that a rule was broken. It is who chose."""
@@ -204,7 +207,7 @@ class TestBeatTwo(unittest.TestCase):
     """
 
     def setUp(self):
-        self.seen = visible([slide_headed("Beat 2")])
+        self.seen = seen("Beat 2")
         self.feet, self.us_feet = captured_elevations()
 
     def test_both_captured_answers_are_on_the_slide(self):
@@ -212,13 +215,49 @@ class TestBeatTwo(unittest.TestCase):
             with self.subTest(value=value):
                 self.assertIn(f"{value:,.2f}", self.seen)
 
-    def test_the_ratio_on_the_slide_is_the_ratio_between_them(self):
+    def test_the_conversion_factor_on_the_slide_is_the_captured_one(self):
         """The point of the beat is that the second answer is the first one in
         another unit. A slide stating the conversion factor states a claim
         about two numbers beside it, so it is divided rather than trusted."""
         ratio = round(self.feet / self.us_feet, 5)
         self.assertEqual(ratio, round(elevation_trap.FEET_PER_METER, 5))
         self.assertIn(f"{ratio}", self.seen)
+
+    def test_any_sum_this_block_prints_is_true_at_the_precision_it_prints(self):
+        """**A slide that shows its arithmetic is asking the room to check it.**
+
+        The first draft of this one read `866.87 / 264.22 = 3.28084`, and every
+        figure in it was read out of the captures. It is still wrong: divide the
+        two numbers a room can see and the answer is 3.28086. The full-precision
+        check above passed the whole time, because it divided the captures
+        rather than the slide -- a guard testing something other than the thing
+        on the projector.
+
+        A surveyor who does that division on a phone in the fourth row gets a
+        different last digit from the one this session just told them to trust,
+        during the beat about being confidently wrong. So the sum is checked as
+        printed, and the fix was to stop printing a sum at all.
+        """
+        for slide in block():
+            for line in slide.content_lines():
+                found = A_DIVISION.search(line)
+                if not found:
+                    continue
+                left, right, stated = found.groups()
+                places = len(stated.partition(".")[2])
+                with self.subTest(slide=slide.number, sum=found.group(0)):
+                    self.assertEqual(
+                        round(float(left) / float(right), places), float(stated),
+                        f"slide {slide.number} prints a sum that does not come out",
+                    )
+
+    def test_that_arithmetic_check_can_actually_fail(self):
+        """The guard on the guard, since the check above finds nothing today --
+        and a check that can only pass is a comment."""
+        found = A_DIVISION.search("- 866.87 ÷ 264.22 = **3.28084**, feet per meter")
+        left, right, stated = found.groups()
+        places = len(stated.partition(".")[2])
+        self.assertNotEqual(round(float(left) / float(right), places), float(stated))
 
     def test_the_slide_names_the_unit_a_surveyor_would_ask_for(self):
         self.assertIn("US_Feet", on_screen("Beat 2"))
@@ -269,7 +308,7 @@ class TestBeatThree(unittest.TestCase):
     """
 
     def setUp(self):
-        self.seen = visible([slide_headed("Beat 3")])
+        self.seen = seen("Beat 3")
         self.captured = flat(text_of(WORK_ORDER))
 
     def test_the_work_order_still_carries_the_instruction_it_was_given(self):
@@ -318,16 +357,27 @@ class TestTheSeal(unittest.TestCase):
     """
 
     def setUp(self):
-        self.seen = visible([slide_headed("You seal it")])
+        self.seen = seen("You seal it")
         self.page = quoted(SEAL)
 
     def test_the_board_did_speak_and_the_page_still_says_so(self):
         self.assertIn("Policy Advisory Opinion 71", self.page)
         self.assertIn("14 November 2024", self.page)
 
-    def test_the_slide_says_the_tool_is_not_banned_and_the_opinion_says_it(self):
+    def test_the_slide_says_the_tool_is_not_banned_as_narrowly_as_the_board_did(self):
+        """**The board said *directly* ban, and the qualifier is the claim.**
+
+        PAO 71 says neither the Practice Acts nor the board rules *directly*
+        ban AI software. It does not say nothing anywhere bans it, and the
+        opinion goes on to set three caveats. This slide's own note calls it the
+        claim most likely to be photographed and forwarded, and a first draft
+        of it read "Nothing bans it" — broader than the source it cites, on the
+        one slide that can least afford to be.
+        """
         self.assertIn("directly ban the use of AI software", self.page)
-        self.assertRegex(self.seen.lower(), r"nothing bans it|is a tool")
+        self.assertRegex(self.seen.lower(), r"is a tool")
+        self.assertRegex(self.seen.lower(), r"bans it directly|directly bans")
+        self.assertNotIn("nothing bans it", self.seen.lower())
 
     def test_responsible_charge_is_a_synonym_and_the_slide_does_not_soften_it(self):
         self.assertIn('Synonymous with the term "direct supervision"', self.page)

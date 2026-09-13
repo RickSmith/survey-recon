@@ -1070,11 +1070,11 @@ folder. It prints both addresses, what each one serves, and the evidence file
 behind each. No network.
 
 **The detail that makes this a beat rather than a broken link**: the retired
-host still has a published name, and nothing accepted a connection on port 80 or
-on 443 — three attempts each, twelve seconds apiece. So a caller gets a timeout,
-and a timeout reads as a bad network rather than as a retired document. A "page
-not found" would have told the agent something. Silence told it nothing, so it
-used what the search gave it.
+address is still published, and nothing answered on it at all — six attempts,
+twelve seconds apiece, over both a plain and a secure connection. So a caller
+waits and gets nothing back, which reads as a bad network rather than as a
+retired document. A "page not found" would have told the agent something.
+Silence told it nothing, so it used what the search gave it.
 
 The defense is boring, and being boring is the point: fetch the URL you are
 about to cite and read what comes back. This repo runs that check over its own
@@ -1091,11 +1091,11 @@ beat as plain text, for a podium where Python will not start.
 
 - One question, asked twice, one word apart. Same point on Bandera Rd
 - `units=Feet` → **866.87**. `units=US_Feet` → **264.22**
-- 866.87 ÷ 264.22 = **3.28084**, feet per meter. The second is in meters
+- Same ground. The second answer is in **meters** — 3.28084 ft per meter
 - `US_Feet` is not a typo. It is the unit a Texas surveyor works in
 - **No error either time.** Nothing in the reply says which unit
 
-corridor-screen/captures/silent-nodata/
+corridor-screen/captures/silent-nodata/ · captured 2026-09-13
 
 <!--
 1:36–1:48 · 12 min · Review, seal — and the three failures
@@ -1113,8 +1113,9 @@ txdot.gov/manuals/row/ess. The surveyor asking in the unit of their own
 profession is the one who gets meters back.
 
 Second, the same service can fail loudly, and that version is the safe one. A
-point out in the Gulf answers with plain text that is not JSON at all, so
-anything reading it breaks inside a second. The believable answer is the
+point out in the Gulf answers with a line of plain English rather than the
+structured reply a program knows how to read — so anything reading it breaks
+inside a second, loudly, in front of somebody. The believable answer is the
 dangerous one.
 
 **What separates them is where the range check is drawn.** 264 ft is below the
@@ -1135,7 +1136,7 @@ Fallback: corridor-screen/captures/silent-nodata/the-beat.txt.
 - The agent went to find the citation, found **PAO 71**, and stopped
 - Approved **14 Nov 2024** — public for nearly two years. pels.texas.gov
 
-corridor-screen/captures/the-work-order/issue-7.txt
+corridor-screen/captures/the-work-order/issue-7.txt · captured 2026-09-13
 
 <!--
 1:36–1:48 · 12 min · Review, seal — and the three failures
@@ -1170,7 +1171,7 @@ one needs a network.
 # You seal it. You own it.
 
 - TBPELS has spoken directly to AI, in writing, since 2024
-- **AI is a tool. Nothing bans it.** You answer for what you seal
+- **AI is a tool. No rule bans it directly.** You answer for what you seal
 - **Responsible charge is a synonym for direct supervision**
 - Review and approve decisions **before they are acted on**
 - Check the work as though you had done it yourself. You did
