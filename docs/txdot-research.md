@@ -319,13 +319,13 @@ TxDOT publishes **six** standard sheets titled "Traffic Control Plan for Surveyi
 
 **The duration line is one hour, and it is the only line.** All six sheets print the same definitions: *short duration* is work that occupies a location **up to 1 hour**; *short term stationary* is daytime work that holds a location for **more than 1 hour** within a single daylight period.
 
-**What crossing the hour costs depends on which sheet you are on.** That split is the whole cost story, and it is legible only in the drawing — see the correction below.
+**What crossing the hour costs depends on which sheet you are on.** That split is the whole cost story, and it is legible only in the drawing — see the correction below. Two of TxDOT's terms carry the cost: **channelizing devices** are the cones, drums and vertical panels that steer traffic away from the work space, and a **shadow vehicle** is a truck parked to be hit instead of the crew, carrying a **TMA** — a truck-mounted attenuator, the crash cushion on its back. A run of cones is time. A shadow vehicle is a truck and an operator, and it is the single largest step in a survey crew's day rate.
 
 | Sheet and case | Protective vehicle **drawn** | What the hour does |
 |---|---|---|
 | **TCP(S-2b)** work in roadway<br>**TCP(S-3a)** right lane closed | **Shadow Vehicle with TMA** — one | Permission to substitute an ordinary work vehicle is granted **"for short duration work"** only (S-2 Note 10, S-3 Note 2). Past the hour the permission lapses and the drawn shadow vehicle stands |
 | **TCP(S-3b)** work on centerline | **Two** Shadow Vehicles with TMA | The same, doubled. The most expensive configuration in the family — and the one a centerline retracement lands on |
-| **TCP(S-1a/b)** off or on shoulder<br>**TCP(S-2c)** two-lane rural intersection<br>**TCP(S-4a/b)** divided, off right shoulder or in median | Plain work vehicle (S-4b draws two, reducible to one behind a median barrier — S-4 Note 2) | The TMA is an **upgrade you may elect**, never a penalty the clock triggers (S-1 Note 4, S-4 Note 4). Crossing the hour costs the G20-2a "END ROAD WORK" sign and a run of channelizing devices — setup and teardown time, not a second vehicle |
+| **TCP(S-1a/b)** off or on shoulder<br>**TCP(S-2c)** two-lane rural intersection<br>**TCP(S-4a/b)** divided, off right shoulder or in median | Plain work vehicle (S-4b draws two, reducible to one behind a median barrier — S-4 Note 2) | The TMA is an **upgrade you may elect**, never a penalty the clock triggers (S-1 Note 4, S-4 Note 4). Crossing the hour costs the G20-2a "END ROAD WORK" sign — and, **on S-1 only**, a run of channelizing devices as well (S-1 Note 2). Setup and teardown time, not a second vehicle |
 | **TCP(S-2a)** road closed under 20 min | **None** — flaggers instead | — |
 | **TCP(S-5a/b)** divided, on right or median shoulder | **The sheet contradicts itself** | Unresolved — see below |
 
@@ -362,19 +362,20 @@ One escape from the drawn shadow vehicle exists, and it is not automatic: S-2 No
     is not the same as a rule that adds a truck, and does not happen on S-1,
     S-2a, S-2c or S-4 at all.
 
-    Nobody made the numbers up. **All three are real. Each governs something
-    else.**
+    Nobody made the numbers up. **Every one of them is real. Each governs
+    something else.**
 
     | Number | Where it really comes from | What it actually governs |
     |---|---|---|
     | **~15 minutes** | TCP(S-2c)-10, MOBILE definition | The boundary between *mobile* and *short duration* work. A **classification**, with no requirement attached to crossing it |
+    | **15 minutes**, again | TCP(S-1)-08A Note 7 | The "SURVEY CREW AHEAD" sign at a low-volume intersecting side road is *desirable but not required* under 15 minutes in that area, **as determined by the Engineer**. It governs **one sign**, and it is the only 15-minute figure on S-1 |
     | **20 minutes** | TCP(S-2)-08A Note 7 | "Road closures shall be less than 20 minutes." A cap on how long a road may be **closed** with flaggers. Nothing to do with shadow trucks |
-    | **45 mph** | TCP(S-3)-08 Note 7 | One CW20-5L "LEFT LANE CLOSED" sign per direction may be omitted below 45 mph **and** under 2000 ADT. It governs **one sign** |
+    | **45 mph** | TCP(S-3)-08 Note 7 | One CW20-5L "LEFT LANE CLOSED" sign per direction may be omitted below 45 mph **and** under 2000 ADT — average daily traffic, the count of vehicles past a point in a day. It governs **one sign** |
 
-    Three true facts from three different sheets, welded into a fourth claim
-    that none of them makes. Not fabrication — **synthesis across sources that
-    each looked authoritative.** Every number survives spot-checking. The
-    sentence built from them does not.
+    Four true figures from four different sheets, welded into a claim that none
+    of them makes. Not fabrication — **synthesis across sources that each
+    looked authoritative.** Every number survives spot-checking. The sentence
+    built from them does not.
 
     **The first correction was also wrong**, and that is the better lesson. It
     said flatly that no sheet in the family requires a shadow truck, read
@@ -410,7 +411,7 @@ One escape from the drawn shadow vehicle exists, and it is not automatic: S-2 No
 - **The agent confidently cited a superseded manual revision** because search results still point at the dead URL.
 - **A survey crew on the centerline for more than an hour is looking at two shadow trucks.** TCP(S-3b) draws both of them. Under the hour, the crew's own truck will do.
 - **TxDOT wrote a rule about sighting down a line.** TCP(S-1)-08A Note 3 — if line of sight will not let the work vehicle sit where it protects the crew, the channelizing devices are required however short the job.
-- **Three true numbers, welded into a claim none of them makes.** 15 minutes, 20 minutes and 45 mph are each real and each governs something else. Every number survived spot-checking. The sentence built from them did not.
+- **Four true numbers, welded into a claim none of them makes.** Two different 15-minute figures, 20 minutes and 45 mph are each real, on four different sheets, and each governs something else. Every number survived spot-checking. The sentence built from them did not.
 - **The notes said "desirable." The drawing said otherwise.** On a CAD standard sheet the drawing states the requirement and the notes are exceptions to it. An agent that reads text but cannot see a picture gets it backwards, and sounds confident doing it.
 
 ## Key source URLs
@@ -426,5 +427,14 @@ One escape from the drawn shadow vehicle exists, and it is not automatic: S-2 No
 - NGS Web Services index — https://geodesy.noaa.gov/web_services/
 - TxDOT Open Data Portal — https://gis-txdot.opendata.arcgis.com/
 - TMUTCD — https://www.txdot.gov/business/resources/traffic-design-standards/tmutcd.html
+- TCP(S-1)-08A — https://ftp.txdot.gov/pub/txdot-info/cmd/cserve/standard/traffic/tcps1.pdf
+- TCP(S-2)-08A — https://ftp.txdot.gov/pub/txdot-info/cmd/cserve/standard/traffic/tcps2.pdf
+- TCP(S-2c)-10 — https://ftp.txdot.gov/pub/txdot-info/cmd/cserve/standard/traffic/tcps2c.pdf
+- TCP(S-2c)-10 announcement memo — https://ftp.txdot.gov/pub/txdot-info/cmd/cserve/standard/traffic/memotcps2c.pdf
+- TCP(S-3)-08 — https://ftp.txdot.gov/pub/txdot-info/cmd/cserve/standard/traffic/tcps3.pdf
+- TCP(S-4)-08A — https://ftp.txdot.gov/pub/txdot-info/cmd/cserve/standard/traffic/tcps4.pdf
+- TCP(S-5)-08 — https://ftp.txdot.gov/pub/txdot-info/cmd/cserve/standard/traffic/tcps5.pdf
+
+    All seven were fetched on 2026-09-13 and the bytes hashed against the copies committed in [`project-sh16/manual-pulls/`](https://github.com/RickSmith/survey-recon/tree/main/project-sh16/manual-pulls). **Do not use `www.dot.state.tx.us/insdtdot/...` for these** — that host answers HTTP 200 with a "Page Not Found" page for every file under it, which is a not-found answer wearing a success status code. The folder's `README.md` records how that trap was caught.
 - Texas 811 — https://texas811.org/law/
 - THC cemetery laws — https://thc.texas.gov/preserve/preservation-programs/cemetery-preservation/cemetery-laws
