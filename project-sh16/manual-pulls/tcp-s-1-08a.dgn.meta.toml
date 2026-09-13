@@ -1,0 +1,16 @@
+# Provenance record. See tcp-s-1-08a.pdf.meta.toml for the full note on hosts.
+# This is the same sheet as the PDF, in TxDOT's CAD source format.
+document = "TCP(S-1)-08A -- Traffic Control Plan for Surveying Operations (CAD source)"
+publisher = "Texas Department of Transportation, Traffic Operations Division"
+file = "tcp-s-1-08a.dgn"
+format = "MicroStation DGN (V8, OLE2 compound file)"
+source_url = "https://ftp.txdot.gov/pub/txdot-info/cmd/cserve/standard/traffic/tcps1.dgn"
+captured_at = 2026-09-13T09:53:27-05:00
+captured_by = "human"
+http_status = 200
+bytes = 145920
+sha256 = "de2e08df2fd046ba8a31f3cccd120be240f2e39e4ffb5efc5874c98b83c1a231"
+
+legacy_url = "https://www.dot.state.tx.us/insdtdot/orgchart/cmd/cserve/standard/traffic/tcps1.dgn"
+source_url_verified_at = 2026-09-13T09:55:00-05:00
+source_url_verified_by = "sha256 of fetched bytes equals sha256 of committed file"
