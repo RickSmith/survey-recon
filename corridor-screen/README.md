@@ -254,6 +254,46 @@ That comparison is the beat: the broken answer is caught by anything that reads
 it, and the plausible one is caught by nothing. The full account is
 [the wrong answer](../docs/managing-your-agent/the-wrong-answer.md).
 
+## The letter that sends itself
+
+```bash
+python -m corridor_screen.roe --show
+```
+
+Not a failure beat — nothing in it is wrong. It is the Hermes segment, and it
+runs from files committed in this repo, so a hotel network cannot take it away
+either.
+
+**Right of entry is not a statutory right in Texas.** You ask, and the owner may
+say nothing at all. TxDOT ships **two** letter templates for that reason. The
+second one is the work firms forget, and this writes it on a clock nobody has
+to remember.
+
+**Day 21 is derived, not typed.** No published right-of-entry turn-around was
+found in any TxDOT manual this repo read, so there is no number to quote.
+Instead: the longest confirmed wait in
+[`lead_times.toml`](corridor_screen/lead_times.toml) counted in calendar days is
+the railroad's **45**; halve it so the second letter gets the window the first
+one had, **22**; round down to whole weeks because a letter moves in weeks,
+**21**. Put 60 in the railroad row and the follow-up moves to day 28. The full
+argument is on
+[the right-of-entry letters page](../docs/corridor-screen/roe-letters.md).
+
+To write whatever is due today:
+
+```bash
+python -m corridor_screen.roe --write ../project-sh16/roe
+```
+
+Before 2026-10-04 that writes one letter and says the second is not due. On or
+after it, two — and nobody had to remember. It mails nothing, signs nothing and
+carries no address. An **RPLS** does all three.
+
+**Nobody has to run it either.** `.github/workflows/roe-followup.yml` reads the
+same clock every day on a schedule and puts whatever is due into the run
+summary. It commits nothing and needs no secret. That workflow is the evidence
+behind "with no human action"; the command above is the rehearsal of it.
+
 ## The one call that stays live
 
 Everything above replays from disk. This one goes out to NGS while you watch:
