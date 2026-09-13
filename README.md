@@ -43,7 +43,7 @@ Software developers already built that discipline. This repo borrows it and tran
 | Pull request | The check print you redline |
 | Merge | You sign and seal |
 
-**The accountability never moves.** TBPELS has not spoken directly to AI, but responsibility doctrine already covers it: you seal it, you own it.
+**The accountability never moves.** TBPELS addressed AI directly in [Policy Advisory Opinion 71](https://pels.texas.gov/nm/2024/pao-71-response.pdf), approved 14 November 2024: AI software is a tool, nothing bans it, and "licensees are ultimately responsible for any work product they sign and seal." You seal it, you own it.
 
 ---
 
