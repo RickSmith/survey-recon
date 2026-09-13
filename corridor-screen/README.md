@@ -33,6 +33,8 @@ and the flags that hang off it, from
 | The crew safety sheet — nearest hospital, EMS and police | yes |
 | The whole tool replaying offline, checked against the live run | yes |
 | One genuinely live call, cross-checked against the capture | yes |
+| The bid memo — the document a principal reads before pricing | yes |
+| The flagged parcel table, the crew-day build-up | not yet, separate work orders |
 | TxDOT primary control points, on layer 67 | yes |
 | Roadway facts — ROW_MIN, lanes, traffic | not yet, a separate work order |
 | SVG renderings | not yet |
@@ -115,6 +117,24 @@ the network taken away** — not politely asked for, actually removed, at the
 level below every library that could reach for it. See `tests/test_offline.py`.
 That test is the one that would catch a stray live call before a session rather
 than during one.
+
+## The renderings
+
+The screening run fetches once; separate commands read that one file and write
+what a person actually reads. The first is built:
+
+```bash
+python -m corridor_screen.bid_memo --out ../project-sh16
+```
+
+It writes `bid-memo.md` — the document a principal reads before pricing. It
+prices nothing and decides nothing. What it does carefully is keep **what is not
+known** in its own section near the front, ahead of the findings that depend on
+it, rather than as a footnote under a total.
+
+It will not print a number the run did not measure. `acres_in_corridor` is not
+implemented, so the memo says the take was not measured rather than summing a
+column of nothing into "0.0 acres".
 
 ## The one call that stays live
 

@@ -7,8 +7,10 @@
     [#23](https://github.com/RickSmith/survey-recon/issues/23) and
     [#24](https://github.com/RickSmith/survey-recon/issues/24).
 
-    **The capture itself is done.** What the tool found, and every surprise it
-    turned up, is on [What the capture found](capture-note.md).
+    **The capture itself is done**, and so is the first of the three outputs.
+    What the tool found, and every surprise it turned up, is on
+    [What the capture found](capture-note.md). The memo built from that run is
+    [`project-sh16/bid-memo.md`](https://github.com/RickSmith/survey-recon/blob/main/project-sh16/bid-memo.md).
 
 TxDOT SH16 (Bandera Rd), Loop 410 to Gibeaut Rd. Preliminary design ROW mapping,
 widening on both sides. One corridor, start to finish: find the control, count

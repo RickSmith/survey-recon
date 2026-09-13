@@ -99,6 +99,12 @@ There is a second command, and it is a check rather than a screening run. It com
 python -m corridor_screen.replay one-run/screening.json another-run/screening.json
 ```
 
+One per rendering, reading the screening file rather than the services — section 2's "one fetch, many renderings." The first of the three is built:
+
+```bash
+python -m corridor_screen.bid_memo --out project-sh16/
+```
+
 And a third, which is the one genuinely live call — the plan of record's "one live moment proves it isn't a movie," kept as its own act rather than folded into a run that must not fail:
 
 ```bash
