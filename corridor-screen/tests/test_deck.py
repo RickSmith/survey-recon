@@ -3,7 +3,7 @@
 Issue #12 asks for a skeleton rather than a talk: **a slide for every block of
 the two hours, with the clock in the speaker notes, section breaks on the act
 boundaries, and type a back row can read.** The content lands later, under #31
-and #32. What this file checks is the frame.
+through #34. What this file checks is the frame.
 
 A deck is the one document in this repo nobody reads carefully. It gets skimmed
 in a hotel room the night before, and a block that quietly has no slide is
@@ -12,12 +12,14 @@ one folder over, and for the same reason:
 
 * every block of the run of show in `docs/plan-of-record.md` §5 has at least one
   slide, and the deck invents no block the plan does not have
-* the slides arrive in the order the session runs them
+* the slides arrive in the order the session runs them, in one run each
 * every slide carries a speaker note, and that note opens with the block's
   clock and its length **taken from the plan** rather than typed again here
 * every block opens with a break slide, so a cut is made by deleting whole
   slides between two breaks rather than by picking through a deck
-* every item on the cut line in §7 is marked on the slide it would take out
+* every item on the cut line in §7 is marked on the slide it would take out,
+  and nothing §7 says never to cut is marked
+* every file a speaker note sends a presenter to is committed
 * nothing in the theme drops below 28pt, and no slide carries more than the
   1920 x 1080 canvas holds
 
@@ -26,30 +28,23 @@ spec. A deck that kept its own private copy of the run of show would go on
 passing its own tests for weeks after the run of show changed, which is the
 exact failure this file exists to prevent.
 
-**On the last check.** Marp and a browser are the authority on whether a slide
-fits, and neither is available to a test that has to run with no Docker and no
-Node. So the fitting check here is a **budget**, not a renderer: it reads the
-type sizes out of `tsps.css` and adds up what a slide asks the canvas for.
-
-That budget is calibrated against the real thing rather than argued from the
-box model. All 45 slides were rendered with the pinned Marp container on
-13 September 2026 and the page was asked how tall each one had come out. The
-first draft of the arithmetic here ran up to 7% **under** those numbers, which
-would have made it an estimate wearing a guard's uniform. With `ELEMENT_GAP`
-it is above the measured height on all 45, by between 2% and 29%.
-
-So it errs one way: it may refuse a dense slide that would have fitted, and it
-will not wave through one that would not. Re-measure it if the theme changes
-shape. The authority is still `.github/workflows/slides.yml`, which renders the
-deck for real on every push.
+**Where the rest lives.** Opening a committed markdown document and reading a
+table out of it is `tests/markdown_docs.py`, shared with `test_fallbacks.py`.
+Working out how much room a slide asks the projector for is
+`tests/slide_canvas.py`, which changes when the theme changes rather than when
+the session does.
 """
 
-import math
+import itertools
 import re
 import unittest
+from collections import namedtuple
 from pathlib import Path
 
 from corridor_screen.cache import long_path
+
+from tests.markdown_docs import markdown_section, table_rows, text_of
+from tests.slide_canvas import Canvas, points, style_rules
 
 REPO = Path(__file__).resolve().parents[2]
 DECK = REPO / "docs" / "slides" / "beyond-the-prompt.md"
@@ -58,10 +53,10 @@ THEME = REPO / "docs" / "slides" / "themes" / "tsps.css"
 PLAN = REPO / "docs" / "plan-of-record.md"
 SLIDES_WORKFLOW = REPO / ".github" / "workflows" / "slides.yml"
 
-# `0:57–1:18`, with the en dash the plan of record actually uses. Same pattern
-# as `test_fallbacks.A_TIME`, and deliberately not imported from there: these
-# two files check different documents and should be able to disagree about what
-# a time looks like without one of them being edited to suit the other.
+# `0:57–1:18`, with the en dash the plan of record actually uses. Searched for
+# rather than anchored, because this one has to be found inside a line of prose
+# as well as alone in a table cell -- which is why it is not the same pattern
+# `test_fallbacks.py` uses, and not shared with it.
 A_TIME = re.compile(r"\d:\d\d\u2013\d:\d\d")
 
 # The first line of a speaker note, which is the line this whole file keys on:
@@ -98,80 +93,23 @@ NO_WORK_ORDER = "no work order yet"
 # matter is fenced with the same three, which is why it is stripped first.
 A_SLIDE_BREAK = "---"
 
-# The class on a break slide. The opening slide is a break too -- it is what is
-# on screen for the whole cold open -- and it carries `title` instead.
+# The class that makes a slide a section break. The opening slide is a break
+# too -- it is what is on screen for the whole cold open -- and it carries
+# `title` instead.
 BREAK_CLASSES = ("divider", "title")
 
-# 96 CSS pixels to the inch, 72 points to the inch. The canvas in `tsps.css` is
-# given in pixels and the type in points, so one of them has to be converted.
-PX_PER_PT = 96 / 72
+# Words too common to identify anything, dropped before the phrases §7 uses for
+# the blocks it protects are matched against the names §5 gives them.
+COMMON_WORDS = ("the", "a", "an", "and", "of", "our", "own")
 
-# Roughly how wide an average character is, as a fraction of the type size, in
-# the Helvetica the theme asks for. Used to work out where a long line wraps.
-AVERAGE_CHARACTER = 0.50
-
-# What a browser puts between two blocks that the stylesheet does not account
-# for. Not derived -- **measured**, on 13 September 2026, by rendering all 45
-# slides with the pinned Marp container and asking the page how tall each one
-# had come out.
-#
-# Without it the estimate below ran up to 7% under the real height, which made
-# it an estimate pretending to be a guard. With it the estimate is above the
-# real height on every one of the 45, by between 2% and 29%. That is the
-# direction to be wrong in: it refuses a dense slide that might have fitted,
-# and it never waves through one that did not.
-#
-# Re-measure if the theme changes shape. The method is in the pull request for
-# #12, and the real render is `.github/workflows/slides.yml`.
-ELEMENT_GAP = 16
-
-
-def text_of(path):
-    """Read a committed file, through the door that survives a long path.
-
-    A surveyor's checkout sits under something like "OneDrive - Some Long Firm
-    Name\\Documents\\Projects", and this repo's own worktrees already push a
-    path past the 260 characters Windows opens without being asked in the
-    extended form. `cache.long_path` is how every other read here gets in.
-    """
-    with open(long_path(path), "r", encoding="utf-8") as handle:
-        return handle.read()
+# One row of the run of show. The three travel together through every check
+# here, so they travel as one thing.
+Block = namedtuple("Block", "time minutes label")
 
 
 # ---------------------------------------------------------------------------
 # Reading the plan of record
 # ---------------------------------------------------------------------------
-
-
-def markdown_section(markdown, heading):
-    """Everything under one heading, up to the next heading of any depth.
-
-    Matched on how the heading starts rather than on the whole of it, because
-    the plan of record writes its running time into one of them -- "## 5. Run
-    of show (2:00)" -- and a heading that gains or loses a parenthesis should
-    not fail a check about slides.
-    """
-    lines = markdown.splitlines()
-    for start, line in enumerate(lines):
-        if line.strip().startswith(heading):
-            break
-    else:
-        raise AssertionError(f"{heading!r} is not in that file")
-    for end in range(start + 1, len(lines)):
-        if lines[end].startswith("#"):
-            return "\n".join(lines[start + 1:end])
-    return "\n".join(lines[start + 1:])
-
-
-def table_rows(markdown):
-    """Every table row in a markdown file, as a list of stripped cells."""
-    rows = []
-    for line in markdown.splitlines():
-        line = line.strip()
-        if not line.startswith("|"):
-            continue
-        rows.append([cell.strip() for cell in line.strip("|").split("|")])
-    return rows
 
 
 def block_label(cell):
@@ -192,13 +130,13 @@ def block_label(cell):
 
 
 def run_of_show():
-    """The blocks of the session as (time, minutes, label), in order.
+    """The blocks of the session, in order, read from the plan of record.
 
     Read rather than restated, for the reason in this file's docstring.
     """
     section = markdown_section(text_of(PLAN), "## 5. Run of show")
     return [
-        (row[0], int(row[1]), block_label(row[2]))
+        Block(row[0], int(row[1]), block_label(row[2]))
         for row in table_rows(section)
         if A_TIME.fullmatch(row[0])
     ]
@@ -220,6 +158,44 @@ def cut_line():
     if not items:
         raise AssertionError("the plan of record no longer has a cut line")
     return items
+
+
+def never_cut():
+    """The blocks §7 says never to cut, as the labels §5 gives them.
+
+    The two sections do not use the same words for the same block. §7 writes
+    "the failure beat" and "the accountability close"; §5 heads the same two
+    "Review, seal — and the three failures" and "Accountability · Monday
+    morning · the live issue". So a phrase is matched to a block on any word it
+    carries that is not a common one, allowing a word in §7 to be the start of
+    a longer word in §5 -- which is what joins "failure" to "failures".
+
+    A straight substring match was tried first and quietly matched two of the
+    four. That is the failure this returns a resolved list to make visible:
+    the caller checks it found every block before it trusts any of them.
+    """
+    section = markdown_section(text_of(PLAN), "### Cut line, in order")
+    stated = re.search(r"\*\*Never cut:\*\*(.+)", section)
+    if not stated:
+        raise AssertionError("the plan of record no longer says what never to cut")
+    resolved = {}
+    for phrase in stated.group(1).split(","):
+        phrase = phrase.strip(" .*")
+        if not phrase:
+            continue
+        wanted = [
+            word for word in re.findall(r"\w+", phrase.lower())
+            if word not in COMMON_WORDS
+        ]
+        resolved[phrase] = [
+            block for block in run_of_show()
+            if any(
+                found.startswith(word)
+                for word in wanted
+                for found in re.findall(r"\w+", block.label.lower())
+            )
+        ]
+    return resolved
 
 
 # ---------------------------------------------------------------------------
@@ -248,6 +224,11 @@ class Slide:
         ]
 
     @property
+    def classes(self):
+        """The Marp classes on this slide. A slide may carry more than one."""
+        return self.directives.get("_class", "").split()
+
+    @property
     def note(self):
         """The one speaker note on this slide, or "" if it has none."""
         return self.notes[0] if len(self.notes) == 1 else ""
@@ -261,7 +242,7 @@ class Slide:
 
     @property
     def is_a_break(self):
-        return self.directives.get("_class") in BREAK_CLASSES
+        return any(klass in BREAK_CLASSES for klass in self.classes)
 
     def content_lines(self):
         """The lines a viewer actually sees, with the markdown stripped off.
@@ -305,13 +286,18 @@ def slides():
 
 
 def noted(slide):
-    """The (time, minutes, label) a slide's speaker note claims, or None."""
+    """The Block a slide's speaker note claims to belong to, or None."""
     if not slide.note:
         return None
     found = A_NOTE.match(slide.note.splitlines()[0].strip())
     if not found:
         return None
-    return found.group("time"), int(found.group("min")), found.group("block").strip()
+    return Block(found.group("time"), int(found.group("min")), found.group("block").strip())
+
+
+def blocks_in_deck_order():
+    """The clock of every slide that claims one, in the order they appear."""
+    return [noted(slide).time for slide in slides() if noted(slide)]
 
 
 def slides_by_block():
@@ -320,159 +306,8 @@ def slides_by_block():
     for slide in slides():
         claim = noted(slide)
         if claim:
-            grouped.setdefault(claim[0], []).append(slide)
+            grouped.setdefault(claim.time, []).append(slide)
     return grouped
-
-
-# ---------------------------------------------------------------------------
-# Reading the theme
-# ---------------------------------------------------------------------------
-
-
-def style_rules():
-    """`tsps.css` as {selector: {property: value}}.
-
-    Small enough to read with a regular expression, and a real CSS parser is a
-    dependency this repo will not take on for one file.
-
-    Two things get thrown away first. Comments, because the theme explains
-    itself at length and half of what it says is a number. And statements that
-    end in a semicolon outside any block -- `@import 'default';` is the only
-    one today -- because otherwise the import sticks to the front of the first
-    selector and `section` is suddenly not in the file.
-    """
-    css = re.sub(r"/\*.*?\*/", "", text_of(THEME), flags=re.S)
-    rules = {}
-    for selector, block in re.findall(r"([^{}]+)\{([^{}]*)\}", css):
-        selector = selector.rpartition(";")[2]
-        declarations = {}
-        for declaration in block.split(";"):
-            name, _, value = declaration.partition(":")
-            if value:
-                declarations[name.strip()] = value.strip()
-        for one in selector.split(","):
-            rules.setdefault(one.strip(), {}).update(declarations)
-    return rules
-
-
-def points(value):
-    """`34pt` as the number 34, or None for anything not written in points."""
-    found = re.fullmatch(r"([\d.]+)pt", value.strip())
-    return float(found.group(1)) if found else None
-
-
-def pixels(value):
-    found = re.fullmatch(r"([\d.]+)px", value.strip())
-    return float(found.group(1)) if found else None
-
-
-def margin_bottom(declarations):
-    """The bottom margin of a rule, in em, however it was written.
-
-    `margin: 0 0 0.55em 0` and `margin-bottom: 0.5em` mean the same thing and
-    the theme uses both.
-    """
-    if "margin-bottom" in declarations:
-        found = re.fullmatch(r"([\d.]+)em", declarations["margin-bottom"].strip())
-        return float(found.group(1)) if found else 0.0
-    shorthand = declarations.get("margin", "").split()
-    if len(shorthand) == 4:
-        found = re.fullmatch(r"([\d.]+)em", shorthand[2])
-        return float(found.group(1)) if found else 0.0
-    return 0.0
-
-
-class Canvas:
-    """The type sizes and the space to put them in, read out of the theme.
-
-    Everything here comes from `tsps.css`. Nothing is typed in twice, so
-    changing a size in the theme changes what this will accept.
-
-    **Classes are read too.** `section.title h1` is 84pt where `section h1` is
-    66, and a budget blind to that would wave through the two slides carrying
-    the biggest type in the deck -- which are the only two where the type alone
-    can fill the canvas.
-    """
-
-    def __init__(self):
-        self.rules = style_rules()
-        body = self.rules["section"]
-        self.width = pixels(body["width"]) - 2 * self._padding(body, side=1)
-        self.height = pixels(body["height"]) - 2 * self._padding(body, side=0)
-        self.body_pt = points(body["font-size"])
-        self.body_leading = float(body["line-height"])
-
-    @staticmethod
-    def _padding(declarations, side):
-        """`padding: 90px 120px` -- side 0 is top and bottom, 1 is left and right."""
-        return pixels(declarations["padding"].split()[side])
-
-    def style_for(self, tag, klass=None):
-        """(size in points, line height, bottom margin in em) for one tag.
-
-        A rule set on the class wins over the same rule set on every slide,
-        which is what the browser does. Anything neither of them sets falls
-        back to the body.
-        """
-        declarations = dict(self.rules.get(f"section {tag}", {}))
-        if klass:
-            declarations.update(self.rules.get(f"section.{klass} {tag}", {}))
-        size = points(declarations.get("font-size", "")) or self.body_pt
-        leading = float(declarations.get("line-height", self.body_leading))
-        # A paragraph gets no rule of its own in the theme, so it is given a
-        # bullet's bottom margin. That is a guess, and it is the pessimistic
-        # one: guessing zero would let a slide of paragraphs through that a
-        # real render would overflow.
-        margin = margin_bottom(declarations or self.rules.get("section li", {}))
-        return size, leading, margin
-
-    def smallest_type(self):
-        """The smallest size anywhere in the theme, including the page number."""
-        sizes = [self.body_pt]
-        for declarations in self.rules.values():
-            size = points(declarations.get("font-size", ""))
-            if size:
-                sizes.append(size)
-        return min(sizes)
-
-    def height_of(self, tag, text, klass=None):
-        """How tall one line of markdown renders, wrapping included."""
-        size, leading, margin = self.style_for(tag, klass)
-        per_character = size * PX_PER_PT * AVERAGE_CHARACTER
-        wrapped = max(1, math.ceil(len(text) * per_character / self.width))
-        return wrapped * size * PX_PER_PT * leading + margin * size * PX_PER_PT
-
-    @staticmethod
-    def tag_of(line):
-        """Which element one line of markdown renders as."""
-        if line.startswith("###"):
-            return "h3", line.lstrip("#").strip()
-        if line.startswith("##"):
-            return "h2", line.lstrip("#").strip()
-        if line.startswith("#"):
-            return "h1", line.lstrip("#").strip()
-        if line.startswith("> "):
-            return "blockquote", line[2:]
-        if line.startswith(("- ", "* ", "1. ")):
-            return "li", line
-        return "p", line
-
-    def height_of_slide(self, slide):
-        """About how tall a slide renders, in pixels of the 1080 canvas.
-
-        `ELEMENT_GAP` is added once per *block*, not once per line: a run of
-        bullets is one list to a browser however many bullets are in it, which
-        is how the gap was measured.
-        """
-        klass = slide.directives.get("_class")
-        total, blocks, previous = 0.0, 0, None
-        for line in slide.content_lines():
-            tag, text = self.tag_of(line.strip())
-            if tag != "li" or previous != "li":
-                blocks += 1
-            total += self.height_of(tag, text, klass)
-            previous = tag
-        return total + blocks * ELEMENT_GAP
 
 
 # ---------------------------------------------------------------------------
@@ -490,27 +325,43 @@ class TestTheDeckCoversTheWholeSession(unittest.TestCase):
     def test_every_block_in_the_run_of_show_has_at_least_one_slide(self):
         covered = slides_by_block()
         missing = [
-            f"{time} {label}" for time, _min, label in run_of_show() if time not in covered
+            f"{block.time} {block.label}"
+            for block in run_of_show()
+            if block.time not in covered
         ]
         self.assertEqual(missing, [], "these blocks of the session have no slide")
 
     def test_the_deck_invents_no_block_the_plan_of_record_does_not_have(self):
         """A section for something that was cut is time spent on stage on it."""
-        planned = {time for time, _min, _label in run_of_show()}
+        planned = {block.time for block in run_of_show()}
         extra = sorted(set(slides_by_block()) - planned)
         self.assertEqual(extra, [], "these are in the deck and not in the run of show")
 
     def test_the_slides_are_in_the_order_the_session_runs_them(self):
         """A deck out of order is found by paging through it, which nobody does."""
-        order = [time for time, _min, _label in run_of_show()]
-        seen = [noted(slide)[0] for slide in slides() if noted(slide)]
+        order = [block.time for block in run_of_show()]
+        seen = blocks_in_deck_order()
         self.assertEqual(seen, sorted(seen, key=order.index))
 
     def test_a_block_is_one_unbroken_run_of_slides(self):
         """Half a block at the front of the deck and half at the back is a cut
-        that takes out the wrong slides, made by somebody in a hurry."""
-        seen = [noted(slide)[0] for slide in slides() if noted(slide)]
-        self.assertEqual(len(list(dict.fromkeys(seen))), len(set(seen)))
+        that takes out the wrong slides, made by somebody in a hurry.
+
+        `groupby` collapses each run of the same clock to one entry, so a block
+        that appears in two places appears twice in `runs` and nowhere else.
+        The first draft of this compared `dict.fromkeys` against `set`, which
+        are equal in length by definition -- an assertion that could not fail.
+        """
+        runs = [time for time, _slides in itertools.groupby(blocks_in_deck_order())]
+        self.assertEqual(
+            runs, list(dict.fromkeys(runs)),
+            "this block is split across two places in the deck",
+        )
+
+    def test_that_contiguity_check_can_actually_fail(self):
+        """The guard on the guard, since the first version of it could not."""
+        runs = [time for time, _s in itertools.groupby(["a", "b", "a"])]
+        self.assertNotEqual(runs, list(dict.fromkeys(runs)))
 
 
 class TestEverySlideCarriesTheClock(unittest.TestCase):
@@ -531,24 +382,12 @@ class TestEverySlideCarriesTheClock(unittest.TestCase):
     def test_every_note_opens_with_the_clock_the_length_and_the_block(self):
         for slide in slides():
             with self.subTest(slide=slide.number, heading=slide.heading):
+                opening = slide.note.splitlines()[0] if slide.note else ""
                 self.assertIsNotNone(
                     noted(slide),
-                    f"slide {slide.number} opens its note with "
-                    f"{slide.note.splitlines()[0] if slide.note else '' !r}, which is not "
-                    "`0:00–0:08 · 8 min · Cold open`",
+                    f"slide {slide.number} opens its note with {opening!r}, which is "
+                    "not `0:00–0:08 · 8 min · Cold open`",
                 )
-
-    def test_the_length_on_every_slide_is_the_length_in_the_plan_of_record(self):
-        """A note saying 12 minutes for a block the plan gives 6 is a deck that
-        was right once."""
-        planned = {time: (minutes, label) for time, minutes, label in run_of_show()}
-        for slide in slides():
-            claim = noted(slide)
-            with self.subTest(slide=slide.number, heading=slide.heading):
-                self.assertIsNotNone(claim, f"slide {slide.number} has no readable note")
-                time, minutes, label = claim
-                self.assertIn(time, planned, f"{time} is not a block of this session")
-                self.assertEqual((minutes, label), planned[time])
 
     def test_the_clock_is_nowhere_the_room_can_see_it(self):
         """The other half of "in the speaker notes", and the half worth saying.
@@ -564,6 +403,19 @@ class TestEverySlideCarriesTheClock(unittest.TestCase):
                         A_TIME.search(line),
                         f"slide {slide.number} puts the clock on the projector",
                     )
+
+    def test_the_length_on_every_slide_is_the_length_in_the_plan_of_record(self):
+        """A note saying 12 minutes for a block the plan gives 6 is a deck that
+        was right once."""
+        planned = {block.time: block for block in run_of_show()}
+        for slide in slides():
+            claim = noted(slide)
+            with self.subTest(slide=slide.number, heading=slide.heading):
+                self.assertIsNotNone(claim, f"slide {slide.number} has no readable note")
+                self.assertIn(
+                    claim.time, planned, f"{claim.time} is not a block of this session"
+                )
+                self.assertEqual(claim, planned[claim.time])
 
     def test_a_note_says_more_than_the_clock(self):
         """A note with nothing under the header line is a header, not a note,
@@ -600,26 +452,37 @@ class TestTheSectionBreaksMatchTheActs(unittest.TestCase):
                 self.assertEqual(inside, [], f"{time} has a second break inside it")
 
     def test_the_deck_opens_on_the_title_slide(self):
-        first = slides()[0]
-        self.assertEqual(first.directives.get("_class"), "title")
+        self.assertIn("title", slides()[0].classes)
 
-    def test_each_act_has_a_break_slide_that_names_it(self):
-        """The three acts by name, because they are how the session is described
-        to the room and how it is talked about afterwards."""
-        acts = [label for _time, _min, label in run_of_show() if label.startswith("Act ")]
+    def test_each_act_is_marked_as_one(self):
+        """The three acts carry a class of their own, on top of `divider`.
+
+        Eleven identical breaks make every block look the same size to the
+        room, and the acts are not the same size as the stretch break. This is
+        what lets the theme set them apart.
+        """
+        acts = [block for block in run_of_show() if block.label.startswith("Act ")]
         self.assertEqual(len(acts), 3, "the run of show no longer has three acts")
-        headings = [slide.heading for slide in slides() if slide.is_a_break]
         for act in acts:
-            with self.subTest(act=act):
-                self.assertIn(act, headings)
+            opener = slides_by_block()[act.time][0]
+            with self.subTest(act=act.label):
+                self.assertEqual(opener.heading, act.label)
+                self.assertIn("act", opener.classes)
+
+    def test_nothing_but_an_act_is_marked_as_one(self):
+        act_times = {b.time for b in run_of_show() if b.label.startswith("Act ")}
+        for slide in slides():
+            if "act" not in slide.classes:
+                continue
+            with self.subTest(slide=slide.number, heading=slide.heading):
+                self.assertIn(noted(slide).time, act_times)
 
     def test_every_break_slide_is_headed_with_the_block_it_opens(self):
         for slide in slides():
             if not slide.is_a_break or slide.number == 1:
                 continue
-            _time, _min, label = noted(slide)
             with self.subTest(slide=slide.number):
-                self.assertEqual(slide.heading, label)
+                self.assertEqual(slide.heading, noted(slide).label)
 
 
 class TestTheCutLineIsMarkedOnTheSlides(unittest.TestCase):
@@ -644,77 +507,49 @@ class TestTheCutLineIsMarkedOnTheSlides(unittest.TestCase):
             with self.subTest(cut=rank, what=what):
                 self.assertEqual(len(marked), 1, f"{mark} is on slides {marked}")
 
+    def test_every_phrase_the_plan_protects_resolves_to_exactly_one_block(self):
+        """The guard on the guard below, and it was needed.
+
+        §7 and §5 name the same blocks differently, so the check that nothing
+        protected is marked can only work if every protected phrase is first
+        matched to a block. A substring match looked like it worked and
+        silently resolved two of the four, which left half the guard dead while
+        the test went on passing.
+        """
+        resolved = never_cut()
+        self.assertEqual(len(resolved), 4, "the plan protects a different number of blocks")
+        for phrase, blocks in resolved.items():
+            with self.subTest(protected=phrase):
+                self.assertEqual(
+                    [block.label for block in blocks].__len__(), 1,
+                    f"{phrase!r} matches {[b.label for b in blocks]} in the run of show",
+                )
+
     def test_nothing_the_plan_says_never_to_cut_is_marked(self):
         """§7 is blunt about four of them. A deck that marked one for cutting
-        would be read at the one moment nobody re-reads the plan."""
-        never = markdown_section(text_of(PLAN), "### Cut line, in order")
-        stated = re.search(r"\*\*Never cut:\*\*(.+)", never)
-        self.assertIsNotNone(stated, "the plan of record no longer says what never to cut")
-        protected = [part.strip(" .*") for part in stated.group(1).split(",")]
-        self.assertTrue(protected)
-        marked = {
-            noted(slide)[2] for slide in slides() if "Cut " in slide.note and noted(slide)
-        }
-        for label in marked:
-            for phrase in protected:
-                with self.subTest(marked=label, protected=phrase):
-                    # The plan writes "the grilling" and the deck heads that
-                    # block "Act I — The grilling", so the leading article has
-                    # to come off before the two can be compared.
-                    without_article = phrase.lower().removeprefix("the ").strip()
-                    self.assertNotIn(without_article, label.lower())
+        would be read at the one moment nobody re-reads the plan.
 
-
-class TestNothingIsTooSmallOrTooBigForTheRoom(unittest.TestCase):
-    """The fourth acceptance criterion, in its two halves.
-
-    Too small is a number in a stylesheet. Too big is a slide that asks the
-    canvas for more room than it has, and the back row gets neither.
-    """
-
-    def setUp(self):
-        self.canvas = Canvas()
-
-    def test_the_canvas_is_the_size_the_projector_runs_at(self):
-        rules = style_rules()["section"]
-        self.assertEqual(pixels(rules["width"]), 1920)
-        self.assertEqual(pixels(rules["height"]), 1080)
-
-    def test_nothing_in_the_theme_is_smaller_than_28pt(self):
-        self.assertGreaterEqual(self.canvas.smallest_type(), 28)
-
-    def test_no_relative_size_drops_a_run_of_text_below_28pt(self):
-        """`font-size: 0.85em` on a code span is how 28pt quietly becomes 24."""
-        for selector, declarations in style_rules().items():
-            size = declarations.get("font-size", "")
-            found = re.fullmatch(r"([\d.]+)em", size.strip())
-            if not found:
-                continue
-            with self.subTest(selector=selector):
-                self.assertGreaterEqual(
-                    float(found.group(1)) * self.canvas.body_pt, 28,
-                    f"{selector} sets {size}, which is under 28pt of the {self.canvas.body_pt}pt body",
-                )
-
-    def test_no_slide_asks_for_more_room_than_the_canvas_has(self):
-        for slide in slides():
-            with self.subTest(slide=slide.number, heading=slide.heading):
-                asked = self.canvas.height_of_slide(slide)
-                self.assertLessEqual(
-                    asked, self.canvas.height,
-                    f"slide {slide.number} ({slide.heading!r}) asks for about "
-                    f"{asked:.0f}px of a {self.canvas.height:.0f}px canvas",
-                )
-
-    def test_the_budget_would_notice_a_slide_that_overflowed(self):
-        """A budget that can never fail is not a check, it is a comment.
-
-        Twenty-four bullets on one slide is well past anything a projector
-        renders, and if this passes then the arithmetic above has broken and
-        every other slide is being waved through.
+        Only the formal `Cut N of M` marker counts, and that is not a
+        loophole. §7 protects the failure beat as a **block** while the timing
+        warning above it says, in the same document, to cut **beat 2** inside
+        that block if the run is behind at 1:36. Both are true: the block
+        survives and one of its three beats goes. A first draft matched the
+        bare word "Cut" and read the note carrying that instruction as a
+        cut-line mark, which would have made the plan contradict itself.
         """
-        too_much = Slide(0, "# Heading\n\n" + "\n".join(["- a line of text"] * 24))
-        self.assertGreater(self.canvas.height_of_slide(too_much), self.canvas.height)
+        protected = {
+            block.time: phrase for phrase, blocks in never_cut().items() for block in blocks
+        }
+        a_cut_mark = re.compile(r"Cut \d+ of \d+")
+        for slide in slides():
+            if not a_cut_mark.search(slide.note):
+                continue
+            with self.subTest(slide=slide.number, heading=slide.heading):
+                self.assertNotIn(
+                    noted(slide).time, protected,
+                    f"slide {slide.number} is marked for cutting and the plan of record "
+                    f"says never to cut {protected.get(noted(slide).time)!r}",
+                )
 
 
 class TestTheSpeakerNotesSendYouSomewhereReal(unittest.TestCase):
@@ -753,14 +588,65 @@ class TestTheSpeakerNotesSendYouSomewhereReal(unittest.TestCase):
                 )
 
 
+class TestTheClaimsWithConsequencesCarryTheirSource(unittest.TestCase):
+    """`CLAUDE.md`: *"Numbers with legal consequence -- accuracy tolerances,
+    notice periods, fees -- get a source link next to them"*, and *"Never
+    invent a TxDOT requirement. Cite the manual section and its URL."*
+
+    The deck publishes on every push to `main`, so a claim about Texas law or
+    a TxDOT rule is on the web the moment it is written, whether or not the
+    slide around it is finished. Saying the source in the speaker notes is not
+    enough: nobody in the room can see the presenter's screen.
+
+    So a slide that states one carries its citation, and the citation is the
+    repo's own -- checked here against `CONTEXT.md`, `docs/txdot-research.md`
+    and `docs/governance/`, not against this file's memory of them.
+    """
+
+    # Each is (a phrase that appears on a slide, something its citation must
+    # carry). Kept short on purpose: this is a list of the claims that would
+    # cost somebody money or a license if they were wrong, not of every fact.
+    CONSEQUENCES = (
+        ("no acceptable failure rate", "txdot.gov/manuals/row/ess"),
+        ("cannot be invoiced", "txdot.gov/manuals/row/ess"),
+        ("PAO 71", "pels.texas.gov"),
+        ("responsible charge", "131.2"),
+        ("Right of entry", "1071.358"),
+    )
+
+    def slide_saying(self, phrase):
+        for slide in slides():
+            if any(phrase.lower() in line.lower() for line in slide.content_lines()):
+                return slide
+        return None
+
+    def test_every_claim_with_consequences_carries_its_citation_on_the_slide(self):
+        for phrase, citation in self.CONSEQUENCES:
+            slide = self.slide_saying(phrase)
+            with self.subTest(claim=phrase):
+                self.assertIsNotNone(slide, f"no slide says {phrase!r} any more")
+                visible = "\n".join(slide.content_lines())
+                self.assertIn(
+                    citation, visible,
+                    f"slide {slide.number} states {phrase!r} with no source the room can see",
+                )
+
+    def test_no_slide_cites_the_superseded_manual_host(self):
+        """`CLAUDE.md`: never `onlinemanuals.txdot.gov`. It is a scripted demo
+        in this very session, which would be an unfortunate place to do it."""
+        for slide in slides():
+            with self.subTest(slide=slide.number, heading=slide.heading):
+                self.assertNotIn("onlinemanuals.txdot.gov", "\n".join(slide.content_lines()))
+
+
 class TestThePlaceholdersSayTheyArePlaceholders(unittest.TestCase):
     """#12 asks for a frame and says plainly there is no real content yet.
 
     That is fine on the 13th of September and dangerous on the 7th of October,
-    because this deck renders and publishes on every push to `main`. A slide
-    with a heading and three bullets looks finished from the back of a room. So
-    every slide still waiting on its content says so on its face, and names the
-    work order that would fill it.
+    because this deck renders and publishes on every push. A slide with a
+    heading and three bullets looks finished from the back of a room. So every
+    slide still waiting on its content says so on its face, and names the work
+    order that would fill it.
     """
 
     def test_every_placeholder_either_names_a_work_order_or_says_there_is_none(self):
@@ -801,18 +687,19 @@ class TestThePlaceholdersSayTheyArePlaceholders(unittest.TestCase):
         """A number written in prose beside a thing is a number that rots.
 
         `docs/slides/index.md` is the page a reader lands on, and it is where
-        the deck admits what state it is in. Both numbers on it are checkable,
-        so both are checked -- same reasoning as the gap count on the fallback
-        card, which was wrong on its first draft for exactly this reason.
+        the deck admits what state it is in. Every number on it is checkable,
+        so every number is checked -- same reasoning as the gap count on the
+        fallback card, which was wrong on its first draft for exactly this
+        reason.
         """
-        page = text_of(SLIDES_PAGE)
-        stated = re.search(r"\*\*(\d+) slides\*\*", page)
+        stated = re.search(r"\*\*(\d+) slides\*\*", text_of(SLIDES_PAGE))
         self.assertIsNotNone(stated, "the Slides page no longer says how big the deck is")
         self.assertEqual(int(stated.group(1)), len(slides()))
 
     def test_the_slides_page_states_how_much_of_it_is_still_a_placeholder(self):
-        page = text_of(SLIDES_PAGE)
-        stated = re.search(r"\*\*(\d+) of them are still placeholders\*\*", page)
+        stated = re.search(
+            r"\*\*(\d+) of them are still placeholders\*\*", text_of(SLIDES_PAGE)
+        )
         self.assertIsNotNone(stated, "the Slides page no longer says what is unfinished")
         waiting = [slide for slide in slides() if PLACEHOLDER in slide.body]
         self.assertEqual(int(stated.group(1)), len(waiting))
@@ -821,11 +708,85 @@ class TestThePlaceholdersSayTheyArePlaceholders(unittest.TestCase):
         """The number this whole exercise turned up, on the page a reader lands
         on. It is the one number here that should make somebody uncomfortable,
         which is the argument for checking it rather than trusting it."""
-        page = text_of(SLIDES_PAGE)
-        stated = re.search(r"\*\*(\d+) of those have no work order yet\*\*", page)
+        stated = re.search(
+            r"\*\*(\d+) of those have no work order yet\*\*", text_of(SLIDES_PAGE)
+        )
         self.assertIsNotNone(stated, "the Slides page no longer says what nobody is writing")
         unowned = [slide for slide in slides() if NO_WORK_ORDER in slide.body]
         self.assertEqual(int(stated.group(1)), len(unowned))
+
+    def test_the_slides_page_states_how_many_blocks_that_leaves_unwritten(self):
+        """The same gap counted the way a presenter feels it -- in blocks of the
+        session rather than in slides. It was right when it was written and
+        nothing held it there, which is how the other counts on this page ended
+        up with tests."""
+        page = text_of(SLIDES_PAGE)
+        stated = re.search(r"That is (\w+) of the\s+(\w+) blocks", page)
+        self.assertIsNotNone(stated, "the Slides page no longer counts the blocks affected")
+        words = {
+            "one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6,
+            "seven": 7, "eight": 8, "nine": 9, "ten": 10, "eleven": 11,
+        }
+        unowned = {
+            noted(slide).time for slide in slides() if NO_WORK_ORDER in slide.body
+        }
+        self.assertEqual(words[stated.group(1)], len(unowned))
+        self.assertEqual(words[stated.group(2)], len(run_of_show()))
+
+
+class TestNothingIsTooSmallOrTooBigForTheRoom(unittest.TestCase):
+    """The fourth acceptance criterion, in its two halves.
+
+    Too small is a number in a stylesheet. Too big is a slide that asks the
+    canvas for more room than it has, and the back row gets neither.
+    """
+
+    def setUp(self):
+        self.canvas = Canvas(THEME)
+
+    def test_the_canvas_is_the_size_the_projector_runs_at(self):
+        rules = style_rules(THEME)["section"]
+        self.assertEqual(rules["width"], "1920px")
+        self.assertEqual(rules["height"], "1080px")
+
+    def test_nothing_in_the_theme_is_smaller_than_28pt(self):
+        """28pt exactly is what the page number is, and that is the floor, not
+        a rounding error. `section::after` sits at it deliberately."""
+        self.assertGreaterEqual(self.canvas.smallest_type(), 28)
+
+    def test_no_relative_size_drops_a_run_of_text_below_28pt(self):
+        """`font-size: 0.85em` on a code span is how 28pt quietly becomes 24."""
+        for selector, declarations in style_rules(THEME).items():
+            size = declarations.get("font-size", "")
+            found = re.fullmatch(r"([\d.]+)em", size.strip())
+            if not found:
+                continue
+            with self.subTest(selector=selector):
+                self.assertGreaterEqual(
+                    float(found.group(1)) * self.canvas.body_pt, 28,
+                    f"{selector} sets {size}, which is under 28pt of the "
+                    f"{self.canvas.body_pt}pt body",
+                )
+
+    def test_no_slide_asks_for_more_room_than_the_canvas_has(self):
+        for slide in slides():
+            with self.subTest(slide=slide.number, heading=slide.heading):
+                asked = self.canvas.height_of_lines(slide.content_lines(), slide.classes)
+                self.assertLessEqual(
+                    asked, self.canvas.height,
+                    f"slide {slide.number} ({slide.heading!r}) asks for about "
+                    f"{asked:.0f}px of a {self.canvas.height:.0f}px canvas",
+                )
+
+    def test_the_budget_would_notice_a_slide_that_overflowed(self):
+        """A budget that can never fail is not a check, it is a comment.
+
+        Twenty-four bullets on one slide is well past anything a projector
+        renders, and if this passes then the arithmetic has broken and every
+        other slide is being waved through.
+        """
+        too_much = ["# Heading"] + ["- a line of text"] * 24
+        self.assertGreater(self.canvas.height_of_lines(too_much), self.canvas.height)
 
 
 class TestTheDeckIsWiredIntoTheBuild(unittest.TestCase):

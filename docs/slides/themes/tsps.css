@@ -129,6 +129,28 @@ section.divider h2 {
 }
 
 /*
+  The three Acts. Add "<!-- _class: divider act -->" to get this on top of the
+  divider above.
+
+  Eleven identical breaks make every block look the same size to the room, and
+  they are not: an Act runs sixteen to twenty-one minutes and the stretch runs
+  five. So an Act carries a heavy rule over its title and a white subtitle
+  rather than the pale one, which reads from the back as "this is a big piece"
+  without anybody having to be told.
+
+  The rule is drawn with a border rather than an image, so nothing is fetched
+  and the slide renders the same on a laptop with no network.
+*/
+section.act h1 {
+  border-top: 14px solid #bfe3d1;
+  padding-top: 0.35em;
+}
+
+section.act h2 {
+  color: #ffffff;
+}
+
+/*
   A slide that is still waiting for its content says so, in a blockquote, and
   names the work order that would fill it.
 

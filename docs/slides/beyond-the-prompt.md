@@ -229,7 +229,7 @@ running long. Keep it to one slide so the cut is a single deletion.
 
 ---
 
-<!-- _class: divider -->
+<!-- _class: divider act -->
 
 # Act I — The grilling
 
@@ -381,6 +381,8 @@ through A12, so anybody who wants to argue with one can find it.
 - For an owner, that is not a quality sentence. It is a money sentence
 - Speed is the smaller half of the argument. Lead with this one
 
+Survey Manual (ESS) rev. April 2026, Ch. 4 · txdot.gov/manuals/row/ess
+
 > **To be written** — #32
 
 <!--
@@ -411,7 +413,7 @@ Nothing is on screen to lose here, so there is no fallback to reach for.
 
 ---
 
-<!-- _class: divider -->
+<!-- _class: divider act -->
 
 # Act II — Find the control
 
@@ -538,7 +540,7 @@ so and move on - losing it costs the live moment and nothing else.
 
 ---
 
-<!-- _class: divider -->
+<!-- _class: divider act -->
 
 # Act III — The estimate package
 
@@ -665,11 +667,12 @@ corridor-screen folder. It needs no network.
 
 ---
 
-# Beat 2 — the silent NoData
+# Beat 2 — the silent `NoData`
 
+- `NoData` is a service saying "no height recorded for that point"
 - One question, asked twice, one word apart
-- The service ignored the coordinate system and answered anyway
-- No error. A plausible number, in the wrong units, with nothing to warn you
+- It ignored the coordinate system, landed in the ocean, and said `NoData`
+- No error, and the web's code for "here is your answer" on both
 - It did not fail. It answered. That is worse
 
 > **To be written** — no work order yet
@@ -677,7 +680,10 @@ corridor-screen folder. It needs no network.
 <!--
 1:36–1:48 · 12 min · Review, seal — and the three failures
 
-Cut this beat first if the block is running long.
+Not on the cut line, and the block it sits in is never cut. The plan's own
+timing warning is narrower than that: if the run is behind at 1:36, drop
+this one beat -- the most technical of the three and the least about
+accountability -- and keep the block.
 
 Fallback: python -m corridor_screen.elevation_trap --show
 -->
@@ -707,10 +713,12 @@ in order. The rule that caught it was written for something else entirely.
 
 # You seal it. You own it.
 
-- TBPELS has spoken directly to AI, and its answer is the existing doctrine
+- TBPELS has spoken directly to AI. Its answer is the existing doctrine
 - AI is a tool. The licensee is responsible for what they sign and seal
-- Responsible charge is the same standard as direct supervision, not a looser one
+- Responsible charge is direct supervision's standard, not a looser one
 - Personally review and approve decisions before they are acted on
+
+PAO 71, 14 Nov 2024 · pels.texas.gov · 22 Tex. Admin. Code § 131.2(11), (38)
 
 > **To be written** — no work order yet
 
@@ -744,9 +752,11 @@ Build it so it survives being reduced to a recorded teaser. See #34.
 # The letter nobody remembers to send
 
 - Right of entry is not a statutory right in Texas. You have to ask
-- The first letter goes out. The follow-up is the one firms forget
+- A denied RPLS *may seek* a court order; an LSLS *is entitled to* one
 - Day 21 comes out of the lead-time math, not out of a hard-coded number
 - Nothing in it touches client data
+
+Tex. Occ. Code §§ 1071.3585 and 1071.358 · lead times in the repo, each cited
 
 > **To be written** — #34
 

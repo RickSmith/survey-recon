@@ -41,9 +41,9 @@ page is what was on the screen in the room.
     eleven blocks of the session, and none of it was visible until there was a
     slide to hang each block on.
 
-    The slides say `no work order yet` rather than pointing at an issue that
-    does not exist. Same rule as everywhere else here: *not found*, never *does
-    not exist*.
+    The slides say `no work order yet` rather than pointing at an issue
+    nobody has written. Same rule as everywhere else here: **not found**, never
+    the stronger claim.
 
 ## How it is put together
 
@@ -74,9 +74,15 @@ live demo that runs long turns every slide into an accusation.
 ## Making a cut
 
 Every block of the session opens with a **section break** — a dark green slide
-carrying the block's name. That is what makes a cut cheap: cutting a block is
-deleting from one break to the next, which anybody can do the night before
-without reading the slides.
+carrying the block's name. The one exception is the cold open, which opens on
+the title slide, because that is what is really on the screen for those eight
+minutes while the agent runs.
+
+That is what makes a cut cheap: cutting a block is deleting from one break to
+the next, which anybody can do the night before without reading the slides.
+
+The three **Acts** carry a heavy rule over the title, so they read from the back
+of the room as bigger pieces than the five-minute stretch break.
 
 The three things on [the cut line](../plan-of-record.md#cut-line-in-order) are
 marked in the speaker notes of the exact slide they would take out, as
@@ -86,12 +92,15 @@ to cut are not marked, and the tests refuse to let them be.
 ## How this deck is kept honest
 
 `corridor-screen/tests/test_deck.py` reads the deck on every test run and holds
-it to all of this — every block covered, in order; the clock in every note and
-on no slide; a break at the head of every block; the cut line marked; nothing in
-the theme under 28pt; and no slide asking for more room than 1920 x 1080 has.
+it to all of this — every block covered, in order, in one unbroken run each;
+the clock in every note and on no slide; a break at the head of every block and
+the Acts marked as Acts; the cut line marked and nothing the plan protects
+marked; every file a speaker note sends a presenter to committed; every claim
+with legal weight carrying its source **on the slide**; nothing in the theme
+under 28pt; and no slide asking for more room than 1920 x 1080 has.
 
-The two counts in the boxes above are checked against the deck as well, because
-a number written in prose beside a thing is a number that rots.
+Every count in the boxes above is checked against the deck as well, because a
+number written in prose beside a thing is a number that rots.
 
 ```bash
 cd corridor-screen && python -m unittest tests.test_deck
