@@ -11,6 +11,7 @@ are recorded there. Shortened to the steps that exist in this first pass:
 6. Flags -- what about each parcel costs time
 7. Control -- the NGS marks and TxDOT's own points, and what condition they are in
 8. ROW map sheets -- how many drawings there are and how far back they go
+9. Crew safety -- where the nearest help is, for the people on the road
 
 The ping exists because last is not soon enough to find out. The field list
 check exists because a query against the wrong layer answers without
@@ -36,6 +37,7 @@ from . import (
     output,
     parcels,
     row_maps as row_maps_mod,
+    safety as safety_mod,
 )
 from .alignment import AlignmentError, from_route_features
 from .arcgis import MODES, Fetcher, ServiceDown, ServiceError, attribute
@@ -51,6 +53,8 @@ from .sources import (
     ROADWAYS,
     ROW_MAP_FIELDS,
     ROW_MAPS,
+    SAFETY_FIELDS,
+    SAFETY_SOURCES,
     TXDOT_CONTROL,
     TXDOT_CONTROL_FIELDS,
 )
@@ -88,8 +92,20 @@ CONTROL_SOURCE_LIST = (NGS_MARKS, TXDOT_CONTROL)
 # reachability ping is doing real work on this one.
 ROW_MAP_SOURCE_LIST = (ROW_MAPS,)
 
+# The crew safety sheet. Not the spine, not joined to a parcel, and not a bid
+# question at all -- issue #18 is blunt that it is a different output. It goes
+# last because nothing else waits on it, and because a blocked host here must
+# cost this sheet and nothing else.
+SAFETY_SOURCE_LIST = tuple(source for source, _ in SAFETY_SOURCES)
+
 # Pinged in this order, and skipped in this order if the run never reaches them.
-SOURCES = SPINE_SOURCES + FLAG_SOURCE_LIST + CONTROL_SOURCE_LIST + ROW_MAP_SOURCE_LIST
+SOURCES = (
+    SPINE_SOURCES
+    + FLAG_SOURCE_LIST
+    + CONTROL_SOURCE_LIST
+    + ROW_MAP_SOURCE_LIST
+    + SAFETY_SOURCE_LIST
+)
 
 # What went wrong is worth recording; how the tool crashed is not. Anything in
 # here becomes an incomplete run with a readable reason rather than a traceback.
@@ -154,6 +170,18 @@ def parse_args(argv=None):
             "period being counted once per parcel."
         ),
     )
+    parser.add_argument(
+        "--safety-search-miles",
+        type=float,
+        default=safety_mod.DEFAULT_SEARCH_RADIUS_MI,
+        help=(
+            "How far around the corridor to look for the nearest hospital, ambulance, "
+            "fire or EMS station and police station, in miles. Stated, never derived. "
+            f"Default {safety_mod.DEFAULT_SEARCH_RADIUS_MI:g}. Raise it on a rural "
+            "corridor: nothing found inside this radius is reported as nothing found "
+            "inside this radius, never as nothing there."
+        ),
+    )
     parser.add_argument("--mode", choices=MODES, default="cache-first", help="Whether the run may reach the network")
     parser.add_argument("--out", required=True, help="Where the output file and the cache are written")
     parser.add_argument(
@@ -173,6 +201,10 @@ def parse_args(argv=None):
         parser.error("--adjacent-distance-ft is a distance from a parcel and cannot be negative")
     if args.corridor_flag_parcels < 1:
         parser.error("--corridor-flag-parcels is a count of parcels and must be at least 1")
+    if args.safety_search_miles <= 0:
+        # A radius of zero would report every corridor as having no hospital,
+        # which is the one thing the crew safety sheet must never do.
+        parser.error("--safety-search-miles must be greater than zero; nothing would be found otherwise")
     return args
 
 
@@ -851,6 +883,138 @@ def _report_row_maps(sheets, without_shape, returned):
     _say()
 
 
+def _safety_extent(alignment, search_miles):
+    """The box the crew safety services are asked about.
+
+    **Much wider than every other extent in this tool, and deliberately so.**
+    Every other step asks what is *in* the corridor. This one asks where the
+    nearest help is, and the nearest hospital to a rural corridor is not in the
+    corridor. A box sized to the ribbon would find nothing and that nothing
+    would read as an answer.
+
+    An envelope, for the reason written up in
+    ``docs/data-sources/flag-services.md``: asked with a polyline and a
+    distance, this exact server buffered into the wrong county and answered
+    without erroring.
+    """
+    return grow_bbox(alignment.bbox, float(search_miles))
+
+
+def _screen_safety(fetcher, args, pings, blocked_hosts, alignment, plane):
+    """Ask where the nearest hospital, ambulance, fire or EMS and police are.
+
+    Returns ``(by_type, service_entries, warnings)``. ``by_type`` holds a key
+    only for a type whose service actually answered, which is what keeps the
+    sheet honest: a blocked host leaves its type out entirely, and
+    ``safety.block`` then names it under ``not_checked`` rather than reporting
+    it as absent. A crew that believes it has no cover because a web server was
+    down is the failure this shape exists to prevent.
+    """
+    extent = _safety_extent(alignment, args.safety_search_miles)
+    by_type = {}
+    entries = []
+    warnings = []
+
+    for source, kind in SAFETY_SOURCES:
+        ping = pings.get(source.name, {})
+        if source.name in blocked_hosts:
+            _go_on_without(source, args, kind, "this kind of help")
+            entries.append(
+                output.skipped_service(
+                    source,
+                    f"the host was not answering when the run began, so the nearest "
+                    f"{kind} was not looked for and none is reported as absent",
+                    ping,
+                )
+            )
+            _say(f"  crew  {kind:<10} not checked -- the host was blocking at the ping")
+            continue
+        try:
+            features, records = _ask_about_extent(
+                fetcher, args, source, extent, f"safety-{kind}", kind, "this kind of help"
+            )
+        except (ServiceDown, ServiceError, Skipped) as exc:
+            # A blocked host costs this one kind of help and nothing else. A
+            # wrong layer is not caught here on purpose -- see
+            # `_ask_about_extent`.
+            entries.append(output.skipped_service(source, str(exc), ping))
+            _say(f"  crew  {kind:<10} not checked -- {exc}")
+            continue
+
+        places, without_position = safety_mod.nearest(
+            features,
+            alignment.flat_paths,
+            alignment.start,
+            alignment.end,
+            plane,
+            source_name=source.name,
+        )
+        tripped = checks.collect(
+            checks.check_paging_cap(source.name, len(features)),
+            checks.check_records_without_position(source.name, without_position, len(features)),
+        )
+        # `check_records_in_requested_extent` is deliberately not run here. Every
+        # other step asks about a box and doubts a record outside it; this step
+        # asks about a box precisely because the answer may be far away, and the
+        # places kept are the nearest few rather than everything returned. The
+        # check that matters for this sheet is the paging cap, because a cap hit
+        # means the nearest place may not have been among the records returned.
+        warnings.extend(tripped)
+        fetcher.note_warnings(records, tripped)
+        by_type[kind] = (places, without_position)
+        entries.append(
+            output.service_entry(
+                source,
+                ping,
+                "ok",
+                records,
+                len(features),
+                tripped,
+                # "33 returned, 3 kept". The box is wide on purpose, so most of
+                # what comes back is correctly returned and simply is not among
+                # the nearest -- the same honest pair every other step reports.
+                used={
+                    "returned": len(features),
+                    "kept": len(places),
+                    "without_position": without_position,
+                    "unused": len(features) - len(places) - without_position,
+                },
+            )
+        )
+    return by_type, entries, warnings
+
+
+def _report_safety(by_type, search_miles):
+    """The sheet a party chief reads, printed while somebody is still watching.
+
+    The straight-line warning is printed every time, not only when something
+    looks odd. It is the caveat most likely to matter and least likely to be
+    read off a page somebody opened once.
+    """
+    _say()
+    _say("  Crew safety")
+    if by_type is None:
+        _say("    nearest help      not checked -- nothing is reported as absent")
+        _say()
+        return
+    for kind in safety_mod.SAFETY_TYPES:
+        if kind not in by_type:
+            _say(f"    {kind:<10} not checked -- no answer either way")
+            continue
+        places, _ = by_type[kind]
+        if not places:
+            _say(f"    {kind:<10} none within {search_miles:g} miles -- not the same as none")
+            continue
+        first = places[0]
+        _say(f"    {kind:<10} {first['distance_mi']:>6.2f} mi  {first['name'] or '(unnamed)'}")
+        where = ", ".join(p for p in (first["address"], first["city"]) if p)
+        if where:
+            _say(f"               {'':>6}      {where}")
+    _say(f"    searched          {search_miles:g} miles around the corridor")
+    _say("    straight lines, not drive times -- check the route before the crew goes out")
+    _say()
+
+
 def run(args):
     started_at = datetime.now(timezone.utc).astimezone()
     run_id = f"texas-bexar-{slug(args.route)}-{started_at.strftime('%Y%m%dT%H%M%S')}"
@@ -886,6 +1050,12 @@ def run(args):
     row_map_sheets = None
     row_maps_without_shape = 0
     row_maps_detail = "the run stopped before the ROW map step"
+    # Same rule again, and it matters most here. `None` means no safety service
+    # was asked, which is not the same as a corridor with no hospital near it --
+    # and a crew that believes it has no cover because a web server was down is
+    # the worst answer this tool could give.
+    safety_by_type = None
+    safety_detail = "the run stopped before the crew safety step"
 
     # Read before anything is fetched. A table that cannot be quoted -- a row
     # with no citation, a "not found" that does not say where it looked -- is a
@@ -918,6 +1088,10 @@ def run(args):
         row_maps_detail = (
             f"{', '.join(spine_blocked)} was not answering, so the run never reached "
             "the ROW map step and no map sheet was checked"
+        )
+        safety_detail = (
+            f"{', '.join(spine_blocked)} was not answering, so the run never reached "
+            "the crew safety step and no nearest help was looked for"
         )
         services = [
             output.skipped_service(
@@ -1090,6 +1264,21 @@ def run(args):
                 row_map_sheets, row_maps_without_shape, row_map_entry.get("record_count") or 0
             )
 
+            # 9 -- the crew safety sheet. Not a bid question, and the only
+            # block here somebody reads before driving out rather than before
+            # pricing.
+            safety_by_type, safety_services, safety_warnings = _screen_safety(
+                fetcher, args, pings, blocked_hosts, alignment, plane
+            )
+            services.extend(safety_services)
+            warnings.extend(safety_warnings)
+            if len(safety_by_type) < len(SAFETY_SOURCES):
+                # A kind of help nobody could ask about. The run says so, and
+                # `safety.block` keeps it out of the answer entirely rather
+                # than letting it read as none nearby.
+                status = "incomplete"
+            _report_safety(safety_by_type, args.safety_search_miles)
+
         except EXPECTED_FAILURES as exc:
             # A stopped run still writes its output, marked incomplete, naming
             # what stopped it. The responses already fetched are already cached,
@@ -1108,6 +1297,8 @@ def run(args):
             txdot_detail = control_detail
             row_map_sheets = None
             row_maps_detail = f"the run stopped before the ROW map step finished: {exc}"
+            safety_by_type = None
+            safety_detail = f"the run stopped before the crew safety step finished: {exc}"
             for source in SOURCES:
                 if not any(entry["name"] == source.name for entry in services):
                     services.append(
@@ -1144,6 +1335,9 @@ def run(args):
         ),
         row_maps=row_maps_mod.block(
             row_map_sheets, detail=row_maps_detail, without_shape=row_maps_without_shape
+        ),
+        crew_safety=safety_mod.block(
+            safety_by_type, search_radius_mi=args.safety_search_miles, detail=safety_detail
         ),
     )
     written = output.write(document, out_dir)

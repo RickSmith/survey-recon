@@ -44,3 +44,9 @@ Verified research notes live in
   one raises an error rather than returning a wrong date. It also carries the
   difference between a corridor figure and a county one, worked through with
   both numbers cached.
+- [The crew safety services](crew-safety.md) — the nearest hospital, ambulance,
+  fire or EMS station and police station, with distances. Written under
+  [issue #18](https://github.com/RickSmith/survey-recon/issues/18). It is the
+  one output here nobody prices, and the caveat it carries is the one that could
+  get somebody hurt: every distance on it is a straight line, and an ambulance
+  drives roads.

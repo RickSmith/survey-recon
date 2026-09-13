@@ -1,13 +1,14 @@
 # Provenance record. The response file beside this one is exactly what the
 # server sent and is never edited. Every parameter of the request is listed
 # under [request_params], so the call can be repeated and checked.
-service = "ArcGIS_Geometry"
-cache_key = "arcgis-geometry/arcgis-geometry-metadata__c2e700c573a0"
+service = "USGS_Structures_Police"
+cache_key = "usgs-structures-police/usgs-structures-police-layer-18-metadata__ec1deea1f4a9"
 request_method = "GET"
-request_url = "https://utility.arcgisonline.com/arcgis/rest/services/Geometry/GeometryServer"
-captured_at = 2026-09-13T06:24:41-05:00
+request_url = "https://carto.nationalmap.gov/arcgis/rest/services/structures/MapServer/18"
+captured_at = 2026-09-13T06:24:45-05:00
 http_status = 200
-response_bytes = 132
+response_bytes = 18282
+layer_id = 18
 warnings = []
 
 [request_params]

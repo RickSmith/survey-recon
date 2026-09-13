@@ -43,6 +43,7 @@ They are buyers and risk-owners. They are not going to install things themselves
 | **Closure** | The error you get when a traverse doesn't return exactly to its start. A quality measure |
 | **Metes and bounds** | A boundary described as a sequence of bearings and distances |
 | **Party chief** | The person running a field crew |
+| **Crew safety sheet** | The nearest hospital, ambulance service, fire or EMS station and police station for a corridor, with distances. A party chief's output, not an estimator's, and kept apart from the flagged parcel list for that reason. Every distance on it is a **straight line, not a drive time** — see [the crew safety services](docs/data-sources/crew-safety.md) |
 
 ## Geodetic vocabulary
 

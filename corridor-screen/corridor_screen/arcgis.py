@@ -20,6 +20,7 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
+from datetime import datetime, timedelta, timezone
 
 USER_AGENT = "survey-recon corridor-screen (https://github.com/RickSmith/survey-recon)"
 
@@ -73,6 +74,39 @@ def attribute(attributes, name):
     if isinstance(value, str):
         return value.strip() or None
     return value
+
+
+# Milliseconds since here is what an ArcGIS date field carries.
+EPOCH = datetime(1970, 1, 1, tzinfo=timezone.utc)
+
+
+def from_epoch_ms(value):
+    """One ArcGIS date field, as a date a person can read.
+
+    **The trap, and it does not return a wrong answer -- it stops the run.**
+    A service that publishes a real date field sends it as milliseconds since
+    1970, so anything older than 1970 is a **negative** number. Handed to
+    ``datetime.fromtimestamp`` or ``datetime.utcfromtimestamp`` on Windows, a
+    negative value raises ``OSError: [Errno 22] Invalid argument``. Confirmed
+    on Windows 11 with Python 3.11 on 2026-09-12, on the real value TxDOT's ROW
+    map service returns for its 1937 sheet. Adding a ``timedelta`` to the epoch
+    has no such limit.
+
+    Anything that is not a number is passed through exactly as it arrived. A
+    value this code does not recognize is not a value it should be rewriting,
+    which is the same trade ``control._recovered_on`` already makes.
+
+    It lives here, beside ``attribute``, for the reason written above that
+    function: both are about reading what an ArcGIS service actually sent, and
+    two services now need this one. TxDOT's ROW map sheets publish ``MAP_FROM_DT``
+    and the USGS structures layers publish ``LOADDATE``, and neither module
+    owns the trap.
+    """
+    if value is None:
+        return None
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        return value
+    return (EPOCH + timedelta(milliseconds=value)).date().isoformat()
 
 
 def _encode(params):

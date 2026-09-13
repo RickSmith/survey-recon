@@ -1,0 +1,26 @@
+# Provenance record. The response file beside this one is exactly what the
+# server sent and is never edited. Every parameter of the request is listed
+# under [request_params], so the call can be repeated and checked.
+service = "USGS_Structures_Police"
+cache_key = "usgs-structures-police/safety-police-offset-0__ae2e7e14254c"
+request_method = "POST"
+request_url = "https://carto.nationalmap.gov/arcgis/rest/services/structures/MapServer/18/query"
+captured_at = 2026-09-13T06:23:26-05:00
+http_status = 200
+response_bytes = 17721
+layer_id = 18
+record_count = 57
+warnings = []
+
+[request_params]
+geometry = "{\"xmin\": -99.10495013116247, \"ymin\": 29.120429615989284, \"xmax\": -98.18432035781802, \"ymax\": 29.9365460212627, \"spatialReference\": {\"wkid\": 4326}}"
+geometryType = "esriGeometryEnvelope"
+inSR = 4326
+outSR = 4326
+spatialRel = "esriSpatialRelIntersects"
+where = "1=1"
+outFields = "PERMANENT_IDENTIFIER,NAME,ADDRESS,CITY,STATE,ZIPCODE,LOADDATE"
+returnGeometry = "true"
+f = "json"
+resultOffset = 0
+resultRecordCount = 2000
