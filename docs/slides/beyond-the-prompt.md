@@ -362,16 +362,25 @@ screen. Nineteen questions, what was recommended, what Rick answered.
 
 - You describe a job. The agent asks until it understands the scope
 - It is allowed to disagree with you, and it does
-- The survey parallel: the scoping call you wish every client would sit through
-- Nineteen questions, on the real SH16 job, in one sitting
+- **The survey parallel:** the scoping call you wish clients would sit through
+- On SH16 it asked **19 questions**, in three rounds, in one sitting
+- You answered every one. Nothing was assumed on your behalf
 
-> **To be written** — #82
+The real run — corridor-screen/captures/the-grilling/README.md
 
 <!--
 0:30–0:46 · 16 min · Act I — The grilling
 
 Set up the live run here, then stop talking. The room learns more from
 watching the questions arrive than from any description of them.
+
+"It is allowed to disagree with you" is the bullet to say slowly. This room
+has bought software that does what it is told and produces confident rubbish.
+An agent that pushes back is the unfamiliar part.
+
+Do not promise 19 questions live. That is what it asked on 12 September, on
+this job, and it is on the slide as a past fact. A live run asks what it
+asks.
 -->
 
 ---
@@ -380,17 +389,19 @@ watching the questions arrive than from any description of them.
 
 - Run it against the SH16 scope, on the projector, at full size
 - Let the silences sit. The questions are the content
-- Watch for the moment it asks something the room had not thought of
-
-> **To be written** — #82
+- Watch for the one it asks that nobody in the room had thought of
 
 <!--
 0:30–0:46 · 16 min · Act I — The grilling
 
 Live block. This slide is a holding card; switch away from it immediately.
+Three bullets, and they are for you rather than for them.
 
-If the live run will not start, open the captured transcript instead and say
-plainly that it is a transcript of a real run and not a recording.
+If the live run will not start, open
+corridor-screen/captures/the-grilling/README.md and say plainly that it is a
+**transcript, not a recording**. There is no video of that session and there
+never was. The README is the whole block on one screen; the full run is
+corridor-screen/captures/the-grilling/the-grilling.md beside it.
 -->
 
 ---
@@ -401,12 +412,18 @@ plainly that it is a transcript of a real run and not a recording.
 - Every decision is on the page, including the ones you did not make
 - Nothing is assumed silently, which is the whole value of it
 
-> **To be written** — #82
-
 <!--
 0:30–0:46 · 16 min · Act I — The grilling
 
 Live block. Show the spec document, scroll it once, slowly. Do not read it out.
+
+The scope of work it writes is docs/corridor-screen/spec.md, and it is
+committed — so if /to-spec will not run, open the file that run produced and
+say that is what it produced.
+
+The sentence for this slide, if you need one while it scrolls: this is the
+check print. You redline it now, on a page, instead of finding it in the
+field.
 -->
 
 ---
@@ -415,33 +432,63 @@ Live block. Show the spec document, scroll it once, slowly. Do not read it out.
 
 - The scope breaks into numbered work orders, each small enough to check
 - They land on GitHub, publicly, while the room watches
-- Thirty-five of them, on the real job, in under two minutes
+- Last time: **35 work orders in 89 seconds**, numbered 5 to 39
 
-> **To be written** — #82
+GitHub stamped these — corridor-screen/captures/the-grilling/the-tickets.md
 
 <!--
 0:30–0:46 · 16 min · Act I — The grilling
 
 Live block, and the one that gets the audible reaction. Have the issues page
 open in a second window so you can switch to it the moment they appear.
+
+**35 in 89 seconds is a past fact, not a promise.** Those times are the ones
+GitHub stamped -- 20:32:08 to 20:33:37 on 12 September -- and they are the part
+of that file nothing later can edit. A live run produces what it produces.
+
+Two things about the capture, if anybody asks. The tickets file is the result
+of a /to-tickets run, **not a recording of one**, and the grilling beside it
+never ran that command at all. And row one of it is issue #5, "Specify the
+corridor-screening tool" -- which is the work order the grilling was run
+against, hours later. The tickets came first. The stage runs them the other
+way round because that is the order the ideas go in, not the order that
+Saturday went.
 -->
 
 ---
 
 # Why this is the hinge
 
-- The work you do before the agent starts is the work that decides the outcome
+- The work you do before the agent starts decides the outcome
 - A vague assignment produces confident, plausible, wrong work
-- This is not new. It is how you already supervise a party chief
-- Everything after this slide is the agent executing a scope you approved
+- **This is not new.** It is how you already supervise a party chief
+- **13 of the 19 answers** were "your recommendation" — delegation, working
+- **5 answers changed the shape of the tool.** That is what you are for
 
-> **To be written** — #82
+corridor-screen/captures/the-grilling/README.md
 
 <!--
 0:30–0:46 · 16 min · Act I — The grilling
 
 If only one slide from this block survives a cut, it is this one. Say the
 third bullet in their words, not in software words.
+
+**The last two bullets are the argument.** Thirteen "your recommendation"
+answers is not laziness -- it is what delegation looks like when it is
+working, and this room delegates for a living. The five that changed the tool
+are the ones nobody else in the building could have given: which file formats
+a firm actually owns, what to do when a source is down, that you look at the
+drawing before you trust the numbers, that parcel data differs county to
+county, and that scope has to be cut somewhere.
+
+The two counts overlap by one. Q14 says "your recommendation" and then adds a
+condition, so it is in both. Thirteen and five do not add to eighteen, and
+somebody will check.
+
+**Q18 is the one to dwell on if you have the time.** The agent had designed a
+general, swappable parcel-source config. Rick cut it -- never mind for this,
+stick to Bexar County. An agent will happily build the general case nobody
+asked for, and the person paying for it is the one who stops that.
 -->
 
 ---
