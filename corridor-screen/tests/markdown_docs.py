@@ -1,13 +1,15 @@
 """Reading a committed markdown document, for the tests that check one.
 
-Three test files hold a page in `docs/` to what it claims:
+Four test files hold a page in `docs/` to what it claims:
 
 * `test_fallbacks.py` — the fallback card, against the run of show
 * `test_deck.py` — the slide deck, against the same table
 * `test_plan_of_record.py` — the run of show's own Act II figures, against the
   SH16 run in `project-sh16/screening.json`
+* `test_principals_brief.py` — the one-page handout, against the crew-day
+  build-up its cost figures are read out of
 
-All three have to open a file, find a heading, and read a table out from under
+All of them have to open a file, find a heading, and read a table out from under
 it. Those three functions were written twice before they were written here, and
 the second copy is what this module exists to delete. The reason is
 `test_fallbacks.py`'s own, about the helpers it borrows rather than copies:
@@ -36,6 +38,22 @@ def text_of(path):
     """
     with open(long_path(path), "r", encoding="utf-8") as handle:
         return handle.read()
+
+
+def flat(markdown):
+    """The document as one long line, for checking that a phrase is in it.
+
+    Every page in `docs/` is hard-wrapped at about eighty characters, so half
+    the phrases worth checking have a line break somewhere in the middle of
+    them. A break is where the wrapping fell, not something the page says, and a
+    check that fails when a sentence is re-wrapped is a check that punishes
+    editing.
+
+    `test_plan_of_record.py` was already doing this inline before it had a name.
+    It lives here for the module's own reason: two copies would drift the first
+    time somebody fixed one of them.
+    """
+    return " ".join(markdown.split())
 
 
 def markdown_section(markdown, heading):
