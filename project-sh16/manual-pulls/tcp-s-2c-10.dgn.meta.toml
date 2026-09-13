@@ -1,0 +1,23 @@
+# Provenance record. The response file beside this one is exactly what the
+# server sent and is never edited. Both URLs below were fetched and their bytes
+# hashed; see README.md for the check and for the dead host to avoid.
+
+document = "TCP(S-2c)-10 -- Traffic Control Plan for Surveying Operations (CAD source)"
+publisher = "Texas Department of Transportation, Traffic Operations Division"
+standard_sheet_index_no = "212A"
+cases_drawn = "Single case: a two lane rural intersection, as determined by the Engineer"
+protective_vehicle_drawn = "One Work Vehicle. No TMA drawn."
+roadway_class = "Conventional Roads Only (footnote on the sign-spacing table)"
+copyright = "(C) TxDOT January 2010"
+format = "MicroStation DGN (V8, OLE2 compound file)"
+file = "tcp-s-2c-10.dgn"
+source_url = "https://ftp.txdot.gov/pub/txdot-info/cmd/cserve/standard/traffic/tcps2c.dgn"
+mirror_url = "https://ftp.dot.state.tx.us/pub/txdot-info/cmd/cserve/standard/traffic/tcps2c.dgn"
+captured_at = 2026-09-13T10:01:46-05:00
+captured_by = "agent (curl)"
+http_status = 200
+bytes = 124928
+sha256 = "5397f4e3280c8ebc4b9dbb806e56815ef802e4e1799825989a63ad1fe776b47c"
+source_url_verified_at = 2026-09-13T10:22:00-05:00
+source_url_verified_by = "sha256 of fetched bytes equals sha256 of committed file"
+mirror_url_verified = true

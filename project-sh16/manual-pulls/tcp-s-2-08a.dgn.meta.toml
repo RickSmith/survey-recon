@@ -1,0 +1,23 @@
+# Provenance record. The response file beside this one is exactly what the
+# server sent and is never edited. Both URLs below were fetched and their bytes
+# hashed; see README.md for the check and for the dead host to avoid.
+
+document = "TCP(S-2)-08A -- Traffic Control Plan for Surveying Operations (CAD source)"
+publisher = "Texas Department of Transportation, Traffic Operations Division"
+standard_sheet_index_no = "212"
+cases_drawn = "TCP(S-2a) road closed for less than 20 minutes, off peak traffic hours, with or without shoulders; TCP(S-2b) work in roadway, off peak traffic hours, with or without shoulders"
+protective_vehicle_drawn = "S-2a: none, flaggers instead. S-2b: one Shadow Vehicle with TMA."
+roadway_class = "Conventional Roads Only (footnote on the sign-spacing table)"
+copyright = "(C) TxDOT August 2008"
+format = "MicroStation DGN (V8, OLE2 compound file)"
+file = "tcp-s-2-08a.dgn"
+source_url = "https://ftp.txdot.gov/pub/txdot-info/cmd/cserve/standard/traffic/tcps2.dgn"
+mirror_url = "https://ftp.dot.state.tx.us/pub/txdot-info/cmd/cserve/standard/traffic/tcps2.dgn"
+captured_at = 2026-09-13T10:01:44-05:00
+captured_by = "agent (curl)"
+http_status = 200
+bytes = 176640
+sha256 = "bcf697efc84d4096b83a7587bbd2a570c90e3c5e89cb576057754486f27b0183"
+source_url_verified_at = 2026-09-13T10:22:00-05:00
+source_url_verified_by = "sha256 of fetched bytes equals sha256 of committed file"
+mirror_url_verified = true

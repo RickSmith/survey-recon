@@ -1,0 +1,23 @@
+# Provenance record. The response file beside this one is exactly what the
+# server sent and is never edited. Both URLs below were fetched and their bytes
+# hashed; see README.md for the check and for the dead host to avoid.
+
+document = "TCP(S-5)-08 -- Traffic Control Plan for Surveying Operations (CAD source)"
+publisher = "Texas Department of Transportation, Traffic Operations Division"
+standard_sheet_index_no = "215"
+cases_drawn = "TCP(S-5a) work on right shoulder of divided roadways; TCP(S-5b) work on median shoulder of divided roadways"
+protective_vehicle_drawn = "One Work Vehicle per case, drawn WITHOUT a TMA -- but Notes 2 and 3 are written about \"the Shadow Vehicle with TMA.\" The sheet contradicts itself; see tcp-s-family.md."
+roadway_class = "Conventional Roads Only (footnote on the sign-spacing table)"
+copyright = "(C) TxDOT August 2008"
+format = "MicroStation DGN (V8, OLE2 compound file)"
+file = "tcp-s-5-08.dgn"
+source_url = "https://ftp.txdot.gov/pub/txdot-info/cmd/cserve/standard/traffic/tcps5.dgn"
+mirror_url = "https://ftp.dot.state.tx.us/pub/txdot-info/cmd/cserve/standard/traffic/tcps5.dgn"
+captured_at = 2026-09-13T10:01:49-05:00
+captured_by = "agent (curl)"
+http_status = 200
+bytes = 155136
+sha256 = "492694fbcd49ed87e380dcf1cea06d5992cdf2360947a4ca15da6aba2c320917"
+source_url_verified_at = 2026-09-13T10:22:00-05:00
+source_url_verified_by = "sha256 of fetched bytes equals sha256 of committed file"
+mirror_url_verified = true

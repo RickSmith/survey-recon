@@ -15,17 +15,26 @@ the shoulder taper and tangent section may be omitted (Note 2). Cross the hour
 and both come back — a sign, a run of cones, and the time to set and retrieve
 them. That is billable time, not a second vehicle. What actually adds a vehicle
 is **Note 3**: if line-of-sight requirements for the surveying operation will
-not allow the work vehicle to be parked where it protects the crew, the Note 2
-channelizing devices are required *regardless of duration*. That is the
+not allow the work vehicle to be parked where it protects the crew, "the
+channelizing devices mentioned in Note 2 are required." Note 2 is the note that
+lets them be omitted under an hour, so Note 3 withdraws that relief — the
+devices stand whatever the duration. *That last clause is a reading of the two
+notes together, not a phrase printed on the sheet.* It is the
 surveying-specific trap, because sighting down a line is the job. The shadow
 vehicle with a truck-mounted attenuator (TMA) appears in **Note 4** as a
 permitted **substitute** for the work vehicle — an option, not a penalty the
-clock triggers.
+clock triggers. **That is true of this sheet and not of the family.** S-1 draws
+an ordinary work vehicle, so the TMA is an upgrade. TCP(S-2b) and TCP(S-3) draw
+a shadow vehicle with TMA, so on those the same clock works the other way. Do
+not carry this paragraph across to another sheet; see
+[`tcp-s-family.md`](tcp-s-family.md).
 
 ## The rest of what the sheet says
 
-- Two cases are drawn: **TCP(S-1a) work off shoulder** and **TCP(S-1b) work on
-  shoulder or paved surface**.
+- Two cases are drawn: **TCP(S-1a) work off shoulder or paved surface** and
+  **TCP(S-1b) work on shoulder**. Each shows one ordinary **work vehicle** with
+  high intensity lights — a plain truck, with none of the legend's black TMA
+  chevron on it.
 - Advance sign spacing: **3X where the posted speed is 50 mph or less, 1500 ft
   where it is over 50 mph.** `X` comes from the sheet's own spacing table.
 - Note 5 — the CW20-1D "ROAD WORK AHEAD" sign may be substituted for the
@@ -47,11 +56,18 @@ clock triggers.
 
 ## What this sheet does not cover
 
-The spacing table is footnoted **"Conventional Roads Only."** TCP(S-1)-08A does
-not speak to divided highways or controlled-access facilities. Five further
-sheets in the same family exist — TCP(S-2)-08A, TCP(S-2c)-10, TCP(S-3)-08,
-TCP(S-4)-08A and TCP(S-5)-08 — and are **not in this repo yet**. Until they
-are, say "not found on TCP(S-1)" rather than "TxDOT does not require it."
+The spacing table is footnoted **"Conventional Roads Only."** TCP(S-1)-08A draws
+only the two shoulder cases, so it does not speak to lane closures, centerline
+work, or divided roadways.
+
+The other five sheets in the family are **now in this repo** —
+TCP(S-2)-08A, TCP(S-2c)-10, TCP(S-3)-08, TCP(S-4)-08A and TCP(S-5)-08. Divided
+roadways turn out to be covered, by S-4 and S-5. Read
+[`tcp-s-family.md`](tcp-s-family.md) before drawing any conclusion from this
+sheet alone.
+
+Freeways are still **not found**: all six sheets carry the same "Conventional
+Roads Only" footnote, and none uses the words *freeway* or *controlled access*.
 
 ## A claim in this repo that this sheet does not support
 
@@ -73,9 +89,22 @@ not fifteen or twenty minutes; the consequence of crossing it is signs and
 cones, not a truck; and the TMA shadow vehicle is an alternative to the work
 vehicle rather than an addition to the crew.
 
-That is **not the same as saying the claim is wrong.** TCP(S-1) is conventional
-roads only, and a 55-mph highway may well be a divided facility covered by one
-of the five sheets listed above. The honest statement today is that the claim is
-**unsupported by the surveying standard now in hand, and unresolved** until the
-rest of the family is pulled. It should not be repeated on stage in its current
-form. Correcting `docs/txdot-research.md` is its own issue, not this one.
+When this file was written, TCP(S-1) was the only sheet in hand, so the verdict
+was recorded as "unsupported and unresolved" — a 55-mph highway might have been
+a divided facility covered by a sheet nobody had read.
+
+**It has since been resolved, and the answer is split.** All five remaining
+sheets were pulled and read. Divided roadways are covered, by TCP(S-4)-08A and
+TCP(S-5)-08. **No posted speed anywhere in the family triggers a shadow truck** —
+55 mph is an ordinary table row on all six sheets. But **duration does**, on
+**TCP(S-2b)** and **TCP(S-3)**: those *draw* a shadow vehicle with TMA — two of
+them on S-3b, work on centerline — and the permission to use an ordinary work
+vehicle instead is granted only for short duration work. Past an hour it lapses.
+
+**TCP(S-1) is not one of them.** It draws a plain work truck, so everything in
+the crew-time paragraph above holds for this sheet. The full account, including
+a contradiction on S-5 that is left unresolved, is in
+[`tcp-s-family.md`](tcp-s-family.md).
+
+Correcting `docs/txdot-research.md` is
+[#70](https://github.com/RickSmith/survey-recon/issues/70), not this file's job.
