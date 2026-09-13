@@ -74,11 +74,12 @@ def service_entry(source, ping, status, records, record_count, warnings=(), used
         # numbers. Hiding the first would make the second look like the whole
         # answer.
         #
-        # Specification section 10 says "flag services **only**". Control marks
-        # are asked the same way and have the same gap between returned and
-        # used, so the same pair is reported for them. The difference is raised
-        # on the pull request for issue #14 rather than patched into the spec --
-        # amending a settled spec is not the agent's call.
+        # Until 2026-09-13, specification section 10 said "flag services
+        # **only**". Control marks are asked about a box the same way and have
+        # the same gap between returned and used, so the same pair is reported
+        # for them. Raised on PR #54 rather than patched over, and Rick ruled on
+        # 2026-09-13 that the rule belongs to any service asked about a box.
+        # Section 10 now says so.
         "records_used": used,
     }
 

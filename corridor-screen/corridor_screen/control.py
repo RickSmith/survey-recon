@@ -271,11 +271,11 @@ def block(marks, detail=None, without_position=0):
     A difference from the specification, recorded rather than quietly made
     ====================================================================
 
-    Specification section 11 says ``ngs_marks`` and ``txdot_points`` are "each
-    an **array**." Here each is an array only when its service was asked. When
-    it was not -- ``txdot_points`` on every run until issue #15 lands, and
-    ``ngs_marks`` on a run whose host was blocking -- it is a ``not-screened``
-    block instead.
+    Until 2026-09-13, specification section 11 said ``ngs_marks`` and
+    ``txdot_points`` were "each an **array**." Here each is an array only when
+    its service was asked. When it was not -- ``txdot_points`` on every run
+    until issue #15 lands, and ``ngs_marks`` on a run whose host was blocking --
+    it is a ``not-screened`` block instead.
 
     An empty array would be the one thing this whole tool exists to avoid: it
     reads as "we looked and there is no control here," on a corridor nobody
@@ -284,8 +284,11 @@ def block(marks, detail=None, without_position=0):
 
     Amending a settled specification is not the agent's call -- the precedent
     is ``AcctNumb`` on PR #52 and ``NPMS`` on PR #53, both raised rather than
-    patched over. This difference is raised on the pull request for issue #14
-    and is Rick's to rule on.
+    patched over. This was raised on
+    [PR #54](https://github.com/RickSmith/survey-recon/pull/54), and Rick ruled
+    on 2026-09-13 that each is an array when its service answered and a
+    ``not-screened`` block when it did not. Section 11 now says so, with a note
+    recording the amendment, so this code and the specification agree again.
     """
     if marks is None:
         return {
