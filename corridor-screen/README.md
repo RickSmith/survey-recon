@@ -162,6 +162,34 @@ else.
 The drawing shows twelve rows. A corridor with more says how many it did not
 show rather than quietly ending at twelve; the Markdown carries all of them.
 
+## The check that keeps a citation honest
+
+```bash
+python -m corridor_screen.citations --show
+```
+
+Failure beat one of the session, and it runs entirely from files committed in
+`captures/superseded-manual/` — so a hotel network cannot take it away from you.
+
+Search still hands out `onlinemanuals.txdot.gov` links for the TxDOT Survey
+Manual. **That host resolves in DNS and answers nothing**, so an agent sees a
+timeout rather than a 404 — which looks exactly like bad Wi-Fi and invites a
+retry. The manual moved, and the two are not the same document: the old address
+last served **March 2025, Manual Notice 2025-1**, and the one in force is
+**April 2026, Manual Notice 2026-1**.
+
+The other half is the one that earns its keep every day:
+
+```bash
+python -m corridor_screen.citations --check .
+```
+
+It fails if any page or module here cites a superseded address, and prints the
+`txdot.gov` one to use instead. CLAUDE.md has forbidden those URLs from early
+on; this is what makes that rule something other than a sentence nobody runs.
+It is in the test suite. The full account is on
+[the superseded manual](../docs/managing-your-agent/the-superseded-manual.md).
+
 ## The one call that stays live
 
 Everything above replays from disk. This one goes out to NGS while you watch:
