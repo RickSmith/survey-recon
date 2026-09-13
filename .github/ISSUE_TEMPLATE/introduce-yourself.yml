@@ -1,0 +1,132 @@
+name: Introduce yourself
+description: New here? Say hello, and name the one job you would hand to an agent.
+title: "Hello from "
+labels:
+  - introduction
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## You are in the right place
+
+        This page is a **template** — something somebody wrote out in
+        advance so that you do not have to start from an empty page. This
+        one takes the shape of a form. Fill in the boxes, press the green
+        button at the bottom, and you are done.
+
+        What you are making is called an **issue**. This repo calls it
+        what it is: a **work order**. Yours is a short one. It asks who you
+        are and what you would automate. ("Repo" is short for repository —
+        the shared folder that holds this project and every change ever made
+        to it.)
+
+        Three things worth knowing before you type.
+
+        - **Nothing here breaks.** Filling this in cannot damage
+          anything, and nobody is grading it.
+        - **Assume it is permanent.** You can edit what you wrote and you
+          can close it, but you cannot delete it — only a repository
+          administrator can do that — and every edit keeps a public
+          record of what it replaced. So write it as though it cannot be
+          taken back, because mostly it cannot.
+        - **This is public.** Anyone on the internet can read what you
+          write, today and years from now. So no client names, no job
+          numbers, no tract descriptions, nothing under a non-disclosure
+          agreement. Describe the *kind* of work, never the work itself.
+        - **One box is required.** Everything else is optional. Skip
+          anything you would rather not answer.
+
+  - type: input
+    id: who
+    attributes:
+      label: Who are you?
+      description: A name, and your firm if you want to name it. "Rick, CBI" is plenty.
+      placeholder: Rick, CBI
+    validations:
+      required: false
+
+  - type: input
+    id: where
+    attributes:
+      label: Where in Texas do you work?
+      description: A county, a region, or a city. This helps pick worked examples against data you would actually use.
+      placeholder: Bexar and the counties around it
+    validations:
+      required: false
+
+  - type: dropdown
+    id: work
+    attributes:
+      label: What kind of work fills most of your week?
+      description: Pick as many as fit.
+      multiple: true
+      options:
+        - Boundary and retracement
+        - ALTA/NSPS land title surveys
+        - Right of way and transportation
+        - Topographic and design survey
+        - Construction staking
+        - Subdivision platting and development
+        - Oil, gas and pipeline
+        - Hydrographic
+        - Expert witness and boundary disputes
+        - Something else
+    validations:
+      required: false
+
+  - type: textarea
+    id: automate
+    attributes:
+      label: If you could hand one job to an agent tomorrow, what would it be?
+      description: |
+        Think about desk work rather than field work — anything you do at a
+        computer that repeats, and that you could explain to a new employee
+        in a few sentences. Say what makes it tedious. That part is the
+        useful part.
+
+        Answers here pick the next worked example, so be specific.
+      placeholder: |
+        Pulling deed records and plats off the county site before I price a
+        retracement. It is about two hours of clicking, and I do it three or
+        four times a week. Half of what I open turns out to be the wrong
+        tract.
+    validations:
+      required: true
+
+  - type: input
+    id: effort
+    attributes:
+      label: How long does that job take you now, and how often do you do it?
+      description: A rough figure is fine. This is how we tell whether any of this is worth your time.
+      placeholder: About 2 hours, 3 times a week
+    validations:
+      required: false
+
+  - type: dropdown
+    id: tried
+    attributes:
+      label: Have you used an AI agent for work yet?
+      description: There is no right answer. Most of this room has not.
+      options:
+        - "No, today is the first time"
+        - "I have used a chatbot, but not an agent"
+        - "I have tried an agent once or twice"
+        - "I use one most weeks"
+    validations:
+      required: false
+
+  - type: textarea
+    id: anything
+    attributes:
+      label: Anything else?
+      description: A question, a doubt, something that worried you during the session. All welcome.
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: no_client_data
+    attributes:
+      label: Before you post
+      options:
+        - label: I have kept client-identifying information out of this issue.
+          required: true
