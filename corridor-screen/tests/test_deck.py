@@ -28,26 +28,35 @@ spec. A deck that kept its own private copy of the run of show would go on
 passing its own tests for weeks after the run of show changed, which is the
 exact failure this file exists to prevent.
 
-**Where the rest lives.** Opening a committed markdown document and reading a
-table out of it is `tests/markdown_docs.py`, shared with `test_fallbacks.py`.
-Working out how much room a slide asks the projector for is
-`tests/slide_canvas.py`, which changes when the theme changes rather than when
-the session does.
+**Where the rest lives.** Splitting the deck into slides on Marp's rules is
+`tests/deck_reader.py`, shared with `test_money_slide.py`. Opening a committed
+markdown document and reading a table out of it is `tests/markdown_docs.py`,
+shared with `test_fallbacks.py`. Working out how much room a slide asks the
+projector for is `tests/slide_canvas.py`, which changes when the theme changes
+rather than when the session does.
 """
 
 import itertools
 import re
 import unittest
-from collections import namedtuple
 from pathlib import Path
 
 from corridor_screen.cache import long_path
 
+from tests.deck_reader import (
+    BREAK_CLASSES,
+    DECK,
+    Block,
+    blocks_in_deck_order,
+    front_matter_and_body,
+    noted,
+    slides,
+    slides_by_block,
+)
 from tests.markdown_docs import markdown_section, table_rows, text_of
 from tests.slide_canvas import Canvas, points, style_rules
 
 REPO = Path(__file__).resolve().parents[2]
-DECK = REPO / "docs" / "slides" / "beyond-the-prompt.md"
 SLIDES_PAGE = REPO / "docs" / "slides" / "index.md"
 THEME = REPO / "docs" / "slides" / "themes" / "tsps.css"
 PLAN = REPO / "docs" / "plan-of-record.md"
@@ -89,23 +98,9 @@ PLACEHOLDER = "To be written"
 # than a discovery in October.
 NO_WORK_ORDER = "no work order yet"
 
-# Marp starts a new slide on a line that is exactly three dashes. The front
-# matter is fenced with the same three, which is why it is stripped first.
-A_SLIDE_BREAK = "---"
-
-# The class that makes a slide a section break. The opening slide is a break
-# too -- it is what is on screen for the whole cold open -- and it carries
-# `title` instead.
-BREAK_CLASSES = ("divider", "title")
-
 # Words too common to identify anything, dropped before the phrases §7 uses for
 # the blocks it protects are matched against the names §5 gives them.
 COMMON_WORDS = ("the", "a", "an", "and", "of", "our", "own")
-
-# One row of the run of show. The three travel together through every check
-# here, so they travel as one thing.
-Block = namedtuple("Block", "time minutes label")
-
 
 # ---------------------------------------------------------------------------
 # Reading the plan of record
@@ -196,118 +191,6 @@ def never_cut():
             )
         ]
     return resolved
-
-
-# ---------------------------------------------------------------------------
-# Reading the deck
-# ---------------------------------------------------------------------------
-
-
-class Slide:
-    """One slide of the deck: its markdown, its Marp directives, its note."""
-
-    def __init__(self, number, body):
-        self.number = number
-        self.body = body
-        # A directive is one line and its name starts with a letter, optionally
-        # behind an underscore -- `<!-- _class: title -->`. Both halves of that
-        # matter: without them a speaker note beginning "0:30–0:46 · ..." parses
-        # as a directive named `0`, and a note that happened to open with the
-        # word "class" would set one.
-        self.directives = dict(
-            re.findall(r"<!--\s*(_?[a-zA-Z][\w-]*)\s*:\s*([^\n>]*?)\s*-->", body)
-        )
-        self.notes = [
-            comment.strip()
-            for comment in re.findall(r"<!--(.*?)-->", body, flags=re.S)
-            if comment.strip()[:1].isdigit()
-        ]
-
-    @property
-    def classes(self):
-        """The Marp classes on this slide. A slide may carry more than one."""
-        return self.directives.get("_class", "").split()
-
-    @property
-    def note(self):
-        """The one speaker note on this slide, or "" if it has none."""
-        return self.notes[0] if len(self.notes) == 1 else ""
-
-    @property
-    def heading(self):
-        for line in self.body.splitlines():
-            if line.startswith("#"):
-                return line.lstrip("#").strip()
-        return ""
-
-    @property
-    def is_a_break(self):
-        return any(klass in BREAK_CLASSES for klass in self.classes)
-
-    def content_lines(self):
-        """The lines a viewer actually sees, with the markdown stripped off.
-
-        Comments, directives and blank lines are dropped: a note is for the
-        presenter's screen and a blank line renders as nothing.
-        """
-        without_comments = re.sub(r"<!--.*?-->", "", self.body, flags=re.S)
-        return [line.rstrip() for line in without_comments.splitlines() if line.strip()]
-
-
-def front_matter_and_body(markdown):
-    """Split the deck's YAML front matter off the slides.
-
-    Marp fences front matter with the same three dashes it separates slides
-    with, so the front matter has to come off before anything counts slides.
-    """
-    lines = markdown.splitlines()
-    if lines[0].strip() != A_SLIDE_BREAK:
-        raise AssertionError("the deck has no front matter, so Marp will not render it")
-    for end in range(1, len(lines)):
-        if lines[end].strip() == A_SLIDE_BREAK:
-            return "\n".join(lines[1:end]), "\n".join(lines[end + 1:])
-    raise AssertionError("the deck's front matter is never closed")
-
-
-def slides():
-    """Every slide of the deck, in order, numbered from 1."""
-    _front, body = front_matter_and_body(text_of(DECK))
-    parts, current, fenced = [], [], False
-    for line in body.splitlines():
-        if line.startswith("```"):
-            fenced = not fenced
-        if line.strip() == A_SLIDE_BREAK and not fenced:
-            parts.append("\n".join(current))
-            current = []
-            continue
-        current.append(line)
-    parts.append("\n".join(current))
-    return [Slide(n, part) for n, part in enumerate(parts, start=1) if part.strip()]
-
-
-def noted(slide):
-    """The Block a slide's speaker note claims to belong to, or None."""
-    if not slide.note:
-        return None
-    found = A_NOTE.match(slide.note.splitlines()[0].strip())
-    if not found:
-        return None
-    return Block(found.group("time"), int(found.group("min")), found.group("block").strip())
-
-
-def blocks_in_deck_order():
-    """The clock of every slide that claims one, in the order they appear."""
-    return [noted(slide).time for slide in slides() if noted(slide)]
-
-
-def slides_by_block():
-    """The deck grouped into blocks, keyed by the clock in the speaker notes."""
-    grouped = {}
-    for slide in slides():
-        claim = noted(slide)
-        if claim:
-            grouped.setdefault(claim.time, []).append(slide)
-    return grouped
 
 
 # ---------------------------------------------------------------------------

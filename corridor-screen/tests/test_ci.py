@@ -246,17 +246,27 @@ class TestDiscoveryReachesEveryTestInTheFolder(unittest.TestCase):
     def test_the_folder_holds_the_helpers_the_tests_import(self):
         """The other direction, and not a tautology: these are read off disk.
 
-        `markdown_docs` and `slide_canvas` are imported by tests rather than
-        being tests. If either were renamed to start with `test`, discovery
-        would import it looking for cases — and the check above would stop
-        being able to see it at all.
+        Each of these is imported by tests rather than being one. If any were
+        renamed to start with `test`, discovery would import it looking for
+        cases — and the check above would stop being able to see it at all.
+
+        Listed rather than counted, so that a helper appearing or disappearing
+        is something somebody decided rather than something that happened.
         """
         folder = Path(long_path(REPO / "corridor-screen" / "tests"))
         helpers = sorted(
             path.name for path in folder.glob("*.py")
             if not path.name.startswith(("test", "__"))
         )
-        self.assertEqual(helpers, ["markdown_docs.py", "slide_canvas.py"])
+        self.assertEqual(
+            helpers,
+            [
+                "build_up_figures.py",
+                "deck_reader.py",
+                "markdown_docs.py",
+                "slide_canvas.py",
+            ],
+        )
 
 
 if __name__ == "__main__":

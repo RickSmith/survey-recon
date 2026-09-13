@@ -22,7 +22,7 @@ page is what was on the screen in the room.
 
 !!! note "It is a frame, not a talk"
     The deck is **45 slides** — one section break for every block of the two
-    hours, and outline slides under each. **34 of them are still placeholders**,
+    hours, and outline slides under each. **32 of them are still placeholders**,
     and each of those says so on its face and names the work order that will
     fill it.
 
@@ -30,10 +30,13 @@ page is what was on the screen in the room.
     session.
 
     The skeleton was built under
-    [issue #12](https://github.com/RickSmith/survey-recon/issues/12). The
-    content lands under [#31](https://github.com/RickSmith/survey-recon/issues/31)
-    (the concept slides), [#32](https://github.com/RickSmith/survey-recon/issues/32)
-    (the money slide), [#33](https://github.com/RickSmith/survey-recon/issues/33)
+    [issue #12](https://github.com/RickSmith/survey-recon/issues/12). The money
+    slide landed under
+    [#32](https://github.com/RickSmith/survey-recon/issues/32) — its figures are
+    read out of the crew-day build-up and checked against it on every test run.
+    The rest of the content lands under
+    [#31](https://github.com/RickSmith/survey-recon/issues/31)
+    (the concept slides), [#33](https://github.com/RickSmith/survey-recon/issues/33)
     (the datum gap), [#34](https://github.com/RickSmith/survey-recon/issues/34)
     (Hermes), and [#81](https://github.com/RickSmith/survey-recon/issues/81)
     through [#86](https://github.com/RickSmith/survey-recon/issues/86) (the cold
@@ -59,6 +62,7 @@ page is what was on the screen in the room.
 | `docs/slides/themes/tsps.css` | Type sizes and colors. The canvas is 1920 x 1080 and nothing is smaller than 28pt |
 | `.github/workflows/slides.yml` | Renders the deck to HTML and PDF every time the repo is pushed |
 | `corridor-screen/tests/test_deck.py` | Holds the deck to the run of show. See below |
+| `corridor-screen/tests/test_money_slide.py` | Holds the money slide to the crew-day build-up its figures come from |
 
 ## Where the clock lives
 
@@ -107,6 +111,14 @@ under 28pt; and no slide asking for more room than 1920 x 1080 has.
 
 Every count in the boxes above is checked against the deck as well, because a
 number written in prose beside a thing is a number that rots.
+
+The money slide gets a second file of its own,
+`corridor-screen/tests/test_money_slide.py`, for the same reason. Every figure
+on it is read back out of the crew-day build-up in `project-sh16/` and compared
+— the day counts, the hours, the rate handles, and **every number anywhere on
+the block** unless it sits on a line carrying its own source. The build-up is
+regenerated whenever the tool runs; a slide is not. That block is read out loud
+to a room that prices this work for a living.
 
 ```bash
 cd corridor-screen && python -m unittest tests.test_deck
