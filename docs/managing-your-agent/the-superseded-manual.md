@@ -114,11 +114,15 @@ It exits non-zero if any page or module in this repo cites a superseded URL, and
 it prints the `txdot.gov` address to use instead. **It runs in the test suite**,
 so `python -m unittest discover -s tests -t .` catches one.
 
-!!! note "It does not yet fail CI"
-    An earlier draft of this page said "fails the build." That was not true, and
-    it is the shape of claim this page exists to warn about. GitHub Actions here
-    runs two workflows — the docs site and the slides — and **neither runs the
-    Python tests.** Wiring that up is separate work and is not smuggled in here.
+!!! note "It fails the build now. It did not when this page was written"
+    An earlier draft said "fails the build." That was not true then, and it is
+    exactly the shape of claim this page exists to warn about: a sentence that
+    reads as a guarantee and is not one. GitHub Actions ran two workflows at
+    the time, the docs site and the slides, and neither ran a Python test.
+
+    #78 added `.github/workflows/tests.yml`, so the claim is true now. It is
+    recorded here rather than quietly corrected, because the gap between the
+    two drafts is the lesson.
 
 **Telling a citation from a warning.** Several pages here name
 `onlinemanuals.txdot.gov` on purpose, to warn about it — including the rule in
