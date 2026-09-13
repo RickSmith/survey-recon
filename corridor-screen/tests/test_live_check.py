@@ -171,6 +171,80 @@ class TestWhatTheRoomIsTold(unittest.TestCase):
         self.assertNotIn("agree", printed.lower().split("no cross-check")[0])
 
 
+class TestWhenTheFieldHasBeenRenamed(unittest.TestCase):
+    """The failure that would put a false alarm on a projector.
+
+    ``sources.py`` records this trap for the *other* NGS endpoint: the
+    condition field is ``LAST_COND`` on the feature service and ``condition``
+    here, and reading the wrong name returns nothing and raises nothing. If NGS
+    renames it on this API, every mark comes back with no condition, every one
+    of them then "differs" from the capture, and the report announces
+    ``CHANGED SINCE THE CAPTURE -- 5 marks`` to a room. All of it wrong.
+
+    Thirteen marks do not lose their condition on the same afternoon. A field
+    does.
+    """
+
+    def test_no_mark_carrying_a_condition_is_not_five_disagreements(self):
+        found = live_check.compare(
+            [live_check.to_mark({"pid": "AY1102"}), live_check.to_mark({"pid": "AY1100"})],
+            [a_captured_mark("AY1102"), a_captured_mark("AY1100")],
+        )
+        self.assertTrue(found["no_conditions"])
+        self.assertFalse(found["cross_checked"])
+
+    def test_the_report_says_the_field_may_have_been_renamed(self):
+        printed = live_check.report(
+            [live_check.to_mark({"pid": "AY1102"})],
+            [a_captured_mark("AY1102")],
+            "2026-09-13T06:51:13-05:00",
+        )
+        self.assertIn("different", printed.lower())
+        self.assertNotIn("CHANGED", printed)
+
+    def test_one_mark_missing_a_condition_is_still_an_ordinary_disagreement(self):
+        """Only *every* mark missing one points at the field rather than the data."""
+        found = live_check.compare(
+            [
+                live_check.to_mark({"pid": "AY1102"}),
+                live_check.to_mark({"pid": "AY1100", "condition": "GOOD"}),
+            ],
+            [a_captured_mark("AY1102"), a_captured_mark("AY1100")],
+        )
+        self.assertFalse(found["no_conditions"])
+        self.assertEqual(len(found["disagree"]), 2)
+
+
+class TestTheCommandLine(unittest.TestCase):
+    """``argparse``, the same as the screening run.
+
+    The first version parsed by hand, and ``--out`` with no value after it put
+    an ``IndexError`` traceback on screen -- on the one command that runs live
+    in front of a room.
+    """
+
+    def test_the_project_directory_is_required(self):
+        with self.assertRaises(SystemExit):
+            live_check.parse_args([])
+
+    def test_a_missing_value_is_an_error_rather_than_a_traceback(self):
+        with self.assertRaises(SystemExit):
+            live_check.parse_args(["--out"])
+
+    def test_a_radius_that_is_not_a_number_is_an_error(self):
+        with self.assertRaises(SystemExit):
+            live_check.parse_args(["--out", "somewhere", "--radius-miles", "wide"])
+
+    def test_a_radius_of_zero_would_find_nothing_and_is_refused(self):
+        with self.assertRaises(SystemExit):
+            live_check.parse_args(["--out", "somewhere", "--radius-miles", "0"])
+
+    def test_the_defaults_are_the_stated_ones(self):
+        args = live_check.parse_args(["--out", "../project-sh16"])
+        self.assertEqual(args.out, "../project-sh16")
+        self.assertEqual(args.radius_miles, live_check.DEFAULT_RADIUS_MI)
+
+
 class TestWhenThereIsNoNetwork(unittest.TestCase):
     """A venue with no network costs the live moment and nothing else."""
 

@@ -657,9 +657,11 @@ TXDOT_CONTROL_FIELDS = {
 # are layer 14 and also layer 49. Ambulance services are 15 and also 50. Fire
 # and EMS are 16 and also 51. Police stations are 18 and also 53.
 #
-# Read live on 2026-09-13, both copies of all four answered the same box with
-# the same count: 17 hospitals, 13 ambulance services, 31 fire or EMS stations,
-# 13 police stations. Both are plain point feature layers with the same fields.
+# Read live on 2026-09-13 against the tool's own 25-mile envelope, both copies of
+# all four answered with the same count: 33 hospitals, 33 ambulance services,
+# 140 fire or EMS stations, 57 police stations -- the same four figures the
+# data-source page quotes, because it is the same box. Both are plain point
+# feature layers with the same fields.
 #
 # So this is a trap that does not bite -- but only because it was checked. The
 # lower set is used, which is what specification section 6 names and what the

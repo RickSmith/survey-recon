@@ -25,6 +25,15 @@ network can do is cost the live moment. The screening is already on disk.
 Two acts, in the order a presenter wants them: run the screening from cache,
 then prove the wires are real.
 
+**Running this rewrites one cache entry**, and that is worth knowing before it
+surprises somebody. Section 14 says every response is saved, and it also says
+`--mode live` is the only thing that refreshes the cache. A call that must be
+live every time cannot honor both, so it saves its answer over the same key
+each run and `git status` shows one modified file afterwards. Expected, not a
+surprise. Raised on [PR #59](https://github.com/RickSmith/survey-recon/pull/59)
+together with the question of whether this command should exist at all; neither
+is the agent's to settle.
+
 ----
 
 Why this call is worth making
@@ -60,14 +69,15 @@ tool being right about how old its data is. It is printed loudly and it is not
 an error.
 """
 
+import argparse
 import json
 import sys
-import urllib.error
+import time
 import urllib.parse
 import urllib.request
 from pathlib import Path
 
-from .arcgis import USER_AGENT
+from .arcgis import USER_AGENT, from_compact_date
 from .cache import Cache, long_path
 from .sources import NGS_RADIAL
 
@@ -77,23 +87,27 @@ from .sources import NGS_RADIAL
 # 13 marks, 5 of which the run also found.
 DEFAULT_RADIUS_MI = 2.0
 
+# The same three tries and the same growing wait `arcgis.Fetcher` uses, for the
+# same reason: this repo watched a host fail and then succeed minutes later.
+RETRIES = 3
+TIMEOUT_S = 30
+
+
+class Unreachable(Exception):
+    """NGS could not be reached, or did not answer in a shape we can read."""
+
 # What the tool is willing to say the cross-check proved.
 NO_OVERLAP = (
     "no cross-check -- the live call and the capture have no mark in common, "
     "so there was nothing to compare"
 )
 
-
-def _recovered_on(value):
-    """``20020308`` written out as ``2002-03-08``.
-
-    The same tidy-up ``control._recovered_on`` does for the feature service,
-    and for the same reason: on a projector, eight digits read as a number.
-    Anything this does not recognize is passed through exactly as it arrived.
-    """
-    if isinstance(value, str) and len(value) == 8 and value.isdigit():
-        return f"{value[0:4]}-{value[4:6]}-{value[6:8]}"
-    return value
+NO_CONDITIONS = (
+    "no cross-check -- NGS answered, but not one mark came back carrying a "
+    "condition. That is far more likely to be the field having a different "
+    "name than every mark losing its condition at once, so nothing is reported "
+    "as changed. Check what this API calls `condition` now"
+)
 
 
 def to_mark(record):
@@ -110,7 +124,7 @@ def to_mark(record):
         "pid": record.get("pid"),
         "condition": condition,
         "designation": record.get("name"),
-        "last_recovered": _recovered_on(record.get("lastRecovered")),
+        "last_recovered": from_compact_date(record.get("lastRecovered")),
         "latitude": record.get("lat"),
         "longitude": record.get("lon"),
     }
@@ -131,6 +145,13 @@ def compare(live_marks, captured_marks):
     live = {m["pid"]: m for m in live_marks if m.get("pid")}
     captured = {m["pid"]: m for m in captured_marks if m.get("pid")}
     both = sorted(set(live) & set(captured))
+    # Every mark came back with no condition at all. That is not thirteen marks
+    # losing their condition at once; it is the field having a different name
+    # than this code asks for -- the exact `LAST_COND` trap ``sources.py``
+    # records for the other NGS endpoint, pointed at a projector. Without this,
+    # a rename would print "CHANGED SINCE THE CAPTURE -- 5 marks" and somebody
+    # would read that false alarm out to a room.
+    no_conditions = bool(live) and not any(m.get("condition") for m in live.values())
     disagree = [
         {
             "pid": pid,
@@ -150,7 +171,9 @@ def compare(live_marks, captured_marks):
         "only_captured": len(set(captured) - set(live)),
         # Zero of zero agreeing is not a cross-check, and must never be read as
         # one. The two questions can legitimately share no mark at all.
-        "cross_checked": bool(both),
+        "cross_checked": bool(both) and not no_conditions,
+        # The live call answered, and carried no condition on any mark.
+        "no_conditions": no_conditions,
     }
 
 
@@ -171,6 +194,9 @@ def report(live_marks, captured_marks, captured_at, radius_mi=DEFAULT_RADIUS_MI)
         "    ordinary, and only the marks in both are compared.",
         "",
     ]
+    if found["no_conditions"]:
+        lines.append(f"    {NO_CONDITIONS}.")
+        return "\n".join(lines)
     if not found["cross_checked"]:
         lines.append(f"    {NO_OVERLAP}.")
         return "\n".join(lines)
@@ -217,24 +243,53 @@ def unreachable(detail):
     )
 
 
-def fetch(cache, lat, lon, radius_mi=DEFAULT_RADIUS_MI, timeout=30):
+def fetch(cache, lat, lon, radius_mi=DEFAULT_RADIUS_MI, timeout=TIMEOUT_S, retries=RETRIES):
     """Ask NGS, now. Always live, never from the cache.
 
-    The answer is still saved with its provenance, because specification
-    section 14 asks that every response this tool receives is written down --
-    but it is never read back. A cached live call would defeat the only thing
-    this command is for.
+    **Three tries with a growing wait**, the same as ``arcgis.Fetcher``, and
+    for the reason that fetcher's own ping docstring records: this repo watched
+    a host fail and then succeed minutes later. One attempt is thin cover for
+    the single call a session is standing on, and the whole point of this
+    command is that it goes out.
+
+    The answer is saved with its provenance, because specification section 14
+    asks that every response this tool receives is written down -- but it is
+    never read back. A cached live call would defeat the only thing this
+    command is for. That does mean running it rewrites one cache entry; see the
+    note in this file's docstring.
     """
     params = {"lat": f"{lat:.6f}", "lon": f"{lon:.6f}", "radius": radius_mi, "units": "MILE"}
     url = f"{NGS_RADIAL.base_url}?{urllib.parse.urlencode(params)}"
-    request = urllib.request.Request(url)
-    request.add_header("User-Agent", USER_AGENT)
-    with urllib.request.urlopen(request, timeout=timeout) as response:
-        body = response.read()
-        status = response.status
-    records = json.loads(body)
+    wait = 1.0
+    last = None
+    for attempt in range(1, retries + 1):
+        try:
+            request = urllib.request.Request(url)
+            request.add_header("User-Agent", USER_AGENT)
+            with urllib.request.urlopen(request, timeout=timeout) as response:
+                body = response.read()
+                status = response.status
+            records = json.loads(body)
+            break
+        except Exception as exc:
+            last = f"{type(exc).__name__}: {exc}"
+            if attempt == retries:
+                raise Unreachable(f"{last} (after {retries} attempts)") from exc
+            time.sleep(wait)
+            wait *= 2
+    if not isinstance(records, list):
+        # The API answers with a list. Anything else is an error body or a
+        # changed contract, and reading it as marks would walk its keys.
+        raise Unreachable(
+            f"NGS answered with {type(records).__name__}, not the list of marks "
+            f"this command expects: {str(records)[:200]}"
+        )
     entry = cache.entry(NGS_RADIAL.name, "live-check-radial", NGS_RADIAL.base_url, params)
     cache.write(entry, body, status, record_count=len(records))
+    # Section 14 calls INDEX.md "the file you point at" when you say the
+    # captures are from a particular date. Writing a response without
+    # regenerating it leaves that file quietly wrong about this one.
+    cache.write_index()
     return [to_mark(r) for r in records], entry.cache_key
 
 
@@ -256,29 +311,45 @@ def _read_screening(out_dir):
     return marks, captured_at, document
 
 
+def parse_args(argv=None):
+    """The command line. ``argparse``, the same as the screening run uses.
+
+    Hand-rolled parsing was the first version of this, and ``--out`` with no
+    value after it put an ``IndexError`` traceback on the screen -- on the one
+    command in this repo that runs live in front of a room. Caught by the
+    review on issue #20.
+    """
+    parser = argparse.ArgumentParser(
+        prog="corridor-screen live-check",
+        description=(
+            "Make the one call that is genuinely live, and compare what NGS says "
+            "now against what the committed screening run captured."
+        ),
+    )
+    parser.add_argument(
+        "--out",
+        required=True,
+        help="The project directory holding screening.json and its cache",
+    )
+    parser.add_argument(
+        "--radius-miles",
+        type=float,
+        default=DEFAULT_RADIUS_MI,
+        help=(
+            "How far around the corridor midpoint to ask, in miles. Stated, "
+            f"never derived. Default {DEFAULT_RADIUS_MI:g}."
+        ),
+    )
+    args = parser.parse_args(argv)
+    if args.radius_miles <= 0:
+        parser.error("--radius-miles must be greater than zero; nothing would be found otherwise")
+    return args
+
+
 def main(argv=None):
     """``python -m corridor_screen.live_check --out ../project-sh16``"""
-    argv = list(sys.argv[1:] if argv is None else argv)
-    out_dir = "."
-    radius = DEFAULT_RADIUS_MI
-    if "--out" in argv:
-        out_dir = argv[argv.index("--out") + 1]
-    if "--radius-miles" in argv:
-        radius = float(argv[argv.index("--radius-miles") + 1])
-    if "--help" in argv or "-h" in argv:
-        print(
-            "Make the one call that is genuinely live, and compare it against\n"
-            "the committed screening run.\n"
-            "\n"
-            "  python -m corridor_screen.live_check --out ../project-sh16\n"
-            "\n"
-            f"  --radius-miles   how far around the corridor midpoint to ask. "
-            f"Default {DEFAULT_RADIUS_MI:g}.\n"
-            "\n"
-            "Exit code 0 when the call was made, 1 when it could not be.",
-            file=sys.stderr,
-        )
-        return 2
+    args = parse_args(argv)
+    out_dir, radius = args.out, args.radius_miles
 
     marks, captured_at, document = _read_screening(out_dir)
     bbox = document["alignment"]["bbox"]
@@ -289,8 +360,8 @@ def main(argv=None):
     print()
     try:
         live, cache_key = fetch(Cache(Path(out_dir) / "cache"), lat, lon, radius)
-    except (urllib.error.URLError, OSError, ValueError) as exc:
-        print(unreachable(f"{type(exc).__name__}: {exc}"))
+    except Unreachable as exc:
+        print(unreachable(str(exc)))
         print()
         return 1
     print(report(live, marks, captured_at, radius))

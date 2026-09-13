@@ -1,7 +1,7 @@
 # Corridor screening — specification
 
 **Status:** settled 2026-09-12, from the grilling on [issue #5](https://github.com/RickSmith/survey-recon/issues/5).
-**Amended:** 2026-09-13 — section 3.6, the offline and comparison commands; section 5, the crew safety step; section 6, the pipeline source and the crew safety layers; section 8, how a returned record is tested against the corridor; section 10, the parcel field names, the ROW map block, the `crew_safety` block, and nine additions for the flags. See the notes there.
+**Amended:** 2026-09-13 — section 3.6, the offline and comparison commands, and the live-check command **raised but not yet ruled on**; section 5, the crew safety step; section 6, the pipeline source and the crew safety layers; section 8, how a returned record is tested against the corridor; section 10, the parcel field names, the ROW map block, the `crew_safety` block, and nine additions for the flags. See the notes there.
 **Scope of work for:** the `corridor-screen/` tool.
 
 A note on words. A **spec** is a scope of work. A **schema** is an agreed field list — the column headings on a parcel table that everybody uses the same way. An **endpoint** is the web address you ask a question of. A **cache** is a saved copy of an answer you already got. Everything else is in [CONTEXT.md](https://github.com/RickSmith/survey-recon/blob/main/CONTEXT.md).
@@ -99,11 +99,20 @@ There is a second command, and it is a check rather than a screening run. It com
 python -m corridor_screen.replay one-run/screening.json another-run/screening.json
 ```
 
-And a third, which is the one genuinely live call — section 14's "one live moment proves it isn't a movie," kept as its own act rather than folded into a run that must not fail:
+And a third, which is the one genuinely live call — the plan of record's "one live moment proves it isn't a movie," kept as its own act rather than folded into a run that must not fail:
 
 ```bash
 python -m corridor_screen.live_check --out project-sh16/
 ```
+
+!!! warning "Raised on [PR #59](https://github.com/RickSmith/survey-recon/pull/59) — **not yet ruled on**"
+    Two differences came with the live call, and neither is the agent's to settle. Both are written here so a reader sees them, rather than left for somebody to notice.
+
+    **This third command was not asked for.** [#20](https://github.com/RickSmith/survey-recon/issues/20) asked that one genuinely live call be "identified and kept," which the plan of record's section 4 had already called for. It did not name a command. The reasoning for building one is in `corridor_screen/live_check.py`: a live moment folded into the screening run would put a call that can fail inside the run that must not, so a venue with a captive portal would lose both. As a separate act, the worst a dead network costs is the live moment.
+
+    **It refreshes one cache entry outside `--mode live`,** which section 14 says is the only refresh. That is unavoidable if the call is to be live at all — and section 14 also says every response is saved, so not writing it is not an option either. The consequence is concrete: running the live check leaves one modified file in `git status`. Expected, not a surprise, and recorded here so it is not mistaken for one.
+
+    Rick rules. The precedent is `AcctNumb` on [#52](https://github.com/RickSmith/survey-recon/pull/52), `NPMS` on [#53](https://github.com/RickSmith/survey-recon/pull/53), the control blocks on [#54](https://github.com/RickSmith/survey-recon/pull/54), the ROW map block on [#56](https://github.com/RickSmith/survey-recon/pull/56), the crew safety sheet on [#57](https://github.com/RickSmith/survey-recon/pull/57) and the comparison command on [#58](https://github.com/RickSmith/survey-recon/pull/58).
 
 !!! note "Added 2026-09-13, on [PR #58](https://github.com/RickSmith/survey-recon/pull/58)"
     Until then this section showed one command, and no section named a second.

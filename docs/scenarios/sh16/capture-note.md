@@ -1,17 +1,21 @@
 # The SH16 capture: what happened
 
 **What was run:** SH16 (Bandera Road), Loop 410 to Gibeaut Road, Bexar County —
-8.69 miles, 300-foot half-width. The whole tool, all nine steps, against the
-live services.
+8.69 miles, 300-foot half-width. Every step the tool has been built to do, against
+the live services.
 
-**When:** 2026-09-13. Every response is committed in
-[`project-sh16/cache/`](https://github.com/RickSmith/survey-recon/tree/main/project-sh16/cache)
-— 39 of them, each with a `.meta.toml` beside it carrying the capture time, the
-exact request URL and every parameter of the request.
+**When:** most of it on 2026-09-13; **9 of the 39 responses were captured on
+2026-09-12** while the services were being worked out, and were re-checked
+rather than re-fetched because nothing about them had changed. Every response is
+committed in
+[`project-sh16/cache/`](https://github.com/RickSmith/survey-recon/tree/main/project-sh16/cache),
+each with a `.meta.toml` beside it carrying its own capture time, the exact
+request URL and every parameter of the request. The per-file stamps are the
+authority; this paragraph is a summary of them.
 
-**Say this on stage.** *"These were captured on the 13th of September, so we're
-not at the mercy of the hotel Wi-Fi. The code is live code and you can run it
-yourself."* Undisclosed caching, if noticed, costs you the room.
+**Say this on stage.** *"These were captured on the 12th and 13th of September,
+so we're not at the mercy of the hotel Wi-Fi. The code is live code and you can
+run it yourself."* Undisclosed caching, if noticed, costs you the room.
 
 Written under [issue #20](https://github.com/RickSmith/survey-recon/issues/20).
 
@@ -19,8 +23,8 @@ Written under [issue #20](https://github.com/RickSmith/survey-recon/issues/20).
 
 ## The run
 
-Fourteen services. Every one answered. Nothing was skipped, no sanity check
-tripped, and the run finished `complete`.
+Fourteen services. **Every one answered**, no sanity check tripped, and the run
+finished `complete`.
 
 | Service | Returned | Ping |
 |---|---:|---:|
@@ -51,6 +55,21 @@ And what it found:
 | ROW map sheets over the corridor | 69, of which **15 are SH16's own** |
 | Nearest hospital | 2.05 mi — Audie L Murphy VA |
 | Warnings recorded | 0 |
+
+### What was not run
+
+Three things the specification names are not built yet. The output file says so
+itself rather than leaving a reader to notice:
+
+| Not run | What it would have added | How the output says so |
+|---|---|---|
+| **Roadway facts** — spec §5 step 5 | `ROW_MIN`, lane count, traffic, from `Roadway_Inventory_2023` | the `roadway` block reads `not-screened` and names the service |
+| **Historic sites** — USGS `structures` layer 11 | a fifth flag type | `screened_for` lists four types, so no parcel reads as clear of a fifth |
+| **TxDOT-owned land** — `2025_Land_Parcels` layer 328 | `txdot_owned` on each parcel row | the field is absent rather than false |
+
+That is the `unknown` against `no` rule turned on the tool's own coverage. A
+parcel this run never checked for a historic site is not a parcel reported as
+having none.
 
 ---
 
@@ -109,7 +128,7 @@ Six of the 27 share the value 993. Counting distinct identifiers gives 22, not
 ### `1900-01-01` appears 368 times, and we could not confirm what it means
 
 Across 20,276 ROW sheet records, 368 carry exactly that date and **not one
-record is null**. That looks like a placeholder for "no date recorded." We could
+record has an empty one**. That looks like a placeholder for "no date recorded." We could
 not confirm it: the same layer holds 501 records dated after 1900 and before
 1917.
 
@@ -132,7 +151,7 @@ corridor's south end — and **7.99 miles from the north end**. A crew working
 the north end who read only the first number would be wrong by nearly six miles.
 
 Every place on the crew safety sheet carries three straight-line distances for
-that reason. And every one of them is labelled a straight line, because an
+that reason. And every one of them is labeled a straight line, because an
 ambulance drives roads.
 
 ### The honesty block was not being honest about one field
