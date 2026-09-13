@@ -22,7 +22,7 @@ page is what was on the screen in the room.
 
 !!! note "It is a frame, not a talk"
     The deck is **46 slides** — one section break for every block of the two
-    hours, and outline slides under each. **11 of them are still placeholders**,
+    hours, and outline slides under each. **8 of them are still placeholders**,
     and each of those says so on its face and names the work order that will
     fill it.
 
@@ -30,7 +30,7 @@ page is what was on the screen in the room.
     session.
 
     The skeleton was built under
-    [issue #12](https://github.com/RickSmith/survey-recon/issues/12). Seven
+    [issue #12](https://github.com/RickSmith/survey-recon/issues/12). Eight
     pieces of content have landed, each checked against its own source on every
     test run: the cold-open slide under
     [#81](https://github.com/RickSmith/survey-recon/issues/81), its figures
@@ -47,10 +47,13 @@ page is what was on the screen in the room.
     [#31](https://github.com/RickSmith/survey-recon/issues/31), held to the
     translation table in `CONTEXT.md`; and Hermes under
     [#34](https://github.com/RickSmith/survey-recon/issues/34), whose day 21 is
-    derived from the lead-time table rather than written on the slide. The rest
-    lands under [#84](https://github.com/RickSmith/survey-recon/issues/84)
-    through [#86](https://github.com/RickSmith/survey-recon/issues/86) (Act III,
-    the failure beat and the close).
+    derived from the lead-time table rather than written on the slide; and
+    Act III under
+    [#84](https://github.com/RickSmith/survey-recon/issues/84), each of its
+    three slides read back out of the document it frames. The rest lands under
+    [#85](https://github.com/RickSmith/survey-recon/issues/85) and
+    [#86](https://github.com/RickSmith/survey-recon/issues/86) (the failure beat
+    and the close).
 
 !!! info "What building the frame turned up"
     On **13 September 2026**, when the skeleton landed, the four work orders
@@ -75,6 +78,7 @@ page is what was on the screen in the room.
 | `corridor-screen/tests/test_cold_open.py` | Holds the cold-open slide to the SH16 run — and stops it announcing a figure the terminal has not reached yet |
 | `corridor-screen/tests/test_act_one.py` | Holds Act I to the captured grilling, counting its rows rather than reading its prose — and stops a slide calling a transcript a recording |
 | `corridor-screen/tests/test_act_two.py` | Holds Act II to the SH16 run, and checks by name for the three stale figures #80 retired |
+| `corridor-screen/tests/test_act_three.py` | Holds each Act III slide to the document it frames — the bid memo, the flagged parcel table and the crew-day build-up |
 | `corridor-screen/tests/test_money_slide.py` | Holds the money slide to the crew-day build-up its figures come from |
 | `corridor-screen/tests/test_datum_gap.py` | Holds the datum-gap slide to the research note and the SH16 run |
 | `corridor-screen/tests/test_concept_slides.py` | Holds the concept slides to the translation table, and to what they ported |

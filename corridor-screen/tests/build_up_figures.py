@@ -50,6 +50,11 @@ UNTOTALED = re.compile(r"\*\*That total is a floor\.\*\* (\d+) lines")
 # first cell is the handle in backticks.
 HANDLE = re.compile(r"`(A\d+)`")
 
+# The same, keeping the backticks, for taking a handle off a line before the
+# line is searched for quantities. `A4` is a name and the 4 in it is not a
+# number, so a check asking what a line quotes has to drop it first.
+A_HANDLE_ON_A_LINE = re.compile(r"`A\d+`")
+
 # **The build-up's unit is the hour.** These are the words that mean a document
 # quoting it has left that unit and started pricing software instead, which
 # both [#30] and [#32] forbid in the same sentence: billable-hour terms, never
@@ -139,6 +144,17 @@ def rate_values():
             # The rate table is `| handle | name | value | what to argue with |`
             values[row[0].strip("`")] = set(A_NUMBER.findall(row[2]))
     return values
+
+
+def quantities_on(line):
+    """Every number a line of a quoting document actually quotes.
+
+    A rate handle comes off first, so `A4` is read as the name it is rather
+    than as a stray four. Both the money slide and the Act III build-up slide
+    ask this same question of a line, and the pattern that answers it lived in
+    both of their test files until #84's review found the copy.
+    """
+    return set(A_NUMBER.findall(A_HANDLE_ON_A_LINE.sub("", line)))
 
 
 def numbers_it_publishes():

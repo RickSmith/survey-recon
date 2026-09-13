@@ -37,11 +37,11 @@ import re
 import unittest
 
 from tests.build_up_figures import (
-    A_NUMBER,
     HANDLE,
     PRICED_BY_THE_SEAT,
     figures,
     numbers_it_publishes,
+    quantities_on,
     rate_handles,
     rate_values,
 )
@@ -66,9 +66,10 @@ SLIDE_COUNT = re.compile(
 # revision year and a chapter number are the manual's, not the build-up's.
 A_SOURCE = "txdot.gov"
 
-# A rate handle is `A4`, and the 4 in it is not a quantity. Taken out before any
-# line is searched for numbers.
-A_HANDLE_ON_A_LINE = re.compile(r"`A\d+`")
+# A rate handle is `A4`, and the 4 in it is not a quantity. Taking it off a
+# line before the line is searched for numbers is `build_up_figures.
+# quantities_on`, which this file imports rather than keeping its own copy of
+# the pattern -- #84 wrote the second one and its review found it.
 
 
 def the_block():
@@ -117,7 +118,7 @@ class TheFiguresAreTheBuildUpsFigures(unittest.TestCase):
             for line in slide.content_lines():
                 if A_SOURCE in line:
                     continue
-                for number in A_NUMBER.findall(A_HANDLE_ON_A_LINE.sub("", line)):
+                for number in quantities_on(line):
                     with self.subTest(slide=slide.number, number=number):
                         self.assertIn(
                             number,
@@ -152,7 +153,7 @@ class TheFiguresAreTheBuildUpsFigures(unittest.TestCase):
                 wanted = values.get(handle, set())
                 quoted = any(
                     handle in line
-                    and wanted & set(A_NUMBER.findall(A_HANDLE_ON_A_LINE.sub("", line)))
+                    and wanted & quantities_on(line)
                     for line in slide.content_lines()
                 )
                 with self.subTest(slide=slide.number, handle=handle):

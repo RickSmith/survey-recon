@@ -95,6 +95,7 @@ They are buyers and risk-owners. They are not going to install things themselves
 | **Flagged parcel** | A tract with something that costs time — school, cemetery, railroad, pipeline, gated access, livestock |
 | **Lead time** | Statutory or procedural delay before you can enter. Railroad 30–45 days, cemetery 14 days, Texas 811 48 hours |
 | **Crew-day build-up** | The hours estimate, shown as arguable math rather than a single number |
+| **Rate handle** | A short name stamped on one rate in the crew-day build-up — `A1` through `A12` — so a reader can disagree with that one rate out loud, by name, instead of disagreeing with the total. Like a note number on a sheet: you say *note 8*, not *the drawing* |
 | **The grilling** | `/grill-with-docs` — the agent interviewing you about scope before it touches anything. The session's centerpiece |
 | **The failure beat** | Three deliberate, scripted moments showing work being confidently wrong and then caught. Two show the agent wrong. The third shows a licensed human wrong — a false statement of law written into a work order — and the agent catching it. The direction runs both ways, which is the point |
 | **The recursion** | This repo is built the way the session tells attendees to work, so its git history is itself a teaching artifact |

@@ -58,6 +58,36 @@ def flat(markdown):
     return " ".join(markdown.split())
 
 
+def unemphasized(markdown):
+    """The document with its bold, its italic and its backticks taken off.
+
+    Two documents saying the same thing rarely emphasize it the same way. The
+    bid memo writes `**may seek**` and a slide quoting it writes `*may seek*` --
+    one phrase to a reader, two strings to a test, and a check that failed on
+    that would punish editing exactly the way `flat` exists to stop.
+
+    **Line breaks are left alone**, because dropping them is a separate
+    decision with a real cost: a phrase that ran across two bullets would start
+    matching, and a check that cannot tell one bullet from two is weaker than
+    the one it replaced. `plain` below is the version that does both, for
+    callers that want both.
+
+    `deck_reader.visible` is the slide-side caller. It kept the second copy of
+    these replacements until #84's review found the fourth being written.
+    """
+    return markdown.replace("**", "").replace("*", "").replace("`", "")
+
+
+def plain(markdown):
+    """One long line, with the emphasis off too. `flat` and `unemphasized`.
+
+    What a test wants when it is comparing a sentence in a hard-wrapped page
+    with the same sentence on a slide, which is a comparison that has to
+    survive both a line break and a change of emphasis.
+    """
+    return unemphasized(flat(markdown))
+
+
 def markdown_section(markdown, heading):
     """Everything under one heading, up to the next heading of any depth.
 
