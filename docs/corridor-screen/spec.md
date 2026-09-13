@@ -1,7 +1,7 @@
 # Corridor screening — specification
 
 **Status:** settled 2026-09-12, from the grilling on [issue #5](https://github.com/RickSmith/survey-recon/issues/5).
-**Amended:** 2026-09-13 — section 6, the pipeline source; section 8, how a returned record is tested against the corridor; section 10, the parcel field names. See the notes there.
+**Amended:** 2026-09-13 — section 6, the pipeline source; section 8, how a returned record is tested against the corridor; section 10, the parcel field names, and nine additions for the flags. See the notes there.
 **Scope of work for:** the `corridor-screen/` tool.
 
 A note on words. A **spec** is a scope of work. A **schema** is an agreed field list — the column headings on a parcel table that everybody uses the same way. An **endpoint** is the web address you ask a question of. A **cache** is a saved copy of an answer you already got. Everything else is in [CONTEXT.md](https://github.com/RickSmith/survey-recon/blob/main/CONTEXT.md).
@@ -253,10 +253,13 @@ services   control   row_maps   parcels   corridor_flags   warnings
 | `mode` | `live`, `cache-first`, `cache-only` |
 | `tool_version` | which version produced this file |
 | `half_width_ft`, `adjacent_distance_ft` | the two stated distances |
+| `sanity_margin_ft` | the third stated distance — how far outside the ribbon a record may sit before the run doubts it. See the section 8 note |
 | `area` | `texas-bexar` |
 | `not_screenable` | list of type and reason — see section 12 |
 | `renderings` | paths to both SVG files |
 | `map_link` | public web-map URL centered on the corridor |
+| `screened_for` | the flag types this run checked for, run-wide. Built from the services that actually answered, never from the list of types the tool knows about |
+| `lead_times` | the number and its citation for each type in `screened_for`, so the file can be checked without this repo beside it |
 
 ### `alignment`
 
@@ -285,15 +288,20 @@ services   control   row_maps   parcels   corridor_flags   warnings
 |---|---|
 | `name`, `url`, `layer_id` | exactly what was asked, and of what |
 | `purpose` | `parcels`, `control`, `flag:schools`, and so on |
-| `ping` | `ok`, `blocked` or `slow`, with milliseconds |
+| `ping` | `ok`, `blocked` or `slow` |
+| `ping_ms` | how long that ping took |
+| `ping_detail` | why, when a ping came back `blocked` |
 | `status` | `ok`, `failed`, `from-cache`, `skipped` |
 | `attempts` | how many times it was tried |
 | `record_count` | how many records came back |
-| `cache_file` | relative path to the saved response |
+| `records_used` | flag services only: how many of those were used, and how |
+| `cache_files` | relative paths to the saved responses — one per page, since a capped answer is fetched in several |
 | `captured_at` | when that response was captured |
 | `warnings` | sanity checks that tripped on this service |
 
 This block is the honesty block. It is what lets somebody else decide whether to trust the file.
+
+**`records_used` sits beside `record_count` because the two are rarely equal, and the gap is not a fault.** A flag service is asked about a box drawn around every parcel in the corridor, which is wider than the ribbon, so a school at the far corner of that box is a correct answer to the question that was asked and is simply not this corridor's problem. Recording only the six that were used would make six look like the whole world. The honesty block says "39 returned, 6 used" instead.
 
 ### `control`
 
@@ -319,7 +327,9 @@ This block is the honesty block. It is what lets somebody else decide whether to
 | `screened_for` | the flag types actually checked **for this parcel** |
 | `flags` | see below |
 | `max_lead_time_days` | the one number that drives scheduling |
+| `max_lead_time_basis` | which days that number counts — `calendar days` or `working days` |
 | `lead_time_driver` | which flag set that number |
+| `lead_time_not_found` | flag types on this parcel whose lead time could not be confirmed |
 | `warnings` | anything doubted about this row |
 
 #### Where each of those comes from
@@ -356,6 +366,8 @@ The CoSA service is the one section 6 prefers. These are the fields it publishes
 
 **`screened_for` is how `unknown` stays different from `no`.** Anything not on that list was not checked, and is never reported as clear. If a service died and the run stopped, the parcels already written say so on their own.
 
+**`lead_time_not_found` sits beside `max_lead_time_days` for the same reason.** A parcel whose only flag is a school has no confirmed number, and a blank there reads as "no delay". It is not clear. It is unmeasured, which is a different thing — the same distinction as `unknown` against `no`, one row further down. A parcel carrying both a cemetery and a school shows **14 calendar days** *and* `school` in the not-found list, because 14 is the longest figure anybody can stand behind and it is not the whole answer.
+
 **`acres_in_corridor` is separate from `legal_acres` on purpose.** A 200-acre ranch clipped by a 300-foot corridor is not a 200-acre problem, and the crew-day estimate hangs off the difference.
 
 ### A `flag` on a parcel
@@ -363,24 +375,83 @@ The CoSA service is the one section 6 prefers. These are the fields it publishes
 | Field | Meaning |
 |---|---|
 | `type` | `school`, `cemetery`, `railroad`, `pipeline`, `church`, `federal`, `historic` |
-| `relation` | `on`, meaning inside the parcel, or `adjacent` |
+| `relation` | `on`, meaning inside the parcel, `adjacent`, or `corridor` — see `corridor_flags` below |
 | `distance_ft` | only when `adjacent` |
 | `name` | the feature's own name |
 | `source_service`, `source_feature_id` | which service said so, and which record |
 | `screenable` | true |
 | `lead_time_days` | from section 13 |
+| `lead_time_basis` | **which days that number counts** — `calendar days` or `working days` |
+| `lead_time_days_low` | the bottom of a published range, where the figure is one. `lead_time_days` carries the top |
+| `lead_time_confirmed` | false where no figure could be confirmed. Then `lead_time_days` is empty and `lead_time_not_found` is filled |
+| `lead_time_statutory` | true for a code section, false for somebody's published procedure. They are different kinds of promise |
 | `lead_time_source` | the statutory or procedural citation |
 | `lead_time_url` | the link to it |
+| `lead_time_verified_on` | the date that link was opened and read |
+| `lead_time_driver_detail` | what actually causes the delay, in words |
+| `lead_time_note` | the limits on the number — what the surveyor still has to judge |
+| `lead_time_not_found` | where we looked, when no figure was confirmed. Begins with the words "Not found" |
+| `parcels_crossed` | corridor-level flags only: how many parcels in this corridor it crosses |
 
 `on` and `adjacent` are recorded separately and never merged. A party chief needs to know about both. An estimator must not count both.
+
+**`lead_time_basis` is not optional and is never converted.** Two working days and two calendar days are different promises — [Tex. Util. Code § 251.151(a)](https://statutes.capitol.texas.gov/Docs/UT/htm/UT.251.htm) excludes Saturdays, Sundays and legal holidays, and [Tex. Health & Safety Code § 711.041](https://statutes.capitol.texas.gov/Docs/HS/htm/HS.711.htm) does not. Turning one into the other would mean the tool inventing a calendar of Texas legal holidays it does not have and cannot check, so it states the basis and leaves the calendar to the reader. The lead-time table loader refuses a confirmed row that does not say which days.
 
 ### `corridor_flags`
 
 Things that cost time but belong to no single parcel — a pipeline easement crossing many of them, a railway crossing the route. Same fields, recorded against the run. Nothing gets quietly dropped for being hard to attach.
 
+There are **two** ways to belong to no single parcel, and both land here:
+
+- A feature on **no** parcel that is still inside the corridor — a pipeline in a road right of way no appraisal district taxes.
+- A feature on **many** parcels, which is the pipeline easement named above. It stays on every parcel it touches, because a party chief needs to know which ones, **and** it is recorded once here, because an estimator adding one easement's notice period thirty times has the wrong number. The two records are separate and never merged, for the same reason `on` and `adjacent` are.
+
+How many parcels count as many is **stated, not derived**, like the half-width. It defaults to **5** and is settable with `--corridor-flag-parcels`.
+
 ### `warnings`
 
 Every sanity check that tripped, run-wide: `check`, `service`, `severity` — always `warning`, per ADR 0001 — `detail`, and `what_to_do`.
+
+!!! note "Amended 2026-09-13, on [PR #53](https://github.com/RickSmith/survey-recon/pull/53)"
+    Nine entries were added to this section when the flags were built under
+    [#17](https://github.com/RickSmith/survey-recon/issues/17). **Nothing named
+    here before was removed or renamed.**
+
+    They were built first and named here second, which is the wrong way round.
+    The tool emitted them, the difference was listed in
+    [the flag services page](../data-sources/flag-services.md) rather than
+    slipped in, and Rick ruled on 2026-09-13 to keep all nine. This section now
+    names them, so the contract and the file agree again.
+
+    | Added | Where | Why |
+    |---|---|---|
+    | `lead_time_basis` | flag | Two working days and two calendar days are different promises. A bare "days" is what a reader turns into a date and gets wrong |
+    | `lead_time_confirmed` · `lead_time_statutory` | flag | #17 asks for "code and section **where it is statutory**." A reader has to be able to tell a statute from a company's published procedure |
+    | `lead_time_not_found` | flag, and the parcel row | #17 asks that an unconfirmed lead time say "not found" and say where it looked. On the row it is what stops a school-only parcel reading as clear |
+    | `lead_time_days_low` · `lead_time_note` · `lead_time_verified_on` · `lead_time_driver_detail` | flag | The railroad figure is a published **range**; carrying only the planning number hides what it was chosen from. The note and the date are what make a citation checkable a year later |
+    | `max_lead_time_basis` | parcel row | Same reason as `lead_time_basis` |
+    | `parcels_crossed` | corridor-level flag | The number that stops one easement's notice period being counted once per parcel |
+    | `records_used` | services | "39 returned, 6 used" rather than a bare 6 |
+    | `screened_for` · `lead_times` | run | The flag types checked run-wide, and the citation for each |
+    | `relation: "corridor"` | flag | This section defined `relation` as `on` or `adjacent`, and separately said a corridor flag carries the "same fields". A corridor flag therefore needed some third value |
+
+    Eight of the nine exist to keep a number honest rather than to add a number.
+    That is the shape of what this ticket turned out to be: the flags were the
+    easy half, and saying exactly how much each figure is worth was the rest.
+
+    **Four more were found while checking this amendment, and they are not from
+    #17.** Walking every field in `screening.json` against the tables above
+    turned up four the file has carried since earlier work and this section never
+    named: `sanity_margin_ft` on the run, from
+    [PR #52](https://github.com/RickSmith/survey-recon/pull/52); and `ping_ms`,
+    `ping_detail` and `cache_files` on a service, from
+    [#13](https://github.com/RickSmith/survey-recon/issues/13). This section had
+    said `cache_file`, singular, and the tool has always written a list, because
+    a capped answer is fetched one page at a time.
+
+    They are named now. The claim above — that the contract and the file agree
+    again — is only worth making if somebody checked, and checking is what found
+    these.
 
 ## 11. On right of entry
 

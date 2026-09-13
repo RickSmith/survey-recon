@@ -234,13 +234,23 @@ rather than a plain dictionary lookup.
 
 ---
 
-## What this adds to the output beyond spec section 10
+## What this added to spec section 10
 
 [Spec section 10](../corridor-screen/spec.md) is a settled contract, and these
-fields are **not in it**. They are listed here rather than slipped in, so the
-ruling on whether they belong is a person's to make.
+nine entries were **not in it** when the flags were built. They were listed here
+rather than slipped in, so the ruling on whether they belonged was a person's to
+make.
 
 Nothing named in section 10 was removed or renamed.
+
+!!! success "Ruled on 2026-09-13, on [PR #53](https://github.com/RickSmith/survey-recon/pull/53)"
+    **Rick ruled to keep all nine.** Section 10 now names them, with a note
+    recording the amendment, so the contract and the file agree again. The table
+    below is kept as the account of what was added and why.
+
+    Eight of the nine exist to keep a number honest rather than to add a number.
+    That is the shape of what this ticket turned out to be: the flags were the
+    easy half, and saying exactly how much each figure is worth was the rest.
 
 | Field | Where | Why it is here |
 |---|---|---|
