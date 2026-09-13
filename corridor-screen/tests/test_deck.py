@@ -498,6 +498,12 @@ class TestTheClaimsWithConsequencesCarryTheirSource(unittest.TestCase):
         # plainest kind of number with legal consequence there is: a crew that
         # rolls on day 13 is a crew that trespassed.
         ("14 calendar days", "711.041"),
+        # Added with the close, #86. *Who signs does not change* is the
+        # sentence a principal leaves the room and acts on, and § 138.33(b) is
+        # the rule under it. The subsection is checked rather than the section:
+        # § 138.33(c) is a different rule, about using somebody else's work,
+        # and it sits one letter away.
+        ("Who signs does not change", "138.33(b)"),
     )
 
     def slides_saying(self, phrase):

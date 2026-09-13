@@ -43,6 +43,7 @@ They are buyers and risk-owners. They are not going to install things themselves
 | **Closure** | The error you get when a traverse doesn't return exactly to its start. A quality measure |
 | **Metes and bounds** | A boundary described as a sequence of bearings and distances |
 | **Party chief** | The person running a field crew |
+| **ALTA survey** | Short for an ALTA/NSPS Land Title Survey — a boundary survey to a national standard set jointly by the American Land Title Association and the National Society of Professional Surveyors, ordered when a commercial property changes hands. Named here because it is the second worked example the closing slides offer: the same four steps, a different set of services |
 
 ## Geodetic vocabulary
 
