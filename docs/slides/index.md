@@ -23,27 +23,33 @@ page is what was on the screen in the room.
 !!! note "It is a frame, not a talk"
     The deck is **45 slides** — one section break for every block of the two
     hours, and outline slides under each. **34 of them are still placeholders**,
-    and each of those says so on its face and names the work order that would
+    and each of those says so on its face and names the work order that will
     fill it.
+
+    Slides still waiting on a work order: **0**, across **0** blocks of the
+    session.
 
     The skeleton was built under
     [issue #12](https://github.com/RickSmith/survey-recon/issues/12). The
     content lands under [#31](https://github.com/RickSmith/survey-recon/issues/31)
     (the concept slides), [#32](https://github.com/RickSmith/survey-recon/issues/32)
     (the money slide), [#33](https://github.com/RickSmith/survey-recon/issues/33)
-    (the datum gap) and [#34](https://github.com/RickSmith/survey-recon/issues/34)
-    (Hermes).
+    (the datum gap), [#34](https://github.com/RickSmith/survey-recon/issues/34)
+    (Hermes), and [#81](https://github.com/RickSmith/survey-recon/issues/81)
+    through [#86](https://github.com/RickSmith/survey-recon/issues/86) (the cold
+    open, the three Acts, the failure beat and the close).
 
-!!! warning "What building the frame turned up"
-    Those four work orders do not cover the deck.
-    **22 of those have no work order yet** — the cold open, Act I, most of
-    Act II, all of Act III, the failure beat and the close. That is six of the
-    eleven blocks of the session, and none of it was visible until there was a
-    slide to hang each block on.
+!!! info "What building the frame turned up"
+    On **13 September 2026**, when the skeleton landed, the four work orders
+    that existed for slide content — #31 through #34 — covered 12 of the 34
+    unfinished slides. The other **22**, across six of the eleven blocks, had
+    nobody writing them: the cold open, Act I, most of Act II, all of Act III,
+    the failure beat and the close.
 
-    The slides say `no work order yet` rather than pointing at an issue
-    nobody has written. Same rule as everywhere else here: **not found**, never
-    the stronger claim.
+    None of it was visible until there was a slide to hang each block on. Those
+    slides said `no work order yet` rather than pointing at an issue nobody had
+    written — the same rule as everywhere else here: **not found**, never the
+    stronger claim. #81 through #86 were opened the same day and closed the gap.
 
 ## How it is put together
 

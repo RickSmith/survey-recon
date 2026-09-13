@@ -704,34 +704,30 @@ class TestThePlaceholdersSayTheyArePlaceholders(unittest.TestCase):
         waiting = [slide for slide in slides() if PLACEHOLDER in slide.body]
         self.assertEqual(int(stated.group(1)), len(waiting))
 
-    def test_the_slides_page_states_how_many_slides_nobody_is_writing(self):
-        """The number this whole exercise turned up, on the page a reader lands
-        on. It is the one number here that should make somebody uncomfortable,
-        which is the argument for checking it rather than trusting it."""
+    def test_the_slides_page_states_how_much_of_the_deck_nobody_is_writing(self):
+        """The number the skeleton turned up, on the page a reader lands on.
+
+        It was 22 slides across six blocks when #12 landed, and #81 through #86
+        took it to nothing the same day. It is still counted rather than
+        declared closed, because the next block added to the run of show
+        arrives with no work order and this is the sentence that should say so.
+
+        Written to read at any value -- the first draft phrased it as "N of
+        those have no work order yet", which is fine at 22 and clumsy at 0, and
+        a sentence nobody wants to write is a sentence that gets deleted along
+        with its check.
+        """
+        page = text_of(SLIDES_PAGE)
         stated = re.search(
-            r"\*\*(\d+) of those have no work order yet\*\*", text_of(SLIDES_PAGE)
+            r"Slides still waiting on a work order: \*\*(\d+)\*\*, across\s+\*\*(\d+)\*\*",
+            page,
         )
         self.assertIsNotNone(stated, "the Slides page no longer says what nobody is writing")
         unowned = [slide for slide in slides() if NO_WORK_ORDER in slide.body]
         self.assertEqual(int(stated.group(1)), len(unowned))
-
-    def test_the_slides_page_states_how_many_blocks_that_leaves_unwritten(self):
-        """The same gap counted the way a presenter feels it -- in blocks of the
-        session rather than in slides. It was right when it was written and
-        nothing held it there, which is how the other counts on this page ended
-        up with tests."""
-        page = text_of(SLIDES_PAGE)
-        stated = re.search(r"That is (\w+) of the\s+(\w+) blocks", page)
-        self.assertIsNotNone(stated, "the Slides page no longer counts the blocks affected")
-        words = {
-            "one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6,
-            "seven": 7, "eight": 8, "nine": 9, "ten": 10, "eleven": 11,
-        }
-        unowned = {
-            noted(slide).time for slide in slides() if NO_WORK_ORDER in slide.body
-        }
-        self.assertEqual(words[stated.group(1)], len(unowned))
-        self.assertEqual(words[stated.group(2)], len(run_of_show()))
+        self.assertEqual(
+            int(stated.group(2)), len({noted(slide).time for slide in unowned})
+        )
 
 
 class TestNothingIsTooSmallOrTooBigForTheRoom(unittest.TestCase):

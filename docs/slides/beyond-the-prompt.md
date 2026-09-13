@@ -39,7 +39,7 @@ Fallback if the command will not start: docs/presenting/fallbacks.md, row one.
 - What we asked for: what is out there, and what it costs in crew days
 - What it does next: reads, asks, and shows its work
 
-> **To be written** — no work order yet
+> **To be written** — #81
 
 <!--
 0:00–0:08 · 8 min · Cold open
@@ -257,7 +257,7 @@ screen. Nineteen questions, what was recommended, what Rick answered.
 - The survey parallel: the scoping call you wish every client would sit through
 - Nineteen questions, on the real SH16 job, in one sitting
 
-> **To be written** — no work order yet
+> **To be written** — #82
 
 <!--
 0:30–0:46 · 16 min · Act I — The grilling
@@ -274,7 +274,7 @@ watching the questions arrive than from any description of them.
 - Let the silences sit. The questions are the content
 - Watch for the moment it asks something the room had not thought of
 
-> **To be written** — no work order yet
+> **To be written** — #82
 
 <!--
 0:30–0:46 · 16 min · Act I — The grilling
@@ -293,7 +293,7 @@ plainly that it is a transcript of a real run and not a recording.
 - Every decision is on the page, including the ones you did not make
 - Nothing is assumed silently, which is the whole value of it
 
-> **To be written** — no work order yet
+> **To be written** — #82
 
 <!--
 0:30–0:46 · 16 min · Act I — The grilling
@@ -309,7 +309,7 @@ Live block. Show the spec document, scroll it once, slowly. Do not read it out.
 - They land on GitHub, publicly, while the room watches
 - Thirty-five of them, on the real job, in under two minutes
 
-> **To be written** — no work order yet
+> **To be written** — #82
 
 <!--
 0:30–0:46 · 16 min · Act I — The grilling
@@ -327,7 +327,7 @@ open in a second window so you can switch to it the moment they appear.
 - This is not new. It is how you already supervise a party chief
 - Everything after this slide is the agent executing a scope you approved
 
-> **To be written** — no work order yet
+> **To be written** — #82
 
 <!--
 0:30–0:46 · 16 min · Act I — The grilling
@@ -439,7 +439,7 @@ order you need them, and project-sh16/screening.json is the run itself.
 - Every right-of-way map sheet the corridor touches, and its date
 - All of it from public sources. No client data, ever
 
-> **To be written** — no work order yet
+> **To be written** — #83
 
 <!--
 0:57–1:18 · 21 min · Act II — Find the control
@@ -457,7 +457,7 @@ plainly: nothing belonging to a client went anywhere near this.
 - A mark somebody looked for and could not find is control you may have to set
 - Counted separately from the marks reported present, and here is why
 
-> **To be written** — no work order yet
+> **To be written** — #83
 
 <!--
 0:57–1:18 · 21 min · Act II — Find the control
@@ -475,7 +475,7 @@ A count of marks reads as control you have.
 - Condition unknown is neither. Nobody looked, so nobody knows
 - Two records can name one monument, so a record count is not a monument count
 
-> **To be written** — no work order yet
+> **To be written** — #83
 
 <!--
 0:57–1:18 · 21 min · Act II — Find the control
@@ -493,7 +493,7 @@ trust the rest of the output. Do not skip it for time.
 - Sheets from the 1940s and sheets from the 1990s are not the same document
 - What the tool reports, and what still has to be ordered by hand
 
-> **To be written** — no work order yet
+> **To be written** — #83
 
 <!--
 0:57–1:18 · 21 min · Act II — Find the control
@@ -529,7 +529,7 @@ right. Open question, stated plainly, no settled answer implied.
 - If it fails, that is also true, and we will say that too
 - One live moment is what proves the rest is not a movie
 
-> **To be written** — no work order yet
+> **To be written** — #83
 
 <!--
 0:57–1:18 · 21 min · Act II — Find the control
@@ -564,7 +564,7 @@ fallback that is just a file on the laptop.
 - Written by the tool, from the run, with its sources beside every claim
 - It says what it could not check, which is the part that earns trust
 
-> **To be written** — no work order yet
+> **To be written** — #84
 
 <!--
 1:18–1:36 · 18 min · Act III — The estimate package
@@ -583,7 +583,7 @@ there for a moment.
 - Unknown is never written as no. One of those sends a crew to a locked gate
 - Gated access and livestock cannot be screened, and the output says so
 
-> **To be written** — no work order yet
+> **To be written** — #84
 
 <!--
 1:18–1:36 · 18 min · Act III — The estimate package
@@ -601,7 +601,7 @@ the ones a party chief cares about.
 - Every rate has a handle, so anybody can point at the one they disagree with
 - An estimate you can argue with is an estimate you can defend
 
-> **To be written** — no work order yet
+> **To be written** — #84
 
 <!--
 1:18–1:36 · 18 min · Act III — The estimate package
@@ -637,7 +637,7 @@ three and the least about accountability. Beat 3 is never cut.
 - Including one that was approved and should not have been
 - Not a demo. A record, and it is public
 
-> **To be written** — no work order yet
+> **To be written** — #85
 
 <!--
 1:36–1:48 · 12 min · Review, seal — and the three failures
@@ -656,7 +656,7 @@ rather than from GitHub.
 - It did not lie. It did what a new hire does with a stale binder
 - The defense: fetch the URL you are about to cite, and check what comes back
 
-> **To be written** — no work order yet
+> **To be written** — #85
 
 <!--
 1:36–1:48 · 12 min · Review, seal — and the three failures
@@ -675,7 +675,7 @@ corridor-screen folder. It needs no network.
 - No error, and the web's code for "here is your answer" on both
 - It did not fail. It answered. That is worse
 
-> **To be written** — no work order yet
+> **To be written** — #85
 
 <!--
 1:36–1:48 · 12 min · Review, seal — and the three failures
@@ -697,7 +697,7 @@ Fallback: python -m corridor_screen.elevation_trap --show
 - The agent went looking for the citation our own rules demand, and stopped
 - If your checking only runs one direction, you have built half of it
 
-> **To be written** — no work order yet
+> **To be written** — #85
 
 <!--
 1:36–1:48 · 12 min · Review, seal — and the three failures
@@ -720,7 +720,7 @@ in order. The rule that caught it was written for something else entirely.
 
 PAO 71, 14 Nov 2024 · pels.texas.gov · 22 Tex. Admin. Code § 131.2(11), (38)
 
-> **To be written** — no work order yet
+> **To be written** — #85
 
 <!--
 1:36–1:48 · 12 min · Review, seal — and the three failures
@@ -793,7 +793,7 @@ instruments adoption, and picks the next worked example, all at once.
 - Nothing in it is specific to TxDOT except the services it calls
 - Name the pattern before you show the next example
 
-> **To be written** — no work order yet
+> **To be written** — #86
 
 <!--
 1:54–2:00 · 6 min · Accountability · Monday morning · the live issue
@@ -811,7 +811,7 @@ the general shape before it will offer its own examples.
 - Decide what client data never leaves the office, in writing
 - Nothing changes about who signs and who carries the liability
 
-> **To be written** — no work order yet
+> **To be written** — #86
 
 <!--
 1:54–2:00 · 6 min · Accountability · Monday morning · the live issue
@@ -829,7 +829,7 @@ here if it is printed.
 - The replies pick the next worked example
 - The short link and the QR code are on the handout
 
-> **To be written** — no work order yet
+> **To be written** — #86
 
 <!--
 1:54–2:00 · 6 min · Accountability · Monday morning · the live issue
