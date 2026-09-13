@@ -14,6 +14,10 @@ worked example — including the ones that got sent back.
 - **[The rule we broke on day one](the-force-push.md)** — this repo has a rule
   against altering its own history. Fifteen minutes in, we broke it on purpose.
   What happened, what it cost, and who made the call.
+- **[The manual that was real, and out of date](the-superseded-manual.md)** —
+  search still hands out the old address for the TxDOT Survey Manual. The old
+  host does not answer, so an agent sees a timeout rather than a 404, and cites
+  the revision anyway. Failure beat one, and the boring check that catches it.
 - **[The answer that was wrong rather than missing](the-wrong-answer.md)** — ask
   the USGS elevation service in `US_Feet`, the unit a Texas surveyor works in,
   and it answers in meters. No error, valid JSON, a believable number three and

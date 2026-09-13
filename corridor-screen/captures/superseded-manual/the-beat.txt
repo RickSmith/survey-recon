@@ -1,0 +1,17 @@
+  Failure beat 1 - the superseded manual
+
+  What a search for the TxDOT Survey Manual still hands you:
+    http://onlinemanuals.txdot.gov/TxDOTOnlineManuals/TxDOTManuals/ess/index.htm
+      serves    TxDOT Survey Manual March 2025, Manual Notice 2025-1
+      today     the name is still published, and nothing accepted a connection on port 80 or 443 (three attempts, 12 s each)
+      evidence  captures/superseded-manual/legacy-ess-index-archived-2025-06-18.html (Internet Archive capture 20250618021450)
+
+  Where the manual actually is:
+    https://www.txdot.gov/manuals/row/ess/index.html
+      serves    TxDOT Survey Manual April 2026, Manual Notice 2026-1
+      evidence  captures/superseded-manual/current-ess-index.html (fetched live on 2026-09-13)
+
+  It did not invent anything: it followed the link search gave it, read a real TxDOT manual, and cited a revision that had been replaced.
+
+  Every line above was checked on 2026-09-13 and reads from disk,
+  so it does not need a network to run again.
