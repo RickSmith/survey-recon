@@ -60,8 +60,8 @@ class TestFindingTheNearest(unittest.TestCase):
     def test_the_distance_is_given_not_just_the_name(self):
         """The ticket asks for this in as many words."""
         places, _ = nearest([place_feature(NAME="Some Hospital")])
-        self.assertIsInstance(places[0]["distance_mi"], float)
-        self.assertGreater(places[0]["distance_mi"], 0)
+        self.assertIsInstance(places[0]["distance_from_centerline_mi"], float)
+        self.assertGreater(places[0]["distance_from_centerline_mi"], 0)
 
     def test_only_so_many_are_kept(self):
         features = [place_feature(lat=29.55 + i / 100, NAME=f"H{i}") for i in range(10)]
@@ -156,8 +156,10 @@ class TestTheBlock(unittest.TestCase):
         block = self.found(hospital=([], 0))
         found = block["by_type"]["hospital"]
         self.assertIsNone(found["nearest"])
-        self.assertEqual(found["searched_radius_mi"], 25.0)
         self.assertIn("hospital", block["not_found_within_the_radius"])
+        # The radius the answer has to be read against sits on the block,
+        # once, rather than being repeated on every kind of help.
+        self.assertEqual(block["search_radius_mi"], 25.0)
 
     def test_a_type_nobody_asked_about_is_not_reported_as_absent(self):
         """A blocked host is not an answer about the world."""
@@ -191,6 +193,57 @@ class TestTheBlock(unittest.TestCase):
         """Stated, never derived -- the same rule as every other distance here."""
         block = self.found(hospital=([], 0))
         self.assertEqual(block["search_radius_mi"], 25.0)
+
+
+class TestWhatIsPrintedWhileSomebodyIsWatching(unittest.TestCase):
+    """The sheet as it reaches a screen, not only as it reaches the file.
+
+    This class exists because of a bug the unit tests did not catch. Renaming
+    ``distance_mi`` to ``distance_from_centerline_mi`` updated the module, the
+    output file and every test here -- and missed the line ``cli._report_safety``
+    prints. Every test passed and the tool crashed on the next real run.
+
+    The printer reads keys off the same place dictionaries, so it is a second
+    caller of that shape and needs a test of its own. This is the cheapest
+    version of one: run it, and require the numbers to actually appear.
+    """
+
+    def _printed(self, by_type, search_miles=25.0):
+        from corridor_screen import cli
+
+        lines = []
+        original = cli._say
+        cli._say = lambda message="": lines.append(message)
+        try:
+            cli._report_safety(by_type, search_miles)
+        finally:
+            cli._say = original
+        return "\n".join(lines)
+
+    def test_the_nearest_place_and_its_distance_both_reach_the_screen(self):
+        places, _ = nearest([place_feature(NAME="University Hospital", CITY="San Antonio")])
+        printed = self._printed({"hospital": (places, 0)})
+        self.assertIn("University Hospital", printed)
+        self.assertIn("San Antonio", printed)
+        self.assertIn(f"{places[0]['distance_from_centerline_mi']:.2f}", printed)
+
+    def test_the_straight_line_warning_is_printed_every_time(self):
+        """Not only when something looks odd. It is the caveat that matters most."""
+        places, _ = nearest([place_feature(NAME="University Hospital")])
+        self.assertIn("straight lines", self._printed({"hospital": (places, 0)}))
+
+    def test_nothing_found_is_printed_as_the_radius_rather_than_as_none(self):
+        printed = self._printed({"hospital": ([], 0)}, search_miles=25.0)
+        self.assertIn("none within 25 miles", printed)
+
+    def test_a_kind_nobody_asked_about_is_printed_as_neither(self):
+        printed = self._printed({"hospital": ([], 0)})
+        self.assertIn("not checked", printed)
+
+    def test_a_run_that_never_asked_prints_nothing_as_absent(self):
+        printed = self._printed(None)
+        self.assertIn("not checked", printed)
+        self.assertNotIn("0.00", printed)
 
 
 class TestTheTypesAreNamedOnce(unittest.TestCase):

@@ -55,6 +55,7 @@ from .sources import (
     ROW_MAPS,
     SAFETY_FIELDS,
     SAFETY_SOURCES,
+    SAFETY_TYPES,
     TXDOT_CONTROL,
     TXDOT_CONTROL_FIELDS,
 )
@@ -949,16 +950,26 @@ def _screen_safety(fetcher, args, pings, blocked_hosts, alignment, plane):
             plane,
             source_name=source.name,
         )
+        shapes = [(_identifier(f, SAFETY_FIELDS["id"]), shape_of(f.get("geometry"))) for f in features]
         tripped = checks.collect(
+            # A cap hit matters more here than anywhere else: it would mean the
+            # nearest place may simply not have been among the records returned.
             checks.check_paging_cap(source.name, len(features)),
+            # Tested against the 25-mile box that was asked about, not against
+            # the ribbon -- a hospital two miles off the centerline is a correct
+            # answer and must not be doubted for it. An earlier pass of this
+            # ticket skipped this check on exactly that confusion, which was
+            # wrong: `checks.check_records_in_requested_extent` is documented
+            # against **this very server**, which answered a query whose
+            # geometry stopped inside Bexar County with schools in
+            # Fredericksburg and Kerrville, and raised nothing. Every other step
+            # on this host is checked, and skipping it here left the widest
+            # query in the tool as the only unchecked one.
+            checks.check_records_in_requested_extent(
+                source.name, shapes, extent, args.sanity_margin_ft, plane
+            ),
             checks.check_records_without_position(source.name, without_position, len(features)),
         )
-        # `check_records_in_requested_extent` is deliberately not run here. Every
-        # other step asks about a box and doubts a record outside it; this step
-        # asks about a box precisely because the answer may be far away, and the
-        # places kept are the nearest few rather than everything returned. The
-        # check that matters for this sheet is the paging cap, because a cap hit
-        # means the nearest place may not have been among the records returned.
         warnings.extend(tripped)
         fetcher.note_warnings(records, tripped)
         by_type[kind] = (places, without_position)
@@ -997,7 +1008,7 @@ def _report_safety(by_type, search_miles):
         _say("    nearest help      not checked -- nothing is reported as absent")
         _say()
         return
-    for kind in safety_mod.SAFETY_TYPES:
+    for kind in SAFETY_TYPES:
         if kind not in by_type:
             _say(f"    {kind:<10} not checked -- no answer either way")
             continue
@@ -1006,7 +1017,7 @@ def _report_safety(by_type, search_miles):
             _say(f"    {kind:<10} none within {search_miles:g} miles -- not the same as none")
             continue
         first = places[0]
-        _say(f"    {kind:<10} {first['distance_mi']:>6.2f} mi  {first['name'] or '(unnamed)'}")
+        _say(f"    {kind:<10} {first['distance_from_centerline_mi']:>6.2f} mi  {first['name'] or '(unnamed)'}")
         where = ", ".join(p for p in (first["address"], first["city"]) if p)
         if where:
             _say(f"               {'':>6}      {where}")
@@ -1336,6 +1347,7 @@ def run(args):
         row_maps=row_maps_mod.block(
             row_map_sheets, detail=row_maps_detail, without_shape=row_maps_without_shape
         ),
+        safety_search_miles=args.safety_search_miles,
         crew_safety=safety_mod.block(
             safety_by_type, search_radius_mi=args.safety_search_miles, detail=safety_detail
         ),

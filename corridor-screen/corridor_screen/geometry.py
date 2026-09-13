@@ -399,6 +399,26 @@ def paths_to_paths_miles(a_paths, b_paths, plane):
     return best
 
 
+def point_of(feature):
+    """A returned feature's own point, or nothing at all.
+
+    Services that answer with one point per record -- NGS marks, TxDOT control,
+    the crew safety layers -- all need this same two-line read, and a record
+    with no point on it has to come back as ``None`` rather than raising, so the
+    caller can count it and say so out loud.
+
+    It lives here rather than in any one of the three modules that read points,
+    for the same reason ``arcgis.attribute`` lives where it does: all three read
+    features the same way and none of them owns the shape.
+    """
+    geometry = feature.get("geometry") or {}
+    lon = geometry.get("x")
+    lat = geometry.get("y")
+    if lon is None or lat is None:
+        return None
+    return [lon, lat]
+
+
 def shape_of(geometry):
     """Which of the three shapes ArcGIS drew, and the shape itself.
 

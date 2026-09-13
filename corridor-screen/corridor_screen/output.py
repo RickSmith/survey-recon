@@ -117,7 +117,7 @@ def build(run_id, started_at, mode, half_width_ft, adjacent_distance_ft, sanity_
           alignment, corridor, services, parcel_rows, warnings,
           status="complete", stopped_at_service=None, corridor_flags=(),
           screened_for=(), lead_time_table=None, control=None, row_maps=None,
-          crew_safety=None):
+          crew_safety=None, safety_search_miles=None):
     """Assemble the whole output file."""
     return {
         "schema_version": SCHEMA_VERSION,
@@ -132,6 +132,11 @@ def build(run_id, started_at, mode, half_width_ft, adjacent_distance_ft, sanity_
             "half_width_ft": half_width_ft,
             "adjacent_distance_ft": adjacent_distance_ft,
             "sanity_margin_ft": sanity_margin_ft,
+            # The fourth stated distance. It sits here with the other three
+            # rather than only inside `crew_safety`, because every distance
+            # this run was given is a number a person chose and the run block
+            # is where they are read together.
+            "safety_search_miles": safety_search_miles,
             "area": "texas-bexar",
             "not_screenable": NOT_SCREENABLE,
             "renderings": [],

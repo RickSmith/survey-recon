@@ -65,15 +65,19 @@ and **every feature layer appears once under each**. Hospitals are layer 14 and
 also layer 49. Ambulance services are 15 and also 50. Fire and EMS are 16 and
 also 51. Police stations are 18 and also 53.
 
-Read live on 2026-09-13, both copies of all four answered the same box with the
-same count:
+Read live on 2026-09-13, both copies of all four answered **the tool's own
+25-mile envelope around the SH16 corridor** — `-99.105, 29.1204` to
+`-98.1843, 29.9365` — with the same count:
 
 | Kind | Lower layer | Count | Upper layer | Count |
 |---|---|---|---|---|
-| Hospital | 14 | 17 | 49 | 17 |
-| Ambulance | 15 | 13 | 50 | 13 |
-| Fire and EMS | 16 | 31 | 51 | 31 |
-| Police | 18 | 13 | 53 | 13 |
+| Hospital | 14 | 33 | 49 | 33 |
+| Ambulance | 15 | 33 | 50 | 33 |
+| Fire and EMS | 16 | 140 | 51 | 140 |
+| Police | 18 | 57 | 53 | 57 |
+
+Those are the same four counts quoted under *How "nearest" is worked out*
+below, because it is the same box.
 
 So this is a trap that does not bite — but only because it was checked. Both
 are plain point feature layers with the same fields. The tool uses the lower
@@ -187,6 +191,21 @@ Read live on 2026-09-13, searching 25 miles.
 
 Helotes Fire Department is on Bandera Road, which is SH16 itself.
 
+### Every one of those responses is on disk
+
+Captured on 2026-09-13 and committed, under
+`project-sh16/cache/usgs-structures-hospitals/`,
+`.../usgs-structures-ambulance/`, `.../usgs-structures-fire-ems/` and
+`.../usgs-structures-police/` — the query and the layer's own field list for
+each. The `.meta.toml` beside every response carries the capture time, the
+exact request URL and every parameter of the request, so the numbers above can
+be checked rather than taken.
+
+The cache is there so a run works on a conference network that may not, and so
+this page can be read against the bytes the server actually sent. It is not
+there to make a demo look like a live call: `--mode cache-only` says in the run
+header that it made no network calls at all.
+
 ---
 
 ## The fields
@@ -195,7 +214,7 @@ Helotes Fire Department is on Bandera Road, which is SH16 itself.
 |---|---|---|
 | `name` | `NAME` | |
 | `address`, `city`, `state`, `zipcode` | `ADDRESS`, `CITY`, `STATE`, `ZIPCODE` | A name with no address is a name somebody has to look up on a phone that may have no signal |
-| `distance_mi` | — | Straight line to the nearest point of the centerline. What the places are ranked by |
+| `distance_from_centerline_mi` | — | Straight line to the nearest point of the centerline. What the places are ranked by |
 | `distance_from_start_mi`, `distance_from_end_mi` | — | Straight lines to each end of the corridor |
 | `longitude`, `latitude` | the point geometry | |
 | `source_load_date` | `LOADDATE` | Milliseconds. The day USGS loaded the record, not the day anybody checked |
@@ -207,7 +226,15 @@ around this corridor, so none of them is asked for.
 
 ---
 
-!!! note "Two differences from the specification, raised rather than patched over"
+!!! note "Three differences from the specification, raised rather than patched over"
+    **Section 10 gains a top-level block.** Its list reads `schema_version   run
+    alignment   corridor   roadway / services   control   row_maps   parcels
+    corridor_flags   warnings`. `crew_safety` is a tenth key it does not name.
+    It is a new top-level block rather than a field inside an existing one,
+    which is exactly what
+    [PR #56](https://github.com/RickSmith/survey-recon/pull/56) established gets
+    section 10 raised explicitly.
+
     **Police is not in section 6.** It lists this server's layers as
     "Cemeteries, Historic, Hospitals, Ambulance, Fire and EMS, Schools — 2, 11,
     14, 15, 16, 23." There is no police row.
@@ -222,7 +249,21 @@ around this corridor, so none of them is asked for.
     step of their own, writing their own `crew_safety` block, and they are not
     attached to any parcel.
 
-    Both follow the ticket rather than the section. Amending a settled
+    **One section 8 check is deliberately not applied.** Section 8 asks that
+    "any part of every returned record falls within the half-width plus a
+    stated margin." That test is right for a parcel and wrong for this sheet: a
+    hospital two miles off the centerline is a correct answer, and doubting it
+    for being outside the ribbon would be a warning that teaches the reader to
+    ignore warnings. What *is* applied is
+    `checks.check_records_in_requested_extent`, which tests each record against
+    the 25-mile box that was actually asked about — and that one matters here
+    more than anywhere, because its documented failure case is this very
+    server returning schools in Fredericksburg and Kerrville for a query whose
+    geometry stopped inside Bexar County. An earlier pass of this ticket
+    skipped it on a confusion between the two checks. That was wrong and the
+    review caught it.
+
+    All three follow the ticket rather than the section. Amending a settled
     specification is not the agent's call — the precedent is `AcctNumb` on
     [PR #52](https://github.com/RickSmith/survey-recon/pull/52), `NPMS` on
     [PR #53](https://github.com/RickSmith/survey-recon/pull/53), the control

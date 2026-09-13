@@ -53,7 +53,7 @@ says so in its own output, not only here.
 """
 
 from .arcgis import attribute, from_epoch_ms
-from .geometry import haversine_miles, point_to_paths_miles
+from .geometry import haversine_miles, point_of, point_to_paths_miles
 from .output import not_screened
 from .sources import SAFETY_FIELDS, SAFETY_TYPES
 
@@ -129,7 +129,7 @@ def to_place(feature, point, to_centerline_mi, to_start_mi, to_end_mi, source_na
         "zipcode": read("zipcode"),
         # Straight line to the nearest point of the centerline. The number the
         # places are ranked by, and never a drive time -- see the note above.
-        "distance_mi": to_centerline_mi,
+        "distance_from_centerline_mi": to_centerline_mi,
         # The same measure from each end, because the crew is standing at one
         # end and not on the whole corridor at once.
         "distance_from_start_mi": to_start_mi,
@@ -142,16 +142,6 @@ def to_place(feature, point, to_centerline_mi, to_start_mi, to_end_mi, source_na
         "usgs_id": read("id"),
         "source_service": source_name,
     }
-
-
-def _point_of(feature):
-    """The place's position, or nothing at all."""
-    geometry = feature.get("geometry") or {}
-    lon = geometry.get("x")
-    lat = geometry.get("y")
-    if lon is None or lat is None:
-        return None
-    return [lon, lat]
 
 
 def nearest(features, alignment_paths, start, end, plane, source_name=None, limit=PLACES_PER_TYPE):
@@ -169,7 +159,7 @@ def nearest(features, alignment_paths, start, end, plane, source_name=None, limi
     measured = []
     without_position = 0
     for feature in features:
-        point = _point_of(feature)
+        point = point_of(feature)
         if point is None:
             without_position += 1
             continue
@@ -187,24 +177,24 @@ def nearest(features, alignment_paths, start, end, plane, source_name=None, limi
                 source_name,
             )
         )
-    measured.sort(key=lambda p: (p["distance_mi"], p["name"] or ""))
+    measured.sort(key=lambda p: (p["distance_from_centerline_mi"], p["name"] or ""))
     return measured[:limit], without_position
 
 
-def _for_type(places, without_position, search_radius_mi):
+def _for_type(places, without_position):
     """What this sheet says about one kind of help.
 
     ``nearest`` is ``None`` when the service answered and nothing of this kind
-    was inside the radius. That is deliberately not an empty list: the radius
-    sits beside it, so the answer reads as "none within 25 miles" rather than
-    "none".
+    was inside the radius. That is deliberately not an empty list, and the
+    kind is named in ``not_found_within_the_radius`` beside the block's own
+    ``search_radius_mi``, so the answer reads as "none within 25 miles"
+    rather than "none".
     """
     return {
         "nearest": places[0] if places else None,
         # The two behind it. A crew at the far end of the corridor may be
         # closer to one of these than to the nearest.
         "others": places[1:],
-        "searched_radius_mi": search_radius_mi,
         "without_position": without_position,
     }
 
@@ -227,7 +217,7 @@ def block(by_type, search_radius_mi=DEFAULT_SEARCH_RADIUS_MI, detail=None):
     """
     if by_type is None:
         return not_screened(detail or "the crew safety services were not called")
-    found = {kind: _for_type(*by_type[kind], search_radius_mi) for kind in SAFETY_TYPES if kind in by_type}
+    found = {kind: _for_type(*by_type[kind]) for kind in SAFETY_TYPES if kind in by_type}
     return {
         "search_radius_mi": search_radius_mi,
         "by_type": found,

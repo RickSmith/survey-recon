@@ -65,7 +65,7 @@ real, and it is the 3DEP shape of failure recorded in
 from datetime import datetime, timezone
 
 from .arcgis import attribute
-from .geometry import FEET_PER_MILE, point_to_paths_miles
+from .geometry import FEET_PER_MILE, point_of, point_to_paths_miles
 from .output import not_screened
 from .sources import NGS_MARK_FIELDS, TXDOT_CONTROL_FIELDS
 
@@ -192,20 +192,6 @@ def _recovered_on(value):
     return value
 
 
-def _point_of(feature):
-    """The mark's position, or nothing at all.
-
-    NGS marks come back as a single ``x``/``y`` point per record, so this is a
-    simpler read than the shapes the flag services return.
-    """
-    geometry = feature.get("geometry") or {}
-    lon = geometry.get("x")
-    lat = geometry.get("y")
-    if lon is None or lat is None:
-        return None
-    return [lon, lat]
-
-
 def to_mark(feature, point, distance_ft, source_name=None):
     """One NGS mark, in the shape the output file uses.
 
@@ -282,7 +268,7 @@ def _in_corridor(features, alignment_paths, half_width_ft, plane):
     placed = []
     without_position = 0
     for feature in features:
-        point = _point_of(feature)
+        point = point_of(feature)
         if point is None:
             without_position += 1
             continue
