@@ -45,7 +45,7 @@ from tests.build_up_figures import (
     rate_handles,
     rate_values,
 )
-from tests.deck_reader import block_headed, content_slides, visible, with_markup
+from tests.deck_reader import block_headed, visible, with_markup
 
 # What the block's break slide is headed, which is how this file finds it.
 THE_BLOCK = "money slide"
@@ -77,8 +77,14 @@ def the_block():
 
 
 def the_content():
-    """The block's slides that carry content, which is all but the break."""
-    return content_slides(the_block())
+    """The block's slides that carry content, which is all but the break.
+
+    Kept here rather than in `deck_reader`. It went there with the rest of the
+    move and came back: this is its only caller, and a one-line filter sitting
+    in a shared module with nobody else asking for it is generality nobody
+    ordered.
+    """
+    return [slide for slide in the_block() if not slide.is_a_break]
 
 
 class TheFiguresAreTheBuildUpsFigures(unittest.TestCase):

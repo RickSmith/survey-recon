@@ -530,12 +530,12 @@ difference through properly. Take the numbers from there.
 
 # The datum gap
 
-- **April 2026** Survey Manual: no NAD 83 realization, no epoch, no geoid model
+- **April 2026** Survey Manual: no realization, no epoch, no geoid model
 - No reference in it to **NATRF2022**, **NAPGD2022** or **SPCS2022**
-- All 4 TxDOT control records in this corridor publish geoid model `N/A`
-- It does say: *"TxDOT will not accept any datum transformations for control"*
+- Its control service: geoid `N/A` on 4 records, 2 monuments here; `GEOID03` just outside
+- *"TxDOT will not accept any datum transformations for control"*
 
-**So what datum do you certify to, and what does your report say?**
+**So what do you certify to?** Name realization, epoch and geoid in your report
 
 Survey Manual (ESS) rev. April 2026, Ch. 3 · txdot.gov/manuals/row/ess
 
@@ -546,24 +546,27 @@ This is the slide most likely to be quoted afterward, out of a photograph taken
 from the fourth row by somebody who was not here. So say the sentence on the
 slide and stop.
 
-**It is a gap, not a mistake, and it is not TxDOT's to close on its own.** NGS
-set the 2022 dates and has moved them before. Nobody in this room gets to be
-smug about it, and a slide that sounded smug would cost you every contractor in
-the audience.
+**It is a gap, not a mistake.** Nobody in this room gets to be smug about it,
+and a slide that sounded smug would cost you every contractor in the audience.
 
-What a report can say today, if somebody asks — and this is a firm's choice,
-not a rule anybody has written:
+**Four records, two monuments.** Say both numbers. The slide before this one
+just made that exact point, and a record count heard as a monument count
+doubles the control an estimator thinks is already set.
 
-  - the realization and epoch the work was held to, by name
-  - the geoid model used, by name
+**GEOID03 is the part the room will react to**, so let them. Say what is
+there and nothing more: the same service, the same response, two records
+outside this corridor, naming a geoid model where this corridor's records
+name none. Whether that is right is not ours to say from a podium.
+
+The rest of what a report can say, beyond the line on the slide — a firm's
+choice, not a rule anybody has written:
+
   - where the published values came from, and on what date
   - that no transformation was performed, which the manual does require
 
-The manual does not ask for the first three. It does not disagree with them
-either. That is the whole of the answer available today.
-
 Sources: docs/txdot-research.md has the finding and how it was read;
-docs/data-sources/txdot-control-points.md has the N/A geoid in the live data.
+docs/data-sources/txdot-control-points.md has the N/A geoid in the live data;
+the GEOID03 records are in project-sh16/cache/txdot-primary-control-points.
 -->
 
 ---

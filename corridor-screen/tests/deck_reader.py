@@ -205,11 +205,6 @@ def slide_headed(phrase):
     return found[0]
 
 
-def content_slides(block):
-    """The slides of a block that carry content, which is all but the break."""
-    return [slide for slide in block if not slide.is_a_break]
-
-
 def with_markup(slides_):
     """Everything the room can see across a run of slides, as one string.
 

@@ -30,11 +30,11 @@ page is what was on the screen in the room.
     session.
 
     The skeleton was built under
-    [issue #12](https://github.com/RickSmith/survey-recon/issues/12). Two blocks
-    have landed: the money slide under
-    [#32](https://github.com/RickSmith/survey-recon/issues/32), its figures read
-    out of the crew-day build-up, and the datum gap under
-    [#33](https://github.com/RickSmith/survey-recon/issues/33), its geoid count
+    [issue #12](https://github.com/RickSmith/survey-recon/issues/12). Two pieces
+    of content have landed: the money slide's two slides under
+    [#32](https://github.com/RickSmith/survey-recon/issues/32), their figures
+    read out of the crew-day build-up, and one slide in Act II — the datum gap —
+    under [#33](https://github.com/RickSmith/survey-recon/issues/33), its counts
     read out of the SH16 run. Both are checked against those sources on every
     test run. The rest of the content lands under
     [#31](https://github.com/RickSmith/survey-recon/issues/31)

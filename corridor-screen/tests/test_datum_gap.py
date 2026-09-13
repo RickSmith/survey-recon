@@ -7,7 +7,7 @@ room specifically:
 > certify to, and what does your survey report say when the manual doesn't tell
 > you?"*
 
-**It is the slide most likely to be quoted afterwards**, by somebody who was not
+**It is the slide most likely to be quoted afterward**, by somebody who was not
 in the room, out of a photograph taken from the fourth row. That is the whole
 reason it is checked this hard. A slide that overstates the gap is a slide that
 says a state agency got something wrong, in front of three hundred of its
@@ -68,6 +68,11 @@ NO_TRANSFORMATIONS = "TxDOT will not accept any datum transformations for contro
 # footer repeats the manual's revision, so a check about whether the claim
 # carries its date has to read past it.
 A_CITATION = "txdot.gov"
+
+# What a report can name, that the manual does not ask for. The issue wants the
+# slide to say what a surveyor should put in their report today, and a question
+# with no answer beside it is not that.
+ANSWERABLE = ("realization", "epoch", "geoid")
 
 # Words that turn a gap into an accusation. Blunt, and deliberately so: the
 # issue's first acceptance criterion is that the slide is framed as an open
@@ -162,23 +167,44 @@ class TheGapIsStatedPrecisely(unittest.TestCase):
 
 
 class TheGeoidCountIsTheRunsCount(unittest.TestCase):
-    def test_the_slide_counts_what_the_run_counted(self):
-        """TxDOT's own control service publishes no geoid model, and the slide
-        says so with a number. The number is the SH16 run's, not a slide's."""
+    def test_every_record_in_the_corridor_still_publishes_no_geoid(self):
+        """The claim the slide rests on, against the run that produced it.
+
+        If a later capture puts a geoid model on one of these records, the
+        slide needs rewriting rather than recounting -- so this fails loudly
+        instead of quietly adjusting a number.
+        """
         points = run()["control"]["txdot_points"]
-        without = [point for point in points if not point.get("geoid")]
         self.assertTrue(points, "the run has no TxDOT control points at all")
         self.assertEqual(
-            len(without),
-            len(points),
-            "some point in this corridor does publish a geoid model, so the "
-            "slide's claim needs rewriting rather than recounting",
+            [point for point in points if point.get("geoid")],
+            [],
+            "a control record in this corridor now publishes a geoid model",
+        )
+
+    def test_the_record_count_is_the_runs_and_never_stands_alone(self):
+        """*A record count is not a monument count.*
+
+        `CONTEXT.md` is explicit that distinct stations are reported beside the
+        record count and **never in place of it**, and the slide immediately
+        before this one in Act II makes that exact point out loud. Four records
+        naming two monuments, heard as four monuments, doubles the control an
+        estimator believes is already set. So both numbers are wanted, and
+        wanted beside their own nouns.
+        """
+        control = run()["control"]["txdot_control"]
+        records, monuments = control["points_in_corridor"], control["distinct_stations"]
+        slide = seen()
+        self.assertIn(
+            f"{records} records",
+            slide,
+            f"the slide does not say {records} records",
         )
         self.assertIn(
-            f"{len(without)} ",
-            seen(),
-            f"the slide does not show {len(without)}, which is how many control "
-            f"records in this corridor publish no geoid model",
+            f"{monuments} monuments",
+            slide,
+            f"the slide gives a record count with no monument count beside it, "
+            f"which is the mistake the previous slide of this Act warns about",
         )
 
 
@@ -193,19 +219,50 @@ class TheSlideAsksRatherThanAnswers(unittest.TestCase):
         )
 
     def test_it_says_what_a_report_can_say_today(self):
-        """*It says what a surveyor should put in their report today.*"""
-        self.assertIn("report", seen().lower())
+        """*It says what a surveyor should put in their report today.*
+
+        **On the slide, not in the speaker note.** The first draft answered
+        this in the note and asserted only that the word "report" was on the
+        screen -- which the question itself already satisfied, so the check
+        could not fail and the answer was never on screen at all. A photograph
+        taken from the fourth row carries the liability question; it has to
+        carry something to do about it too.
+
+        **And read off the answer, not off the slide.** The second draft wanted
+        the three words anywhere on it, which the bullet listing what the
+        manual does *not* name already satisfied. Twice now this check has been
+        written so that the gap itself answered the question about the gap. So
+        it reads the line the answer is on.
+        """
+        answers = [
+            line
+            for line in visible([the_slide()]).lower().splitlines()
+            if "report" in line
+        ]
+        self.assertTrue(answers, "nothing on the slide mentions a report")
+        for named in ANSWERABLE:
+            self.assertTrue(
+                any(named in line for line in answers),
+                f"the slide asks what your report says and never names "
+                f"{named!r} as something to put in it",
+            )
 
     def test_it_blames_nobody(self):
-        """*It is framed as an open question, not a criticism of anyone.*"""
-        lowered = seen().lower()
-        for word in BLAME:
-            self.assertNotIn(
-                word,
-                lowered,
-                f"{word!r} turns a gap into an accusation, and this slide gets "
-                f"photographed and quoted by people who were not in the room",
-            )
+        """*It is framed as an open question, not a criticism of anyone.*
+
+        The note is read as well as the slide. The tone risk lives at least as
+        much in what gets said out loud as in what is printed, and the first
+        draft of this read only `content_lines`, which strips the note out.
+        """
+        for where, text in (("the slide", seen()), ("the note", the_slide().note)):
+            for word in BLAME:
+                self.assertNotIn(
+                    word,
+                    text.lower(),
+                    f"{word!r} on {where} turns a gap into an accusation, and "
+                    f"this one gets photographed and quoted by people who were "
+                    f"not in the room",
+                )
 
     def test_it_is_no_longer_a_placeholder(self):
         self.assertNotIn("To be written", the_slide().body)
