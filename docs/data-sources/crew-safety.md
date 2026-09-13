@@ -226,28 +226,27 @@ around this corridor, so none of them is asked for.
 
 ---
 
-!!! note "Three differences from the specification, raised rather than patched over"
-    **Section 10 gains a top-level block.** Its list reads `schema_version   run
-    alignment   corridor   roadway / services   control   row_maps   parcels
-    corridor_flags   warnings`. `crew_safety` is a tenth key it does not name.
-    It is a new top-level block rather than a field inside an existing one,
-    which is exactly what
+!!! note "Three differences from the specification, amended 2026-09-13 on [PR #57](https://github.com/RickSmith/survey-recon/pull/57)"
+    **Section 10 gained a top-level block.** Until the ruling its list held ten
+    keys and no `crew_safety`. It is a new top-level block rather than a field
+    inside an existing one, which is exactly what
     [PR #56](https://github.com/RickSmith/survey-recon/pull/56) established gets
-    section 10 raised explicitly.
+    section 10 raised explicitly. It now names it.
 
-    **Police is not in section 6.** It lists this server's layers as
+    **Police was not in section 6.** It listed this server's layers as
     "Cemeteries, Historic, Hospitals, Ambulance, Fire and EMS, Schools — 2, 11,
-    14, 15, 16, 23." There is no police row.
+    14, 15, 16, 23," with no police row.
     [Issue #18](https://github.com/RickSmith/survey-recon/issues/18) asks for
     "nearest hospital, nearest EMS, nearest police" in as many words, so layer
-    18 is called.
+    18 is called. Section 6 now carries it, and its row is split in two because
+    the flags and the safety sheet are different steps asked different
+    questions.
 
-    **Hospitals and EMS are treated as a separate output, not as flags.**
-    Section 5 puts them in step 6, among the flags that hang off a parcel.
-    Issue #18 says this "is a different output from the flagged parcel list. It
-    answers a field-crew safety question, not a bid question." So they are a
-    step of their own, writing their own `crew_safety` block, and they are not
-    attached to any parcel.
+    **Hospitals and EMS are a separate output, not flags.** Section 5 put them
+    in step 6, among the flags that hang off a parcel. Issue #18 says this "is
+    a different output from the flagged parcel list. It answers a field-crew
+    safety question, not a bid question." They are step 9 now, writing their
+    own `crew_safety` block and attached to no parcel.
 
     **One section 8 check is deliberately not applied.** Section 8 asks that
     "any part of every returned record falls within the half-width plus a
@@ -263,11 +262,13 @@ around this corridor, so none of them is asked for.
     skipped it on a confusion between the two checks. That was wrong and the
     review caught it.
 
-    All three follow the ticket rather than the section. Amending a settled
-    specification is not the agent's call — the precedent is `AcctNumb` on
+    All three followed the ticket rather than the section, and were raised
+    rather than made quietly. Amending a settled specification is not the
+    agent's call — the precedent is `AcctNumb` on
     [PR #52](https://github.com/RickSmith/survey-recon/pull/52), `NPMS` on
     [PR #53](https://github.com/RickSmith/survey-recon/pull/53), the control
     blocks on [PR #54](https://github.com/RickSmith/survey-recon/pull/54) and
     the ROW map block on
     [PR #56](https://github.com/RickSmith/survey-recon/pull/56). All four were
-    raised on the pull request and ruled on by Rick. So are these.
+    raised on the pull request and ruled on by Rick. So were these, on
+    2026-09-13 — sections 5, 6 and 10 now say what this page describes.

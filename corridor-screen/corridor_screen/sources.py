@@ -667,17 +667,24 @@ TXDOT_CONTROL_FIELDS = {
 #
 # ----
 #
-# Police is not in the specification, and the ticket asks for it
-# =============================================================
+# Police was not in the specification, and the ticket asked for it
+# ================================================================
 #
-# Section 6 lists this server's layers as "Cemeteries, Historic, Hospitals,
-# Ambulance, Fire and EMS, Schools -- 2, 11, 14, 15, 16, 23." There is no police
-# row. Issue #18 asks for "nearest hospital, nearest EMS, nearest police" in as
-# many words, so `Police Stations`, layer 18, is called.
+# Until 2026-09-13, section 6 listed this server's layers as "Cemeteries,
+# Historic, Hospitals, Ambulance, Fire and EMS, Schools -- 2, 11, 14, 15, 16,
+# 23," with no police row at all. Issue #18 asks for "nearest hospital, nearest
+# EMS, nearest police" in as many words, so `Police Stations`, layer 18, is
+# called. Layer 17 is the `Law Enforcement` group above it and layer 19 is
+# `Prisons/Correctional Facilities`, which is not what was asked for.
 #
 # Amending a settled spec is not the agent's call -- the precedent is `AcctNumb`
 # on PR #52, `NPMS` on PR #53, the control blocks on PR #54 and the ROW map
-# block on PR #56. This is raised on the pull request for issue #18.
+# block on PR #56. This was raised on PR #57, and Rick ruled on 2026-09-13.
+# Section 6 now carries police, and splits that row in two: the flags and the
+# crew safety sheet are different steps, asked different questions about
+# different extents. Section 5 gained step 9 and section 10 gained the
+# `crew_safety` block on the same ruling, so this code and the specification
+# agree again.
 #
 # ----
 #

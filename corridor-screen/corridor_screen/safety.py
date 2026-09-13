@@ -8,6 +8,14 @@ Issue #18 is blunt that it is a different output from the flagged parcel list,
 and it is kept apart in the file for that reason. A hospital does not belong in
 a column of things that cost days of notice.
 
+Until 2026-09-13 the specification disagreed: section 5 filed hospitals and EMS
+among the flags in step 6, section 6 named no police layer at all, and section
+10's block list had no ``crew_safety`` in it. All three were raised on
+[PR #57](https://github.com/RickSmith/survey-recon/pull/57) rather than patched
+over -- the precedent is ``AcctNumb`` on PR #52, ``NPMS`` on PR #53, the control
+blocks on PR #54 and the ROW map block on PR #56. Rick ruled on 2026-09-13, and
+the specification now names step 9, the police layer and this block.
+
 Four rules shape this file, and three of them are about not getting somebody
 hurt.
 
