@@ -68,16 +68,11 @@ SLIDES_WORKFLOW = REPO / ".github" / "workflows" / "slides.yml"
 # `test_fallbacks.py` uses, and not shared with it.
 A_TIME = re.compile(r"\d:\d\d\u2013\d:\d\d")
 
-# The first line of a speaker note, which is the line this whole file keys on:
-#
-#     0:30–0:46 · 16 min · Act I — The grilling
-#
-# A note is told apart from a Marp directive by that leading digit. Directives
-# are `_class: title` and the like, so they start with a letter or an
-# underscore and can never match this.
-A_NOTE = re.compile(
-    r"^(?P<time>\d:\d\d\u2013\d:\d\d) \u00b7 (?P<min>\d+) min \u00b7 (?P<block>.+)$"
-)
+# How a speaker note opens -- the clock, the length, the block -- is
+# `deck_reader.A_NOTE`, read there by `noted`. A copy stood here after the
+# extraction, unused, still claiming to be the line this file keys on. Two
+# copies of it would have drifted the first time somebody fixed one of them,
+# which is the reason the reader exists.
 
 # `1. Hermes segment → recorded teaser`, in §7.
 A_CUT = re.compile(r"^(\d+)\.\s+(.+)$")

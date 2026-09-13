@@ -358,11 +358,11 @@ build-up in project-sh16/, not from invention.
 
 # The billable-hour math
 
-- **38 crew-days** in the field — 299.29 hours, 2 people to a crew
-- **18 days** in the office — 138.26 hours. The two are never added
-- The largest line is corner recovery: 524 tracts at 0.5 hours, 262.00 hours
-- That line is rate `A4`. Argue with `A4`, not with the total
-- 2 lines have no total at all — so 38 is a floor, not an estimate
+- **38 crew-days** in the field — 299.29 hours at 8 to the day, 2 people to a crew
+- **18 days** in the office — 138.26 hours. The two are never added together
+- Largest line: corner recovery, rate `A4` — 524 tracts at 0.5 hours = 262.00
+- Argue with `A4`. Do not argue with the total
+- 2 lines have no total at all, so 38 is a floor rather than an estimate
 
 <!--
 0:46–0:52 · 6 min · The money slide
@@ -377,6 +377,15 @@ showing the arithmetic.
 
 Do not price the agent here. Nothing in this repo has measured what it saves,
 and a number invented on this slide is the one they will quote back at you.
+
+Hours, never a price per seat or per month. Nobody in this room buys software
+that way, and quoting it in those units loses them.
+
+299.29 and 138.26 are crew-hours, not person-hours. If somebody in the second
+row starts halving them, that is why.
+
+An RPLS directed this run and checked every figure on it. Say so if you are
+asked; the accountability close at 1:54 is where it gets said properly.
 
 Fallback: project-sh16/crew-day.md is the build-up itself, with every step.
 -->

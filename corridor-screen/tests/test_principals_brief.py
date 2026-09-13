@@ -274,7 +274,7 @@ class TheArgumentIsRework(unittest.TestCase):
 
 class TheBriefSaysWhoSigns(unittest.TestCase):
     def test_it_says_who_signs_plainly(self):
-        """A section of its own, and the licence named in it.
+        """A section of its own, and the license named in it.
 
         Checking for the word "seal" anywhere was the first draft of this, and
         it could not fail: the page links to `seal-and-responsible-charge.md`,

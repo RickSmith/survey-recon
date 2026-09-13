@@ -37,11 +37,13 @@ import re
 import unittest
 
 from tests.build_up_figures import (
+    A_NUMBER,
     HANDLE,
     PRICED_BY_THE_SEAT,
     figures,
     numbers_it_publishes,
     rate_handles,
+    rate_values,
 )
 from tests.deck_reader import noted, slides, slides_by_block
 
@@ -59,7 +61,12 @@ THE_BLOCK = "money slide"
 NUMBER_WORDS = {
     "one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6,
 }
-SLIDE_COUNT = re.compile(r"\b(\w+) slides\b")
+# Anchored to the number words rather than to any word, so a note that happens
+# to say "these slides" before it says how many is read past instead of failing
+# with "'these' is not a number".
+SLIDE_COUNT = re.compile(
+    r"\b(" + "|".join(NUMBER_WORDS) + r") slides\b", re.IGNORECASE
+)
 
 # A line that carries its own source may carry its own numbers -- a manual
 # revision year and a chapter number are the manual's, not the build-up's.
@@ -88,9 +95,27 @@ def content_slides():
     return [slide for slide in the_block() if not slide.is_a_break]
 
 
-def visible(slides_):
-    """Everything the room can see across a run of slides, as one string."""
+def with_markup(slides_):
+    """Everything the room can see across a run of slides, as one string.
+
+    The markdown is left on, for the checks that want a rate handle: `A4` is
+    told apart from the letter A followed by a four by those backticks.
+    """
     return "\n".join(line for slide in slides_ for line in slide.content_lines())
+
+
+def visible(slides_):
+    """The same, with the bold and the backticks taken off.
+
+    A figure and the noun it counts have to sit beside each other to be checked
+    at all, and `**38 crew-days**` re-emphasized as `**38** crew-days` is the
+    same slide to the room and a different string to a test. `markdown_docs.flat`
+    does this job for line wrapping on the principals' brief; this is the same
+    class of false failure, wearing emphasis instead of a line break.
+    """
+    return (
+        with_markup(slides_).replace("**", "").replace("*", "").replace("`", "")
+    )
 
 
 class TheFiguresAreTheBuildUpsFigures(unittest.TestCase):
@@ -123,9 +148,7 @@ class TheFiguresAreTheBuildUpsFigures(unittest.TestCase):
             for line in slide.content_lines():
                 if A_SOURCE in line:
                     continue
-                for number in re.findall(
-                    r"\d[\d.]*\d|\d", A_HANDLE_ON_A_LINE.sub("", line)
-                ):
+                for number in A_NUMBER.findall(A_HANDLE_ON_A_LINE.sub("", line)):
                     with self.subTest(slide=slide.number, number=number):
                         self.assertIn(
                             number,
@@ -138,8 +161,38 @@ class TheFiguresAreTheBuildUpsFigures(unittest.TestCase):
     def test_every_rate_handle_it_names_is_a_real_handle(self):
         real = rate_handles()
         self.assertTrue(real, "no rate handles found in the build-up at all")
-        for handle in set(HANDLE.findall(visible(the_block()))):
+        for handle in set(HANDLE.findall(with_markup(the_block()))):
             self.assertIn(handle, real, f"{handle} is not a rate in the build-up")
+
+    def test_a_handle_is_shown_beside_the_rate_it_stands_for(self):
+        """The hole the two checks above leave between them.
+
+        `A4` is a real handle and `0.75` is a real number, so a slide reading
+        *rate `A4` — 0.75 hours per tract* passes both and is wrong: 0.75 is
+        `A1`'s rate. A handle on a slide is an invitation to argue with one
+        rate by name, and the room can only take it up if the name and the
+        number it is shown beside are the same rate.
+
+        Some line naming the handle has to carry its value. Not every line --
+        *argue with `A4`, not with the total* names it and is not quoting it.
+        """
+        values = rate_values()
+        self.assertTrue(values, "the build-up's rate table no longer reads")
+        for slide in content_slides():
+            for handle in set(HANDLE.findall(with_markup([slide]))):
+                wanted = values.get(handle, set())
+                quoted = any(
+                    handle in line
+                    and wanted & set(A_NUMBER.findall(A_HANDLE_ON_A_LINE.sub("", line)))
+                    for line in slide.content_lines()
+                )
+                with self.subTest(slide=slide.number, handle=handle):
+                    self.assertTrue(
+                        quoted,
+                        f"slide {slide.number} names {handle} and never shows "
+                        f"the rate it stands for, which the build-up gives as "
+                        f"{sorted(wanted)}",
+                    )
 
     def test_it_names_at_least_one_rate_to_argue_with(self):
         """The block's whole argument is that the arithmetic is open. A slide
@@ -147,7 +200,7 @@ class TheFiguresAreTheBuildUpsFigures(unittest.TestCase):
         disagreeing with the total, which is the thing the build-up exists to
         stop."""
         self.assertTrue(
-            HANDLE.search(visible(content_slides())),
+            HANDLE.search(with_markup(content_slides())),
             "no rate handle anywhere on the block, so nobody in the room can "
             "argue with one rate by name",
         )
@@ -171,18 +224,35 @@ class TheCostIsInHours(unittest.TestCase):
 
 
 class ReworkLeadsAndSpeedFollows(unittest.TestCase):
-    def test_rework_is_said_before_speed_is(self):
+    def test_a_slide_of_the_block_is_headed_about_rework(self):
         """The issue: *Rework leads; speed is secondary.*
 
-        Read across the block in the order a room sees it, break slide first,
-        because which argument leads is a question about order and nothing
-        else.
+        Rework gets a slide of its own, headed as such. A word somewhere in a
+        bullet is the block mentioning rework, which is not the same as leading
+        with it.
         """
-        seen = visible(the_block()).lower()
+        headings = [slide.heading.lower() for slide in content_slides()]
+        self.assertTrue(
+            any("rework" in heading for heading in headings),
+            f"no slide of the block is headed about rework. Its headings are "
+            f"{headings}",
+        )
+
+    def test_rework_is_said_before_speed_is(self):
+        """The same criterion, as a question about order.
+
+        **Read across the content slides only, and the break slide is left
+        out on purpose.** The break slide is headed *Rework is the argument.
+        Speed is not*, which puts rework in front of speed no matter what the
+        rest of the block does -- so a first draft of this check that read the
+        whole block could not fail, and would have passed with the rework slide
+        deleted outright.
+        """
+        seen = visible(content_slides()).lower()
         rework = seen.find("rework")
         speed = seen.find("speed")
-        self.assertNotEqual(rework, -1, "the block never says 'rework'")
-        self.assertNotEqual(speed, -1, "the block never says 'speed'")
+        self.assertNotEqual(rework, -1, "the content slides never say 'rework'")
+        self.assertNotEqual(speed, -1, "the content slides never say 'speed'")
         self.assertLess(
             rework,
             speed,

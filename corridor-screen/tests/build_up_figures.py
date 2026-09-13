@@ -30,7 +30,7 @@ import re
 from collections import namedtuple
 from pathlib import Path
 
-from tests.markdown_docs import text_of
+from tests.markdown_docs import table_rows, text_of
 
 REPO = Path(__file__).resolve().parents[2]
 BUILD_UP = REPO / "project-sh16" / "crew-day.md"
@@ -119,6 +119,26 @@ def rate_handles():
     three files.
     """
     return set(HANDLE.findall(text_of(BUILD_UP)))
+
+
+def rate_values():
+    """Each rate handle and the numbers its own row gives it.
+
+    `rate_handles` says `A4` is a real handle and `numbers_it_publishes` says
+    `0.5` is a real number, and between them they will wave through a slide
+    that puts `A1`'s rate beside `A4`'s name -- both halves are true and the
+    sentence is wrong. This is what ties one to the other.
+
+    The value is returned as the numbers in the row rather than as its words,
+    because a document quoting a rate writes the quantity its own way: the
+    table says "0.5 hours per tract" and a slide says "at 0.5 hours".
+    """
+    values = {}
+    for row in table_rows(text_of(BUILD_UP)):
+        if row and HANDLE.fullmatch(row[0]):
+            # The rate table is `| handle | name | value | what to argue with |`
+            values[row[0].strip("`")] = set(A_NUMBER.findall(row[2]))
+    return values
 
 
 def numbers_it_publishes():
