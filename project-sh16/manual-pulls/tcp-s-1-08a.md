@@ -47,11 +47,18 @@ clock triggers.
 
 ## What this sheet does not cover
 
-The spacing table is footnoted **"Conventional Roads Only."** TCP(S-1)-08A does
-not speak to divided highways or controlled-access facilities. Five further
-sheets in the same family exist — TCP(S-2)-08A, TCP(S-2c)-10, TCP(S-3)-08,
-TCP(S-4)-08A and TCP(S-5)-08 — and are **not in this repo yet**. Until they
-are, say "not found on TCP(S-1)" rather than "TxDOT does not require it."
+The spacing table is footnoted **"Conventional Roads Only."** TCP(S-1)-08A draws
+only the two shoulder cases, so it does not speak to lane closures, centerline
+work, or divided roadways.
+
+The other five sheets in the family are **now in this repo** —
+TCP(S-2)-08A, TCP(S-2c)-10, TCP(S-3)-08, TCP(S-4)-08A and TCP(S-5)-08. Divided
+roadways turn out to be covered, by S-4 and S-5. Read
+[`tcp-s-family.md`](tcp-s-family.md) before drawing any conclusion from this
+sheet alone.
+
+Freeways are still **not found**: all six sheets carry the same "Conventional
+Roads Only" footnote, and none uses the words *freeway* or *controlled access*.
 
 ## A claim in this repo that this sheet does not support
 
@@ -73,9 +80,16 @@ not fifteen or twenty minutes; the consequence of crossing it is signs and
 cones, not a truck; and the TMA shadow vehicle is an alternative to the work
 vehicle rather than an addition to the crew.
 
-That is **not the same as saying the claim is wrong.** TCP(S-1) is conventional
-roads only, and a 55-mph highway may well be a divided facility covered by one
-of the five sheets listed above. The honest statement today is that the claim is
-**unsupported by the surveying standard now in hand, and unresolved** until the
-rest of the family is pulled. It should not be repeated on stage in its current
-form. Correcting `docs/txdot-research.md` is its own issue, not this one.
+When this file was written, TCP(S-1) was the only sheet in hand, so the verdict
+was recorded as "unsupported and unresolved" — a 55-mph highway might have been
+a divided facility covered by a sheet nobody had read.
+
+**It has since been resolved.** All five remaining sheets were pulled and read.
+Divided roadways are covered, by TCP(S-4)-08A and TCP(S-5)-08, and **no sheet in
+the family makes a shadow truck required at any duration or any posted speed.**
+The three numbers in the claim each turn out to be real and to govern something
+else. The full account, with the table, is in
+[`tcp-s-family.md`](tcp-s-family.md).
+
+Correcting `docs/txdot-research.md` is
+[#70](https://github.com/RickSmith/survey-recon/issues/70), not this file's job.

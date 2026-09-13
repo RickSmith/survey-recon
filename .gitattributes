@@ -22,3 +22,4 @@ project-sh16/cache/**/*.json -text
 # people committing these files are not going to be reading a diff to catch it.
 # So say it outright.
 project-sh16/manual-pulls/*.pdf -text
+project-sh16/manual-pulls/*.dgn -text

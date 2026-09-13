@@ -1,15 +1,19 @@
-# Pulled by hand
+# Documents pulled outside a tool run
 
-Some TxDOT documents cannot be fetched by a program. The host refuses the
-request, or the file sits behind a page that only a browser can work through.
-Those documents get downloaded by a person and committed here.
+Published documents — standard sheets, manuals, memos — that this repo needs to
+quote and therefore keeps a copy of. They are not responses the corridor tool
+received, so they do not belong in the cache.
+
+The folder is named `manual-pulls` because the first one genuinely was pulled by
+hand. Read **"Blocked" was not true** below before repeating that assumption
+about the next document.
 
 ## Why this is not the cache
 
 `project-sh16/cache/` holds the responses the corridor tool received while it
-ran, and the tool rewrites `cache/INDEX.md` on every run. A file a person
-dropped in there by hand would appear in that index nowhere, and could be
-written over. So hand-pulled documents live in this folder instead.
+ran, and the tool rewrites `cache/INDEX.md` on every run. A file placed there by
+hand would appear in that index nowhere, and could be written over. So documents
+kept for reference live in this folder instead.
 
 ## The provenance rule is the same rule
 
@@ -18,57 +22,92 @@ custody you would want on any record you plan to rely on. The cache keeps that
 record in a `.meta.toml` file beside every response. A `.toml` file is plain
 text, one `name = value` per line, readable in any editor.
 
-A person doing the fetching does not make provenance matter less. So **every
-file in this folder has a `.meta.toml` beside it, with the same name.**
+Who did the fetching does not change how much provenance matters. So **every
+file in this folder has a `.meta.toml` beside it, with the same name**, naming
+the URL, the date, the byte count and the SHA-256.
 
 ## What is here
 
-| Document | Files | Pulled |
+All six TxDOT standard sheets titled **"Traffic Control Plan for Surveying
+Operations,"** plus the memo that introduced the newest one.
+
+| Document | Index | Files |
 |---|---|---|
-| TCP(S-1)-08A — Traffic Control Plan for Surveying Operations | `tcp-s-1-08a.pdf`, `tcp-s-1-08a.dgn` | 2026-09-13 |
+| TCP(S-1)-08A | 211 | `tcp-s-1-08a.pdf`, `tcp-s-1-08a.dgn` |
+| TCP(S-2)-08A | 212 | `tcp-s-2-08a.pdf`, `tcp-s-2-08a.dgn` |
+| TCP(S-2c)-10 | 212A | `tcp-s-2c-10.pdf`, `tcp-s-2c-10.dgn` |
+| TCP(S-3)-08 | 213 | `tcp-s-3-08.pdf`, `tcp-s-3-08.dgn` |
+| TCP(S-4)-08A | 214 | `tcp-s-4-08a.pdf`, `tcp-s-4-08a.dgn` |
+| TCP(S-5)-08 | 215 | `tcp-s-5-08.pdf`, `tcp-s-5-08.dgn` |
+| TxDOT memo, 11 Jan 2010, introducing TCP(S-2c)-10 | — | `tcp-s-2c-10-memo.pdf` |
 
-`tcp-s-1-08a.dgn` is the same sheet in MicroStation CAD format, which is what
-TxDOT draws its standards in. It is here because it is the source TxDOT
-publishes, not because anything in this repo reads it.
+Each `.dgn` is the same sheet in MicroStation CAD format, which is what TxDOT
+draws its standards in. They are here because they are the source TxDOT
+publishes, not because anything in this repo reads them.
 
-What the sheet means for crew time is in
-[`tcp-s-1-08a.md`](tcp-s-1-08a.md). Read that before quoting the sheet — it
-flags a claim elsewhere in this repo that the sheet does not support.
+**Read the summaries before quoting any sheet:**
 
-## How to add one
+- [`tcp-s-family.md`](tcp-s-family.md) — what all six require, and the answer to
+  whether a shadow truck is ever forced by the clock. It is not.
+- [`tcp-s-1-08a.md`](tcp-s-1-08a.md) — the crew-time reading of S-1 on its own.
 
-1. Download the file in a browser.
-2. Save it in this folder. Use a lowercase name with dashes, no spaces —
-   `tcp-s-1-08a.pdf`, not `TCP(S-1)-08A.pdf`. Parentheses in a file name break
-   shell commands on some systems, and this repo is run by beginners.
-3. Copy the **exact** address you downloaded it from, out of the browser's
-   address bar. Not a search result, and never an `onlinemanuals.txdot.gov`
-   address — those are superseded.
-4. Write the `.meta.toml` beside it. Copy the shape from an existing one.
+## "Blocked" was not true
 
-## The URL trap, again — and a second host
+Issue [#11](https://github.com/RickSmith/survey-recon/issues/11) said the host
+blocked automated fetching, so pulling these was a human job. That was written
+down as a fact and believed for weeks. It is not one.
 
-TxDOT moved its manuals. Search engines still return the old
-`onlinemanuals.txdot.gov` addresses, and those pages still load, and they are
-out of date. Use `txdot.gov`. This repo documents that trap in
-`docs/managing-your-agent/the-superseded-manual.md`; do not fall into it while
-filing the evidence for it.
+Every file above answers **HTTP 200 to a plain `curl`** at
+`https://ftp.txdot.gov/pub/txdot-info/cmd/cserve/standard/traffic/`. All twelve
+sheet files and the memo were fetched that way on 2026-09-13. So was the index
+page.
 
-There is a **second** old host, and it caught this folder's first pull.
-TxDOT's standard-sheet index still answers at
-`www.dot.state.tx.us/insdtdot/orgchart/cmd/cserve/standard/toc.htm`, and it
-serves working files. `dot.state.tx.us` is not `txdot.gov`.
+What is genuinely awkward is the **naming**: the server calls the files
+`tcps1.pdf`, `tcps2c.dgn` and so on, which nothing tells you from outside. You
+have to read the index to learn them. "Hard to discover" had been recorded as
+"impossible to fetch," and nobody rechecked.
 
-The fix is not to distrust the download. It is to **check whether the current
-host serves the same bytes**, and record the answer:
+## The soft-404 that cost this folder an error
+
+A **soft-404** is a not-found answer wearing a success status code: the server
+says HTTP 200, and the body is an error page. Nothing in the status code warns
+you, so a program stores the error page as if it were the document.
+
+`www.dot.state.tx.us/insdtdot/orgchart/cmd/cserve/standard/toc.htm` is the
+standard-sheet index, and it works. But it **does not host the files** — its
+links point out to `ftp.dot.state.tx.us/pub/txdot-info/...`. Request a PDF from
+the `www.dot.state.tx.us/insdtdot/...` path directly and you get **HTTP 200 with
+5,104 bytes of "Page Not Found" HTML.**
+
+The first version of `tcp-s-1-08a.pdf.meta.toml`, committed in
+[#68](https://github.com/RickSmith/survey-recon/pull/68), recorded exactly that
+dead URL as the document's origin. It was inferred from the index address and
+never fetched. The correction is recorded in that file rather than quietly
+edited away.
+
+**Two hosts serve these files and both are real mirrors:**
+`ftp.txdot.gov/pub/txdot-info/...` and `ftp.dot.state.tx.us/pub/txdot-info/...`.
+Every file here was fetched from both and hashed; all thirteen matched. Cite the
+`txdot.gov` one.
+
+## How to add a document
+
+1. Get the file. Try `curl` first — see above, "blocked" is often wrong.
+2. Save it here with a lowercase, dashed name: `tcp-s-1-08a.pdf`, not
+   `TCP(S-1)-08A.pdf`. Parentheses in a file name break shell commands on some
+   systems, and this repo is run by beginners.
+3. Write the `.meta.toml` beside it. Copy the shape from an existing one.
+4. **Verify the URL you are about to cite.** Do not infer it.
+
+## Verifying, which is the whole point
+
+`sha256sum` prints a fingerprint of a file's exact contents. Two files with the
+same fingerprint are the same file. This loop re-fetches every recorded URL and
+checks it against what is committed:
 
 ```bash
-curl -sL "https://ftp.txdot.gov/pub/txdot-info/cmd/cserve/standard/traffic/tcps1.pdf" | sha256sum
-sha256sum tcp-s-1-08a.pdf
+cd project-sh16/manual-pulls && for m in *.meta.toml; do f=$(python -c "import tomllib,sys;print(tomllib.load(open(sys.argv[1],'rb'))['file'])" "$m"); u=$(python -c "import tomllib,sys;print(tomllib.load(open(sys.argv[1],'rb'))['source_url'])" "$m"); a=$(sha256sum "$f" | cut -d' ' -f1); b=$(curl -sL "$u" | sha256sum | cut -d' ' -f1); [ "$a" = "$b" ] && echo "OK   $f" || echo "FAIL $f"; done
 ```
 
-Two identical hashes mean the same document, and the `txdot.gov` address can be
-cited honestly. `sha256sum` prints a fingerprint of a file's exact contents;
-two files with the same fingerprint are the same file. For TCP(S-1)-08A the
-hashes matched, and both `.meta.toml` files record that the check was run
-rather than assumed.
+Thirteen `OK` lines is a pass. That loop is what caught the dead URL described
+above — a claim nobody had tested until something tested all of them.
