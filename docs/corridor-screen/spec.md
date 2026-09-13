@@ -712,4 +712,14 @@ project-sh16/cache/
     The bid memo and the flagged parcel table were on this list until 2026-09-13. Both are built, under [#22](https://github.com/RickSmith/survey-recon/issues/22) and [#23](https://github.com/RickSmith/survey-recon/issues/23), and their commands are in section 3.6. Each was settled by its own work order rather than by this specification, which is what this entry always meant and still means for the third. Rick ruled on 2026-09-13.
 - Any county but Bexar.
 - Elevation and topography. USGS 3DEP timed out on three attempts of four, and returned a silent wrong answer on the fourth. It stays off the critical path.
-- TCP(S-1)-08A. The host blocks automated fetch, so it must be pulled by hand. It is the crew-time document, and the traffic-control cost cliff is real: a twenty-minute shot on a 55 mph highway turns a two-person crew into a crew plus a shadow truck with an attenuator.
+- ~~TCP(S-1)-08A. The host blocks automated fetch, so it must be pulled by hand.~~ Settled 2026-09-13, and the claim that came with it was wrong.
+
+    All six sheets in the TCP(S-\*) family were pulled by hand and committed with provenance under [#68](https://github.com/RickSmith/survey-recon/pull/68) and [#69](https://github.com/RickSmith/survey-recon/issues/69). The cost cliff is real. It is not where this entry put it.
+
+    **The trigger is duration, and the line is one hour — not twenty minutes.** No posted speed triggers anything anywhere in the family; 55 mph is an ordinary row in the spacing tables on all six sheets. **What the hour costs depends on the sheet.** On TCP(S-2b), work in the roadway, and on TCP(S-3), lane closed or on centerline, the sheet *draws* a shadow vehicle with a truck-mounted attenuator — **two** of them on TCP(S-3b) — and the permission to use an ordinary work vehicle instead is granted for short duration work only. Past the hour that permission lapses, unless the Engineer approves barricades. On TCP(S-1), TCP(S-2a), TCP(S-2c) and TCP(S-4) it does not: the drawn truck is a plain work vehicle and the hour costs a sign and a run of channelizing devices. TCP(S-5) contradicts itself and is left unresolved — ask the Engineer.
+
+    The separate, surveying-specific cost that duration never reaches is TCP(S-1)-08A **Note 3**: where line-of-sight requirements keep the work vehicle out of its protecting position, the channelizing devices are required regardless of how short the job is.
+
+    Full reading with the plan-view evidence: [`tcp-s-family.md`](https://github.com/RickSmith/survey-recon/blob/main/project-sh16/manual-pulls/tcp-s-family.md). The corrected research section is in [TxDOT research](../txdot-research.md). Corrected under [#70](https://github.com/RickSmith/survey-recon/issues/70).
+
+    **This bears on the crew-day build-up, which is still on this list.** An estimator working from the old sentence would price a shadow truck onto a twenty-minute shot that does not need one, and would miss the one it does need — an hour in a travel lane.
