@@ -50,12 +50,15 @@ nav:
       - Lead times and their sources: corridor-screen/lead-times.md
   - Data sources:
       - data-sources/index.md
+      - TxDOT Roadways - the centerline: data-sources/txdot-roadways.md
       - ArcGIS geometry service: data-sources/arcgis-geometry-service.md
+      - BCAD parcels: data-sources/bcad-parcels.md
       - The flag services: data-sources/flag-services.md
       - The NGS datasheets service: data-sources/ngs-datasheets.md
       - The TxDOT control points service: data-sources/txdot-control-points.md
       - The TxDOT ROW map sheet index: data-sources/row-map-sheets.md
       - The crew safety services: data-sources/crew-safety.md
+      - Sources we did not use: data-sources/not-used.md
   - Toolkit: toolkit/index.md
   - Governance:
       - governance/index.md

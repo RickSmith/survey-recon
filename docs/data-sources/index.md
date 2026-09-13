@@ -1,58 +1,145 @@
 # Data sources
 
-!!! note "Placeholder"
-    This page is a stub. It gets written under
-    [issue #21](https://github.com/RickSmith/survey-recon/issues/21).
+Every public service this tool calls, with its exact endpoint, the fields it
+actually returns, and its quirks — **including the ones that return a plausible
+wrong answer instead of an error.**
 
-Every public service this repo queries gets its own page here: the endpoint, the
-fields it returns, and its quirks — including the ones that return a plausible
-wrong answer instead of an error.
+All of it is public data. No client data, ever, and the repo stays public.
 
-Verified research notes live in
-[TxDOT research](../txdot-research.md) until this chapter is written.
+**Every service the tool calls** was queried live and returned real results, and
+every response a run receives is committed in
+[`project-sh16/cache/`](https://github.com/RickSmith/survey-recon/tree/main/project-sh16/cache)
+with its capture date and the exact request beside it.
 
-## Written so far
+Two things are **not** in that cache, and each page says so where it matters.
+Some findings come from queries a run never makes — the roadbed table on
+[TxDOT Roadways](txdot-roadways.md) is one, and it carries the query to
+reproduce it. And the sources on
+[sources we did not use](not-used.md) include two FEMA rows **we never tested at
+all**, carried across from older notes.
 
-- [Esri ArcGIS geometry service](arcgis-geometry-service.md) — builds the corridor
-  polygon. Written under [issue #13](https://github.com/RickSmith/survey-recon/issues/13)
-  because the corridor tool started calling it, and it appears in no earlier
-  research note. It carries the unit-code trap: a value the parcel query accepts
-  and answers wrong.
-- [The flag services](flag-services.md) — schools, cemeteries, railroads and
-  pipelines. Written under [issue #17](https://github.com/RickSmith/survey-recon/issues/17).
-  It carries two traps worth the reading time: a USGS layer that buffers a long
-  polyline into the wrong county without erroring, and a pipeline service named
-  in the spec that turns out to hold Pennsylvania data only.
-- [The NGS datasheets service](ngs-datasheets.md) — the survey marks along the
-  corridor, and the condition each was last left in. Written under
-  [issue #14](https://github.com/RickSmith/survey-recon/issues/14). Its trap is
-  the quiet kind: the condition field is called `LAST_COND` here and `condition`
-  on NGS's other API, and asking for the wrong name returns nothing and raises
-  nothing.
-- [The TxDOT control points service](txdot-control-points.md) — TxDOT's own
-  primary control, on the famous layer 67. Written under
-  [issue #15](https://github.com/RickSmith/survey-recon/issues/15). It carries
-  four traps, and the first is that the trap this repo kept warning about is not
-  the one that is actually there: layer 0 hard-errors on this service. The quiet
-  wrong answer comes from a differently named service that *does* answer at
-  layer 0 and holds highway segments rather than monuments.
-- [The TxDOT ROW map sheet index](row-map-sheets.md) — how many record drawings
-  cover the corridor and how far back they go. Written under
-  [issue #16](https://github.com/RickSmith/survey-recon/issues/16). Its first
-  trap is the loud kind for once: the dates arrive as milliseconds, every sheet
-  older than 1970 is a negative number, and on Windows the obvious way to read
-  one raises an error rather than returning a wrong date. It also carries the
-  difference between a corridor figure and a county one, worked through with
-  both numbers cached.
-- [The crew safety services](crew-safety.md) — the nearest hospital, ambulance,
-  fire or EMS station and police station, with distances. Written under
-  [issue #18](https://github.com/RickSmith/survey-recon/issues/18). It is the
-  one output here nobody prices, and the caveat it carries is the one that could
-  get somebody hurt: every distance on it is a straight line, and an ambulance
-  drives roads.
-- **The NGS Data Explorer API** — the one call that stays live, so a session can
-  show the wires are real. It is a second NGS endpoint, not a second source: the
-  screening run uses the datasheets feature service, and the account of why the
-  tool reads one and cross-checks against the other is on
-  [the NGS datasheets page](ngs-datasheets.md). Kept under
-  [issue #20](https://github.com/RickSmith/survey-recon/issues/20).
+Where something could not be confirmed, the page says "not found" and says where
+we looked.
+
+---
+
+## The services, in the order a run calls them
+
+| Step | Source | Page |
+|---|---|---|
+| 1 | **TxDOT Roadways** — the centerline | [txdot-roadways.md](txdot-roadways.md) |
+| 2 | **Esri geometry service** — builds the corridor polygon | [arcgis-geometry-service.md](arcgis-geometry-service.md) |
+| 3 | **BCAD parcels** — the spine everything joins to | [bcad-parcels.md](bcad-parcels.md) |
+| 4 | **The flag services** — schools, cemeteries, railroads, pipelines | [flag-services.md](flag-services.md) |
+| 5 | **NGS datasheets** — survey marks and their condition | [ngs-datasheets.md](ngs-datasheets.md) |
+| 6 | **TxDOT control points** — layer 67 | [txdot-control-points.md](txdot-control-points.md) |
+| 7 | **TxDOT ROW map sheets** — the historical record drawings | [row-map-sheets.md](row-map-sheets.md) |
+| 8 | **The crew safety services** — nearest hospital, EMS, police | [crew-safety.md](crew-safety.md) |
+
+Two more that are not steps of a run:
+
+| Source | What it is | Page |
+|---|---|---|
+| **NGS Data Explorer** | The one call kept genuinely live, so a session can show the wires are real. A second NGS endpoint rather than a second source — which is exactly what makes the cross-check worth anything | [ngs-datasheets.md](ngs-datasheets.md) |
+| **Sources we looked at and did not use** | Including the USGS elevation service the whole warn-versus-stop design was written around | [not-used.md](not-used.md) |
+
+---
+
+## The traps, by kind
+
+Most of what is worth reading here is on this list. They are grouped by **how**
+they fail, because that is the part that transfers to a service this repo has
+never seen.
+
+### It answers, and the answer is about the wrong place
+
+The most expensive kind. No error, no delay, no clue.
+
+- **A pipeline service holding only Pennsylvania.** Named in this repo's own
+  specification. 543 real records, zero in Texas, and a Texas query returns zero
+  rows without complaint — [the flag services](flag-services.md)
+- **A USGS layer buffering into the wrong county.** Asked with a polyline and a
+  distance it returned schools sixty miles up the road, for a query whose
+  geometry stopped inside Bexar. Asked with an envelope it was correct every
+  time — [the flag services](flag-services.md)
+- **A flood layer holding Salem, Massachusetts**, which ranks high in a search —
+  recorded in older notes and **not verified by us** —
+  [sources we did not use](not-used.md)
+
+### It answers, and you asked the wrong thing
+
+- **Layer numbers are load-bearing.** TxDOT control is layer 67 and land parcels
+  is layer 328. But the trap this repo kept warning about is not the one that is
+  actually there — layer 0 *hard-errors* on that service. The quiet wrong answer
+  comes from a **differently named service** that does answer at layer 0 and
+  holds highway segments rather than monuments —
+  [TxDOT control points](txdot-control-points.md)
+- **`SH16` is not a route name. Neither is `SH0016`.** Both return nothing at
+  all. The name is `SH0016-KG`, and the suffix is the roadbed —
+  [TxDOT Roadways](txdot-roadways.md)
+- **A unit code that is accepted and answered differently.** `9003` is the EPSG
+  code for the US survey foot, and the parcel query takes it and hands back a
+  different corridor — [the geometry service](arcgis-geometry-service.md)
+
+### The field is not called what the document says
+
+- **`LAST_COND`, not `condition`.** NGS's two endpoints spell the same field
+  differently, and asking for the wrong one returns nothing and raises nothing —
+  [the NGS datasheets](ngs-datasheets.md)
+- **`Geo_id`, not `AcctNumb`.** The specification carried one Bexar service's
+  field names across to the other — [BCAD parcels](bcad-parcels.md)
+- **Published in capitals, answered in lower case.** The USGS structures layers
+  do this, and a plain dictionary lookup finds nothing —
+  [the flag services](flag-services.md)
+
+### The data is not shaped the way you assume
+
+- **Dates that crash rather than come out wrong.** ArcGIS sends a real date
+  field as milliseconds, so every ROW sheet older than 1970 is a negative
+  number — and on Windows the obvious way to read one raises an error, on
+  exactly the oldest sheets — [ROW map sheets](row-map-sheets.md)
+- **An identifier that is not unique.** Six of the 27 SH16 sheets share one
+  `ROW_MAP_ID` — [ROW map sheets](row-map-sheets.md)
+- **A date that may not be a date.** `1900-01-01` appears 368 times in 20,276
+  records, with no empty dates anywhere. Whether it is a placeholder **could not
+  be confirmed** — [ROW map sheets](row-map-sheets.md)
+- **A field that exists and is empty.** `COUNTY` is a single underscore on every
+  roadway segment read — [TxDOT Roadways](txdot-roadways.md)
+- **Every layer published twice.** Hospitals are layer 14 *and* layer 49. Both
+  copies returned identical counts and identifier sets, so it does not bite —
+  but only because somebody checked —
+  [the crew safety services](crew-safety.md)
+
+### The host is unreliable, or the data is older than it looks
+
+- **`maps.dot.state.tx.us` blocks intermittently.** The same URL failed and then
+  succeeded minutes later. It is why the ROW step is deliberately last —
+  [ROW map sheets](row-map-sheets.md)
+- **The parcel service rebuilds weekly**, says so itself, and publishes the date
+  it was last edited. How fast a transfer reaches the appraisal roll in the first
+  place is a separate question we did not confirm —
+  [BCAD parcels](bcad-parcels.md)
+- **USGS records carry the date they were loaded, not the date anybody checked.**
+  On the SH16 corridor they run from 2016 to 2025 —
+  [the crew safety services](crew-safety.md)
+
+---
+
+## Two rules these pages follow
+
+**Cite it, or say you could not confirm it.** Numbers with consequences carry a
+source next to them. Where we looked and found nothing, the page says "not
+found" and says where it looked. It never says "does not exist."
+
+**TxDOT URLs use `txdot.gov`.** Never `onlinemanuals.txdot.gov`, which is
+superseded and which search engines still surface.
+
+---
+
+## The working notes these came from
+
+[TxDOT research](../txdot-research.md) is the notebook the endpoints were found
+in. It is kept as a record of how, and where it disagrees with a page here,
+**the page is the one that was checked.** The 3DEP re-test in
+[sources we did not use](not-used.md) is a worked example of the two
+disagreeing — and of what to do about it.

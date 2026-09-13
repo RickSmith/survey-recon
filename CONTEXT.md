@@ -128,6 +128,26 @@ Settled during the grilling for [issue #5](https://github.com/RickSmith/survey-r
 | **Monument destroyed** | The condition TxDOT publishes for one of its own primary control points that is gone. Recorded separately from the NGS `MARK NOT FOUND` rather than merged with it: one says somebody looked and could not find it, the other says it is gone, and the second is the stronger claim. Both cost a crew the same trip. Settled in [issue #15](https://github.com/RickSmith/survey-recon/issues/15); the source is on [the TxDOT control points page](docs/data-sources/txdot-control-points.md) |
 | **Distinct stations** | How many *monuments* the TxDOT control records in a corridor actually name, as against how many records came back. The service holds two records for 274 of its 492 stations, so the two numbers differ — on SH16, four records name two monuments. Reported beside the record count and never in place of it, because a crew drives to the monument and an estimator must not count it twice |
 
+## Reading a map service
+
+These turn up all over [the data-source pages](docs/data-sources/index.md). None
+of them is a surveying idea; they are the words the services themselves use, and
+they are collected here so no page has to stop and explain them twice.
+
+| Term | Meaning |
+|---|---|
+| **Endpoint** | The web address you ask a question of. A service usually has several |
+| **Layer** | One table inside a service, numbered. TxDOT's control points are layer 67 of theirs. **The number is load-bearing** — asking the wrong one can answer without complaining |
+| **WKID** | Well-Known ID. Esri's number for a coordinate system — 4326 is longitude and latitude, 2278 is NAD 83 Texas South Central in US survey feet |
+| **EPSG** | A different numbering of the same idea, by a different body. `9003` is EPSG's code for the US survey foot, and it is the one that answers wrong in [the geometry service](docs/data-sources/arcgis-geometry-service.md) |
+| **Polyline** | A line, as a service returns it: a list of points to join up |
+| **M value** | A third number on each point of a polyline — a measure along the line rather than a position. On TxDOT's roadways the M values **are** the DFO |
+| **Envelope** | A rectangle, given as its four corner coordinates. Asking with an envelope instead of a line and a distance is what stopped a USGS service answering about the wrong county |
+| **Paging cap** | The most records a service will hand over at once. Ask for more and it gives you the cap **and a flag saying there is more** — a tool that ignores the flag reports the cap as if it were the answer |
+| **HTTP 200** | The web's code for "here is your answer." It says the request arrived and got a reply. **It does not say the reply is an answer** — several services return a 200 carrying an error message, and a caller that checks only the code sees success |
+| **Null, and blank** | Not the same thing. `null` is "no value recorded"; a field holding a single space is a value, and a query asking for `IS NOT NULL` will match it. Both BCAD and NGS do this, and it is why `arcgis.attribute` treats whitespace as absent |
+| **Robots-blocked** | A server refusing automated requests by policy, via a `robots.txt` file naming what may be fetched. It is a rule rather than a failure, and a polite tool obeys it |
+
 ## Translation table — used throughout the docs
 
 | Software term | Survey term |
