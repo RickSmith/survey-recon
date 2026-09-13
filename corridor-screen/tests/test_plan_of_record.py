@@ -42,10 +42,14 @@ from corridor_screen.cache import long_path
 
 # Borrowed rather than copied, the way `test_fallbacks` borrows from
 # `test_offline`. Two copies of a markdown reader would drift the first time
-# somebody fixed one of them. The deck under #12 moves these three into
-# `tests/markdown_docs.py` and re-exports them from here, so this import keeps
-# working either way -- point it at the new home when next in this file.
-from tests.test_fallbacks import markdown_section, table_rows, text_of
+# somebody fixed one of them.
+#
+# This asked to be pointed at the new home when somebody was next in the file,
+# and #12 was next: the three now live in `tests/markdown_docs.py`, which is
+# where `test_fallbacks` and `test_deck` both get them. Importing them through
+# `test_fallbacks` still worked -- it re-exports them -- but it made this file
+# look as though it depended on the fallback card's tests, which it does not.
+from tests.markdown_docs import markdown_section, table_rows, text_of
 
 REPO = Path(__file__).resolve().parents[2]
 PLAN = REPO / "docs" / "plan-of-record.md"

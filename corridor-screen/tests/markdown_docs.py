@@ -1,13 +1,16 @@
 """Reading a committed markdown document, for the tests that check one.
 
-Two test files hold a page in `docs/` to what it claims — `test_fallbacks.py`
-checks the fallback card against the run of show, and `test_deck.py` checks the
-slide deck against the same table. Both have to open a file, find a heading,
-and read a table out from under it.
+Three test files hold a page in `docs/` to what it claims:
 
-Those three were written twice before they were written here, and the second
-copy is what this module exists to delete. The reason is `test_fallbacks.py`'s
-own, about the helpers it borrows rather than copies:
+* `test_fallbacks.py` — the fallback card, against the run of show
+* `test_deck.py` — the slide deck, against the same table
+* `test_plan_of_record.py` — the run of show's own Act II figures, against the
+  SH16 run in `project-sh16/screening.json`
+
+All three have to open a file, find a heading, and read a table out from under
+it. Those three functions were written twice before they were written here, and
+the second copy is what this module exists to delete. The reason is
+`test_fallbacks.py`'s own, about the helpers it borrows rather than copies:
 
 > Two copies of any of them would drift the first time somebody fixed one of
 > them.
