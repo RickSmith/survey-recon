@@ -34,12 +34,12 @@ Fallback if the command will not start: docs/presenting/fallbacks.md, row one.
 
 # The job we just handed it
 
-- The corridor: SH16, Loop 410 to Old Bandera Rd, Bexar County
-- 8.69 miles of a TxDOT right of way, scoped from public records only
-- What we asked for: what is out there, and what it costs in crew days
-- What it does next: reads, asks, and shows its work
+- **SH16, Loop 410 to Old Bandera Rd** — 8.69 miles, Bexar County
+- 300 ft each side of the centerline. We chose that and can modify if needed
+- Asked for: what is out there, and what it costs in crew days
+- 14 public map services. No client file was opened
 
-> **To be written** — #81
+This will be real code and real data (we might use previously captured if the internet acts up). You will be able to run this yourself using the GitHub repository: corridor-screen/README.md
 
 <!--
 0:00–0:08 · 8 min · Cold open
@@ -48,7 +48,34 @@ One slide only. The terminal is the thing on screen for this block; this is
 what goes up beside it, or behind it, while the run finishes.
 
 Do not explain the tool yet. The whole point of the cold open is that the room
-watches something real happen before anybody has defined a single term.
+watches something real happen before anybody has defined a single term. No
+slide in this block says what an agent is, and the next block is where that
+starts.
+
+The plan is to run it live. The cache is the backup, not the plan -- the
+committed SH16 run really did call all fourteen services on 13 September.
+Say that plainly if the network makes you switch: "this is running off
+answers we captured on the 12th and 13th." Undisclosed caching, if the room
+notices it, costs you the room. The last line on the slide is what keeps that
+honest whichever way the demo goes.
+
+What it does next -- it reads, it asks, and it shows its work -- is worth
+saying out loud and did not fit on the slide. The terminal is demonstrating
+all three anyway.
+
+No count on this slide is a result. 8.69 miles and 300 ft are what went in;
+524 tracts is what comes back, and it comes back on the terminal beside you.
+Do not say it before the run does.
+
+"300 ft each side" is the half-width, and the point of the bullet is that a
+person chose it. Somebody will ask why not 200 or 500. The answer is that it
+is stated rather than derived, so it can be argued with -- and it can be
+changed and the run done again, which is the bullet's own promise.
+
+Fallback: docs/presenting/fallbacks.md, row one. The whole run replays off the
+disk with --mode cache-only and makes no network call at all. Do not retype
+that line; copy it from corridor-screen/README.md under "If the network is
+down".
 -->
 
 ---
