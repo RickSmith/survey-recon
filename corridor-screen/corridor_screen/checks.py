@@ -16,7 +16,13 @@ warning is written into the output next to the data it doubts. The tool does
 not hide it and does not fix it.
 """
 
-from .geometry import _boxes_overlap, bbox_of_shape, grow_bbox, shape_is_within_miles
+from .geometry import (
+    FEET_PER_MILE,
+    bbox_of_shape,
+    grow_bbox,
+    shape_is_within_miles,
+    shape_to_rings_miles,
+)
 
 # ArcGIS servers cap how many records they will hand over at once. A count that
 # lands exactly on a cap is far more likely to be the cap than a coincidence.
@@ -37,8 +43,6 @@ MAX_PARCELS_PER_SQ_MI = 4000
 # parcel is doubted only when every part of it is more than 800 ft from the
 # centerline. This is slack for a filter that is working, not a second corridor.
 DEFAULT_SANITY_MARGIN_FT = 500.0
-
-FEET_PER_MILE = 5280.0
 
 
 class FieldListError(Exception):
@@ -195,12 +199,22 @@ def check_records_in_requested_extent(service, shapes, bbox, margin_ft, plane):
     if not shapes or not bbox:
         return None
     reach = grow_bbox(bbox, float(margin_ft) / FEET_PER_MILE)
+    # The grown extent as a ring, so "any part of the record is inside it" is
+    # one distance of zero rather than a box test. Comparing boxes would be the
+    # same mistake the parcel check was amended for on PR #52: a long railroad
+    # running past the corner of the extent has a box that overlaps while no
+    # part of the line is inside. Measured, the answer is honest either way.
+    ring = [
+        [reach[0], reach[1]],
+        [reach[0], reach[3]],
+        [reach[2], reach[3]],
+        [reach[2], reach[1]],
+    ]
     outside = []
     for identifier, shape in shapes:
-        box = bbox_of_shape(shape)
-        if box is None:
+        if bbox_of_shape(shape) is None:
             continue
-        if not _boxes_overlap(reach, box):
+        if shape_to_rings_miles(shape, [ring], plane) != 0.0:
             outside.append(identifier)
     if not outside:
         return None

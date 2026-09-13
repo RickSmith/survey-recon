@@ -107,6 +107,18 @@ def parse_args(argv=None):
             "separately and never merged."
         ),
     )
+    parser.add_argument(
+        "--corridor-flag-parcels",
+        type=int,
+        default=flags_mod.DEFAULT_CORRIDOR_FLAG_PARCELS,
+        help=(
+            "How many parcels one feature must cross before it is also recorded "
+            "against the run as a whole. Stated, never derived. Default "
+            f"{flags_mod.DEFAULT_CORRIDOR_FLAG_PARCELS}. It stays on each parcel "
+            "either way; the run-level record is what stops one pipeline's notice "
+            "period being counted once per parcel."
+        ),
+    )
     parser.add_argument("--mode", choices=MODES, default="cache-first", help="Whether the run may reach the network")
     parser.add_argument("--out", required=True, help="Where the output file and the cache are written")
     parser.add_argument(
@@ -124,6 +136,8 @@ def parse_args(argv=None):
         parser.error("--half-width must be greater than zero; there is no corridor otherwise")
     if args.adjacent_distance_ft < 0:
         parser.error("--adjacent-distance-ft is a distance from a parcel and cannot be negative")
+    if args.corridor_flag_parcels < 1:
+        parser.error("--corridor-flag-parcels is a count of parcels and must be at least 1")
     return args
 
 
@@ -198,7 +212,8 @@ def _rings_by_id(parcel_features):
     """
     rings = {}
     for feature in parcel_features:
-        rings.setdefault(parcels.to_row(feature)["id"], parcels.rings_of(feature))
+        identifier, _ = parcels.id_of(feature)
+        rings.setdefault(identifier, parcels.rings_of(feature))
     return rings
 
 
@@ -281,6 +296,20 @@ def _screen_flags(fetcher, args, pings, blocked_flags, parcel_features, plane):
             )
             continue
         if source.name in blocked_flags:
+            # Section 7 says a person decides -- retry, skip, or abort -- so a
+            # person is asked, if one is there. Unattended, the run goes on
+            # without this flag type rather than hanging, and says so twice: in
+            # the honesty block, and by leaving the type off `screened_for`.
+            if not args.yes and sys.stdin.isatty():
+                _say()
+                _say(f"  {flag_type}: {source.name} was not answering at the ping")
+                answer = input("  [s]kip this flag type, or [a]bort the run? ").strip().lower()
+                if answer in ("a", "abort"):
+                    raise ServiceDown(
+                        source.name,
+                        "the host was not answering at the ping, and this run was told to stop",
+                        attempts=1,
+                    )
             entries.append(
                 output.skipped_service(
                     source,
@@ -307,8 +336,15 @@ def _screen_flags(fetcher, args, pings, blocked_flags, parcel_features, plane):
                 args.yes,
                 allow_skip=True,
             )
-        except (ServiceDown, ServiceError, Skipped, checks.FieldListError) as exc:
-            # Not the spine. This costs one flag type and nothing else.
+        except (ServiceDown, ServiceError, Skipped) as exc:
+            # A host that is blocking is the network's problem, and it costs one
+            # flag type. A layer that is not the layer we think it is is *our*
+            # problem, and `checks.FieldListError` is deliberately NOT caught
+            # here -- specification section 8 makes the field list check a hard
+            # error "because it is a configuration bug and free to catch."
+            # Catching it here would turn the layer-67-not-0 trap into a quietly
+            # shorter screening, which is the one failure this repo exists to
+            # teach people to look for.
             entries.append(output.skipped_service(source, str(exc), ping))
             _say(f"  flag  {flag_type:<10} not checked -- {exc}")
             continue
@@ -336,31 +372,6 @@ def _record_counts(services, found, counts):
             entry["records_used"] = counts[flag_type]
 
 
-def _citations(table, screened_for):
-    """The lead time and its citation for every type this run screened for.
-
-    Carried inside the output file so that somebody holding only the JSON can
-    check a number against its source without this repo beside them. A lead
-    time is worth exactly what its citation is worth.
-    """
-    wanted = set(screened_for)
-    return {
-        key: {
-            "label": entry.label,
-            "lead_time_days": entry.days,
-            "lead_time_days_low": entry.days_low,
-            "confirmed": entry.confirmed,
-            "statutory": entry.statutory,
-            "source": entry.source,
-            "url": entry.url,
-            "verified_on": str(entry.verified_on) if entry.verified_on else None,
-            "not_found": entry.not_found,
-        }
-        for key, entry in table.items()
-        if key in wanted
-    }
-
-
 def _report_flags(rows, corridor_flags, counts, screened_for):
     """What the run found, printed while somebody is still watching."""
     _say()
@@ -379,8 +390,8 @@ def _report_flags(rows, corridor_flags, counts, screened_for):
     if with_a_number:
         top = max(with_a_number, key=lambda r: r["max_lead_time_days"])
         _say(
-            f"    longest wait      {top['max_lead_time_days']} days on {top['id']} "
-            f"-- {top['lead_time_driver']}"
+            f"    longest wait      {top['max_lead_time_days']} {top['max_lead_time_basis']} "
+            f"on {top['id']} -- {top['lead_time_driver']}"
         )
     unconfirmed = sorted({t for r in rows for t in r["lead_time_not_found"]})
     if unconfirmed:
@@ -541,6 +552,7 @@ def run(args):
                 corridor_half_width_ft=args.half_width,
                 plane=plane,
                 table=table,
+                corridor_flag_parcels=args.corridor_flag_parcels,
             )
             screened_for = sorted(flag_type for _, flag_type, _ in found)
             _record_counts(services, found, counts)
@@ -583,7 +595,7 @@ def run(args):
         stopped_at_service=stopped_at,
         corridor_flags=corridor_flags,
         screened_for=screened_for,
-        lead_time_table=_citations(table, screened_for),
+        lead_time_table=lead_times_mod.citations(table, screened_for),
     )
     written = output.write(document, out_dir)
     index = cache.write_index(f"{args.route} DFO {args.begin_dfo} to {args.end_dfo}")

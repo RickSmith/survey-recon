@@ -133,6 +133,11 @@ BEXAR_PARCEL_FIELDS = {
 # Trap two: the pipeline service in the specification holds no Texas data
 # ======================================================================
 #
+# NPMS is the National Pipeline Mapping System, run by the federal Pipeline and
+# Hazardous Materials Safety Administration. TPMS is the Texas Pipeline Mapping
+# System, run by the Railroad Commission of Texas. Two different bodies, two
+# different datasets, and only one of them covers Texas.
+#
 # Specification section 6 and `docs/txdot-research.md` both name
 # `NPMS_Pipelines_2022` on `services.arcgis.com/G4S1dGvn7PIgYd6Y` as the
 # pipeline source. Read on 2026-09-12, that service holds **543 records, all of
@@ -192,8 +197,9 @@ PIPELINES = Source(
     purpose="flag:pipeline",
     required_fields=("TPMS_ID", "OPER_NM", "CMDTY_DESC", "STATUS_CD"),
     note=(
-        "Lines. The Railroad Commission of Texas, not NPMS -- the NPMS service "
-        "the specification names holds Pennsylvania data only. See trap two above."
+        "Lines. The Texas Pipeline Mapping System, from the Railroad Commission of "
+        "Texas -- not the National Pipeline Mapping System service the "
+        "specification names, which holds Pennsylvania data only. See trap two."
     ),
 )
 

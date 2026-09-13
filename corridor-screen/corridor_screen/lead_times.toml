@@ -37,6 +37,7 @@ screenable = true
 confirmed = true
 statutory = true
 lead_time_days = 14
+basis = "calendar days"
 driver = "written notice to the surrounding landowner, outside owner-set hours"
 source = "Tex. Health & Safety Code § 711.041(c)(2)"
 url = "https://statutes.capitol.texas.gov/Docs/HS/htm/HS.711.htm"
@@ -63,6 +64,12 @@ screenable = true
 confirmed = true
 statutory = true
 lead_time_days = 2
+# NOT calendar days. The statute excludes Saturdays, Sundays and legal
+# holidays, so two working days can be four or five days on a calendar. The
+# number is recorded as the statute states it and the basis is recorded beside
+# it, because converting one to the other means inventing a calendar this tool
+# does not have and cannot check.
+basis = "working days"
 driver = "notice to a notification center before excavation -- Texas 811"
 source = "Tex. Util. Code § 251.151(a)"
 url = "https://statutes.capitol.texas.gov/Docs/UT/htm/UT.251.htm"
@@ -94,6 +101,7 @@ confirmed = true
 statutory = false
 lead_time_days = 45
 lead_time_days_low = 30
+basis = "calendar days"
 driver = "separate corporate right of entry, insurance and flagging"
 source = "Union Pacific Railroad, Right of Entry / Temporary Use of Railroad Property — Procedures"
 url = "https://www.up.com/real-estate/tempuse/procedures"

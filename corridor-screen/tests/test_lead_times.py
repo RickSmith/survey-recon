@@ -25,6 +25,7 @@ label = "Cemetery"
 confirmed = true
 statutory = true
 lead_time_days = 14
+basis = "calendar days"
 driver = "written notice"
 source = "Tex. Health & Safety Code S 711.041(c)(2)"
 url = "https://statutes.capitol.texas.gov/Docs/HS/htm/HS.711.htm"
@@ -131,20 +132,53 @@ class TestTheTableRefusesWhatCannotBeQuoted(unittest.TestCase):
         self.assertIn("no-such-file.toml", str(caught.exception))
 
 
+class TestWhichDaysTheNumberCounts(unittest.TestCase):
+    """Two working days and two calendar days are different promises."""
+
+    def setUp(self):
+        self.table = lead_times.load()
+
+    def test_the_pipeline_floor_is_working_days_because_the_statute_says_so(self):
+        self.assertEqual(self.table["pipeline"].basis, "working days")
+
+    def test_the_cemetery_notice_is_calendar_days(self):
+        self.assertEqual(self.table["cemetery"].basis, "calendar days")
+
+    def test_a_confirmed_row_that_does_not_say_which_days_is_a_hard_error(self):
+        path = write(GOOD.replace('basis = "calendar days"', ""))
+        with self.assertRaises(lead_times.LeadTimeTableError) as caught:
+            lead_times.load(path)
+        self.assertIn("which", str(caught.exception).lower())
+
+    def test_a_basis_nobody_recognizes_is_a_hard_error(self):
+        path = write(GOOD.replace('basis = "calendar days"', 'basis = "days"'))
+        with self.assertRaises(lead_times.LeadTimeTableError):
+            lead_times.load(path)
+
+
 class TestTheLongestWait(unittest.TestCase):
     def test_the_biggest_number_wins_and_names_itself(self):
         flags = [
-            {"type": "cemetery", "lead_time_days": 14},
-            {"type": "railroad", "lead_time_days": 45},
-            {"type": "pipeline", "lead_time_days": 2},
+            {"type": "cemetery", "lead_time_days": 14, "lead_time_basis": "calendar days"},
+            {"type": "railroad", "lead_time_days": 45, "lead_time_basis": "calendar days"},
+            {"type": "pipeline", "lead_time_days": 2, "lead_time_basis": "working days"},
         ]
-        self.assertEqual(lead_times.longest(flags), (45, "railroad"))
+        self.assertEqual(lead_times.longest(flags), (45, "railroad", "calendar days"))
+
+    def test_the_number_never_comes_back_without_saying_which_days(self):
+        """A bare "2" is the sort of thing a reader turns into a date and gets wrong."""
+        flags = [{"type": "pipeline", "lead_time_days": 2, "lead_time_basis": "working days"}]
+        days, driver, basis = lead_times.longest(flags)
+        self.assertEqual((days, driver), (2, "pipeline"))
+        self.assertEqual(basis, "working days")
 
     def test_nothing_with_a_number_gives_no_number(self):
-        self.assertEqual(lead_times.longest([{"type": "school", "lead_time_days": None}]), (None, None))
+        self.assertEqual(
+            lead_times.longest([{"type": "school", "lead_time_days": None}]), (None, None, None)
+        )
 
     def test_no_flags_at_all_gives_no_number(self):
-        self.assertEqual(lead_times.longest([]), (None, None))
+        self.assertEqual(lead_times.longest([]), (None, None, None))
 
     def test_the_types_with_no_number_are_listed_separately(self):
         flags = [

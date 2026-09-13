@@ -35,7 +35,12 @@ REQUIRED = ("label", "source", "url", "driver")
 # A row that claims a number must say where the number came from and whether it
 # is statute or somebody's published procedure. Those are different kinds of
 # promise and an estimator reads them differently.
-REQUIRED_WHEN_CONFIRMED = ("lead_time_days", "statutory", "verified_on")
+REQUIRED_WHEN_CONFIRMED = ("lead_time_days", "statutory", "verified_on", "basis")
+
+# A number of days is meaningless without saying which days. Two working days
+# and two calendar days are different promises, and § 251.151(a) means the
+# first while § 711.041 means the second.
+BASES = ("calendar days", "working days")
 
 # A row that has no number must say where it looked. "Not found" without that
 # is indistinguishable from not having tried.
@@ -60,6 +65,8 @@ class LeadTime:
         # the top of it; this is the bottom, kept so a reader can see the range
         # the tool chose from rather than only the choice.
         self.days_low = row.get("lead_time_days_low")
+        # Which days. See BASES -- this is never guessed and never converted.
+        self.basis = row.get("basis")
         self.driver = row["driver"]
         self.source = row["source"]
         self.url = row["url"]
@@ -77,6 +84,7 @@ class LeadTime:
         return {
             "lead_time_days": self.days,
             "lead_time_days_low": self.days_low,
+            "lead_time_basis": self.basis,
             "lead_time_confirmed": self.confirmed,
             "lead_time_statutory": self.statutory,
             "lead_time_driver_detail": self.driver,
@@ -102,10 +110,16 @@ def _check(key, row):
     if missing:
         raise LeadTimeTableError(
             f"lead-time row [{key}] is missing {', '.join(sorted(set(missing)))}. "
-            "Every row must carry a source and a link, a confirmed row must carry "
-            "its number and say whether it is statutory, and an unconfirmed row "
-            "must say where it looked. A lead time without a citation is a rumor "
-            "with a number on it."
+            "Every row must carry a source and a link. A confirmed row must carry "
+            "its number, say which days that number counts, and say whether it is "
+            "statutory. An unconfirmed row must say where it looked. A lead time "
+            "without a citation is a rumor with a number on it."
+        )
+    if row.get("confirmed") and row.get("basis") not in BASES:
+        raise LeadTimeTableError(
+            f"lead-time row [{key}] gives a number of days without saying which "
+            f"days. `basis` must be one of {', '.join(BASES)}. Two working days "
+            "and two calendar days are different promises."
         )
     if row.get("confirmed") and row.get("not_found"):
         raise LeadTimeTableError(
@@ -156,18 +170,26 @@ def load(path=None):
 def longest(flags):
     """The biggest confirmed lead time among some flags, and what set it.
 
-    Returns ``(days, driver_type)``, or ``(None, None)`` when nothing on the
-    parcel carries a confirmed figure.
+    Returns ``(days, driver_type, basis)``, or ``(None, None, None)`` when
+    nothing on the parcel carries a confirmed figure.
 
     This exists so that the longest wait on a parcel is a number somebody can
     read, rather than something they work out by scanning a list. A parcel you
     cannot enter for 45 days is a schedule problem the day you bid.
+
+    **The basis comes back with the number, and the number is never converted.**
+    Two working days and two calendar days are different promises, and turning
+    one into the other would mean inventing a calendar of weekends and Texas
+    legal holidays that this tool does not have and could not check. So the
+    biggest published figure wins and it is always reported saying which days
+    it counts. A reader who sees "2 working days" knows to add the weekend
+    themselves. A reader who sees a bare "2" does not.
     """
     numbered = [f for f in flags if isinstance(f.get("lead_time_days"), (int, float))]
     if not numbered:
-        return None, None
+        return None, None, None
     worst = max(numbered, key=lambda f: f["lead_time_days"])
-    return worst["lead_time_days"], worst["type"]
+    return worst["lead_time_days"], worst["type"], worst.get("lead_time_basis")
 
 
 def unconfirmed_types(flags):
@@ -179,3 +201,30 @@ def unconfirmed_types(flags):
     it is the same distinction as ``unknown`` against ``no``.
     """
     return sorted({f["type"] for f in flags if f.get("lead_time_days") is None})
+
+
+def cite(entry):
+    """One row's number and its citation, for the output file.
+
+    Carried inside ``screening.json`` so that somebody holding only the output
+    can check a number against its source without this repo beside them. A lead
+    time is worth exactly what its citation is worth.
+    """
+    return {
+        "label": entry.label,
+        "lead_time_days": entry.days,
+        "lead_time_days_low": entry.days_low,
+        "lead_time_basis": entry.basis,
+        "confirmed": entry.confirmed,
+        "statutory": entry.statutory,
+        "source": entry.source,
+        "url": entry.url,
+        "verified_on": str(entry.verified_on) if entry.verified_on else None,
+        "not_found": entry.not_found,
+    }
+
+
+def citations(table, flag_types):
+    """The citation for every flag type a run actually screened for."""
+    wanted = set(flag_types)
+    return {key: cite(entry) for key, entry in table.items() if key in wanted}

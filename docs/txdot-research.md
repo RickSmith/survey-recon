@@ -107,7 +107,9 @@ CoSA AGOL also has `RecordedPlat`, `PreliminaryPlat`, `Major_Thoroughfare_Plan__
 Also: Bexar railroads/schools/school-districts MapServers · CoSA Cemetery Steward Program · ~~NPMS pipelines (`services.arcgis.com/G4S1dGvn7PIgYd6Y/.../NPMS_Pipelines_2022`)~~ — **see the correction below** · USGS TNM Access API for quads.
 
 !!! danger "Corrected 2026-09-12, while building [issue #17](https://github.com/RickSmith/survey-recon/issues/17)"
-    **`NPMS_Pipelines_2022` holds no Texas data.** Read live: 543 records in
+    **`NPMS_Pipelines_2022` holds no Texas data.** NPMS is the National Pipeline
+    Mapping System, run by the federal Pipeline and Hazardous Materials Safety
+    Administration. Read live: 543 records in
     total, **zero** in Texas, zero in Bexar County, and every sample record in
     **Chester County, Pennsylvania**. The layer's own extent sits around
     longitude −76, latitude 40.

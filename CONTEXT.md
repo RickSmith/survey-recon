@@ -75,6 +75,10 @@ They are buyers and risk-owners. They are not going to install things themselves
 | **TMUTCD** | Texas Manual on Uniform Traffic Control Devices. The 2025 edition took effect January 18, 2026 |
 | **TCP** | Traffic Control Plan. TCP(S-1)-08A is the standard sheet for surveying operations |
 | **TMA** | Truck-Mounted Attenuator — the crash cushion on a shadow vehicle. Needing one changes the crew cost |
+| **RRC** | Railroad Commission of Texas. Despite the name it regulates oil, gas and pipelines, not railroads. It publishes **TPMS** |
+| **TPMS** | Texas Pipeline Mapping System — the RRC's public pipeline map service. The source this repo uses for pipelines |
+| **NPMS** | National Pipeline Mapping System — the federal equivalent, run by PHMSA. The ArcGIS service carrying its name holds Pennsylvania data only; see [the flag services page](docs/data-sources/flag-services.md) |
+| **PHMSA** | Pipeline and Hazardous Materials Safety Administration — the federal pipeline regulator |
 
 ## Project vocabulary
 

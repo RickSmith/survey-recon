@@ -49,7 +49,7 @@ A separate clock runs the other way. Discovering a cemetery nobody had recorded
 means filing notice with the county clerk **within 10 days** —
 [§ 711.011(a)](https://statutes.capitol.texas.gov/Docs/HS/htm/HS.711.htm).
 
-### Pipeline — 48 hours, which is two working days
+### Pipeline — 48 hours, which is two **working** days
 
 [Tex. Util. Code § 251.151(a)](https://statutes.capitol.texas.gov/Docs/UT/htm/UT.251.htm)
 
@@ -60,7 +60,15 @@ holidays."*
 
 So 48 hours is a **floor**, not a booking, and the weekend and holiday exclusion
 can make it longer on the calendar than it is on paper. The tool records two
-working days.
+working days, **and records that they are working days.**
+
+That last part matters. Two working days and two calendar days are different
+promises, and the tool will not convert one into the other — doing so would mean
+inventing a calendar of weekends and Texas legal holidays that it does not have
+and could not check. So every number carries a `lead_time_basis` saying which
+days it counts, the loader refuses a confirmed row that does not say, and the
+parcel row repeats it as `max_lead_time_basis`. A reader who sees "2 working
+days" knows to add the weekend. A reader who sees a bare "2" does not.
 
 **The number may not apply at all.** § 251.002 defines excavation as mechanized
 equipment used *"to remove or otherwise disturb soil to a depth of 16 or more
@@ -139,7 +147,7 @@ row then carries two things beside each other:
 
 - **`max_lead_time_days`** — the longest confirmed wait, so nobody has to do
   arithmetic to find the parcel that drives the schedule. `lead_time_driver`
-  names which flag set it.
+  names which flag set it, and `max_lead_time_basis` says which days it counts.
 - **`lead_time_not_found`** — the flag types on that parcel whose lead time could
   not be confirmed.
 

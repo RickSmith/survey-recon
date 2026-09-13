@@ -20,6 +20,11 @@ import math
 EARTH_RADIUS_MI = 3958.7613
 SQ_MI_PER_ACRE = 1.0 / 640.0
 
+# One home. Every distance in this tool is measured in miles, and every stated
+# distance a person types is in feet, so the conversion belongs beside the
+# arithmetic rather than copied into each module that needs it.
+FEET_PER_MILE = 5280.0
+
 
 def haversine_miles(a, b):
     """Great-circle distance between two ``[lon, lat]`` points, in miles."""
@@ -109,7 +114,12 @@ def _bbox_of_points(points):
     return [min(lons), min(lats), max(lons), max(lats)]
 
 
-def _boxes_overlap(a, b):
+def boxes_overlap(a, b):
+    """True when two bounding boxes touch or overlap.
+
+    Public because two other modules need it to skip comparisons that cannot
+    possibly be close. A cheap first pass before any real measuring.
+    """
     return not (a[2] < b[0] or b[2] < a[0] or a[3] < b[1] or b[3] < a[1])
 
 
@@ -160,7 +170,7 @@ def shape_is_within_miles(rings, paths, limit_miles, plane):
     near_segments = [
         (start, end)
         for start, end in _segments(paths)
-        if _boxes_overlap(reach, _bbox_of_points([start, end]))
+        if boxes_overlap(reach, _bbox_of_points([start, end]))
     ]
     if not near_segments:
         return False

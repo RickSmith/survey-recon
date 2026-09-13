@@ -52,6 +52,7 @@ python -m corridor_screen --route SH0016-KG --begin-dfo 347.7 --end-dfo 356.367 
 | `--half-width` | How far each side of the centerline counts as inside. Default 300 feet |
 | `--sanity-margin-ft` | How far outside the ribbon any part of a parcel may sit before the run doubts it. Default 500 |
 | `--adjacent-distance-ft` | How close a feature must be to a parcel to earn an `adjacent` flag. Default 100 |
+| `--corridor-flag-parcels` | How many parcels one feature must cross before it is also recorded against the run. Default 5 |
 | `--mode` | `live`, `cache-first` (default) or `cache-only` |
 | `--out` | Where the output file and the cache are written |
 | `--yes` | Never ask about a dead service. Stop instead. Use for unattended runs |
@@ -197,10 +198,17 @@ source and no link. A lead time with no citation is a rumor with a number on it.
 
 | Flag | Lead time | Where it comes from |
 |---|---|---|
-| Railroad | **45 days** (published range 30–45) | Union Pacific's own procedures page. Corporate procedure, not statute |
-| Cemetery | **14 days** | Tex. Health & Safety Code § 711.041(c)(2) |
+| Railroad | **45 calendar days** (published range 30–45) | Union Pacific's own procedures page. Corporate procedure, not statute |
+| Cemetery | **14 calendar days** | Tex. Health & Safety Code § 711.041(c)(2) |
 | Pipeline | **2 working days** (48 hr floor) | Tex. Util. Code § 251.151(a) |
 | School | **not found** | § 22.0834 is background checks, not a notice period |
+
+**Every number says which days it counts.** Two working days and two calendar
+days are different promises — § 251.151(a) excludes weekends and legal holidays,
+§ 711.041 does not — and the tool will not convert one into the other, because
+that would mean inventing a calendar it cannot check. So `lead_time_basis` rides
+on every flag, `max_lead_time_basis` on every parcel row, and the table's loader
+refuses a number that does not say.
 
 The full wording, the limits on each number and the account of where we looked
 are in [Lead times and their sources](../docs/corridor-screen/lead-times.md).
@@ -209,7 +217,7 @@ are in [Lead times and their sources](../docs/corridor-screen/lead-times.md).
 
 - `max_lead_time_days` — the longest confirmed wait, so nobody has to do
   arithmetic to find the parcel that drives the schedule. `lead_time_driver`
-  names which flag set it
+  names which flag set it and `max_lead_time_basis` says which days it counts
 - `lead_time_not_found` — the flag types on that parcel whose lead time could
   not be confirmed
 
@@ -228,8 +236,8 @@ Run on 2026-09-12 at the default 300 ft half-width:
 | Railroad | 0 | 0 |
 | Pipeline | 0 | 0 |
 
-Eight of 524 parcels carry a flag. The longest wait is **14 days**, on the
-Episcopal Church parcel at 11093 Bandera Rd, which carries a columbarium.
+Eight of 524 parcels carry a flag. The longest wait is **14 calendar days**, on
+the Episcopal Church parcel at 11093 Bandera Rd, which carries a columbarium.
 
 **Zero railroads is a checked answer, not an empty one.** The same USGS layer
 returns 412 records across Bexar County. There is simply no track within 300 ft

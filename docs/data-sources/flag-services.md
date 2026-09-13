@@ -28,7 +28,69 @@ https://carto.nationalmap.gov/arcgis/rest/services/transportation/MapServer/38
 https://gis.rrc.texas.gov/server/rest/services/rrc_public/tpms/MapServer/0
 ```
 
-All four are public, need no key and no account, and support paging.
+All four are public, need no key and no account, and support paging. All four
+cap a single answer at 2,000 records — 1,000 for TPMS — so every query pages
+until the server stops setting `exceededTransferLimit`.
+
+**TPMS** is the Texas Pipeline Mapping System, published by the Railroad
+Commission of Texas. **NPMS** is the National Pipeline Mapping System, run by
+the federal Pipeline and Hazardous Materials Safety Administration; the service
+carrying its name on ArcGIS Online is the subject of trap two below.
+
+---
+
+## The fields we ask for, and what they hold
+
+Only these are requested. A service that stops publishing one of them fails the
+field-list check before a single query is sent, which is deliberate — see
+[spec section 8](../corridor-screen/spec.md).
+
+### USGS `structures`, layers 23 and 2 — schools and cemeteries
+
+| Field | What it holds |
+|---|---|
+| `NAME` | the school's or cemetery's own name. This is what appears on the flag |
+| `PERMANENT_IDENTIFIER` | a stable GUID for the feature. Recorded as `source_feature_id` |
+| `FTYPE` | a numeric feature type — `730` for schools, `820` for cemeteries |
+| `FCODE` | a finer numeric code — `73003` elementary, `73004` middle, `73005` high |
+
+Geometry comes back as a single `x`/`y` point per record.
+
+**These names are published in capitals and answered in lower case.** See trap
+three.
+
+### USGS `transportation`, layer 38 — railroads
+
+| Field | What it holds |
+|---|---|
+| `name` | the subdivision or yard name. Frequently `null` on short-line track |
+| `permanent_identifier` | a stable GUID. Recorded as `source_feature_id` |
+| `railowner` | the operating railroad, e.g. `Union Pacific Railroad Company` |
+
+Geometry comes back as `paths`. Where `name` is empty the flag falls back to
+`railowner`, because "Union Pacific" tells a party chief more than a blank does.
+
+The layer also publishes `railusage`, `railclassification`, `railsubdivision`,
+`railownercode` and `lengthkm`. None is requested; the tool asks for what it
+prints.
+
+### TPMS, layer 0 — pipelines
+
+| Field | What it holds |
+|---|---|
+| `TPMS_ID` | the Railroad Commission's own identifier. Recorded as `source_feature_id` |
+| `OPER_NM` | the operator's name — who you would actually be calling |
+| `CMDTY_DESC` | what the line carries, in words. This is what appears on the flag |
+| `STATUS_CD` | whether the line is in service |
+
+Geometry comes back as `paths`. The layer publishes forty-odd fields including
+`DIAMETER`, `COUNTY`, `INTERSTATE` and `SYS_NM`; only the four above are asked
+for.
+
+!!! warning "`COUNTY` is not a usable filter on TPMS"
+    `COUNTY='BEXAR'` returns zero records, while a spatial query over the same
+    ground returns hundreds. Whatever that column holds, it is not the county
+    name in capitals. The tool filters spatially and never by that attribute.
 
 ---
 
@@ -165,6 +227,28 @@ no name and nobody is told.
 
 `flags.attribute` reads attributes case-insensitively, which is why it exists
 rather than a plain dictionary lookup.
+
+---
+
+## What this adds to the output beyond spec section 10
+
+[Spec section 10](../corridor-screen/spec.md) is a settled contract, and these
+fields are **not in it**. They are listed here rather than slipped in, so the
+ruling on whether they belong is a person's to make.
+
+Nothing named in section 10 was removed or renamed.
+
+| Field | Where | Why it is here |
+|---|---|---|
+| `lead_time_basis` | on every flag | Two working days and two calendar days are different promises. § 251.151(a) excludes weekends and holidays; § 711.041 does not. A bare number is what a reader turns into a date and gets wrong |
+| `lead_time_confirmed` · `lead_time_statutory` | on every flag | Issue #17 asks for "code and section **where it is statutory**." A reader has to be able to tell a statute from a company's published procedure |
+| `lead_time_not_found` | on every flag, and on the parcel row | Issue #17 asks that an unconfirmed lead time say "not found" and say where it looked. On the row it is what stops a school-only parcel reading as clear |
+| `lead_time_days_low` · `lead_time_note` · `lead_time_verified_on` · `lead_time_driver_detail` | on every flag | The railroad figure is a published *range*; carrying only the planning number hides what it was chosen from. The note and the date are what make a citation checkable a year later |
+| `max_lead_time_basis` | on the parcel row | Same reason as `lead_time_basis` |
+| `parcels_crossed` | on a corridor-level flag | The number that stops one easement's notice period being counted once per parcel |
+| `records_used` | on each service in the honesty block | "39 returned, 6 used" rather than a bare 6 |
+| `run.screened_for` · `run.lead_times` | on the run | The flag types checked run-wide, and the citation for each, so the file can be checked without this repo beside it |
+| `relation: "corridor"` | on a corridor-level flag | Section 10 defines `relation` as `on` or `adjacent`, and separately says a corridor flag carries the "same fields." A corridor flag therefore needs *some* third value, and this is it |
 
 ---
 

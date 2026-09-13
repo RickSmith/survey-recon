@@ -39,9 +39,19 @@ written separately and then drift apart under maintenance.
 """
 
 from . import geometry, lead_times as lead_times_mod
+from .geometry import FEET_PER_MILE
 from .sources import FLAG_FIELDS
 
-FEET_PER_MILE = 5280.0
+# How many parcels one feature has to cross before it is ALSO recorded against
+# the run as a whole. Stated, never derived, like the half-width beside it.
+#
+# Specification section 10 gives "a pipeline easement crossing many of them" as
+# the example of a corridor-level flag, so a feature that crosses many parcels
+# has to reach that block -- otherwise the spec's own example never gets there.
+# It stays on each parcel as well, because a party chief needs to know which
+# parcels, and it is recorded once at run level because an estimator must not
+# count one pipeline's 48 hours thirty times.
+DEFAULT_CORRIDOR_FLAG_PARCELS = 5
 
 
 def attribute(attributes, name):
@@ -78,7 +88,7 @@ def _relation(distance_miles, adjacent_distance_ft):
     return None, None
 
 
-def describe(source, flag_type, feature, relation, distance_ft, table):
+def describe(source, flag_type, feature, relation, distance_ft, table, parcel_count=None):
     """One flag, in the shape the output file uses.
 
     The lead-time half of it comes straight out of ``lead_times.toml`` and is
@@ -103,6 +113,10 @@ def describe(source, flag_type, feature, relation, distance_ft, table):
         "source_service": source.name,
         "source_feature_id": _identifier(attributes, fields),
         "screenable": True,
+        # Corridor-level only: how many parcels in this corridor it crosses.
+        # The number is what stops an estimator counting one easement once per
+        # parcel, so it is on the record rather than left to be worked out.
+        "parcels_crossed": parcel_count,
     }
     if entry is None:
         # A flag type with no row in the table. The loader would have caught a
@@ -111,6 +125,7 @@ def describe(source, flag_type, feature, relation, distance_ft, table):
         flag.update(
             {
                 "lead_time_days": None,
+                "lead_time_basis": None,
                 "lead_time_confirmed": False,
                 "lead_time_not_found": (
                     f"not found: no row for '{flag_type}' in the lead-time table. "
@@ -144,7 +159,8 @@ def _shapes(features):
 
 
 def attach(rows, rings_by_id, found, adjacent_distance_ft, alignment_paths,
-           corridor_half_width_ft, plane, table=None):
+           corridor_half_width_ft, plane, table=None,
+           corridor_flag_parcels=DEFAULT_CORRIDOR_FLAG_PARCELS):
     """Hang every flag on every parcel it touches, and total up the wait.
 
     ``found`` is one entry per service that answered: ``(source, flag_type,
@@ -154,10 +170,20 @@ def attach(rows, rings_by_id, found, adjacent_distance_ft, alignment_paths,
 
     Returns ``(corridor_flags, counts)``.
 
-    ``corridor_flags`` are features that cost time but belong to no single
-    parcel -- a pipeline crossing a road right of way that no appraisal district
-    taxes, a railway crossing the route. They are recorded against the run so
-    that nothing is quietly dropped for being hard to attach.
+    ``corridor_flags`` are features that cost time but belong to no **single**
+    parcel, and there are two ways for that to be true.
+
+    A feature can land on **no** parcel while still being in the corridor -- a
+    pipeline in a road right of way that no appraisal district taxes. Nothing
+    gets quietly dropped for being hard to attach.
+
+    Or a feature can land on **many** parcels, which is the example
+    specification section 10 gives: "a pipeline easement crossing many of them."
+    Such a feature stays on every parcel it touches, because a party chief needs
+    to know which parcels -- and it is recorded once more at run level, because
+    an estimator adding one pipeline's notice period thirty times has the wrong
+    number. The two records are separate and are never merged, for the same
+    reason ``on`` and ``adjacent`` are.
 
     ``counts`` is per flag type: how many records the service returned, how many
     landed on parcels, how many became corridor flags, and how many were used
@@ -192,22 +218,34 @@ def attach(rows, rings_by_id, found, adjacent_distance_ft, alignment_paths,
         returned = len(features)
         on_parcels = 0
         as_corridor = 0
+        # Counted apart from `as_corridor`, because a feature that crosses many
+        # parcels is recorded in both places on purpose. Only a feature on no
+        # parcel at all is the difference between "returned" and "used", so
+        # only that one may come off the unused figure -- otherwise the four
+        # numbers stop adding up and the honesty block stops being readable.
+        corridor_only = 0
         for feature, shape, box in _shapes(features):
             reach = geometry.grow_bbox(box, reach_miles)
-            landed = False
+            landed = 0
             for (row, rings), parcel_box in zip(parcels, boxes):
                 if not rings or parcel_box is None:
                     continue
-                if not geometry._boxes_overlap(reach, parcel_box):
+                if not geometry.boxes_overlap(reach, parcel_box):
                     continue
                 distance = geometry.shape_to_rings_miles(shape, rings, plane)
                 relation, distance_ft = _relation(distance, adjacent_distance_ft)
                 if relation is None:
                     continue
                 row["flags"].append(describe(source, flag_type, feature, relation, distance_ft, table))
-                landed = True
+                landed += 1
             if landed:
                 on_parcels += 1
+                if landed >= corridor_flag_parcels:
+                    corridor_flags.append(
+                        describe(source, flag_type, feature, "corridor", None, table,
+                                 parcel_count=landed)
+                    )
+                    as_corridor += 1
                 continue
             # Nothing to hang it on. It is only the run's problem if it is
             # actually in the corridor -- see the docstring.
@@ -217,11 +255,12 @@ def attach(rows, rings_by_id, found, adjacent_distance_ft, alignment_paths,
                     describe(source, flag_type, feature, "corridor", None, table)
                 )
                 as_corridor += 1
+                corridor_only += 1
         counts[flag_type] = {
             "returned": returned,
             "on_parcels": on_parcels,
             "corridor": as_corridor,
-            "unused": returned - on_parcels - as_corridor,
+            "unused": returned - on_parcels - corridor_only,
         }
 
     for row, _ in parcels:
@@ -239,7 +278,11 @@ def _total(row):
     is not clear. It is unmeasured, which is a different thing, and the same
     distinction as ``unknown`` against ``no``.
     """
-    days, driver = lead_times_mod.longest(row["flags"])
+    days, driver, basis = lead_times_mod.longest(row["flags"])
     row["max_lead_time_days"] = days
+    # Which days. Two working days and two calendar days are different
+    # promises, and a bare number beside them is the sort of thing a reader
+    # turns into a date and gets wrong.
+    row["max_lead_time_basis"] = basis
     row["lead_time_driver"] = driver
     row["lead_time_not_found"] = lead_times_mod.unconfirmed_types(row["flags"])

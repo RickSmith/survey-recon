@@ -230,6 +230,75 @@ class TestCorridorLevelFlags(unittest.TestCase):
         self.assertEqual(counts["school"]["unused"], 1)
 
 
+class TestAFeatureCrossingManyParcels(unittest.TestCase):
+    """Spec section 10's own example of a corridor-level flag.
+
+    "A pipeline easement crossing many of them." A rule that only promoted
+    features landing on *no* parcel would never reach the spec's own example,
+    because an easement crossing thirty parcels lands on thirty of them.
+    """
+
+    def four_parcels(self):
+        # Four side-by-side strips, all crossed by one east-west line.
+        rows, rings = [], {}
+        for i in range(4):
+            west = -98.66 + i * 0.01
+            identifier = f"strip-{i}"
+            rows.append(row(identifier))
+            rings[identifier] = [[[west, 29.54], [west, 29.55],
+                                  [west + 0.01, 29.55], [west + 0.01, 29.54]]]
+        return rows, rings
+
+    def crossing(self, rows, rings, threshold):
+        pipeline = line_feature([[-98.67, 29.545], [-98.61, 29.545]], CMDTY_DESC="NATURAL GAS")
+        return flags.attach(
+            rows, rings, [(PIPELINES, "pipeline", [pipeline])],
+            adjacent_distance_ft=100,
+            alignment_paths=ALIGNMENT,
+            corridor_half_width_ft=300,
+            plane=PLANE,
+            table=TABLE,
+            corridor_flag_parcels=threshold,
+        )
+
+    def test_it_is_recorded_against_the_run_as_well_as_on_each_parcel(self):
+        rows, rings = self.four_parcels()
+        corridor_flags, _ = self.crossing(rows, rings, threshold=4)
+        self.assertEqual([len(r["flags"]) for r in rows], [1, 1, 1, 1],
+                         "it stays on every parcel -- a party chief needs to know which")
+        self.assertEqual(len(corridor_flags), 1,
+                         "and once at run level -- an estimator must not count it four times")
+        self.assertEqual(corridor_flags[0]["parcels_crossed"], 4)
+
+    def test_below_the_stated_threshold_it_stays_on_the_parcels_only(self):
+        rows, rings = self.four_parcels()
+        corridor_flags, _ = self.crossing(rows, rings, threshold=5)
+        self.assertEqual(corridor_flags, [])
+
+    def test_the_counts_still_add_up(self):
+        """A feature in both places must not be subtracted twice."""
+        rows, rings = self.four_parcels()
+        _, counts = self.crossing(rows, rings, threshold=4)
+        c = counts["pipeline"]
+        self.assertEqual(c, {"returned": 1, "on_parcels": 1, "corridor": 1, "unused": 0})
+
+
+class TestWhichDaysAreOnTheRow(unittest.TestCase):
+    def test_a_flag_says_which_days_its_number_counts(self):
+        found = [(CEMETERIES, "cemetery", [point_feature(-98.655, 29.545, name="Evers")])]
+        rows, _, _ = attach(found)
+        self.assertEqual(rows[0]["flags"][0]["lead_time_basis"], "calendar days")
+
+    def test_the_parcel_total_says_which_days_too(self):
+        """A bare number is what a reader turns into a date and gets wrong."""
+        found = [(PIPELINES, "pipeline", [
+            line_feature([[-98.68, 29.5455], [-98.63, 29.5455]], CMDTY_DESC="NATURAL GAS"),
+        ])]
+        rows, _, _ = attach(found)
+        self.assertEqual(rows[0]["max_lead_time_days"], 2)
+        self.assertEqual(rows[0]["max_lead_time_basis"], "working days")
+
+
 class TestCountsAreVisible(unittest.TestCase):
     def test_the_honesty_block_can_say_how_many_records_were_used(self):
         found = [(CEMETERIES, "cemetery", [
