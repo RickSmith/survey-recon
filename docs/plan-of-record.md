@@ -38,6 +38,8 @@ Companion: `txdot-research.md` — verified endpoints, TxDOT rules, ROE lead tim
 | 19 | Who builds it | Rick directs, the agent builds — git history becomes a teaching artifact |
 | 20 | Demo rig | Cache everything, replay live |
 
+**Where a decision above got narrowed.** The table stands as written; this is the pointer, not an edit to it. **Decision 2** named Hermes (Nous Research) for autonomous work, and **decision 16** filed the ROE letters as the Hermes beat. What was built under [#34](https://github.com/RickSmith/survey-recon/issues/34) is a scheduled GitHub Actions workflow, which is autonomous and is not Hermes. The account is [ADR 0002](adr/0002-the-hermes-segment-runs-on-a-schedule.md): the cron job stays, the name stays, and the presenter says so out loud. Overriding a decision is allowed here. Overriding one quietly is not.
+
 **On the name:** "recon" is the audience's own word for the desktop work before a bid — it describes the work rather than the arithmetic, survives the generalization problem (you recon a ranch boundary the same as a corridor), and carries no "AI" branding to date it.
 
 ---

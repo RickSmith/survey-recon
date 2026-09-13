@@ -202,12 +202,17 @@ for autonomous work," and decision 16 files the ROE letters as "the Hermes
 beat." What is built is a GitHub Actions schedule reading a clock. It is
 genuinely autonomous — nobody starts it — and it is not Hermes.
 
-That is a gap between a locked decision and a delivered thing, and this page is
-not the place it gets closed. It is **Rick's call**, and there are three
-honest ways out: run the segment on Hermes as decision 2 says; keep the cron
-job and record the substitution in an ADR under `docs/adr/`; or keep the name
-as the session's label for the block and say plainly on stage what is behind
-it. Naming it is the part that could not wait.
+That is a gap between a locked decision and a delivered thing, and it is
+settled rather than left open:
+[ADR 0002](../adr/0002-the-hermes-segment-runs-on-a-schedule.md) keeps the cron
+job and keeps the name, and says why. The short version is that the claim the
+segment makes — day 21 arrives whether or not a person is looking — is better
+evidenced by a public run summary than by a model call, and that reaching a
+hosted Hermes model would put an API key in the attendee path.
+
+**So say it on stage.** The block is called Hermes and a cron job runs it. A
+substitution nobody mentions is the thing this repo's own history exists to
+make visible.
 
 ---
 
