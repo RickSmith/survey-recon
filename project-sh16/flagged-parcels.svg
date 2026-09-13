@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+<rect width="1920" height="1080" fill="#ffffff"/>
+<text x="60" y="86" font-size="46" font-weight="700" fill="#111827">SH0016-KG DFO 347.7 to 356.367</text>
+<text x="60" y="136" font-size="30" fill="#4b5563">8 of 524 parcels carry something that costs time</text>
+<text x="60" y="212" font-size="27" font-weight="700" fill="#374151">Parcel</text>
+<text x="380" y="212" font-size="27" font-weight="700" fill="#374151">Owner</text>
+<text x="920" y="212" font-size="27" font-weight="700" fill="#374151">What is on it</text>
+<text x="1460" y="212" font-size="27" font-weight="700" fill="#374151">Longest wait</text>
+<line x1="60" y1="232" x2="1860" y2="232" stroke="#d1d5db" stroke-width="2"/>
+<text x="60" y="284" font-size="26" fill="#111827" font-weight="400">04480-201-0011</text>
+<text x="380" y="284" font-size="26" fill="#111827" font-weight="400">NORTHSIDE I S D</text>
+<text x="920" y="284" font-size="26" fill="#111827" font-weight="400">school (on)</text>
+<text x="1460" y="284" font-size="26" fill="#b45309" font-weight="600">not found — school</text>
+<rect x="44" y="304" width="1832" height="56" fill="#f9fafb"/>
+<text x="60" y="344" font-size="26" fill="#111827" font-weight="400">04524-401-0020</text>
+<text x="380" y="344" font-size="26" fill="#111827" font-weight="400">NORTHSIDE I S D</text>
+<text x="920" y="344" font-size="26" fill="#111827" font-weight="400">school (on)</text>
+<text x="1460" y="344" font-size="26" fill="#b45309" font-weight="600">not found — school</text>
+<text x="60" y="404" font-size="26" fill="#111827" font-weight="400">05955-000-1031</text>
+<text x="380" y="404" font-size="26" fill="#111827" font-weight="400">NORTHSIDE I S D</text>
+<text x="920" y="404" font-size="26" fill="#111827" font-weight="400">school (on)</text>
+<text x="1460" y="404" font-size="26" fill="#b45309" font-weight="600">not found — school</text>
+<rect x="44" y="424" width="1832" height="56" fill="#f9fafb"/>
+<text x="60" y="464" font-size="26" fill="#111827" font-weight="400">15664-003-0010</text>
+<text x="380" y="464" font-size="26" fill="#111827" font-weight="400">SAN ANTONIO SCENIC HILLS OF</text>
+<text x="920" y="464" font-size="26" fill="#111827" font-weight="400">school (on)</text>
+<text x="1460" y="464" font-size="26" fill="#b45309" font-weight="600">not found — school</text>
+<text x="60" y="524" font-size="26" fill="#111827" font-weight="400">18009-000-0210</text>
+<text x="380" y="524" font-size="26" fill="#111827" font-weight="400">WOOD JOHN H JR PUBLIC CHARTER DIST</text>
+<text x="920" y="524" font-size="26" fill="#111827" font-weight="400">school (on)</text>
+<text x="1460" y="524" font-size="26" fill="#b45309" font-weight="600">not found — school</text>
+<rect x="44" y="544" width="1832" height="56" fill="#f9fafb"/>
+<text x="60" y="584" font-size="26" fill="#111827" font-weight="400">19142-001-0010</text>
+<text x="380" y="584" font-size="26" fill="#111827" font-weight="400">MEHAT PROPERTIES LLC</text>
+<text x="920" y="584" font-size="26" fill="#111827" font-weight="400">school (adjacent, 72 ft)</text>
+<text x="1460" y="584" font-size="26" fill="#b45309" font-weight="600">not found — school</text>
+<text x="60" y="644" font-size="26" fill="#111827" font-weight="400">19142-002-0020</text>
+<text x="380" y="644" font-size="26" fill="#111827" font-weight="400">NORTHSIDE I S D</text>
+<text x="920" y="644" font-size="26" fill="#111827" font-weight="400">school (on)</text>
+<text x="1460" y="644" font-size="26" fill="#b45309" font-weight="600">not found — school</text>
+<rect x="44" y="664" width="1832" height="56" fill="#f9fafb"/>
+<text x="60" y="704" font-size="26" fill="#111827" font-weight="400">15664-003-0040</text>
+<text x="380" y="704" font-size="26" fill="#111827" font-weight="400">EPISCOPAL CHURCH CORP IN WEST TEXAS</text>
+<text x="920" y="704" font-size="26" fill="#111827" font-weight="400">cemetery (on)</text>
+<text x="1460" y="704" font-size="26" fill="#111827" font-weight="600">14 calendar days</text>
+<text x="60" y="944" font-size="20" fill="#6b7280">Cemetery — 14 calendar days: Tex. Health &amp; Safety Code § 711.041(c)(2)</text>
+<text x="60" y="970" font-size="20" fill="#6b7280">School — not found: Tex. Educ. Code § 22.0834 — background checks, which is not a notice period</text>
+<text x="60" y="1008" font-size="23" fill="#b45309">A wait reading “not found” is unmeasured, not zero. Somebody has to make that call.</text>
+<text x="60" y="1044" font-size="21" fill="#6b7280">Run live, finished 2026-09-13T07:07:07-05:00. Half-width 300 ft.</text>
+</svg>
