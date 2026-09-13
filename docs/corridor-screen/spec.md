@@ -1,7 +1,7 @@
 # Corridor screening — specification
 
 **Status:** settled 2026-09-12, from the grilling on [issue #5](https://github.com/RickSmith/survey-recon/issues/5).
-**Amended:** 2026-09-13 — section 3.6, the offline, comparison and live-check commands; section 14, which entry of the cache the live check is allowed to refresh; section 5, the crew safety step; section 6, the pipeline source and the crew safety layers; section 8, how a returned record is tested against the corridor; section 10, the parcel field names, the ROW map block, the `crew_safety` block, and nine additions for the flags. See the notes there.
+**Amended:** 2026-09-13 — section 3.6, the offline, comparison and live-check commands; section 14, which entry of the cache the live check is allowed to refresh; section 5, the crew safety step; section 6, the pipeline source and the crew safety layers; section 8, how a returned record is tested against the corridor; section 10, the parcel field names, the ROW map block, the `crew_safety` block, and nine additions for the flags; section 3.6, the parcel table command and the two files it writes; section 9, whose drawings section 9 is counting; section 10, what `renderings` holds; section 15, the two renderings that are no longer unsettled. See the notes there.
 **Scope of work for:** the `corridor-screen/` tool.
 
 A note on words. A **spec** is a scope of work. A **schema** is an agreed field list — the column headings on a parcel table that everybody uses the same way. An **endpoint** is the web address you ask a question of. A **cache** is a saved copy of an answer you already got. Everything else is in [CONTEXT.md](https://github.com/RickSmith/survey-recon/blob/main/CONTEXT.md).
@@ -99,11 +99,14 @@ There is a second command, and it is a check rather than a screening run. It com
 python -m corridor_screen.replay one-run/screening.json another-run/screening.json
 ```
 
-One per rendering, reading the screening file rather than the services — section 2's "one fetch, many renderings." The first of the three is built:
+One per rendering, reading the screening file rather than the services — section 2's "one fetch, many renderings." Two of the three are built:
 
 ```bash
 python -m corridor_screen.bid_memo --out project-sh16/
+python -m corridor_screen.parcel_table --out project-sh16/
 ```
+
+The parcel table writes **two files from one run**: `flagged-parcels.md`, and `flagged-parcels.svg` for the projector. Section 9's reasoning for SVG is why — a Markdown file cannot promise a type size, and [#23](https://github.com/RickSmith/survey-recon/issues/23) asks for something readable from the back of a room.
 
 And a third, which is the one genuinely live call — the plan of record's "one live moment proves it isn't a movie," kept as its own act rather than folded into a run that must not fail:
 
@@ -117,6 +120,13 @@ python -m corridor_screen.live_check --out project-sh16/
     **This third command was not asked for.** [#20](https://github.com/RickSmith/survey-recon/issues/20) asked that one genuinely live call be "identified and kept," which the plan of record's section 4 had already called for. It did not name a command, and the review was right to put that to Rick rather than let it in quietly.
 
     It was accepted on 2026-09-13, for what the command adds over a call made by hand: it cross-checks what NGS says now against what the capture found, which is what turns a live call into a live *proof*. On SH16 it reports 5 marks in both and 5 conditions agreeing. A bare request would hand a room raw JSON instead.
+
+!!! note "Amended 2026-09-13, on [PR #64](https://github.com/RickSmith/survey-recon/pull/64)"
+    Until then this section read "The first of the three is built" and listed only the bid memo.
+
+    The flagged parcel table was built under [#23](https://github.com/RickSmith/survey-recon/issues/23), so the sentence was simply stale. It is a count of what exists, not a contract, and it is corrected rather than argued.
+
+    **What did need a ruling is that this rendering writes two files rather than one.** No other command does. The reason is in the ticket: a table "readable from the back of a conference room" that "fits on screen without scrolling" is a promise about type size, and a Markdown file makes no such promise — whatever opens it decides. Section 9 had already chosen SVG for exactly that property. Rick ruled on 2026-09-13 that the same reasoning carries here.
 
     It is a separate act rather than part of the screening run for one reason, recorded in `corridor_screen/live_check.py`: `--mode cache-only` promises no network calls, and folding a live call into the run that must not fail would mean a venue with a captive portal loses both. Apart, the worst a dead network costs is the live moment.
 
@@ -320,6 +330,15 @@ Two are produced:
 
 There is no basemap — that would mean a network dependency inside the artifact. Instead the tool prints a public web-map link centered on the corridor, so one click confirms the real-world location against real imagery.
 
+**Those two are the drawings a screening run makes.** A rendering command may draw as well, for the same reasons and in the same format, and its files belong to that command rather than to the run. `flagged-parcels.svg` is the first of those.
+
+!!! note "Amended 2026-09-13, on [PR #64](https://github.com/RickSmith/survey-recon/pull/64)"
+    Until then this section said only "Two are produced," with nothing saying who produced them.
+
+    **Nothing about the two run drawings changed, and neither is built yet.** What is added is whose drawing is whose. Today `project-sh16/` holds exactly one SVG and it is not either of them: `flagged-parcels.svg`, written after the run by a separate command reading `screening.json`. That is section 2's "one fetch, many renderings" working as intended — this rendering simply happens to be a picture rather than prose. Left as it was, the count in this section and the count on disk would have disagreed the moment somebody checked, with no sentence saying which was wrong.
+
+    Raised on [PR #64](https://github.com/RickSmith/survey-recon/pull/64) rather than left to be discovered, and Rick ruled on 2026-09-13.
+
 ## 10. Output, field by field
 
 One JSON file. JSON is a plain text format that both a person and a program can read.
@@ -360,10 +379,15 @@ services   control   row_maps   crew_safety   parcels   corridor_flags   warning
 | `sanity_margin_ft` | the third stated distance — how far outside the ribbon a record may sit before the run doubts it. See the section 8 note |
 | `area` | `texas-bexar` |
 | `not_screenable` | list of type and reason — see section 12 |
-| `renderings` | paths to both SVG files |
+| `renderings` | paths to the run's own two SVG drawings — section 9. A file written afterwards by a rendering command belongs to that command and is not listed here |
 | `map_link` | public web-map URL centered on the corridor |
 | `screened_for` | the flag types this run checked for, run-wide. Built from the services that actually answered, never from the list of types the tool knows about |
 | `lead_times` | the number and its citation for each type in `screened_for`, so the file can be checked without this repo beside it |
+
+!!! note "Amended 2026-09-13, on [PR #64](https://github.com/RickSmith/survey-recon/pull/64)"
+    Until then `renderings` read "paths to both SVG files."
+
+    Both of *what* was the question. It is the run's own two drawings — section 9 — and it stays empty until they are built. A rendering command writing a drawing of its own does not register it here, for the same reason `bid-memo.md` is not listed anywhere in this file: a run cannot record a file written after the run finished. Rick ruled on 2026-09-13.
 
 ### `alignment`
 
@@ -683,7 +707,9 @@ project-sh16/cache/
 
 ## 15. Not settled here
 
-- The bid memo, the flagged parcel table and the crew-day build-up. Separate work orders, all reading this file.
+- The crew-day build-up. A separate work order reading this file.
+
+    The bid memo and the flagged parcel table were on this list until 2026-09-13. Both are built, under [#22](https://github.com/RickSmith/survey-recon/issues/22) and [#23](https://github.com/RickSmith/survey-recon/issues/23), and their commands are in section 3.6. Each was settled by its own work order rather than by this specification, which is what this entry always meant and still means for the third. Rick ruled on 2026-09-13.
 - Any county but Bexar.
 - Elevation and topography. USGS 3DEP timed out on three attempts of four, and returned a silent wrong answer on the fourth. It stays off the critical path.
 - TCP(S-1)-08A. The host blocks automated fetch, so it must be pulled by hand. It is the crew-time document, and the traffic-control cost cliff is real: a twenty-minute shot on a 55 mph highway turns a two-person crew into a crew plus a shadow truck with an attenuator.
