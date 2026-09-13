@@ -39,11 +39,17 @@ import re
 import unittest
 from pathlib import Path
 
-from tests.markdown_docs import flat, table_rows, text_of
+from tests.build_up_figures import (
+    BUILD_UP,
+    HANDLE,
+    PRICED_BY_THE_SEAT,
+    figures,
+    rate_handles,
+)
+from tests.markdown_docs import flat, text_of
 
 REPO = Path(__file__).resolve().parents[2]
 BRIEF = REPO / "docs" / "for-principals" / "index.md"
-BUILD_UP = REPO / "project-sh16" / "crew-day.md"
 
 # Four minutes, at two hundred words a minute -- the ordinary rate for reading
 # something you have to think about, slower than a novel and faster than a
@@ -104,56 +110,11 @@ COMMAND_WORDS = [
 # board and the manual on nearly every page it has.
 PROMPT = re.compile(r"(?:^|\s)\$\s+\w", re.MULTILINE)
 
-# Buying software by the seat, in the words it gets sold in. The issue is blunt
-# about this: cost is in billable-hour terms, never subscription pricing.
-SUBSCRIPTION_WORDS = [
-    "subscription",
-    "per seat",
-    "a seat",
-    "per user",
-    "per month",
-    "/month",
-    "monthly fee",
-    "license fee",
-    "free tier",
-    "pricing plan",
-]
-
 # The address the manual lives at, and the address search engines still hand
 # out. CLAUDE.md names both. The second is a scripted failure in the session,
 # which is exactly why it must not reach the handout.
 LIVE_MANUAL = "txdot.gov/manuals/row/ess"
 SUPERSEDED_MANUAL = "onlinemanuals.txdot.gov"
-
-# How the build-up writes the two day counts it will not add together.
-DAY_COUNTS = re.compile(
-    r"\*\*(\d+) crew-days in the field\. (\d+) days in the office\.\*\*"
-)
-# How it writes the size of a crew, which is the unit those day counts are in.
-CREW_SIZE = re.compile(r"A crew-day here is \*\*(\d+) people\*\*")
-# Its two totals, and the count of lines it could not total at all.
-FIELD_HOURS = re.compile(r"\*\*Field hours total: ([\d.]+) hours\.\*\*")
-OFFICE_HOURS = re.compile(r"\*\*Office hours total: ([\d.]+) hours\.\*\*")
-UNTOTALED = re.compile(r"\*\*That total is a floor\.\*\* (\d+) lines")
-
-# A rate handle, as the build-up stamps them: A1 through A12, in a table whose
-# first cell is the handle in backticks.
-HANDLE = re.compile(r"`(A\d+)`")
-
-
-def one(pattern, markdown, what):
-    """The single match for a pattern, or a failure that names what was wanted.
-
-    Every pattern above describes a sentence the build-up writes exactly once.
-    Finding it twice is as much a finding as not finding it at all -- a second
-    copy is the thing that drifts -- so both are failures here.
-    """
-    found = pattern.findall(markdown)
-    if len(found) != 1:
-        raise AssertionError(
-            f"{what} appears {len(found)} times in {BUILD_UP.name}, wanted once"
-        )
-    return found[0]
 
 
 def headings(markdown):
@@ -247,7 +208,7 @@ class TheBriefHasNoTerminalOnIt(unittest.TestCase):
 class TheCostIsInHours(unittest.TestCase):
     def test_nothing_is_priced_by_the_seat(self):
         markdown = text_of(BRIEF).lower()
-        for word in SUBSCRIPTION_WORDS:
+        for word in PRICED_BY_THE_SEAT:
             self.assertNotIn(
                 word,
                 markdown,
@@ -258,21 +219,22 @@ class TheCostIsInHours(unittest.TestCase):
     def test_the_day_counts_are_the_build_ups_own(self):
         """The two numbers the build-up refuses to add, on the page as it writes
         them, and neither one given as the other."""
-        field, office = one(DAY_COUNTS, text_of(BUILD_UP), "the two day counts")
+        build_up = figures()
         markdown = flat(text_of(BRIEF))
-        self.assertIn(f"{field} crew-days", markdown)
-        self.assertIn(f"{office} days in the office", markdown)
+        self.assertIn(f"{build_up.field_days} crew-days", markdown)
+        self.assertIn(f"{build_up.office_days} days in the office", markdown)
 
     def test_it_says_how_big_a_crew_day_is(self):
         """A day count means nothing without the crew it counts."""
-        people = one(CREW_SIZE, text_of(BUILD_UP), "the crew size")
-        self.assertIn(f"{people} people", flat(text_of(BRIEF)))
+        self.assertIn(f"{figures().crew_size} people", flat(text_of(BRIEF)))
 
     def test_the_hours_it_quotes_are_the_build_ups_hours(self):
-        build_up = text_of(BUILD_UP)
+        build_up = figures()
         markdown = flat(text_of(BRIEF))
-        for pattern, what in ((FIELD_HOURS, "field"), (OFFICE_HOURS, "office")):
-            hours = one(pattern, build_up, f"the {what} hours total")
+        for what, hours in (
+            ("field", build_up.field_hours),
+            ("office", build_up.office_hours),
+        ):
             self.assertIn(
                 hours,
                 markdown,
@@ -283,19 +245,14 @@ class TheCostIsInHours(unittest.TestCase):
     def test_it_says_the_estimate_is_a_floor(self):
         """The two lines with no total are the most honest thing in the
         build-up, and the easiest thing to leave off a summary of it."""
-        lines = one(UNTOTALED, text_of(BUILD_UP), "the lines with no total")
         markdown = flat(text_of(BRIEF))
-        self.assertIn(f"{lines} lines", markdown)
+        self.assertIn(f"{figures().untotaled_lines} lines", markdown)
         self.assertIn("floor", markdown)
 
     def test_every_rate_handle_it_names_is_a_real_handle(self):
         """A handle is an invitation to argue with one rate by name. A handle
         the build-up does not have sends that argument nowhere."""
-        real = {
-            row[0].strip("`")
-            for row in table_rows(text_of(BUILD_UP))
-            if row and HANDLE.fullmatch(row[0])
-        }
+        real = rate_handles()
         self.assertTrue(real, "no rate handles found in the build-up at all")
         for handle in set(HANDLE.findall(text_of(BRIEF))):
             self.assertIn(handle, real, f"{handle} is not a rate in {BUILD_UP.name}")
@@ -317,7 +274,7 @@ class TheArgumentIsRework(unittest.TestCase):
 
 class TheBriefSaysWhoSigns(unittest.TestCase):
     def test_it_says_who_signs_plainly(self):
-        """A section of its own, and the licence named in it.
+        """A section of its own, and the license named in it.
 
         Checking for the word "seal" anywhere was the first draft of this, and
         it could not fail: the page links to `seal-and-responsible-charge.md`,

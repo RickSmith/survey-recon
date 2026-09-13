@@ -358,38 +358,62 @@ build-up in project-sh16/, not from invention.
 
 # The billable-hour math
 
-- What the desktop recon on this corridor costs in hours today
-- What it cost with the agent doing the reading, and who checked it
-- Every number traced to the crew-day build-up in the repo
-- No subscription pricing. Nobody in this room buys software by the seat
-
-> **To be written** — #32
+- **38 crew-days** in the field — 299.29 hours at 8 to the day, 2 people to a crew
+- **18 days** in the office — 138.26 hours. The two are never added together
+- Largest line: corner recovery, rate `A4` — 524 tracts at 0.5 hours = 262.00
+- Argue with `A4`. Do not argue with the total
+- 2 lines have no total at all, so 38 is a floor rather than an estimate
 
 <!--
 0:46–0:52 · 6 min · The money slide
 
-Numbers must come from project-sh16/crew-day.md and carry their handles, A1
-through A12, so anybody who wants to argue with one can find it.
+Every figure here is read out of project-sh16/crew-day.md, and the tests fail
+if this slide and that file ever disagree. Nothing on it was typed from memory.
+
+Say the handles out loud. A4 is the one this room will want to argue with —
+half an hour on every tract the corridor clips, whether it is a ranch or a
+quarter-acre lot — and letting them argue with it is the whole point of
+showing the arithmetic.
+
+Do not price the agent here. Nothing in this repo has measured what it saves,
+and a number invented on this slide is the one they will quote back at you.
+
+Hours, never a price per seat or per month. Nobody in this room buys software
+that way, and quoting it in those units loses them.
+
+299.29 and 138.26 are crew-hours, not person-hours. If somebody in the second
+row starts halving them, that is why.
+
+An RPLS directed this run and checked every figure on it. Say so if you are
+asked; the accountability close at 1:54 is where it gets said properly.
+
+Fallback: project-sh16/crew-day.md is the build-up itself, with every step.
 -->
 
 ---
 
 # Rework, not speed
 
-- TxDOT: there is no acceptable failure rate for any TxDOT survey
-- A non-compliant survey cannot be invoiced
-- For an owner, that is not a quality sentence. It is a money sentence
-- Speed is the smaller half of the argument. Lead with this one
+- **"There is no acceptable failure rate for any TxDOT survey"**
+- A non-compliant survey **cannot be invoiced**
+- Not a sentence about quality. A sentence about money
+- Hours you have already paid a crew for, and cannot bill to anybody
+- Speed is the smaller half of this argument
 
 Survey Manual (ESS) rev. April 2026, Ch. 4 · txdot.gov/manuals/row/ess
-
-> **To be written** — #32
 
 <!--
 0:46–0:52 · 6 min · The money slide
 
-"Cannot be invoiced" needs its citation on the slide, with the manual section
-and its URL. Use txdot.gov/manuals/row/ess/ - never onlinemanuals.txdot.gov.
+Read the quote off the slide rather than paraphrasing it. This is the sentence
+an owner repeats to their accountant, and the citation is on the slide so the
+back of the room can check it while you are saying it.
+
+If the room wants to talk about speed, bring it back to the unbillable hours.
+An agent that reads every standard before the crew rolls is aimed at rework;
+the time it saves is real and is the smaller argument.
+
+Never onlinemanuals.txdot.gov — that host is the failure beat later on.
 -->
 
 ---
