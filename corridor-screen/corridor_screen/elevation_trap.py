@@ -82,19 +82,15 @@ wrong end.
 import argparse
 import json
 import sys
-from pathlib import Path
 
+from . import beats
 from .cache import long_path
 
-CAPTURE_DIR = Path(__file__).resolve().parent.parent / "captures" / "silent-nodata"
+CAPTURE_DIR = beats.capture_dir("silent-nodata")
 
 # When every response below was captured. Services change; this endpoint already
 # changed shape once between this repo's research and its re-test.
 CHECKED_ON = "2026-09-13"
-
-# The beat as `--show` renders it, committed beside the captures so a podium
-# where Python will not start still has it. Pinned to the code by a test.
-BEAT_NAME = "the-beat.txt"
 
 # The conversion that proves the two numbers are one elevation rather than two
 # readings. Stated here so the test can check the ratio rather than a constant.
@@ -307,14 +303,14 @@ def survives_a_local_check(name):
 def beat():
     """The failure beat, built entirely from committed captures.
 
-    Plain ASCII: an em dash is a `UnicodeEncodeError` and a traceback on a
-    Windows console that has not been told otherwise, which is every borrowed
-    podium laptop. Beat one found that the hard way.
+    Plain ASCII, and `beats.render` refuses anything else rather than trusting
+    this sentence to be read. Beat one found the em dash the hard way; issue
+    #67 is about making that structural instead of remembered.
     """
     feet, us_feet = raw_value("feet"), raw_value("us_feet")
     ratio = value_of("feet") / value_of("us_feet")
 
-    return "\n".join([
+    return beats.render([
         "  Failure beat 2 - the answer that is wrong rather than missing",
         "",
         f"  One question, asked twice, one word apart. {POINT}:",
@@ -360,18 +356,11 @@ def main(argv=None):
         prog="corridor-screen elevation-trap",
         description="Failure beat two: a plausible wrong answer, beside the right one.",
     )
-    group = parser.add_mutually_exclusive_group()
-    group.add_argument("--show", action="store_true",
-                       help="print the failure beat (the default)")
-    group.add_argument("--write-fallback", action="store_true",
-                       help=f"re-render the committed {BEAT_NAME} beside the captures")
+    beats.beat_arguments(parser)
     args = parser.parse_args(argv)
 
     if args.write_fallback:
-        path = CAPTURE_DIR / BEAT_NAME
-        with open(long_path(path), "w", encoding="utf-8", newline="\n") as handle:
-            handle.write(beat() + "\n")
-        print(f"  written  {path}")
+        print(f"  written  {beats.write_fallback(CAPTURE_DIR, beat())}")
         return 0
 
     print(beat())

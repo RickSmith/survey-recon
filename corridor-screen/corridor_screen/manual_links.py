@@ -64,21 +64,21 @@ import re
 import sys
 from pathlib import Path
 
+from . import beats
 from .cache import long_path
 
-CAPTURE_DIR = Path(__file__).resolve().parent.parent / "captures" / "superseded-manual"
+CAPTURE_DIR = beats.capture_dir("superseded-manual")
 
 # When every claim below was checked against the live web. Section numbers and
 # revision dates move; a claim with no date is a claim about nothing.
 CHECKED_ON = "2026-09-13"
 
-# The beat, rendered and committed beside the pages it is built from. Issue #27
-# asks for "a capture that can stand in if the live thing breaks on the day" --
-# the page captures are this beat's *inputs*, and this is its *output*. If
-# Python will not start on the podium, a presenter opens a text file instead.
-# A test pins it to what `beat()` produces, the way the committed
-# `screening.json` is pinned by the replay check.
-BEAT_NAME = "the-beat.txt"
+# The rendered beat is committed as `beats.BEAT_NAME` beside the captures.
+# Issue #27 asks for "a capture that can stand in if the live thing breaks on
+# the day" -- the page captures are this beat's *inputs*, and the rendered beat
+# is its *output*. If Python will not start on the podium, a presenter opens a
+# text file instead. `tests/test_beats.py` pins it to what `beat()` produces,
+# the way the committed `screening.json` is pinned by the replay check.
 
 # The one sentence. Issue #25: "The script names what the agent did wrong in one
 # sentence." One, and it stays one -- there is a test on the full stops.
@@ -372,12 +372,14 @@ def beat():
     current = revision_in(capture_text("current"))
     old_url = CAPTURES[0]["url"]
 
-    # **Plain ASCII, deliberately.** An em dash here is a `UnicodeEncodeError`
-    # and a traceback on a Windows console that has not been told otherwise --
-    # which is every borrowed podium laptop. Verified: the first version of this
-    # function died under `PYTHONIOENCODING=cp437`, at 1:36, instead of printing
-    # the beat. Nothing else in this package prints a non-ASCII character.
-    return "\n".join([
+    # **Plain ASCII, and `beats.render` refuses anything else.** An em dash here
+    # is a `UnicodeEncodeError` and a traceback on a Windows console that has
+    # not been told otherwise -- which is every borrowed podium laptop.
+    # Verified: the first version of this function died under
+    # `PYTHONIOENCODING=cp437`, at 1:36, instead of printing the beat. It was
+    # caught by review rather than by anything running, which is what issue #67
+    # moved into the seam below.
+    return beats.render([
         "  Failure beat 1 - the superseded manual",
         "",
         "  What a search for the TxDOT Survey Manual still hands you:",
@@ -408,20 +410,15 @@ def main(argv=None):
         prog="corridor-screen manual-links",
         description="Failure beat one, and the guard that keeps this repo out of it.",
     )
-    group = parser.add_mutually_exclusive_group()
-    group.add_argument("--show", action="store_true",
-                       help="print the failure beat (the default)")
+    group = beats.beat_arguments(parser)
+    # This beat's own option, in the same mutually exclusive group -- which is
+    # why `beat_arguments` hands the group back rather than keeping it.
     group.add_argument("--check", metavar="ROOT", nargs="?", const=".",
                        help="fail if any page or module cites a superseded URL")
-    group.add_argument("--write-fallback", action="store_true",
-                       help=f"re-render the committed {BEAT_NAME} beside the captures")
     args = parser.parse_args(argv)
 
     if args.write_fallback:
-        path = CAPTURE_DIR / BEAT_NAME
-        with open(long_path(path), "w", encoding="utf-8", newline="\n") as handle:
-            handle.write(beat() + "\n")
-        print(f"  written  {path}")
+        print(f"  written  {beats.write_fallback(CAPTURE_DIR, beat())}")
         return 0
 
     if args.check:
