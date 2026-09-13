@@ -6,7 +6,7 @@ import unittest
 from datetime import datetime, timezone
 from pathlib import Path
 
-from corridor_screen import output
+from corridor_screen import control, output
 from corridor_screen.alignment import from_route_features
 from corridor_screen.corridor import Corridor
 from corridor_screen.sources import PARCELS
@@ -15,7 +15,7 @@ STRAIGHT = [[-98.6, 29.0, 100.0], [-98.6, 29.1, 101.0], [-98.6, 29.2, 102.0]]
 RING = [[-98.7, 29.0], [-98.7, 29.2], [-98.5, 29.2], [-98.5, 29.0]]
 
 
-def a_document(status="complete", parcels=()):
+def a_document(status="complete", parcels=(), control=None):
     alignment = from_route_features(
         [{"attributes": {}, "geometry": {"paths": [STRAIGHT]}}], "SH0016-KG", 100.0, 102.0
     )
@@ -35,6 +35,7 @@ def a_document(status="complete", parcels=()):
         warnings=[],
         status=status,
         stopped_at_service=None if status == "complete" else "BCAD_Parcels",
+        control=control,
     )
 
 
@@ -49,9 +50,21 @@ class TestShape(unittest.TestCase):
 
     def test_blocks_this_pass_does_not_fill_say_so_rather_than_being_absent(self):
         document = a_document()
-        for block in ("roadway", "control", "row_maps"):
+        for block in ("roadway", "row_maps"):
             self.assertEqual(document[block]["status"], "not-screened")
             self.assertTrue(document[block]["detail"])
+
+    def test_the_control_block_is_carried_through_as_it_was_built(self):
+        """``control.block`` owns the shape. ``output`` only carries it."""
+        block = control.block([], without_position=0)
+        document = a_document(control=block)
+        self.assertEqual(document["control"], block)
+
+    def test_a_run_with_no_control_block_still_says_what_happened(self):
+        """The fallback is for a caller that never got that far, not a blank."""
+        document = a_document()
+        self.assertEqual(document["control"]["status"], "not-screened")
+        self.assertTrue(document["control"]["detail"])
 
     def test_the_two_things_no_public_source_publishes_are_always_named(self):
         types = {item["type"] for item in a_document()["run"]["not_screenable"]}

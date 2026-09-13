@@ -1,0 +1,15 @@
+# Provenance record. The response file beside this one is exactly what the
+# server sent and is never edited. Every parameter of the request is listed
+# under [request_params], so the call can be repeated and checked.
+service = "NGS_Datasheets"
+cache_key = "ngs-datasheets/ngs-datasheets-layer-1-metadata__d97c97e891ca"
+request_method = "GET"
+request_url = "https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/NGS_Datasheets_Feature_Service/FeatureServer/1"
+captured_at = 2026-09-12T22:36:11-05:00
+http_status = 200
+response_bytes = 34591
+layer_id = 1
+warnings = []
+
+[request_params]
+f = "json"

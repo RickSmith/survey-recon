@@ -8,6 +8,8 @@ are recorded there. Shortened to the steps that exist in this first pass:
 3. Read the alignment, plus the wrong-file check
 4. Buffer -- fetch and cache the corridor polygon
 5. Parcels -- the spine everything joins to
+6. Flags -- what about each parcel costs time
+7. Control -- the NGS marks in the corridor, and their condition
 
 The ping exists because last is not soon enough to find out. The field list
 check exists because a query against the wrong layer answers without
@@ -26,6 +28,7 @@ from pathlib import Path
 from . import (
     __version__,
     checks,
+    control as control_mod,
     corridor as corridor_mod,
     flags as flags_mod,
     lead_times as lead_times_mod,
@@ -33,10 +36,18 @@ from . import (
     parcels,
 )
 from .alignment import AlignmentError, from_route_features
-from .arcgis import MODES, Fetcher, ServiceDown, ServiceError
+from .arcgis import MODES, Fetcher, ServiceDown, ServiceError, attribute
 from .cache import Cache, slug
 from .geometry import LocalPlane, bbox_of, grow_bbox, shape_of
-from .sources import FLAG_FIELDS, FLAG_SOURCES, GEOMETRY, PARCELS, ROADWAYS
+from .sources import (
+    FLAG_FIELDS,
+    FLAG_SOURCES,
+    GEOMETRY,
+    NGS_MARK_FIELDS,
+    NGS_MARKS,
+    PARCELS,
+    ROADWAYS,
+)
 
 DEFAULT_HALF_WIDTH_FT = 300
 DEFAULT_ADJACENT_FT = 100
@@ -53,8 +64,15 @@ SPINE_SOURCES = (ROADWAYS, GEOMETRY, PARCELS)
 # that says so beats no answer.
 FLAG_SOURCE_LIST = tuple(source for source, _ in FLAG_SOURCES)
 
+# Control is not the spine either, and it is not even joined to the parcels --
+# a mark is in the corridor or it is not, whoever owns the ground. So it goes
+# after the flags, which is where specification section 5 puts it, and for the
+# reason recorded there: "Control and ROW sheets are independent of the parcel
+# list, so a failure there costs the least."
+CONTROL_SOURCE_LIST = (NGS_MARKS,)
+
 # Pinged in this order, and skipped in this order if the run never reaches them.
-SOURCES = SPINE_SOURCES + FLAG_SOURCE_LIST
+SOURCES = SPINE_SOURCES + FLAG_SOURCE_LIST + CONTROL_SOURCE_LIST
 
 # What went wrong is worth recording; how the tool crashed is not. Anything in
 # here becomes an incomplete run with a readable reason rather than a traceback.
@@ -240,8 +258,14 @@ def _parcel_extent(parcel_features, adjacent_distance_ft):
     return grow_bbox(box, float(adjacent_distance_ft) / checks.FEET_PER_MILE)
 
 
-def _flag_query(source, extent):
-    """One query, built from the box around the corridor's parcels."""
+def _extent_query(source, extent):
+    """One query about a box, for any service that answers about an area.
+
+    Used for the flag services, which are asked about a box around every parcel
+    in the corridor, and for the NGS marks, which are asked about a box around
+    the corridor itself. One shape of query, so the envelope finding in
+    ``docs/data-sources/flag-services.md`` protects both.
+    """
     return {
         "geometry": json.dumps(
             {
@@ -265,14 +289,19 @@ def _flag_query(source, extent):
     }
 
 
-def _flag_id(source, feature):
+def _identifier(feature, field):
     """The feature's own identifier, read whatever case the service answered in."""
-    fields = FLAG_FIELDS.get(source.name, {})
-    found = flags_mod.attribute(feature.get("attributes"), fields.get("id", "OBJECTID"))
+    found = attribute(feature.get("attributes"), field)
     return str(found) if found is not None else "(unidentified)"
 
 
-def _screen_flags(fetcher, args, pings, blocked_flags, parcel_features, plane):
+def _flag_id(source, feature):
+    """A flag feature's identifier, for the sanity check to name."""
+    fields = FLAG_FIELDS.get(source.name, {})
+    return _identifier(feature, fields.get("id", "OBJECTID"))
+
+
+def _screen_flags(fetcher, args, pings, blocked_hosts, parcel_features, plane):
     """Ask each flag service what sits on the corridor's parcels.
 
     Returns ``(found, service_entries, warnings)``. ``found`` carries only the
@@ -295,7 +324,7 @@ def _screen_flags(fetcher, args, pings, blocked_flags, parcel_features, plane):
                 )
             )
             continue
-        if source.name in blocked_flags:
+        if source.name in blocked_hosts:
             # Section 7 says a person decides -- retry, skip, or abort -- so a
             # person is asked, if one is there. Unattended, the run goes on
             # without this flag type rather than hanging, and says so twice: in
@@ -331,7 +360,7 @@ def _screen_flags(fetcher, args, pings, blocked_flags, parcel_features, plane):
             features, records = _run_stage(
                 flag_type,
                 lambda s=source: fetcher.query_all(
-                    s, _flag_query(s, extent), readable=f"flag-{flag_type}"
+                    s, _extent_query(s, extent), readable=f"flag-{flag_type}"
                 ),
                 args.yes,
                 allow_skip=True,
@@ -400,6 +429,133 @@ def _report_flags(rows, corridor_flags, counts, screened_for):
     _say()
 
 
+def _control_extent(alignment, half_width_ft):
+    """The box the NGS datasheets service is asked about.
+
+    A box around the corridor itself, not around the parcels. Control is not
+    joined to a parcel -- a mark is in the corridor or it is not, whoever owns
+    the ground -- so the corridor is what the question is about.
+
+    An envelope, for the reason written up in
+    ``docs/data-sources/flag-services.md``: asked with a polyline and a
+    distance, a service can buffer into the wrong county and answer without
+    erroring. Asked with an envelope it answers about the envelope, and
+    ``checks.check_records_in_requested_extent`` tests that it did.
+    """
+    return grow_bbox(alignment.bbox, float(half_width_ft) / checks.FEET_PER_MILE)
+
+
+def _screen_control(fetcher, args, pings, blocked_hosts, alignment, plane):
+    """Ask NGS which marks are in the corridor, and what condition they are in.
+
+    Returns ``(marks, without_position, entry, warnings)``. ``marks`` is
+    ``None`` when the service was never asked, and a list -- possibly an empty
+    one -- when it was. Those are different answers and the output file says
+    which it is, so a blocked host never reads as a corridor with no control.
+    """
+    source = NGS_MARKS
+    ping = pings.get(source.name, {})
+    extent = _control_extent(alignment, args.half_width)
+
+    if source.name in blocked_hosts:
+        # Section 7 says a person decides. Unattended, the run goes on without
+        # the marks rather than hanging, and the output says so.
+        if not args.yes and sys.stdin.isatty():
+            _say()
+            _say(f"  control: {source.name} was not answering at the ping")
+            answer = input("  [s]kip the NGS marks, or [a]bort the run? ").strip().lower()
+            if answer in ("a", "abort"):
+                raise ServiceDown(
+                    source.name,
+                    "the host was not answering at the ping, and this run was told to stop",
+                    attempts=1,
+                )
+        reason = (
+            "the host was not answering when the run began, so no NGS mark was "
+            "checked and this corridor is not reported as having no control"
+        )
+        _say("  ctrl  ngs marks  not checked -- the host was blocking at the ping")
+        return None, 0, output.skipped_service(source, reason, ping), []
+
+    try:
+        metadata, _ = _run_stage(
+            "NGS field list",
+            lambda: fetcher.layer_metadata(source),
+            args.yes,
+            allow_skip=True,
+        )
+        # Not caught below, on purpose, and for the reason written out in
+        # `_screen_flags`: a layer that is not the layer we think it is is our
+        # configuration bug, and specification section 8 makes it a hard error.
+        checks.confirm_fields(source, metadata)
+        features, records = _run_stage(
+            "ngs marks",
+            lambda: fetcher.query_all(source, _extent_query(source, extent), readable="ngs-marks"),
+            args.yes,
+            allow_skip=True,
+        )
+    except (ServiceDown, ServiceError, Skipped) as exc:
+        _say(f"  ctrl  ngs marks  not checked -- {exc}")
+        return None, 0, output.skipped_service(source, str(exc), ping), []
+
+    marks, without_position = control_mod.select(
+        features, alignment.flat_paths, args.half_width, plane, source_name=source.name
+    )
+    shapes = [
+        (_identifier(f, NGS_MARK_FIELDS["pid"]), shape_of(f.get("geometry")))
+        for f in features
+    ]
+    tripped = checks.collect(
+        checks.check_paging_cap(source.name, len(features)),
+        checks.check_records_in_requested_extent(
+            source.name, shapes, extent, args.sanity_margin_ft, plane
+        ),
+        checks.check_records_without_position(source.name, without_position, len(features)),
+    )
+    fetcher.note_warnings(records, tripped)
+    entry = output.service_entry(
+        source,
+        ping,
+        "ok",
+        records,
+        len(features),
+        tripped,
+        # "54 returned, 12 used", the same pair the flag services report. The
+        # box is wider than the ribbon, so a mark at its corner is a correct
+        # answer to the question asked and simply is not in the corridor.
+        used={
+            "returned": len(features),
+            "in_corridor": len(marks),
+            "without_position": without_position,
+            "unused": len(features) - len(marks) - without_position,
+        },
+    )
+    return marks, without_position, entry, tripped
+
+
+def _report_control(marks, without_position, returned):
+    """What the marks say about recovery, printed while somebody is watching."""
+    _say()
+    _say("  Control")
+    if marks is None:
+        _say("    ngs marks         not checked -- no mark is reported present or absent")
+        _say()
+        return
+    counted = control_mod.recovery_risk(marks)
+    _say(
+        f"    ngs marks         {returned:>4} returned  "
+        f"{counted['marks_in_corridor']:>3} in the corridor"
+    )
+    _say(f"    mark not found    {counted['mark_not_found']:>4} -- recovery risk, not marks you have")
+    _say(f"    condition unknown {counted['condition_unknown']:>4} -- never counted as found")
+    if without_position:
+        _say(f"    no position       {without_position:>4} -- could not be placed in or out")
+    for condition, count in sorted(counted["by_condition"].items()):
+        _say(f"      {condition:<18} {count:>4}")
+    _say("    txdot control     not checked -- separate work order, issue #15")
+    _say()
+
+
 def run(args):
     started_at = datetime.now(timezone.utc).astimezone()
     run_id = f"texas-bexar-{slug(args.route)}-{started_at.strftime('%Y%m%dT%H%M%S')}"
@@ -418,6 +574,12 @@ def run(args):
     screened_for = []
     status = "complete"
     stopped_at = None
+    # `None` means the NGS service was never asked, which is not the same as a
+    # corridor with no marks in it. The detail beside it is what the output
+    # file says instead of a list.
+    control_marks = None
+    control_without_position = 0
+    control_detail = "the run stopped before the control step"
 
     # Read before anything is fetched. A table that cannot be quoted -- a row
     # with no citation, a "not found" that does not say where it looked -- is a
@@ -432,10 +594,10 @@ def run(args):
         result = pings[source.name]
         _say(f"  ping  {source.name:<18} {result['ping']:<8} {result['ms']} ms  {result['detail']}")
     blocked = [name for name, result in pings.items() if result["ping"] == "blocked"]
-    # A blocked flag service costs its own flag type. A blocked spine service
-    # costs the run. The split is the whole reason the two lists are separate.
+    # A blocked flag or control service costs its own step. A blocked spine
+    # service costs the run. The split is why the lists are separate.
     spine_blocked = [name for name in blocked if any(s.name == name for s in SPINE_SOURCES)]
-    blocked_flags = {name for name in blocked if name not in spine_blocked}
+    blocked_hosts = {name for name in blocked if name not in spine_blocked}
 
     if spine_blocked:
         _say()
@@ -443,6 +605,10 @@ def run(args):
         _say("  Try again, or use --mode cache-only if this corridor was captured before.")
         status = "incomplete"
         stopped_at = spine_blocked[0]
+        control_detail = (
+            f"{', '.join(spine_blocked)} was not answering, so the run never reached "
+            "the control step and no NGS mark was checked"
+        )
         services = [
             output.skipped_service(
                 source, "the host was not answering when the run began", pings[source.name]
@@ -538,7 +704,7 @@ def run(args):
             # 6 -- flags. The money feature, and the first step that is not the
             # spine: any one of these can be missed without costing the rest.
             found, flag_services, flag_warnings = _screen_flags(
-                fetcher, args, pings, blocked_flags, parcel_features, plane
+                fetcher, args, pings, blocked_hosts, parcel_features, plane
             )
             services.extend(flag_services)
             warnings.extend(flag_warnings)
@@ -562,6 +728,22 @@ def run(args):
                 # missing type stays off every parcel's `screened_for`.
                 status = "incomplete"
 
+            # 7 -- control. Independent of the parcel list, so it goes after
+            # the flags and a failure here costs the least.
+            control_marks, control_without_position, control_entry, control_warnings = (
+                _screen_control(fetcher, args, pings, blocked_hosts, alignment, plane)
+            )
+            services.append(control_entry)
+            warnings.extend(control_warnings)
+            if control_marks is None:
+                # The marks were not checked. Same rule as a missing flag type:
+                # the run says so rather than reading as a clean corridor.
+                control_detail = control_entry.get("detail", "the NGS marks were not checked")
+                status = "incomplete"
+            _report_control(
+                control_marks, control_without_position, control_entry.get("record_count") or 0
+            )
+
         except EXPECTED_FAILURES as exc:
             # A stopped run still writes its output, marked incomplete, naming
             # what stopped it. The responses already fetched are already cached,
@@ -570,6 +752,11 @@ def run(args):
             _say(f"  run stopped: {exc}")
             status = "incomplete"
             stopped_at = getattr(exc, "service", type(exc).__name__)
+            # Whatever the marks were going to say, the run did not get to ask.
+            # The reason travels into the control block rather than leaving the
+            # generic one there, which would name the wrong step.
+            control_marks = None
+            control_detail = f"the run stopped before the control step finished: {exc}"
             for source in SOURCES:
                 if not any(entry["name"] == source.name for entry in services):
                     services.append(
@@ -596,6 +783,9 @@ def run(args):
         corridor_flags=corridor_flags,
         screened_for=screened_for,
         lead_time_table=lead_times_mod.citations(table, screened_for),
+        control=control_mod.block(
+            control_marks, detail=control_detail, without_position=control_without_position
+        ),
     )
     written = output.write(document, out_dir)
     index = cache.write_index(f"{args.route} DFO {args.begin_dfo} to {args.end_dfo}")

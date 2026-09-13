@@ -23,3 +23,9 @@ Verified research notes live in
   It carries two traps worth the reading time: a USGS layer that buffers a long
   polyline into the wrong county without erroring, and a pipeline service named
   in the spec that turns out to hold Pennsylvania data only.
+- [The NGS datasheets service](ngs-datasheets.md) — the survey marks along the
+  corridor, and the condition each was last left in. Written under
+  [issue #14](https://github.com/RickSmith/survey-recon/issues/14). Its trap is
+  the quiet kind: the condition field is called `LAST_COND` here and `condition`
+  on NGS's other API, and asking for the wrong name returns nothing and raises
+  nothing.

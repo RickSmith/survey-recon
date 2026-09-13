@@ -109,7 +109,7 @@ def skipped_service(source, reason, ping=None):
 def build(run_id, started_at, mode, half_width_ft, adjacent_distance_ft, sanity_margin_ft, tool_version,
           alignment, corridor, services, parcel_rows, warnings,
           status="complete", stopped_at_service=None, corridor_flags=(),
-          screened_for=(), lead_time_table=None):
+          screened_for=(), lead_time_table=None, control=None):
     """Assemble the whole output file."""
     return {
         "schema_version": SCHEMA_VERSION,
@@ -141,8 +141,12 @@ def build(run_id, started_at, mode, half_width_ft, adjacent_distance_ft, sanity_
             "Roadway_Inventory_2023, which this pass does not call"
         ),
         "services": services,
-        "control": not_screened(
-            "NGS marks and TxDOT primary control points are separate work orders"
+        # NGS marks and their condition, from ``control.block``. A run that
+        # never reached the service still gets a block, saying so -- built by
+        # the same function, so a reader never has to work out which shape of
+        # answer this is.
+        "control": control if control is not None else not_screened(
+            "the run did not reach the control step"
         ),
         "row_maps": not_screened(
             "the ROW map sheet index is a separate work order"

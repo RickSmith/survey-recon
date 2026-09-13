@@ -191,3 +191,21 @@ class TestRecordsInTheRequestedExtent(unittest.TestCase):
 
     def test_nothing_returned_is_nothing_to_doubt(self):
         self.assertIsNone(self.check([]))
+
+
+class TestRecordsWithNoPosition(unittest.TestCase):
+    """A record with no point is neither inside the corridor nor outside it.
+
+    It cannot be tested against anything, so it is counted and said out loud.
+    The alternative is that it falls quietly out of the list and the totals
+    still add up, which is the failure this whole file exists to prevent.
+    """
+
+    def test_nothing_missing_is_nothing_to_doubt(self):
+        self.assertIsNone(checks.check_records_without_position("NGS_Datasheets", 0, 31))
+
+    def test_a_missing_position_is_a_warning_naming_both_numbers(self):
+        tripped = checks.check_records_without_position("NGS_Datasheets", 2, 31)
+        self.assertEqual(tripped["severity"], "warning", "checks warn; they never halt")
+        self.assertIn("2 of 31", tripped["detail"])
+        self.assertTrue(tripped["what_to_do"])

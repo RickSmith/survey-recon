@@ -225,3 +225,116 @@ FLAG_FIELDS = {
     RAILROADS.name: {"name": "name", "id": "permanent_identifier", "operator": "railowner"},
     PIPELINES.name: {"name": "CMDTY_DESC", "id": "TPMS_ID", "operator": "OPER_NM"},
 }
+
+
+# -- Control ----------------------------------------------------------------
+#
+# NGS survey marks, from issue #17's sibling, issue #14. Recovery against
+# setting new is what drives an estimate, so what these records are pulled for
+# is one field: the condition the mark was last left in.
+#
+# ----
+#
+# Two services publish the same marks, and only one of them takes a corridor
+# ================================================================================
+#
+# Specification section 6 names both: "NGS Data Explorer `/radial`, and the NGS
+# datasheets feature service."
+#
+# The Data Explorer API at `geodesy.noaa.gov/api/nde/` takes a point and a
+# radius, or a north-south-east-west box. It does not take a corridor, it caps
+# at 500 records, and it is not an ArcGIS service, so none of the paging, field
+# list checking or provenance machinery in this tool would reach it.
+#
+# The datasheets feature service is a plain ArcGIS feature service. It takes
+# arbitrary geometry, pages at 2,000, and answers the same questions every
+# other source here answers. So the feature service is what this tool calls.
+#
+# The API was still worth the call once, as a cross-check -- see below.
+#
+# ----
+#
+# The condition field is called something else on the service
+# ==========================================================
+#
+# Specification section 11 says `condition` is carried through and never
+# dropped, and issue #14 names `MARK NOT FOUND` as the value that matters. The
+# Data Explorer API does publish a field called `condition`. **The feature
+# service does not.** It publishes `LAST_COND`, which the research note already
+# warned about in one line: "Field names differ from the NDE API."
+#
+# A tool that reads `condition` off this service finds nothing, raises nothing,
+# and reports every mark in the corridor as having no known condition. The
+# thirty-nine marks nobody could find would read as thirty-nine unknowns.
+#
+# That the two are the same field was confirmed rather than assumed. Both
+# services were asked about PID `AY0713` on 2026-09-12. The API answered
+# `"condition": "MARK NOT FOUND"`; the feature service answered
+# `"LAST_COND": "MARK NOT FOUND"`. The mapping below records which name went
+# where, the same way `BEXAR_PARCEL_FIELDS` does.
+#
+# This is a field mapping, not a correction to the specification. Section 11
+# describes the output file, and the output file does carry `condition`.
+
+NGS_AGOL = "https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services"
+
+NGS_MARKS = Source(
+    name="NGS_Datasheets",
+    base_url=f"{NGS_AGOL}/NGS_Datasheets_Feature_Service/FeatureServer",
+    layer_id=1,
+    purpose="control:ngs",
+    required_fields=(
+        "PID",
+        "NAME",
+        "STAMPING",
+        "MARKER",
+        "SETTING",
+        "STABILITY",
+        "LAST_COND",
+        "LAST_RECV",
+        "LAST_RECBY",
+        "POS_DATUM",
+        "VERT_DATUM",
+        "ORTHO_HT",
+        "SPC_ZONE",
+        "POS_ORDER",
+        "VERT_ORDER",
+        "CORS_ID",
+        "PACS_SACS",
+    ),
+    note=(
+        "Points, one per mark. Layer 1 is the only layer on this service and is "
+        "named ALL_DATASHEETS. The condition field is LAST_COND, not condition."
+    ),
+)
+
+# How an NGS mark row is built from what the datasheets service publishes. Left
+# side is the field name in this tool's output; right side is the field name on
+# the service. Same shape and same job as `BEXAR_PARCEL_FIELDS` above.
+NGS_MARK_FIELDS = {
+    "pid": "PID",
+    # The whole reason to pull the marks. See the note above on why it is not
+    # spelled `condition` here.
+    "condition": "LAST_COND",
+    "last_recovered": "LAST_RECV",
+    "last_recovered_by": "LAST_RECBY",
+    # NGS calls this the mark's designation. `NAME` on this service.
+    "designation": "NAME",
+    "stamping": "STAMPING",
+    # What kind of monument it is, and what it is set in. Both come back as a
+    # code and its meaning in one string, for example
+    # "DB = BENCH MARK DISK" -- reported as the service writes it.
+    "marker": "MARKER",
+    "setting": "SETTING",
+    "stability": "STABILITY",
+    "horizontal_datum": "POS_DATUM",
+    "vertical_datum": "VERT_DATUM",
+    # Meters, and NGS publishes it as a string. Reported as it came.
+    "ortho_height": "ORTHO_HT",
+    "spc_zone": "SPC_ZONE",
+    "horizontal_order": "POS_ORDER",
+    "vertical_order": "VERT_ORDER",
+    # Set where the mark is a CORS, or part of a PACS/SACS pair.
+    "cors_id": "CORS_ID",
+    "pacs_sacs": "PACS_SACS",
+}

@@ -48,6 +48,33 @@ class ServiceError(Exception):
     """
 
 
+def attribute(attributes, name):
+    """Read one field out of a returned feature, whatever case it answered in.
+
+    The trap this exists for is recorded at the bottom of ``sources.py``: the
+    USGS structures layers publish their fields as ``NAME`` and
+    ``PERMANENT_IDENTIFIER`` and then answer a query with ``name`` and
+    ``permanent_identifier``. A plain dictionary lookup finds nothing, raises
+    nothing, and every school comes out unnamed.
+
+    A blank string from a database is an absent value, not an empty answer.
+    The NGS datasheets service publishes a single space for a condition nobody
+    has recorded, and read carelessly that is a non-empty string.
+
+    It lives here rather than with either of the things that read features,
+    because both of them read features from ArcGIS and neither owns the trap.
+    """
+    attributes = attributes or {}
+    if name in attributes:
+        value = attributes[name]
+    else:
+        wanted = name.lower()
+        value = next((v for k, v in attributes.items() if k.lower() == wanted), None)
+    if isinstance(value, str):
+        return value.strip() or None
+    return value
+
+
 def _encode(params):
     return urllib.parse.urlencode({k: v for k, v in params.items() if v is not None})
 

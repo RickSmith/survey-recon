@@ -169,6 +169,30 @@ def check_impossible_acres(service, parcels):
     )
 
 
+def check_records_without_position(service, missing, total):
+    """A record the service sent with no point on it.
+
+    A mark with no position cannot be placed inside the corridor or outside it.
+    It is not a mark that is absent and it is not a mark that is present, so it
+    is counted and said out loud rather than quietly falling out of the list --
+    which is the same rule as ``unknown`` against ``no``.
+
+    For the NGS datasheets service this has never tripped in testing. It is
+    here because "it has not happened yet" and "it cannot happen" are different
+    claims, and only one of them is checkable.
+    """
+    if not missing:
+        return None
+    return warning(
+        "records arrived with no position",
+        service,
+        f"{missing} of {total} records came back with no point on them, so they "
+        f"could not be tested against the corridor.",
+        "Those records are in neither the in-corridor list nor the count of ones "
+        "outside it. Read them from the cached response before relying on the total.",
+    )
+
+
 def collect(*results):
     """Drop the checks that did not trip."""
     return [r for r in results if r]
