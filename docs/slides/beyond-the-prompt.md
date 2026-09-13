@@ -1285,56 +1285,122 @@ instruments adoption, and picks the next worked example, all at once.
 
 # The pattern, said out loud
 
-- Corridor, then public data, then a flagged list, then lead times
-- That works for a ranch boundary and an ALTA as well as it works for a highway
-- Nothing in it is specific to TxDOT except the services it calls
-- Name the pattern before you show the next example
+- **Corridor → public data → flagged list → lead times**. Four steps
+- A ranch boundary and an ALTA fit that shape as well as a highway does
+- Only the services change. Swap the parcel source and the four steps hold
+- **Every step says what it could not check**, or the list prices nothing
+- Say it out loud before you go looking for your own
 
-> **To be written** — #86
+corridor-screen/README.md · project-sh16/bid-memo.md
 
 <!--
 1:54–2:00 · 6 min · Accountability · Monday morning · the live issue
 
-Say the pattern out loud before the live issue goes up. The room has to hear
-the general shape before it will offer its own examples.
+Say the pattern out loud before the live issue goes up, not after. The room has
+to hear the general shape before it will offer its own examples, and the last
+slide of the session is where it offers them.
+
+**Four steps, and the fourth is the one people drop.** Corridor, then public
+data, then a flagged list, then lead times. Stop at the third and you have a
+list of tracts with nothing but a schedule-shaped hole beside it -- nobody
+prices from that, and nobody schedules a crew from it either.
+
+**The fourth bullet is the thesis of the whole session, so do not rush it.**
+What makes this usable is not that it finds things. It is that it writes down
+what it could not check: gated access and livestock, which nothing public
+publishes, and the waits recorded as *not found* rather than as zero.
+
+Nothing in the shape belongs to TxDOT. What a different job changes is the
+services -- a parcel source, a control source, a flag source, and a lead-time
+table the firm keeps and can argue with. Say that plainly when somebody asks
+whether it works on anything but a highway, because somebody will.
+
+Fallback: nothing live here. corridor-screen/README.md walks the same four
+steps in its own words, on the laptop, with no network.
 -->
 
 ---
 
 # Monday morning
 
-- Point one person in your firm at the repo. Not the whole office
-- Write your firm's AI-use policy before anybody needs it, not after
-- Decide what client data never leaves the office, in writing
-- Nothing changes about who signs and who carries the liability
+- **Point one person at the repo. Not the office.** Somebody fussy about sources
+- **Write the firm's AI-use policy before anybody needs it**, not after
+- Mark each rule as a board rule, as board guidance, or as firm choice
+- **Decide in writing what client data never leaves the office**
+- *Would I email this outside the firm?* is the whole test
+- Who signs does not change — 22 Tex. Admin. Code § 138.33(b)
 
-> **To be written** — #86
+docs/for-principals/index.md · docs/governance/ai-use-policy.md
 
 <!--
 1:54–2:00 · 6 min · Accountability · Monday morning · the live issue
 
-docs/for-principals/ is the one page to hand somebody. Hold up the handout
-here if it is printed.
+**This slide is for the people who buy the tool and carry the risk, not for
+the people who would use it.** Nothing on it is a keystroke. If the room hears
+an operator's slide here, they will wait for a demo that is not coming and the
+session ends on the wrong note.
+
+docs/for-principals/index.md is the page to hand somebody who was not in the
+room -- four minutes, no command line. Hold it up here if it is printed.
+
+**The first bullet is the one that gets argued with.** One person, not the
+office: not necessarily your most technical person, because the skill being
+asked for is supervision, which the firm already teaches. Somebody fussy about
+sources, who has the standing to tell a confident answer that it is wrong.
+
+**The third bullet is the whole point of the template** and it is worth saying
+slowly. docs/governance/ai-use-policy.md marks every line as a board rule, as
+board guidance, or as firm choice, so nobody in a firm can present a preference
+as a requirement. A room that takes home one idea should take home that one.
+
+The question on the fourth bullet is the entire checklist on
+docs/governance/what-never-leaves.md. Ask it out loud and let it sit.
+
+**Do not re-argue PAO 71 here.** That slide ran at 1:36 with its citation, and
+this block has six minutes and three jobs. The last bullet is a callback, not
+an argument -- say it once and move to the form.
+
+Fallback: nothing live here either. All three pages are committed, so the
+fallback is opening a file.
 -->
 
 ---
 
 # Introduce yourself
 
-- One issue, opened live, on the projector
-- Tell us who you are and what you would automate
-- The replies pick the next worked example
-- The short link and the QR code are on the handout
+- One work order, opened live, on this screen. An **issue** is a work order
+- Who you are, and the one job you would hand to an agent tomorrow
+- Only that last box is required. The replies pick the next worked example
+- **It is public. Treat it as permanent.** No client names, no job numbers
+- github.com/RickSmith/survey-recon → Issues → New → *Introduce yourself*
 
-> **To be written** — #86
+No network in the room? Photograph this slide and do it tonight
 
 <!--
 1:54–2:00 · 6 min · Accountability · Monday morning · the live issue
 
-The form is .github/ISSUE_TEMPLATE/introduce-yourself.yml.
+The form is .github/ISSUE_TEMPLATE/introduce-yourself.yml. Open it live and
+fill the first box in yourself, so the room watches somebody do it once.
 
-It cannot collect a reply without GitHub, so if the network is gone, put the
-form on screen and ask the room to do it from their seats.
+**Three jobs at once, and say which one you are doing.** It teaches issues to a
+room that met the word ninety minutes ago. It measures how many people actually
+try this rather than how many nodded. And the replies pick what gets built
+next, which is the only honest reason to ask anybody for anything at 1:59.
 
-The short link and QR code are #10, then #38. Check they exist before the day.
+**The route on the slide is typed, not scanned, and that is deliberate.** The
+short link is #10 and the QR code is #38. Neither exists yet, so nothing on
+this slide leans on either -- when they land, add the code and leave the typed
+route on, because a phone that will not focus in a dark ballroom is the
+ordinary case rather than the unlucky one.
+
+**Say the public-and-permanent line out loud rather than letting them read
+it.** Everything here is public and stays public. The form asks them to tick a
+box confirming they kept client-identifying work out of it, and that box is the
+one thing on the form besides the question itself that they cannot skip.
+
+Fallback: it cannot collect a single reply without GitHub, and that is a fact
+about the ask rather than a failure of it. With the network gone, put
+.github/ISSUE_TEMPLATE/introduce-yourself.yml on screen, read the question out,
+and ask the room to do it from their seats that evening. The slide says so on
+its face, because nobody out there sees this note.
 -->

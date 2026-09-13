@@ -189,14 +189,23 @@ def block_headed(phrase):
     raise AssertionError(f"no break slide in the deck is headed {phrase!r}")
 
 
-def slide_headed(phrase):
+def slide_headed(phrase, exactly=False):
     """The one slide whose heading carries a phrase.
 
     More than one is as much a finding as none: a check meant for one slide
     that silently reads whichever came first is a check nobody can trust.
+
+    **`exactly` matches the whole heading instead of a phrase inside it**, and
+    the close is why it exists. That block's section break is headed
+    *Accountability · Monday morning · the live issue* and one of its slides is
+    headed *Monday morning* -- one heading contains the other, so the substring
+    reading finds two slides and, rightly, refuses to guess. Any block whose
+    break names its own slides will hit the same wall.
     """
     found = [
-        slide for slide in slides() if phrase.lower() in slide.heading.lower()
+        slide for slide in slides()
+        if (slide.heading == phrase if exactly
+            else phrase.lower() in slide.heading.lower())
     ]
     if len(found) != 1:
         raise AssertionError(
@@ -258,14 +267,16 @@ def slides_in_block(label, breaks=False):
             and (breaks or not slide.is_a_break)]
 
 
-def on_screen(heading):
+def on_screen(heading, exactly=False):
     """What the room sees on one slide, markup and all, note taken out.
 
     The note is deliberately excluded. A note is allowed to say "do not put
     524 on this slide"; a check reading the whole body would find the 524 in
     that warning and fail the slide for obeying it.
+
+    `exactly` is `slide_headed`'s, and means the same thing here.
     """
-    return with_markup([slide_headed(heading)])
+    return with_markup([slide_headed(heading, exactly=exactly)])
 
 
 def seen(heading):
