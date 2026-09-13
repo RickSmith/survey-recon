@@ -98,11 +98,34 @@ Justified: the TxDOT ROW map server blocks intermittently, USGS elevation timed 
 | 0:30–0:46 | 16 | **Act I — The grilling.** `/grill-with-docs` live → `/to-spec` → `/to-tickets` → real issues on the projector. *The hinge.* |
 | 0:46–0:52 | 6 | **The money slide.** Billable-hour math. Rework, not speed. "Cannot be invoiced." |
 | 0:52–0:57 | 5 | Stretch + questions |
-| 0:57–1:18 | 21 | **Act II — Find the control.** 13 NGS marks (several `MARK NOT FOUND`), 18 TxDOT control points, 27 ROW sheets 1937–1998. |
+| 0:57–1:18 | 21 | **Act II — Find the control.** 11 NGS marks, every one `MARK NOT FOUND`; 4 TxDOT control records naming 2 distinct monuments; 69 ROW sheets reach the corridor, 15 of them SH16's own. |
 | 1:18–1:36 | 18 | **Act III — The estimate package.** Bid memo + flagged parcel table with statutory lead times + crew-day build-up. |
 | 1:36–1:48 | 12 | **Review, seal — and the three failures.** |
 | 1:48–1:54 | 6 | **Hermes.** The second ROE letter that sends itself on day 21. |
 | 1:54–2:00 | 6 | **Accountability · Monday morning · the live issue.** |
+
+**Where Act II's figures come from.** They are read out of
+[`project-sh16/screening.json`](https://github.com/RickSmith/survey-recon/blob/main/project-sh16/screening.json)
+— the SH16 run of 2026-09-13 — and `corridor-screen/tests/test_plan_of_record.py`
+fails if this page and that run ever disagree. Two of them are easy to say wrongly
+to a room:
+
+- **A record count is not a monument count.** TxDOT keeps two records for many of
+  its stations. The 4 records in this corridor name **2 distinct monuments**, and a
+  crew drives to the monument rather than to the record. See **Distinct stations**
+  in `CONTEXT.md`.
+- **A corridor figure and a county figure answer different questions.** 69 sheets
+  reach this corridor, because the right of way at an interchange is drawn on the
+  crossing route's sheets rather than on this one's. 15 of those 69 are SH16's own,
+  dating **1944–1998**. SH16 across the whole of Bexar County has **27** sheets,
+  **1937–1998**, over three control sections — 15 + 8 + 4. Both numbers are right,
+  so say which one you are quoting.
+
+Until 2026-09-13 this row read *13 NGS marks (several `MARK NOT FOUND`), 18 TxDOT
+control points, 27 ROW sheets 1937–1998*. All three predated the tool running: 13 is
+the NGS radial call two miles from the corridor midpoint, 18 has no capture behind it
+and reads like a record count, and 27 is the county figure. The account is
+[issue #80](https://github.com/RickSmith/survey-recon/issues/80).
 
 ### The failure beat (1:36–1:48)
 Placed **after** an hour of the agent succeeding — that's when it lands.
