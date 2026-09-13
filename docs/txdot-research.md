@@ -131,8 +131,9 @@ Also: Bexar railroads/schools/school-districts MapServers · CoSA Cemetery Stewa
     [the flag services page](data-sources/flag-services.md).
 
     Spec section 6 still names NPMS. Correcting a settled spec is not the
-    agent's call, so it is raised on the pull request for the same ruling the
-    parcel field names got on
+    agent's call, so it is raised on
+    [PR #53](https://github.com/RickSmith/survey-recon/pull/53), for the same
+    ruling the parcel field names got on
     [PR #52](https://github.com/RickSmith/survey-recon/pull/52).
 
 !!! warning "Also found 2026-09-12 — the USGS structures buffer answers for the wrong county"

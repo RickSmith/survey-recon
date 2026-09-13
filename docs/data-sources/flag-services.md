@@ -206,9 +206,9 @@ holds data there, rather than an empty answer from a source that holds none.
     Correcting a settled specification is not the agent's call. The tool follows
     the service, the difference is recorded here and at the bottom of
     `corridor-screen/corridor_screen/sources.py`, and section 6 is raised on the
-    pull request for the same ruling that
-    [PR #52](https://github.com/RickSmith/survey-recon/pull/52) gave the parcel
-    field names.
+    [PR #53](https://github.com/RickSmith/survey-recon/pull/53), for the same
+    ruling that [PR #52](https://github.com/RickSmith/survey-recon/pull/52) gave
+    the parcel field names.
 
 ---
 

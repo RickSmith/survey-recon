@@ -158,7 +158,8 @@ BEXAR_PARCEL_FIELDS = {
 # Amending a settled spec is not the agent's call -- the precedent is the
 # `AcctNumb` correction above, which was raised on PR #52 and ruled on by Rick.
 # This follows the service rather than the document, says so here, and the
-# difference is raised on the pull request for the same ruling.
+# difference is raised for the same ruling on PR #53:
+# https://github.com/RickSmith/survey-recon/pull/53
 
 USGS_CARTO = "https://carto.nationalmap.gov/arcgis/rest/services"
 RRC_PUBLIC = "https://gis.rrc.texas.gov/server/rest/services/rrc_public"
