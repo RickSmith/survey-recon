@@ -86,24 +86,34 @@ than a feature.
 ### Why you can trust the cached numbers
 
 Because it is checked, not asserted. A live run and a cache-only run of SH16
-were compared on 2026-09-13 and differed in exactly **60 places, every one of
-them the run's own account of itself** — the start time, the run id, the mode,
-and the four ping fields on each of the fourteen services. Every parcel, flag,
-lead time, survey mark, ROW sheet and the whole crew safety sheet were
-identical.
+were compared on 2026-09-13 and differed in exactly **74 places, every one of
+them the run's own account of itself** — when it started and finished, its run
+id, its mode, and five fields on each of the fourteen services saying whether
+each host was pinged, how many times it was asked, and whether the answer came
+off the disk. Every parcel, flag, lead time, survey mark, ROW sheet and the
+whole crew safety sheet were identical.
 
-You can re-run that comparison yourself:
+The comparison is a command you can run:
 
 ```bash
-python -m corridor_screen.replay ../project-sh16/screening.json some-other-run.json
+python -m corridor_screen.replay one-run/screening.json another-run/screening.json
 ```
 
-It prints what differs, prints what it allowed to differ and why, and exits 0
-only when every finding matches.
+It prints what differs, then prints what it allowed to differ and why. It
+finishes successfully only when every finding matches.
 
-The same check runs in the test suite against the committed capture, **with
-every network socket refused** — see `tests/test_offline.py`. That test is the
-one that would catch a stray live call before a session rather than during one.
+**What to compare against what.** It answers one question: did a replay find
+what the live run found. So compare a live run against a replay **of that same
+capture** — the two runs either side of one `--mode live`. Comparing a fresh
+live run against a replay of an older capture will report differences, and it
+should: the two ran against the services on different days, and `captured_at`
+says so on every service. That is the field working, not the check failing.
+
+The same comparison runs in the test suite against the committed capture, **with
+the network taken away** — not politely asked for, actually removed, at the
+level below every library that could reach for it. See `tests/test_offline.py`.
+That test is the one that would catch a stray live call before a session rather
+than during one.
 
 ## Reading the output
 

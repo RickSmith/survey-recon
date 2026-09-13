@@ -45,12 +45,41 @@ def not_screened(reason):
     return {"status": "not-screened", "detail": reason}
 
 
-def service_entry(source, ping, status, records, record_count, warnings=(), used=None):
+# What a service entry says about where its answer came from. Specification
+# section 10 names four values: `ok`, `failed`, `from-cache` and `skipped`.
+FETCHED = "ok"
+FROM_CACHE = "from-cache"
+
+
+def status_of(records):
+    """Where this service's answer came from, read off the responses themselves.
+
+    Every response carries its own `status` -- `ok` when the network was asked,
+    `from-cache` when it was not. A service answered entirely from disk says
+    `from-cache`; one that had to ask says `ok`.
+
+    **This used to be the literal string "ok", passed in by every one of the
+    eight call sites.** The responses carried the truth and nothing read it, so
+    the word `from-cache` appeared nowhere in any output file this tool had ever
+    written -- and a run replayed from disk was, in its own honesty block,
+    byte-identical to one that had just called fourteen services. That is the
+    one field in the block whose job is to say where the answer came from.
+
+    Found by the review on issue #19 and fixed there. A cache-first run that had
+    to fetch part of a service reads `ok`, because it did ask; `attempts` and
+    `captured_at` beside it carry how much and how old.
+    """
+    if not records:
+        return FETCHED
+    return FROM_CACHE if all(r.get("status") == FROM_CACHE for r in records) else FETCHED
+
+
+def service_entry(source, ping, records, record_count, warnings=(), used=None):
     """One line of the honesty block.
 
     This is what lets somebody else decide whether to trust the file. It says
-    exactly what was asked, of what, whether it answered, when that answer was
-    captured, and what was doubted about it.
+    exactly what was asked, of what, whether it answered, where the answer came
+    from, when it was captured, and what was doubted about it.
     """
     return {
         "name": source.name,
@@ -60,7 +89,7 @@ def service_entry(source, ping, status, records, record_count, warnings=(), used
         "ping": ping.get("ping"),
         "ping_ms": ping.get("ms"),
         "ping_detail": ping.get("detail", ""),
-        "status": status,
+        "status": status_of(records),
         "attempts": sum(r.get("attempts", 0) for r in records),
         "record_count": record_count,
         # When the answer was captured. A run replayed from the cache says how
@@ -125,6 +154,9 @@ def build(run_id, started_at, mode, half_width_ft, adjacent_distance_ft, sanity_
             "run_id": run_id,
             "started_at": started_at.isoformat(timespec="seconds"),
             "finished_at": datetime.now(timezone.utc).astimezone().isoformat(timespec="seconds"),
+            # The run's own status -- `complete` or `incomplete`. Not the same
+            # word as a service's `status`, which says where its answer came
+            # from. Two different questions that share a name.
             "status": status,
             "stopped_at_service": stopped_at_service,
             "mode": mode,

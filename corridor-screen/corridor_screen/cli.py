@@ -463,7 +463,7 @@ def _screen_flags(fetcher, args, pings, blocked_hosts, parcel_features, plane):
         warnings.extend(tripped)
         fetcher.note_warnings(records, tripped)
         found.append((source, flag_type, features))
-        entries.append(output.service_entry(source, ping, "ok", records, len(features), tripped))
+        entries.append(output.service_entry(source, ping, records, len(features), tripped))
     return found, entries, warnings
 
 
@@ -572,7 +572,6 @@ def _screen_control(fetcher, args, pings, blocked_hosts, alignment, plane):
     entry = output.service_entry(
         source,
         ping,
-        "ok",
         records,
         len(features),
         tripped,
@@ -709,7 +708,6 @@ def _screen_txdot_control(fetcher, args, pings, blocked_hosts, alignment, plane)
     entry = output.service_entry(
         source,
         ping,
-        "ok",
         records,
         len(features),
         tripped,
@@ -824,7 +822,6 @@ def _screen_row_maps(fetcher, args, pings, blocked_hosts, alignment, plane):
     entry = output.service_entry(
         source,
         ping,
-        "ok",
         records,
         len(features),
         tripped,
@@ -977,7 +974,6 @@ def _screen_safety(fetcher, args, pings, blocked_hosts, alignment, plane):
             output.service_entry(
                 source,
                 ping,
-                "ok",
                 records,
                 len(features),
                 tripped,
@@ -1135,7 +1131,7 @@ def run(args):
             ), args.yes)
             alignment = from_route_features(features, args.route, args.begin_dfo, args.end_dfo)
             services.append(
-                output.service_entry(ROADWAYS, pings[ROADWAYS.name], "ok", road_records, len(features))
+                output.service_entry(ROADWAYS, pings[ROADWAYS.name], road_records, len(features))
             )
             _report_wrong_file_check(alignment)
 
@@ -1144,7 +1140,7 @@ def run(args):
                 "buffer", lambda: corridor_mod.build(fetcher, GEOMETRY, alignment, args.half_width), args.yes
             )
             services.append(
-                output.service_entry(GEOMETRY, pings[GEOMETRY.name], "ok", [buffer_record], len(corridor.rings))
+                output.service_entry(GEOMETRY, pings[GEOMETRY.name], [buffer_record], len(corridor.rings))
             )
             _say(f"  corridor area {corridor.area_sq_mi:.2f} square miles")
 
@@ -1192,7 +1188,7 @@ def run(args):
             fetcher.note_warnings(parcel_records, parcel_warnings)
             services.append(
                 output.service_entry(
-                    PARCELS, pings[PARCELS.name], "ok", parcel_records, len(parcel_features), parcel_warnings
+                    PARCELS, pings[PARCELS.name], parcel_records, len(parcel_features), parcel_warnings
                 )
             )
 

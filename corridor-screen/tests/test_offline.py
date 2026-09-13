@@ -53,24 +53,32 @@ def no_network():
     steps opened a connection -- including any library that might one day be
     reached for without going through ``arcgis.Fetcher``.
     """
-    real_socket = socket.socket
-    real_create = socket.create_connection
-    real_getaddrinfo = socket.getaddrinfo
-
     def refuse(*args, **kwargs):
         raise NetworkWasUsed(
-            "a run that must work offline tried to open a network connection"
+            "a run that must work offline tried to reach the network"
         )
 
-    socket.socket = refuse
-    socket.create_connection = refuse
-    socket.getaddrinfo = refuse
+    # Every door out, and the ways to walk through each one. `connect` is
+    # patched on the socket class rather than replacing the class itself: a
+    # replacement would make `socket.socket` a function, so any `isinstance`
+    # check against it would raise TypeError somewhere unrelated and look like
+    # a different bug entirely. Patching the method leaves the class a class.
+    doors = [
+        (socket.socket, "connect"),
+        (socket.socket, "connect_ex"),
+        (socket, "create_connection"),
+        (socket, "getaddrinfo"),
+        (socket, "gethostbyname"),
+        (socket, "gethostbyname_ex"),
+    ]
+    originals = [(holder, name, getattr(holder, name)) for holder, name in doors]
+    for holder, name in doors:
+        setattr(holder, name, refuse)
     try:
         yield
     finally:
-        socket.socket = real_socket
-        socket.create_connection = real_create
-        socket.getaddrinfo = real_getaddrinfo
+        for holder, name, original in originals:
+            setattr(holder, name, original)
 
 
 @contextmanager
@@ -141,27 +149,42 @@ def run_offline(out, extra=()):
 
 
 class TestTheWholeToolWithNoNetwork(unittest.TestCase):
-    """Nine steps, one corridor, no network at all."""
+    """Nine steps, one corridor, no network at all.
 
-    def test_the_full_run_completes_with_every_socket_refused(self):
+    The run happens **once**, in ``setUpClass``, and every test here reads the
+    same result. Copying two megabytes of cache and replaying 524 parcels five
+    times over to assert five different fields about one run is the same run
+    five times, and the clock is the only thing that notices.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        cls.committed = json.loads((DEMO / "screening.json").read_text(encoding="utf-8"))
         with a_copy_of_the_demo_cache() as out:
-            code, _ = run_offline(out)
-        self.assertEqual(code, 0, "a cache-only run of the demo corridor must complete")
+            cls.code, cls.said = run_offline(out)
+            cls.document = json.loads((out / "screening.json").read_text(encoding="utf-8"))
+
+    def test_the_full_run_completes_with_every_network_door_refused(self):
+        self.assertEqual(self.code, 0, "a cache-only run of the demo corridor must complete")
 
     def test_it_writes_a_complete_run_not_an_incomplete_one(self):
         """`screening.incomplete.json` would mean a step was missed."""
-        with a_copy_of_the_demo_cache() as out:
-            run_offline(out)
-            document = json.loads((out / "screening.json").read_text(encoding="utf-8"))
-        self.assertEqual(document["run"]["status"], "complete")
-        self.assertEqual(document["run"]["mode"], "cache-only")
+        self.assertEqual(self.document["run"]["status"], "complete")
+        self.assertEqual(self.document["run"]["mode"], "cache-only")
 
-    def test_every_service_answered_from_the_cache(self):
-        with a_copy_of_the_demo_cache() as out:
-            run_offline(out)
-            document = json.loads((out / "screening.json").read_text(encoding="utf-8"))
-        skipped = [s["name"] for s in document["services"] if s["status"] != "ok"]
-        self.assertEqual(skipped, [], "every service should have replayed from cache")
+    def test_every_service_says_in_the_output_that_it_came_from_the_cache(self):
+        """`from-cache`, not `ok`. The honesty block has to say where it looked.
+
+        The first version of this test asserted ``status == "ok"`` on all
+        fourteen, under a name claiming the opposite, and passed -- because the
+        emitter hard-coded that word at all eight call sites while the responses
+        underneath carried the truth. The word ``from-cache`` appeared nowhere
+        in any output file this tool had ever written. The review on issue #19
+        caught it.
+        """
+        came_from = {s["name"]: s["status"] for s in self.document["services"]}
+        wrong = {name: status for name, status in came_from.items() if status != "from-cache"}
+        self.assertEqual(wrong, {}, "a replayed run must say so on every service")
 
     def test_it_finds_the_same_things_the_committed_run_found(self):
         """The acceptance criterion: output from cache matches output from live.
@@ -171,21 +194,14 @@ class TestTheWholeToolWithNoNetwork(unittest.TestCase):
         it reports -- in which case re-run it live and commit the new file -- or
         the replay is not faithful, which is the thing this repo cannot ship.
         """
-        committed = json.loads((DEMO / "screening.json").read_text(encoding="utf-8"))
-        with a_copy_of_the_demo_cache() as out:
-            run_offline(out)
-            replayed = json.loads((out / "screening.json").read_text(encoding="utf-8"))
         self.assertTrue(
-            replay.same_findings(committed, replayed),
-            "\n" + replay.report(committed, replayed),
+            replay.same_findings(self.committed, self.document),
+            "\n" + replay.report(self.committed, self.document),
         )
 
     def test_the_parcel_count_a_presenter_would_read_off_the_screen_is_there(self):
         """A blunt check on the number that goes on the projector."""
-        committed = json.loads((DEMO / "screening.json").read_text(encoding="utf-8"))
-        with a_copy_of_the_demo_cache() as out:
-            _, said = run_offline(out)
-        self.assertIn(f"parcels     {len(committed['parcels'])}", said)
+        self.assertIn(f"parcels     {len(self.committed['parcels'])}", self.said)
 
 
 class TestAMissingCaptureFailsLoudly(unittest.TestCase):
@@ -249,11 +265,31 @@ class TestTheNetworkGuardItself(unittest.TestCase):
             with self.assertRaises(NetworkWasUsed):
                 socket.getaddrinfo("example.invalid", 443)
 
-    def test_the_guard_puts_the_network_back_afterwards(self):
-        before = socket.socket
+    def test_the_guard_refuses_a_direct_connect(self):
+        with no_network(), socket.socket() as probe:
+            with self.assertRaises(NetworkWasUsed):
+                probe.connect(("example.invalid", 443))
+
+    def test_the_guard_leaves_the_socket_class_a_class(self):
+        """Replacing it outright would break `isinstance` in unrelated code."""
+        with no_network():
+            with socket.socket() as probe:
+                self.assertIsInstance(probe, socket.socket)
+
+    def test_the_guard_puts_every_door_back_afterwards(self):
+        before = (socket.socket.connect, socket.create_connection, socket.getaddrinfo)
         with no_network():
             pass
-        self.assertIs(socket.socket, before)
+        self.assertEqual(
+            (socket.socket.connect, socket.create_connection, socket.getaddrinfo), before
+        )
+
+    def test_the_guard_puts_them_back_even_when_a_test_raises(self):
+        before = socket.create_connection
+        with self.assertRaises(ValueError):
+            with no_network():
+                raise ValueError("something went wrong inside the guard")
+        self.assertIs(socket.create_connection, before)
 
 
 if __name__ == "__main__":

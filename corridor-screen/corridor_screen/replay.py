@@ -20,12 +20,15 @@ other deliberately did not. **None of those is a finding.** They are the run's
 account of itself.
 
 Compared on the SH16 corridor on 2026-09-13, a live run and a cache-only run
-differed in exactly 60 places, and every one of them was in that account: four
-fields on ``run``, and four on each of the fourteen services. Every parcel,
+differed in exactly **74** places, and every one of them was in that account:
+four fields on ``run``, and five on each of the fourteen services. Every parcel,
 every flag, every lead time, every mark, every sheet and the whole crew safety
 sheet were identical.
 
 ``RUN_ACCOUNT`` below is that list, named once, with a reason beside each entry.
+It is the only place those paths are written down -- an earlier pass of this
+file also spelled four of them out a second time inside a helper nothing called,
+which is exactly how a list like this drifts.
 
 **The whole ``run`` block is not excluded, and that is deliberate.** It would
 have been the easy way to write this. It would also have hidden a replay that
@@ -50,7 +53,6 @@ that both runs report the same wrong thing. The provenance record beside each
 response, and the honesty block in the output, are what carry that question.
 """
 
-import copy
 import json
 import sys
 from pathlib import Path
@@ -74,6 +76,11 @@ RUN_ACCOUNT = {
     "services[].attempts": (
         "how many times the network had to be asked. A replay asks zero times, "
         "which is the point of it"
+    ),
+    "services[].status": (
+        "where this service's answer came from -- `ok` when the network was "
+        "asked, `from-cache` when it was not. It is the field whose whole job "
+        "is to differ between a live run and a replay"
     ),
 }
 
@@ -121,17 +128,26 @@ def _found(path, live, replayed):
     return {"path": path, "live": live, "replayed": replayed}
 
 
+def _split(live, replayed):
+    """Every difference, sorted into the two piles, in one walk.
+
+    One walk rather than two. A screening document holds every parcel in the
+    corridor -- 524 of them on SH16 -- and walking it twice to ask two halves of
+    one question is work nobody needs done.
+    """
+    found, allowed = [], []
+    for path, a, b in _walk(live, replayed):
+        (allowed if _shape(path) in RUN_ACCOUNT else found).append(_found(path, a, b))
+    return found, allowed
+
+
 def differences(live, replayed):
     """Every place the two runs found something different.
 
     The run's own account of itself is left out -- see ``RUN_ACCOUNT``. What
     comes back is the list that matters: if it is empty, the replay is faithful.
     """
-    return [
-        _found(path, a, b)
-        for path, a, b in _walk(live, replayed)
-        if _shape(path) not in RUN_ACCOUNT
-    ]
+    return _split(live, replayed)[0]
 
 
 def run_account_differences(live, replayed):
@@ -141,32 +157,12 @@ def run_account_differences(live, replayed):
     reader to trust it further than it has earned, and the slack here is the
     whole design decision.
     """
-    return [
-        _found(path, a, b)
-        for path, a, b in _walk(live, replayed)
-        if _shape(path) in RUN_ACCOUNT
-    ]
+    return _split(live, replayed)[1]
 
 
 def same_findings(live, replayed):
     """Did the replay find the same things. One question, one answer."""
     return not differences(live, replayed)
-
-
-def findings_of(document):
-    """The document with the run's account of itself taken out.
-
-    Not used by the comparison, which walks both documents at once. It is here
-    because "what did this run find, as opposed to how did it go" is a useful
-    thing to be able to hold, and naming it is half of what this file is for.
-    """
-    stripped = copy.deepcopy(document)
-    for key in ("run_id", "started_at", "finished_at", "mode"):
-        stripped.get("run", {}).pop(key, None)
-    for service in stripped.get("services", []) or []:
-        for key in ("ping", "ping_ms", "ping_detail", "attempts"):
-            service.pop(key, None)
-    return stripped
 
 
 def report(live, replayed):
@@ -175,8 +171,7 @@ def report(live, replayed):
     Always says how much slack it allowed, even on a clean match, because a
     reader who cannot see the slack cannot judge the result.
     """
-    found = differences(live, replayed)
-    allowed = run_account_differences(live, replayed)
+    found, allowed = _split(live, replayed)
     lines = []
     if found:
         lines.append(f"The two runs found DIFFERENT things -- {len(found)} of them.")
@@ -211,13 +206,19 @@ def main(argv=None):
             "\n"
             "  python -m corridor_screen.replay <live.json> <replayed.json>\n"
             "\n"
-            "Exit code 0 when every finding matches, 1 when any does not.",
+            "Compare a live run against a replay of that same capture -- the two\n"
+            "runs either side of one --mode live. Comparing across two captures\n"
+            "will report differences, and should: captured_at says the answers\n"
+            "were obtained on different days.\n"
+            "\n"
+            "Exit code 0 when every finding matches, 1 when any does not, and 2\n"
+            "when this command was called with the wrong number of files.",
             file=sys.stderr,
         )
         return 2
     live, replayed = _read(argv[0]), _read(argv[1])
     print(report(live, replayed))
-    return 0 if same_findings(live, replayed) else 1
+    return 0 if not _split(live, replayed)[0] else 1
 
 
 if __name__ == "__main__":

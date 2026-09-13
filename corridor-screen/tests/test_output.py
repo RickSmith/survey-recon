@@ -100,8 +100,7 @@ class TestHonestyBlock(unittest.TestCase):
         entry = output.service_entry(
             PARCELS,
             {"ping": "ok", "ms": 210, "detail": ""},
-            "ok",
-            [{"cache_key": "bcad/parcels__abc", "attempts": 1}],
+            [{"cache_key": "bcad/parcels__abc", "attempts": 1, "status": "ok"}],
             530,
         )
         self.assertEqual(entry["layer_id"], 0)
@@ -124,11 +123,49 @@ class TestHonestyBlock(unittest.TestCase):
         entry = output.service_entry(
             PARCELS,
             {"ping": "ok", "ms": 210, "detail": ""},
-            "from-cache",
-            [{"cache_key": "bcad/parcels__abc", "attempts": 0, "captured_at": "2026-09-12T20:26:56-05:00"}],
+            [{"cache_key": "bcad/parcels__abc", "attempts": 0, "status": "from-cache",
+              "captured_at": "2026-09-12T20:26:56-05:00"}],
             530,
         )
         self.assertEqual(entry["captured_at"], "2026-09-12T20:26:56-05:00")
+
+    def test_a_service_answered_from_disk_says_from_cache(self):
+        """The field whose whole job is to say where the answer came from.
+
+        It used to be the literal "ok" at all eight call sites, so `from-cache`
+        appeared in no output file this tool had ever written and a replayed
+        run's honesty block was indistinguishable from a live one's. Caught by
+        the review on issue #19.
+        """
+        entry = output.service_entry(
+            PARCELS,
+            {"ping": "skipped", "ms": 0, "detail": "cache-only run makes no network calls"},
+            [{"cache_key": "bcad/parcels__abc", "attempts": 0, "status": "from-cache"}],
+            530,
+        )
+        self.assertEqual(entry["status"], "from-cache")
+
+    def test_a_service_that_had_to_ask_says_ok(self):
+        entry = output.service_entry(
+            PARCELS,
+            {"ping": "ok", "ms": 210, "detail": ""},
+            [{"cache_key": "bcad/parcels__abc", "attempts": 1, "status": "ok"}],
+            530,
+        )
+        self.assertEqual(entry["status"], "ok")
+
+    def test_a_service_part_fetched_and_part_cached_says_ok(self):
+        """It did ask. `attempts` and `captured_at` beside it carry how much."""
+        entry = output.service_entry(
+            PARCELS,
+            {"ping": "ok", "ms": 210, "detail": ""},
+            [
+                {"cache_key": "bcad/meta__abc", "attempts": 0, "status": "from-cache"},
+                {"cache_key": "bcad/parcels__abc", "attempts": 1, "status": "ok"},
+            ],
+            530,
+        )
+        self.assertEqual(entry["status"], "ok")
 
 
 class TestWriting(unittest.TestCase):
