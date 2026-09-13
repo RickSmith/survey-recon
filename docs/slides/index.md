@@ -20,10 +20,30 @@ page is what was on the screen in the room.
   <a class="md-button" href="beyond-the-prompt.pdf">Download the PDF</a>
 </p>
 
-!!! note "Placeholder"
-    Right now the deck is one title slide and one content slide — just enough to
-    prove the pipeline works end to end. The real deck gets built under
-    [issue #12](https://github.com/RickSmith/survey-recon/issues/12).
+!!! note "It is a frame, not a talk"
+    The deck is **45 slides** — one section break for every block of the two
+    hours, and outline slides under each. **34 of them are still placeholders**,
+    and each of those says so on its face and names the work order that would
+    fill it.
+
+    The skeleton was built under
+    [issue #12](https://github.com/RickSmith/survey-recon/issues/12). The
+    content lands under [#31](https://github.com/RickSmith/survey-recon/issues/31)
+    (the concept slides), [#32](https://github.com/RickSmith/survey-recon/issues/32)
+    (the money slide), [#33](https://github.com/RickSmith/survey-recon/issues/33)
+    (the datum gap) and [#34](https://github.com/RickSmith/survey-recon/issues/34)
+    (Hermes).
+
+!!! warning "What building the frame turned up"
+    Those four work orders do not cover the deck.
+    **22 of those have no work order yet** — the cold open, Act I, most of
+    Act II, all of Act III, the failure beat and the close. That is six of the
+    eleven blocks of the session, and none of it was visible until there was a
+    slide to hang each block on.
+
+    The slides say `no work order yet` rather than pointing at an issue that
+    does not exist. Same rule as everywhere else here: *not found*, never *does
+    not exist*.
 
 ## How it is put together
 
@@ -32,6 +52,50 @@ page is what was on the screen in the room.
 | `docs/slides/beyond-the-prompt.md` | The deck itself. Plain markdown. `---` starts a new slide |
 | `docs/slides/themes/tsps.css` | Type sizes and colors. The canvas is 1920 x 1080 and nothing is smaller than 28pt |
 | `.github/workflows/slides.yml` | Renders the deck to HTML and PDF every time the repo is pushed |
+| `corridor-screen/tests/test_deck.py` | Holds the deck to the run of show. See below |
+
+## Where the clock lives
+
+Every slide carries a speaker note, and every note opens the same way:
+
+```
+0:30–0:46 · 16 min · Act I — The grilling
+```
+
+Those timings are read from the run of show in
+[the plan of record](../plan-of-record.md) §5 — not typed in twice. A block
+whose time or length changes there fails the deck's own tests until the deck
+agrees with it.
+
+**The clock is never on the slide.** A time printed on a projector is a promise
+to three hundred people that the session is where it says it is, and the first
+live demo that runs long turns every slide into an accusation.
+
+## Making a cut
+
+Every block of the session opens with a **section break** — a dark green slide
+carrying the block's name. That is what makes a cut cheap: cutting a block is
+deleting from one break to the next, which anybody can do the night before
+without reading the slides.
+
+The three things on [the cut line](../plan-of-record.md#cut-line-in-order) are
+marked in the speaker notes of the exact slide they would take out, as
+`Cut 1 of 3`, `Cut 2 of 3` and `Cut 3 of 3`. The four things the plan says never
+to cut are not marked, and the tests refuse to let them be.
+
+## How this deck is kept honest
+
+`corridor-screen/tests/test_deck.py` reads the deck on every test run and holds
+it to all of this — every block covered, in order; the clock in every note and
+on no slide; a break at the head of every block; the cut line marked; nothing in
+the theme under 28pt; and no slide asking for more room than 1920 x 1080 has.
+
+The two counts in the boxes above are checked against the deck as well, because
+a number written in prose beside a thing is a number that rots.
+
+```bash
+cd corridor-screen && python -m unittest tests.test_deck
+```
 
 ## Previewing it on your own machine
 

@@ -100,3 +100,51 @@ section.title strong {
 section.title::after {
   display: none;
 }
+
+/*
+  A section break. Add "<!-- _class: divider -->" to a slide to get this.
+
+  There is one at the head of every block of the run of show, and that is what
+  makes a cut cheap: cutting a block is deleting from one of these to the next,
+  which anybody can do at eleven at night without reading the slides. The type
+  is smaller than the title slide's because these headings are longer - "Act III
+  - The estimate package" has to fit on one line.
+*/
+section.divider {
+  justify-content: center;
+  background-color: #0b3d2e;
+  color: #ffffff;
+}
+
+section.divider h1 {
+  color: #ffffff;
+  font-size: 72pt;
+  margin-bottom: 0.25em;
+}
+
+section.divider h2 {
+  color: #bfe3d1;
+  font-size: 40pt;
+  font-weight: 400;
+}
+
+/*
+  A slide that is still waiting for its content says so, in a blockquote, and
+  names the work order that would fill it.
+
+  This is muted and set apart rather than hidden. The deck publishes on every
+  push, so an unfinished slide is on the web today - and a heading with three
+  bullets under it reads as finished from the back of a room. 30pt, because
+  nothing here goes under 28.
+*/
+section blockquote {
+  margin: 0.7em 0 0 0;
+  padding: 0 0 0 0.5em;
+  border-left: 8px solid #bfe3d1;
+  font-size: 30pt;
+  color: #5a6b61;
+}
+
+section blockquote strong {
+  color: #5a6b61;
+}
