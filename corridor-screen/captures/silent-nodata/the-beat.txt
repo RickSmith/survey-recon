@@ -1,0 +1,33 @@
+  Failure beat 2 - the answer that is wrong rather than missing
+
+  One question, asked twice, one word apart. SH16 at Bandera Road, San Antonio (-98.644635, 29.528488):
+
+    units=Feet      value = 866.8668528742528
+                    a JSON number, in feet. Correct.
+
+    units=US_Feet   value = '264.221008301'
+                    a JSON string, in meters. No error was raised.
+
+  866.8669 / 264.2210 = 3.28084, which is feet per meter.
+  It is the same elevation. Nothing in the response says which unit.
+
+  US_Feet is not a typo. It is what a Texas surveyor calls the unit
+  they work in, and it is what EPSG numbers 9003.
+
+  The same endpoint has two names for the coordinate system, and only
+  one of them does anything:
+    sr=4326, sr=3857, and no sr at all  ->  the same answer, every time
+    wkid=3857 with Web Mercator meters  ->  correct
+
+  The same service can also fail loudly. A point in the Gulf of Mexico:
+    HTTP 200, and a body that is not JSON at all.
+
+  What separates the two, in code:
+    a check against the whole Earth   -> the wrong number survives
+    a check against Bexar County      -> it is caught, because 264 ft is
+                                         below the county floor of 400 ft
+
+  The broken answer is caught by anything that reads it, and the plausible one is caught only by somebody who already knew what this ground is.
+
+  Checked 2026-09-13. Every line reads from captures in
+  captures/silent-nodata/, so it needs no network to run again.

@@ -172,11 +172,11 @@ Failure beat one of the session, and it runs entirely from files committed in
 `captures/superseded-manual/` — so a hotel network cannot take it away from you.
 
 Search still hands out `onlinemanuals.txdot.gov` links for the TxDOT Survey
-Manual. **That host is still listed in DNS — the internet's phone book — and answers
-nothing**, so an agent sees a timeout rather than a 404 — which looks exactly like bad Wi-Fi and invites a
-retry. The manual moved, and the two are not the same document: the old address
-last served **March 2025, Manual Notice 2025-1**, and the one in force is
-**April 2026, Manual Notice 2026-1**.
+Manual. **That host is still listed in DNS — the internet's phone book — and
+answers nothing**, so an agent sees a timeout rather than a 404, which looks
+exactly like bad Wi-Fi and invites a retry. The manual moved, and the two are
+not the same document: the old address last served **March 2025, Manual Notice
+2025-1**, and the one in force is **April 2026, Manual Notice 2026-1**.
 
 The other half is the one that earns its keep every day:
 
@@ -189,6 +189,32 @@ It fails if any page or module here cites a superseded address, and prints the
 on; this is what makes that rule something other than a sentence nobody runs.
 It is in the test suite. The full account is on
 [the superseded manual](../docs/managing-your-agent/the-superseded-manual.md).
+
+## The beat about the answer you cannot check
+
+```bash
+python -m corridor_screen.elevation_trap --show
+```
+
+Failure beat two, running entirely from files committed in
+`captures/silent-nodata/` — so a hotel network cannot take it away.
+
+Ask the USGS elevation service for the height of SH16 at Bandera Road, twice,
+one word apart. `units=Feet` gives **866.8668528742528**. `units=US_Feet` gives
+**"264.221008301"**. The ratio is 3.28084, which is feet per meter: it is the
+same ground, answered in meters, with no error and **no field anywhere in the
+response saying which unit it is**.
+
+`US_Feet` is not a typo. It is the US survey foot — what EPSG numbers `9003`,
+and what [the geometry service](../docs/data-sources/arcgis-geometry-service.md)
+also accepts and silently treats as meters, returning 2,132 parcels where the
+right unit returned 658. Two services, same silence.
+
+The same endpoint *can* fail loudly — a point in the Gulf of Mexico returns a
+200 carrying plain text, which breaks any parser and gets noticed in a second.
+That comparison is the beat: the broken answer is caught by anything that reads
+it, and the plausible one is caught by nothing. The full account is
+[the wrong answer](../docs/managing-your-agent/the-wrong-answer.md).
 
 ## The one call that stays live
 

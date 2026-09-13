@@ -18,3 +18,8 @@ worked example — including the ones that got sent back.
   search still hands out the old address for the TxDOT Survey Manual. The old
   host does not answer, so an agent sees a timeout rather than a 404, and cites
   the revision anyway. Failure beat one, and the boring check that catches it.
+- **[The answer that was wrong rather than missing](the-wrong-answer.md)** — ask
+  the USGS elevation service in `US_Feet`, the unit a Texas surveyor works in,
+  and it answers in meters. No error, valid JSON, a believable number three and
+  a quarter times too small. Failure beat two, and why a wrong answer is worse
+  than a broken one.
