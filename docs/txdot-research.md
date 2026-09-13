@@ -59,6 +59,33 @@ All of the following were **queried live and returned real results**.
 
     The `outSR=4326` note was right and is load-bearing.
 
+!!! warning "Corrected 2026-09-13, against the SH16 run ([#80](https://github.com/RickSmith/survey-recon/issues/80))"
+    Two rows of the Part 1 table were read as **corridor** figures when the plan
+    of record was written, and the run in `project-sh16/screening.json` does not
+    support that reading. The rows are left as they were captured; what follows is
+    what the corridor itself holds.
+
+    1. **The 13 marks are a two-mile radial call, not the corridor.** The row says
+       so and is right about its own query — the NGS Data Explorer with a point and
+       a radius, cached at
+       `project-sh16/cache/ngs-data-explorer/live-check-radial__bac175832b05`, 13
+       records, `radius = 2.0` miles from the corridor midpoint. The demo corridor
+       is 300 feet wide and holds **11** marks. "Several flagged `MARK NOT FOUND`"
+       understates it either way: 12 of the 13 are `MARK NOT FOUND`, and all 11 in
+       the corridor are.
+    2. **"18 in corridor" is not reproduced by any capture in this repo.** The run
+       returns 8 records for the corridor envelope, **4** of them inside the
+       300-foot corridor, and those 4 name **2** distinct stations. Point 4 above is
+       the reason to expect a record count and a monument count to differ. What 18
+       counted is **not found** rather than wrong: we looked in the run and in
+       `project-sh16/cache/txdot-primary-control-points/`, and 18 is in neither.
+
+    The ROW map sheet row is right, and it is a **county** figure: 27 sheets,
+    1937–1998, over three control sections, confirmed by
+    `project-sh16/cache/txdot-row-maps/sh16-bexar-county-wide-cross-check__5a6865fa7938`.
+    The demo corridor sits inside one of those three and reaches **15** of them,
+    1944–1998. Both numbers are right and they answer different questions.
+
 **TxDOT ROW map index — the standout find**
 ```
 https://maps.dot.state.tx.us/arcgis/rest/services/ROW/ROW_Maps_CL_2017/MapServer/0
