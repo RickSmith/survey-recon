@@ -75,6 +75,10 @@ They are buyers and risk-owners. They are not going to install things themselves
 | **TMUTCD** | Texas Manual on Uniform Traffic Control Devices. The 2025 edition took effect January 18, 2026 |
 | **TCP** | Traffic Control Plan. TCP(S-1)-08A is the standard sheet for surveying operations |
 | **TMA** | Truck-Mounted Attenuator — the crash cushion on a shadow vehicle. Needing one changes the crew cost |
+| **RRC** | Railroad Commission of Texas. Despite the name it regulates oil, gas and pipelines, not railroads. It publishes **TPMS** |
+| **TPMS** | Texas Pipeline Mapping System — the RRC's public pipeline map service. The source this repo uses for pipelines |
+| **NPMS** | National Pipeline Mapping System — the federal equivalent, run by PHMSA. The ArcGIS service carrying its name holds Pennsylvania data only; see [the flag services page](docs/data-sources/flag-services.md) |
+| **PHMSA** | Pipeline and Hazardous Materials Safety Administration — the federal pipeline regulator |
 
 ## Project vocabulary
 
@@ -110,6 +114,9 @@ Settled during the grilling for [issue #5](https://github.com/RickSmith/survey-r
 | **Synthetic parcel id** | An identifier made from a parcel's shape, used when its source gives no usable key. Always marked synthetic, because it is ours and not the appraisal district's |
 | **Wrong-file check** | The length, end points and quick rendering printed before any service is called, so a corridor built from the wrong file is obvious immediately rather than after a clean-looking run |
 | **Honesty block** | The part of a screening output recording every service called, whether it answered, when its answer was captured, and what was doubted about it. It is what lets a reader decide whether to trust the rest of the file |
+| **Lead-time table** | The checked-in list of how many days of notice each flag type costs, with a mandatory citation on every row. Data rather than code, so the person accountable for a number can change it without touching Python. Settled in [issue #17](https://github.com/RickSmith/survey-recon/issues/17); the citations are in [`docs/corridor-screen/lead-times.md`](docs/corridor-screen/lead-times.md) |
+| **Not found** | A lead time we looked for and could not confirm from a published source. Written as "not found," never as "does not exist," and always with an account of where we looked. On a parcel it appears as `lead_time_not_found` beside `max_lead_time_days` — because a parcel with no number is unmeasured, not clear. Same distinction as [`unknown` vs `no`](#corridor-screening-vocabulary) |
+| **Lead-time driver** | Which flag on a parcel set its longest wait. Recorded beside the number so nobody has to scan a list of flags to find the one that moves the schedule |
 
 ## Translation table — used throughout the docs
 

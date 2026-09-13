@@ -1,13 +1,14 @@
 # Provenance record. The response file beside this one is exactly what the
 # server sent and is never edited. Every parameter of the request is listed
 # under [request_params], so the call can be repeated and checked.
-service = "ArcGIS_Geometry"
-cache_key = "arcgis-geometry/arcgis-geometry-metadata__c2e700c573a0"
+service = "RRC_TPMS_Pipelines"
+cache_key = "rrc-tpms-pipelines/rrc-tpms-pipelines-layer-0-metadata__dddda2fa684c"
 request_method = "GET"
-request_url = "https://utility.arcgisonline.com/arcgis/rest/services/Geometry/GeometryServer"
-captured_at = 2026-09-12T21:44:29-05:00
+request_url = "https://gis.rrc.texas.gov/server/rest/services/rrc_public/tpms/MapServer/0"
+captured_at = 2026-09-12T21:44:31-05:00
 http_status = 200
-response_bytes = 132
+response_bytes = 7623
+layer_id = 0
 warnings = []
 
 [request_params]

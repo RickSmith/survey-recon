@@ -13,9 +13,9 @@ Vocabulary is in [`CONTEXT.md`](../CONTEXT.md), under **Corridor-screening vocab
 
 ## What is built so far
 
-The first path through the whole tool, from
-[issue #13](https://github.com/RickSmith/survey-recon/issues/13) — the spine,
-before any of it gets wide.
+The spine, from [issue #13](https://github.com/RickSmith/survey-recon/issues/13),
+and the flags that hang off it, from
+[issue #17](https://github.com/RickSmith/survey-recon/issues/17).
 
 | Step | Built |
 |---|---|
@@ -25,8 +25,9 @@ before any of it gets wide.
 | Corridor buffer, fetched once and cached | yes |
 | Parcels from the CoSA BCAD service | yes |
 | Every response cached with its provenance record | yes |
-| Lead-time column on every parcel | present, and empty |
-| Flags — schools, cemeteries, railroads, pipelines | not yet, issues #14–#18 |
+| Flags — schools, cemeteries, railroads, pipelines | yes |
+| Lead time on every flag, with its citation | yes |
+| The longest wait on a parcel, without arithmetic | yes |
 | Control, ROW map sheets, roadway facts | not yet, separate work orders |
 | SVG renderings | not yet |
 
@@ -50,6 +51,8 @@ python -m corridor_screen --route SH0016-KG --begin-dfo 347.7 --end-dfo 356.367 
 | `--begin-dfo`, `--end-dfo` | The two limits, as Distance From Origin in miles. Either order |
 | `--half-width` | How far each side of the centerline counts as inside. Default 300 feet |
 | `--sanity-margin-ft` | How far outside the ribbon any part of a parcel may sit before the run doubts it. Default 500 |
+| `--adjacent-distance-ft` | How close a feature must be to a parcel to earn an `adjacent` flag. Default 100 |
+| `--corridor-flag-parcels` | How many parcels one feature must cross before it is also recorded against the run. Default 5 |
 | `--mode` | `live`, `cache-first` (default) or `cache-only` |
 | `--out` | Where the output file and the cache are written |
 | `--yes` | Never ask about a dead service. Stop instead. Use for unattended runs |
@@ -80,10 +83,11 @@ what, whether it answered, how many times it had to be asked, which cached file
 holds the answer, and what was doubted about it. It is what lets somebody else
 decide whether to trust the rest of the file.
 
-**`screened_for`** — the flag types actually checked for each parcel. Nothing
-is checked yet, so the list is empty on every row, and no parcel is reported as
-clear of anything. A parcel that could not be checked is `unknown`. It is never
-`no`.
+**`screened_for`** — the flag types actually checked for each parcel. It is
+built from the services that actually answered, never from the list of types the
+tool knows about. A flag service that was blocked today leaves its type off this
+list, and no parcel is then reported as clear of it. A parcel that could not be
+checked is `unknown`. It is never `no`.
 
 ## The cache
 
@@ -114,6 +118,14 @@ with the field list each one is expected to publish.
 | Alignment | `TxDOT_Roadways` on TxDOT's ArcGIS Online org | 0 |
 | Corridor buffer | Esri's public geometry service | — |
 | Parcels | `BCAD_Parcels` via the City of San Antonio | 0 |
+| Schools | USGS `structures` on `carto.nationalmap.gov` | **23** |
+| Cemeteries | USGS `structures`, same server | **2** |
+| Railroads | USGS `transportation`, same server | **38** |
+| Pipelines | **TPMS**, Railroad Commission of Texas | 0 |
+
+The four flag services each have a quirk worth knowing, and two of them return
+a plausible wrong answer rather than an error. They are written up in
+[the flag services page](../docs/data-sources/flag-services.md).
 
 **Layer numbers are load-bearing.** TxDOT's control points are layer 67 and its
 land parcels are layer 328. A query against layer 0 does not error — it answers
@@ -165,3 +177,74 @@ exists. A project living under something like
 `OneDrive - A Fairly Long Firm Name\Documents\Projects\...` reaches that limit
 easily. The cache asks Windows for the extended form of every path, so this
 works wherever the project happens to sit.
+
+## Flags, and the lead times they carry
+
+A **flag** is something on a parcel that costs time. A **lead time** is the
+delay before you can enter — not how long the work takes, but how long you wait
+for permission before it can start.
+
+Four types are screened: **school, cemetery, railroad, pipeline.**
+
+**`on` and `adjacent` are recorded separately and never merged.** A feature
+inside the parcel is `on` it. The same feature within `--adjacent-distance-ft`
+is `adjacent`, and carries the measured distance. A party chief needs to know
+about both. An estimator must not count both.
+
+**Every lead time carries its citation.** The numbers live in
+[`corridor_screen/lead_times.toml`](corridor_screen/lead_times.toml), which is
+checked-in data rather than code, and the loader refuses to read a row with no
+source and no link. A lead time with no citation is a rumor with a number on it.
+
+| Flag | Lead time | Where it comes from |
+|---|---|---|
+| Railroad | **45 calendar days** (published range 30–45) | Union Pacific's own procedures page. Corporate procedure, not statute |
+| Cemetery | **14 calendar days** | Tex. Health & Safety Code § 711.041(c)(2) |
+| Pipeline | **2 working days** (48 hr floor) | Tex. Util. Code § 251.151(a) |
+| School | **not found** | § 22.0834 is background checks, not a notice period |
+
+**Every number says which days it counts.** Two working days and two calendar
+days are different promises — § 251.151(a) excludes weekends and legal holidays,
+§ 711.041 does not — and the tool will not convert one into the other, because
+that would mean inventing a calendar it cannot check. So `lead_time_basis` rides
+on every flag, `max_lead_time_basis` on every parcel row, and the table's loader
+refuses a number that does not say.
+
+The full wording, the limits on each number and the account of where we looked
+are in [Lead times and their sources](../docs/corridor-screen/lead-times.md).
+
+**Two numbers sit side by side on every parcel row**, and both are needed:
+
+- `max_lead_time_days` — the longest confirmed wait, so nobody has to do
+  arithmetic to find the parcel that drives the schedule. `lead_time_driver`
+  names which flag set it and `max_lead_time_basis` says which days it counts
+- `lead_time_not_found` — the flag types on that parcel whose lead time could
+  not be confirmed
+
+A parcel with a cemetery and a school shows **14 days** *and* `school` in the
+not-found list. Fourteen is the longest number anybody can stand behind, and it
+is not the whole answer.
+
+## What SH16 returns
+
+Run on 2026-09-12 at the default 300 ft half-width:
+
+| Flag | Returned | On a corridor parcel |
+|---|---|---|
+| School | 39 | 6 |
+| Cemetery | 6 | 1 |
+| Railroad | 0 | 0 |
+| Pipeline | 0 | 0 |
+
+Eight of 524 parcels carry a flag. The longest wait is **14 calendar days**, on
+the Episcopal Church parcel at 11093 Bandera Rd, which carries a columbarium.
+
+**Zero railroads is a checked answer, not an empty one.** The same USGS layer
+returns 412 records across Bexar County. There is simply no track within 300 ft
+of this stretch of Bandera Road.
+
+Both numbers are in the honesty block — `record_count` and `records_used` — so a
+reader sees "39 returned, 6 used" rather than a bare 6. The flag services are
+asked about a box drawn around every parcel in the corridor, which is wider than
+the ribbon, so the 33 unused schools are a normal answer to the question that was
+asked. Hiding them would make the 6 look like the whole world.

@@ -1,0 +1,26 @@
+# Provenance record. The response file beside this one is exactly what the
+# server sent and is never edited. Every parameter of the request is listed
+# under [request_params], so the call can be repeated and checked.
+service = "USGS_Transportation_Railroads"
+cache_key = "usgs-transportation-railroads/flag-railroad-offset-0__8218960c572c"
+request_method = "POST"
+request_url = "https://carto.nationalmap.gov/arcgis/rest/services/transportation/MapServer/38/query"
+captured_at = 2026-09-12T21:38:15-05:00
+http_status = 200
+response_bytes = 501
+layer_id = 38
+record_count = 0
+warnings = []
+
+[request_params]
+geometry = "{\"xmin\": -98.69195622940256, \"ymin\": 29.480783149794576, \"xmax\": -98.59854966513844, \"ymax\": 29.576831117690826, \"spatialReference\": {\"wkid\": 4326}}"
+geometryType = "esriGeometryEnvelope"
+inSR = 4326
+outSR = 4326
+spatialRel = "esriSpatialRelIntersects"
+where = "1=1"
+outFields = "permanent_identifier,name,railowner"
+returnGeometry = "true"
+f = "json"
+resultOffset = 0
+resultRecordCount = 2000

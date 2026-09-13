@@ -18,3 +18,8 @@ Verified research notes live in
   because the corridor tool started calling it, and it appears in no earlier
   research note. It carries the unit-code trap: a value the parcel query accepts
   and answers wrong.
+- [The flag services](flag-services.md) — schools, cemeteries, railroads and
+  pipelines. Written under [issue #17](https://github.com/RickSmith/survey-recon/issues/17).
+  It carries two traps worth the reading time: a USGS layer that buffers a long
+  polyline into the wrong county without erroring, and a pipeline service named
+  in the spec that turns out to hold Pennsylvania data only.

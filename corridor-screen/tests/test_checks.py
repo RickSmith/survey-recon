@@ -141,3 +141,53 @@ class TestCollect(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestRecordsInTheRequestedExtent(unittest.TestCase):
+    """The flag services are asked about a box. Their answers are tested against it.
+
+    This is not hypothetical. Asked with a polyline and a distance, the USGS
+    structures service returned schools sixty miles up SH16 for a query whose
+    geometry stopped inside Bexar County, and returned no error. Written up in
+    ``docs/data-sources/flag-services.md``.
+    """
+
+    BOX = [-98.66, 29.54, -98.65, 29.55]
+    PLANE = LocalPlane(29.545)
+
+    def check(self, shapes, margin_ft=0.0):
+        return checks.check_records_in_requested_extent(
+            "USGS_Structures_Schools", shapes, self.BOX, margin_ft, self.PLANE
+        )
+
+    def test_a_point_inside_the_box_is_not_doubted(self):
+        self.assertIsNone(self.check([("a", ("point", [-98.655, 29.545]))]))
+
+    def test_a_point_sixty_miles_away_is_doubted_by_name(self):
+        tripped = self.check([("Fredericksburg High School", ("point", [-98.88, 30.26]))])
+        self.assertIsNotNone(tripped)
+        self.assertEqual(tripped["severity"], "warning", "checks warn; they never halt")
+        self.assertIn("Fredericksburg High School", tripped["detail"])
+
+    def test_a_line_passing_through_the_box_is_not_doubted(self):
+        self.assertIsNone(self.check([("track", ("paths", [[[-98.70, 29.545], [-98.60, 29.545]]]))]))
+
+    def test_a_line_whose_box_overlaps_but_which_never_enters_is_doubted(self):
+        """The reason this measures rather than compares boxes.
+
+        This line's bounding box covers the whole extent, yet the line itself
+        runs well south of it and never comes inside. A box comparison would
+        call it fine -- which is the same mistake the parcel check was amended
+        for on PR #52, in the other direction.
+        """
+        diagonal = [[[-98.70, 29.40], [-98.60, 29.53]]]
+        tripped = self.check([("far track", ("paths", diagonal))])
+        self.assertIsNotNone(tripped)
+
+    def test_a_margin_lets_a_record_just_outside_through(self):
+        just_east = ("point", [-98.6499, 29.545])
+        self.assertIsNotNone(self.check([("a", just_east)], margin_ft=0.0))
+        self.assertIsNone(self.check([("a", just_east)], margin_ft=500.0))
+
+    def test_nothing_returned_is_nothing_to_doubt(self):
+        self.assertIsNone(self.check([]))

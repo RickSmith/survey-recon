@@ -17,8 +17,11 @@ import json
 
 from .sources import BEXAR_PARCEL_FIELDS
 
-# A parcel is never reported as clear of something that was not looked for.
-# Nothing is looked for yet, so this list is empty and every parcel says so.
+# A parcel is never reported as clear of something that was not looked for, so
+# a row starts screened for nothing at all. ``flags.attach`` fills this in from
+# the services that actually answered -- never from the list of flag types the
+# tool knows about. A run that stops before the flag services leaves it empty,
+# which is the honest answer: nothing was checked.
 FLAG_TYPES_SCREENED = []
 
 
@@ -54,9 +57,30 @@ def rings_of(feature):
     return ((feature.get("geometry") or {}).get("rings")) or []
 
 
+def id_of(feature, fields=None):
+    """The identifier this parcel's row will carry, and which field gave it.
+
+    ``Geo_id`` is the appraisal district's own geographic identifier and is what
+    a parcel should be quoted by. Some records publish none -- road slivers and
+    similar -- so ``PropID`` is tried next, and a parcel with neither gets an
+    identifier made from its shape.
+
+    Split out from ``to_row`` because the identifier is wanted on its own in two
+    other places, and building five hundred whole rows to read one field of each
+    is five hundred rows nobody keeps.
+    """
+    fields = fields or BEXAR_PARCEL_FIELDS
+    attributes = feature.get("attributes") or {}
+    for key in ("id", "id_fallback"):
+        found = _clean(attributes.get(fields[key]))
+        if found is not None:
+            return str(found), fields[key]
+    return _synthetic_id(feature), "synthetic"
+
+
 def shapes_of(features):
     """Every returned parcel as ``(identifier, rings)``, for the sanity check."""
-    return [(to_row(f)["id"], rings_of(f)) for f in features]
+    return [(id_of(f)[0], rings_of(f)) for f in features]
 
 
 def to_row(feature, fields=None):
@@ -69,17 +93,10 @@ def to_row(feature, fields=None):
     fields = fields or BEXAR_PARCEL_FIELDS
     attributes = feature.get("attributes") or {}
 
-    identifier = _clean(attributes.get(fields["id"]))
-    id_source = fields["id"]
-    if identifier is None:
-        identifier = _clean(attributes.get(fields["id_fallback"]))
-        id_source = fields["id_fallback"]
-    if identifier is None:
-        identifier = _synthetic_id(feature)
-        id_source = "synthetic"
+    identifier, id_source = id_of(feature, fields)
 
     return {
-        "id": str(identifier),
+        "id": identifier,
         "id_source": id_source,
         "owner": _clean(attributes.get(fields["owner"])),
         "situs": _clean(attributes.get(fields["situs"])),
@@ -99,7 +116,16 @@ def to_row(feature, fields=None):
         "screened_for": list(FLAG_TYPES_SCREENED),
         "flags": [],
         "max_lead_time_days": None,
+        # Which days the number above counts. Two working days and two calendar
+        # days are different promises, and a bare number is the sort of thing a
+        # reader turns into a date and gets wrong.
+        "max_lead_time_basis": None,
         "lead_time_driver": None,
+        # Flag types on this parcel whose lead time could not be confirmed.
+        # It sits beside max_lead_time_days because a parcel whose only flag is
+        # a school would otherwise show no number and read as clear. It is not
+        # clear. It is unmeasured, which is a different thing.
+        "lead_time_not_found": [],
         "warnings": [],
     }
 

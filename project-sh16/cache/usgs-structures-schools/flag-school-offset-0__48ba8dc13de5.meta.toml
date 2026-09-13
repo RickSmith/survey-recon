@@ -1,0 +1,26 @@
+# Provenance record. The response file beside this one is exactly what the
+# server sent and is never edited. Every parameter of the request is listed
+# under [request_params], so the call can be repeated and checked.
+service = "USGS_Structures_Schools"
+cache_key = "usgs-structures-schools/flag-school-offset-0__48ba8dc13de5"
+request_method = "POST"
+request_url = "https://carto.nationalmap.gov/arcgis/rest/services/structures/MapServer/23/query"
+captured_at = 2026-09-12T21:38:14-05:00
+http_status = 200
+response_bytes = 8561
+layer_id = 23
+record_count = 39
+warnings = []
+
+[request_params]
+geometry = "{\"xmin\": -98.69195622940256, \"ymin\": 29.480783149794576, \"xmax\": -98.59854966513844, \"ymax\": 29.576831117690826, \"spatialReference\": {\"wkid\": 4326}}"
+geometryType = "esriGeometryEnvelope"
+inSR = 4326
+outSR = 4326
+spatialRel = "esriSpatialRelIntersects"
+where = "1=1"
+outFields = "PERMANENT_IDENTIFIER,NAME,FTYPE,FCODE"
+returnGeometry = "true"
+f = "json"
+resultOffset = 0
+resultRecordCount = 2000

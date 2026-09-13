@@ -16,7 +16,13 @@ warning is written into the output next to the data it doubts. The tool does
 not hide it and does not fix it.
 """
 
-from .geometry import shape_is_within_miles
+from .geometry import (
+    FEET_PER_MILE,
+    bbox_of_shape,
+    grow_bbox,
+    shape_is_within_miles,
+    shape_to_rings_miles,
+)
 
 # ArcGIS servers cap how many records they will hand over at once. A count that
 # lands exactly on a cap is far more likely to be the cap than a coincidence.
@@ -37,8 +43,6 @@ MAX_PARCELS_PER_SQ_MI = 4000
 # parcel is doubted only when every part of it is more than 800 ft from the
 # centerline. This is slack for a filter that is working, not a second corridor.
 DEFAULT_SANITY_MARGIN_FT = 500.0
-
-FEET_PER_MILE = 5280.0
 
 
 class FieldListError(Exception):
@@ -168,3 +172,59 @@ def check_impossible_acres(service, parcels):
 def collect(*results):
     """Drop the checks that did not trip."""
     return [r for r in results if r]
+
+
+def check_records_in_requested_extent(service, shapes, bbox, margin_ft, plane):
+    """Every returned record should be inside the box we asked about.
+
+    This is the section 8 check -- "any part of every returned record falls
+    within a stated extent" -- applied to the flag services. They are asked
+    about a box drawn around every parcel in the corridor rather than about the
+    ribbon itself, because a flag can be `on` a parcel while sitting well
+    outside the ribbon. So the box is what their answers are tested against.
+
+    **This check is not hypothetical.** Asked with a polyline and a distance,
+    the USGS `structures` service returned schools in Fredericksburg and
+    Kerrville -- sixty miles up SH16 from the Bexar corridor -- for a query
+    whose geometry stopped inside Bexar County. It returned no error. The same
+    service asked with an envelope answered correctly, every time, which is why
+    the flag queries are built from an envelope and why their answers are
+    checked anyway. Tested live, 2026-09-12.
+
+    It is the same shape of failure as the 3DEP one in
+    ``docs/txdot-research.md``, and the same shape as the `9003` unit trap in
+    ``corridor.py``: a server that quietly ignores a parameter and answers as
+    if it had not.
+    """
+    if not shapes or not bbox:
+        return None
+    reach = grow_bbox(bbox, float(margin_ft) / FEET_PER_MILE)
+    # The grown extent as a ring, so "any part of the record is inside it" is
+    # one distance of zero rather than a box test. Comparing boxes would be the
+    # same mistake the parcel check was amended for on PR #52: a long railroad
+    # running past the corner of the extent has a box that overlaps while no
+    # part of the line is inside. Measured, the answer is honest either way.
+    ring = [
+        [reach[0], reach[1]],
+        [reach[0], reach[3]],
+        [reach[2], reach[3]],
+        [reach[2], reach[1]],
+    ]
+    outside = []
+    for identifier, shape in shapes:
+        if bbox_of_shape(shape) is None:
+            continue
+        if shape_to_rings_miles(shape, [ring], plane) != 0.0:
+            outside.append(identifier)
+    if not outside:
+        return None
+    return warning(
+        "records fall outside the extent that was asked about",
+        service,
+        f"{len(outside)} of {len(shapes)} returned records lie entirely outside the "
+        f"box this run asked about, grown by a {margin_ft:g} ft margin -- including "
+        f"{outside[0]}.",
+        "The service may have ignored the geometry filter and answered for a wider "
+        "area. Those records were not attached to any parcel. Compare the record "
+        "count in the honesty block against how many were used.",
+    )

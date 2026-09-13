@@ -105,3 +105,123 @@ BEXAR_PARCEL_FIELDS = {
     # not a plain-English description. Reported as the code it is.
     "property_use": "state_cd",
 }
+
+
+# -- The flag services ------------------------------------------------------
+#
+# Four flag types, from issue #17: schools, cemeteries, railroads and
+# pipelines. Each one is a public map service, each one was queried live on
+# 2026-09-12, and two of the four had a trap in them worth recording here.
+#
+# ----
+#
+# Trap one: field names come back in a different case than they are published
+# ==========================================================================
+#
+# The USGS `structures` layers publish their fields as `NAME`,
+# `PERMANENT_IDENTIFIER` and so on, in capitals -- and answer a query with
+# `name` and `permanent_identifier`, in lower case. The USGS `transportation`
+# layers publish them in lower case and answer in lower case.
+#
+# So a field list check that compares capitals against capitals passes, and the
+# code that then reads `feature["attributes"]["NAME"]` finds nothing and
+# silently reports every school as unnamed. Reading attributes case-insensitively
+# is why `flags.attribute` exists rather than a plain dictionary lookup.
+#
+# ----
+#
+# Trap two: the pipeline service in the specification holds no Texas data
+# ======================================================================
+#
+# NPMS is the National Pipeline Mapping System, run by the federal Pipeline and
+# Hazardous Materials Safety Administration. TPMS is the Texas Pipeline Mapping
+# System, run by the Railroad Commission of Texas. Two different bodies, two
+# different datasets, and only one of them covers Texas.
+#
+# Until 2026-09-13, specification section 6 and `docs/txdot-research.md` both
+# named `NPMS_Pipelines_2022` on `services.arcgis.com/G4S1dGvn7PIgYd6Y` as the
+# pipeline source. Read on 2026-09-12, that service holds **543 records, all of
+# them in Chester County, Pennsylvania**. Its own extent is around longitude
+# -76, latitude 40. A query for Texas returns zero records and no error.
+#
+# That is the same trap this repo's own research already records for
+# `FEMA_Flood_Zones` on services9, which "ranks high in search but is Salem, MA
+# only." The research fell into its own documented trap a second time, and the
+# only reason it was caught is that a corridor with zero pipelines looked wrong
+# enough to check the county, and then the state.
+#
+# The source used instead is the **Texas Pipeline Mapping System (TPMS)**,
+# published by the Railroad Commission of Texas, which is the Texas authority
+# for pipeline location. It holds 490,375 records, 598 of them within a box
+# around Bexar County. Read on 2026-09-12.
+#
+# Amending a settled spec is not the agent's call -- the precedent is the
+# `AcctNumb` correction above, which was raised on PR #52 and ruled on by Rick.
+# This followed the service rather than the document and raised the difference
+# on PR #53: https://github.com/RickSmith/survey-recon/pull/53
+#
+# Rick ruled on 2026-09-13 that section 6 should name the source that holds
+# Texas data. It now names TPMS, with a note recording the amendment, so this
+# code and the specification agree again.
+
+USGS_CARTO = "https://carto.nationalmap.gov/arcgis/rest/services"
+RRC_PUBLIC = "https://gis.rrc.texas.gov/server/rest/services/rrc_public"
+
+SCHOOLS = Source(
+    name="USGS_Structures_Schools",
+    base_url=f"{USGS_CARTO}/structures/MapServer",
+    layer_id=23,
+    purpose="flag:school",
+    required_fields=("PERMANENT_IDENTIFIER", "NAME", "FTYPE", "FCODE"),
+    note="Points. Published in capitals, answered in lower case -- see trap one above.",
+)
+
+CEMETERIES = Source(
+    name="USGS_Structures_Cemeteries",
+    base_url=f"{USGS_CARTO}/structures/MapServer",
+    layer_id=2,
+    purpose="flag:cemetery",
+    required_fields=("PERMANENT_IDENTIFIER", "NAME", "FTYPE", "FCODE"),
+    note="Points. Same server and same casing trap as the schools layer.",
+)
+
+RAILROADS = Source(
+    name="USGS_Transportation_Railroads",
+    base_url=f"{USGS_CARTO}/transportation/MapServer",
+    layer_id=38,
+    purpose="flag:railroad",
+    required_fields=("permanent_identifier", "name", "railowner"),
+    note="Lines. This layer publishes lower case, unlike structures on the same host.",
+)
+
+PIPELINES = Source(
+    name="RRC_TPMS_Pipelines",
+    base_url=f"{RRC_PUBLIC}/tpms/MapServer",
+    layer_id=0,
+    purpose="flag:pipeline",
+    required_fields=("TPMS_ID", "OPER_NM", "CMDTY_DESC", "STATUS_CD"),
+    note=(
+        "Lines. The Texas Pipeline Mapping System, from the Railroad Commission of "
+        "Texas -- not the National Pipeline Mapping System service the "
+        "specification names, which holds Pennsylvania data only. See trap two."
+    ),
+)
+
+# One flag type per source, and the key into the lead-time table. Keeping the
+# three together means a new flag type is one entry here, a row in
+# lead_times.toml, and nothing else.
+FLAG_SOURCES = (
+    (SCHOOLS, "school"),
+    (CEMETERIES, "cemetery"),
+    (RAILROADS, "railroad"),
+    (PIPELINES, "pipeline"),
+)
+
+# Which attribute holds the feature's own name, and which holds its identifier,
+# per service. Read case-insensitively, so the casing trap above cannot bite.
+FLAG_FIELDS = {
+    SCHOOLS.name: {"name": "NAME", "id": "PERMANENT_IDENTIFIER"},
+    CEMETERIES.name: {"name": "NAME", "id": "PERMANENT_IDENTIFIER"},
+    RAILROADS.name: {"name": "name", "id": "permanent_identifier", "operator": "railowner"},
+    PIPELINES.name: {"name": "CMDTY_DESC", "id": "TPMS_ID", "operator": "OPER_NM"},
+}
