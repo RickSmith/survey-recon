@@ -1,7 +1,7 @@
 # Corridor screening — specification
 
 **Status:** settled 2026-09-12, from the grilling on [issue #5](https://github.com/RickSmith/survey-recon/issues/5).
-**Amended:** 2026-09-13 — section 3.6, the offline and comparison commands, and the live-check command **raised but not yet ruled on**; section 5, the crew safety step; section 6, the pipeline source and the crew safety layers; section 8, how a returned record is tested against the corridor; section 10, the parcel field names, the ROW map block, the `crew_safety` block, and nine additions for the flags. See the notes there.
+**Amended:** 2026-09-13 — section 3.6, the offline, comparison and live-check commands; section 14, which entry of the cache the live check is allowed to refresh; section 5, the crew safety step; section 6, the pipeline source and the crew safety layers; section 8, how a returned record is tested against the corridor; section 10, the parcel field names, the ROW map block, the `crew_safety` block, and nine additions for the flags. See the notes there.
 **Scope of work for:** the `corridor-screen/` tool.
 
 A note on words. A **spec** is a scope of work. A **schema** is an agreed field list — the column headings on a parcel table that everybody uses the same way. An **endpoint** is the web address you ask a question of. A **cache** is a saved copy of an answer you already got. Everything else is in [CONTEXT.md](https://github.com/RickSmith/survey-recon/blob/main/CONTEXT.md).
@@ -105,23 +105,16 @@ And a third, which is the one genuinely live call — the plan of record's "one 
 python -m corridor_screen.live_check --out project-sh16/
 ```
 
-!!! warning "Raised on [PR #59](https://github.com/RickSmith/survey-recon/pull/59) — **not yet ruled on**"
-    Two differences came with the live call, and neither is the agent's to settle. Both are written here so a reader sees them, rather than left for somebody to notice.
+!!! note "Amended 2026-09-13, on [PR #59](https://github.com/RickSmith/survey-recon/pull/59)"
+    Until then this section showed two commands and named no live check.
 
-    **This third command was not asked for.** [#20](https://github.com/RickSmith/survey-recon/issues/20) asked that one genuinely live call be "identified and kept," which the plan of record's section 4 had already called for. It did not name a command. The reasoning for building one is in `corridor_screen/live_check.py`: a live moment folded into the screening run would put a call that can fail inside the run that must not, so a venue with a captive portal would lose both. As a separate act, the worst a dead network costs is the live moment.
+    **This third command was not asked for.** [#20](https://github.com/RickSmith/survey-recon/issues/20) asked that one genuinely live call be "identified and kept," which the plan of record's section 4 had already called for. It did not name a command, and the review was right to put that to Rick rather than let it in quietly.
 
-    **It refreshes one cache entry outside `--mode live`,** which section 14 says is the only refresh. That is unavoidable if the call is to be live at all — and section 14 also says every response is saved, so not writing it is not an option either. The consequence is concrete: running the live check leaves one modified file in `git status`. Expected, not a surprise, and recorded here so it is not mistaken for one.
+    It was accepted on 2026-09-13, for what the command adds over a call made by hand: it cross-checks what NGS says now against what the capture found, which is what turns a live call into a live *proof*. On SH16 it reports 5 marks in both and 5 conditions agreeing. A bare request would hand a room raw JSON instead.
 
-    Rick rules. The precedent is `AcctNumb` on [#52](https://github.com/RickSmith/survey-recon/pull/52), `NPMS` on [#53](https://github.com/RickSmith/survey-recon/pull/53), the control blocks on [#54](https://github.com/RickSmith/survey-recon/pull/54), the ROW map block on [#56](https://github.com/RickSmith/survey-recon/pull/56), the crew safety sheet on [#57](https://github.com/RickSmith/survey-recon/pull/57) and the comparison command on [#58](https://github.com/RickSmith/survey-recon/pull/58).
+    It is a separate act rather than part of the screening run for one reason, recorded in `corridor_screen/live_check.py`: `--mode cache-only` promises no network calls, and folding a live call into the run that must not fail would mean a venue with a captive portal loses both. Apart, the worst a dead network costs is the live moment.
 
-!!! note "Added 2026-09-13, on [PR #58](https://github.com/RickSmith/survey-recon/pull/58)"
-    Until then this section showed one command, and no section named a second.
-
-    [#19](https://github.com/RickSmith/survey-recon/issues/19) asked that "output from cache matches output from live." It did not ask for a command, and the review on PR #58 was right to call the command scope creep and put it to Rick rather than let it in quietly.
-
-    It was accepted on 2026-09-13, for the reason it was built: a criterion that says two things **match** needs something runnable to keep proving it, or it is true on the day somebody checks by hand and unverified every day after. It is also what a presenter runs to satisfy themselves before walking on stage.
-
-    What it compares is narrow and stated in `corridor_screen/replay.py`: a run and a replay **of that same capture**. Two runs of the same corridor are never byte-identical — on SH16 they differ in 74 places, every one of them the run's account of itself rather than a finding — and that list is named once, with a reason beside each entry, so it can be argued with.
+    The cache rule it collides with was settled on the same ruling — see the note in section 14.
 
 ## 4. The corridor
 
@@ -667,7 +660,18 @@ project-sh16/cache/
 
 **The response file is never edited.** The stamp lives in the sidecar file beside it. The moment you write metadata into a response, "this is real data the server really sent" stops being true — and that sentence is load-bearing.
 
-**The cache never expires on its own.** `--mode live` is the only refresh. A cache that quietly re-fetches on the morning of a session is a hazard, not a feature.
+**The screening cache never expires on its own.** `--mode live` is the only thing that refreshes it. A cache that quietly re-fetches on the morning of a session is a hazard, not a feature.
+
+**One entry is exempt, and it is exempt loudly.** The live check — section 3.6 — owns `ngs-data-explorer/live-check-radial` and re-fetches it every single time, because a live call that could be served from disk would not be a live call. Running it leaves that record and `INDEX.md` modified, by design; the response beside them only changes if NGS's answer did.
+
+!!! note "Amended 2026-09-13, on [PR #59](https://github.com/RickSmith/survey-recon/pull/59)"
+    Until then this read "**The cache never expires on its own.** `--mode live` is the only refresh."
+
+    That collided with this section's own first rule. Every response is saved, and the live call has to go out every time, so it refreshes one entry without `--mode live`. Both rules could not hold as written.
+
+    **The word the rule turns on is "quietly."** The hazard named here is a cache re-fetching behind your back on the morning of a session. The live check is the opposite of that: a separate command you type on purpose, which prints "This call was live, just now," and touches exactly one named entry. The screening cache — the 38 responses a `cache-only` run replays — is untouched by it and still refreshes only on `--mode live`.
+
+    So the scope is narrowed rather than the rule weakened, and the exemption is named rather than left to be discovered. Raised on the pull request rather than patched over. Rick ruled on 2026-09-13.
 
 **`INDEX.md` is the file you point at** when you say on stage that the captures are from a particular date. Caching that is disclosed is a demo rig. Caching that is not is something else.
 

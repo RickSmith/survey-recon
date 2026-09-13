@@ -26,13 +26,19 @@ Two acts, in the order a presenter wants them: run the screening from cache,
 then prove the wires are real.
 
 **Running this rewrites one cache entry**, and that is worth knowing before it
-surprises somebody. Section 14 says every response is saved, and it also says
-`--mode live` is the only thing that refreshes the cache. A call that must be
-live every time cannot honor both, so it saves its answer over the same key
-each run and `git status` shows one modified file afterwards. Expected, not a
-surprise. Raised on [PR #59](https://github.com/RickSmith/survey-recon/pull/59)
-together with the question of whether this command should exist at all; neither
-is the agent's to settle.
+surprises somebody. `git status` shows ``live-check-radial``'s provenance record
+and ``INDEX.md`` modified afterwards -- a timestamp in each. The saved response
+only changes if NGS's answer did.
+
+That collided with specification section 14, which said `--mode live` was the
+only refresh. Both rules could not hold: every response is saved, and this call
+has to go out every time. The word the rule turns on is **quietly** -- the
+hazard it names is a cache re-fetching behind your back on the morning of a
+session, and this is a command you type on purpose that says out loud what it
+did. Raised on [PR #59](https://github.com/RickSmith/survey-recon/pull/59)
+rather than patched over, together with whether this command should exist at
+all. Rick ruled on 2026-09-13: the command stays, and section 14 now exempts
+this one entry by name while the other 38 still refresh only on `--mode live`.
 
 ----
 
