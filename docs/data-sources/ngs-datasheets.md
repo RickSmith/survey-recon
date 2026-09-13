@@ -213,7 +213,7 @@ decision gets made from.
 
 ## What SH16 returned
 
-Corridor: SH16 / Bandera Rd, Loop 410 → Gibeaut Rd. 8.69 miles, 300 ft
+Corridor: SH16 / Bandera Rd, Loop 410 → Old Bandera Rd. 8.69 miles, 300 ft
 half-width. Captured 2026-09-12.
 
 | | |

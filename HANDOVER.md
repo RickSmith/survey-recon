@@ -23,7 +23,7 @@ The session is **watch-only** in the room. Hands-on happens afterward, from the 
 | Session length | 2 hours |
 | Audience | Mostly **firm owners and principals** — buyers and risk-owners, not operators |
 | Repo | `survey-recon`, Rick's personal GitHub, **public** |
-| Worked example | TxDOT SH16 (Bandera Rd), Loop 410 → Gibeaut Rd, Bexar County |
+| Worked example | TxDOT SH16 (Bandera Rd), Loop 410 → Old Bandera Rd, Bexar County |
 | Data policy | **Public sources only.** No client data, ever. |
 
 ## Current status

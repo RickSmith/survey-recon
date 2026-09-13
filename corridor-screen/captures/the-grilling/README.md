@@ -11,6 +11,25 @@ orders of this project — including the one this grilling ran on — are in
 It is a transcript, not a recording. There is no video of that session and
 there never was. What is here is what was typed, by both sides, in order.
 
+## One thing in it is wrong, and it stays wrong
+
+Question 1 of the transcript opens *"Three ways to say 'SH16, Loop 410 to
+Gibeaut Rd'"*. **There is no Gibeaut Rd in Bexar County.** The corridor's north
+end is where Bandera Rd meets **Old Bandera Rd**, in Old Town Helotes.
+
+The name was invented here, on 12 September, and then copied into thirteen
+files without anybody checking it against a map. Rick caught it on 13 September
+reading it off a slide. The corridor itself never moved — DFO 347.7 to 356.367,
+8.691 miles, so not one figure in this repo changed.
+[Issue #99](https://github.com/RickSmith/survey-recon/issues/99) has the
+account; `CONTEXT.md` has the corrected name and the two sources it was checked
+against.
+
+**The transcript is not edited.** It is a record of what was typed, and a record
+that gets quietly corrected is not a record. It is also, on its own, a small
+version of the thing this session is about: the agent wrote a plausible name
+down, repeated it thirteen times, and never doubted it. One human read it once.
+
 ---
 
 ## Nineteen questions, in three rounds

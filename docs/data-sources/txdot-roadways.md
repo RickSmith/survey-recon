@@ -1,7 +1,7 @@
 # The TxDOT Roadways service
 
 **What we use it for:** the corridor's centerline. You give the tool a route
-name and two Distance From Origin numbers — "SH16 from Loop 410 to Gibeaut Rd"
+name and two Distance From Origin numbers — "SH16 from Loop 410 to Old Bandera Rd"
 — and this is the service that turns those three things into a line on the
 ground. Everything else in a screening run hangs off that line.
 

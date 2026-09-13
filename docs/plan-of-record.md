@@ -22,7 +22,7 @@ Companion: `txdot-research.md` — verified endpoints, TxDOT rules, ROE lead tim
 | 3 | Repo | `survey-recon` — Rick's personal GitHub, public |
 | 4 | Content format | Markdown-first repo + MkDocs Material site via GitHub Actions |
 | 5 | Presenting surface | Markdown slides in the repo (Marp) → site + PDF. No PowerPoint. |
-| 6 | Session spine | TxDOT SH16, Loop 410 → Gibeaut Rd (Bexar County), start to finish |
+| 6 | Session spine | TxDOT SH16, Loop 410 → Old Bandera Rd (Bexar County), start to finish |
 | 7 | SDLC depth | Full loop, translated to survey language |
 | 8 | On-ramp | Desktop app first — git, a GitHub account and issues are required |
 | 9 | Cost framing | Billable-hour math, not subscription pricing |
@@ -234,6 +234,19 @@ survey-recon/
 **Typical TxDOT project example**
 - Surveying for preliminary design ROW mapping, east road widening.
 - SH16 from Loop 410 to Gibeaut Rd. Already topo survey that needed to updated but also needed ROW mapping to expand on both sides of the road.
+
+!!! note "The name in the line above is left as it was said"
+    **There is no Gibeaut Rd in Bexar County.** The corridor's north end is the
+    junction of Bandera Rd and **Old Bandera Rd**, in Old Town Helotes — checked
+    against two public sources on 2026-09-13 under
+    [issue #99](https://github.com/RickSmith/survey-recon/issues/99), and
+    recorded in `CONTEXT.md`.
+
+    This appendix is a **verbatim quotation from a Texas RPLS** and is not
+    edited. What somebody said is a record; correcting it silently would make
+    the record useless. Decision 6 above carries the corrected name.
+
+    The corridor itself never moved. DFO 347.7 to 356.367, 8.691 miles.
 
 **Reference:** TxDOT Surveyor Toolkit — https://www.txdot.gov/business/resources/surveyor-toolkit.html
 

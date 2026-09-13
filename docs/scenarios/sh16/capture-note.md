@@ -1,6 +1,6 @@
 # The SH16 capture: what happened
 
-**What was run:** SH16 (Bandera Road), Loop 410 to Gibeaut Road, Bexar County —
+**What was run:** SH16 (Bandera Road), Loop 410 to Old Bandera Rd, Bexar County —
 8.69 miles, 300-foot half-width. Every step the tool has been built to do, against
 the live services.
 

@@ -34,7 +34,7 @@ Fallback if the command will not start: docs/presenting/fallbacks.md, row one.
 
 # The job we just handed it
 
-- The corridor: SH16, Loop 410 to Gibeaut Rd, Bexar County
+- The corridor: SH16, Loop 410 to Old Bandera Rd, Bexar County
 - 8.69 miles of a TxDOT right of way, scoped from public records only
 - What we asked for: what is out there, and what it costs in crew days
 - What it does next: reads, asks, and shows its work
