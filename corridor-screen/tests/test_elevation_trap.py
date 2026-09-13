@@ -181,11 +181,11 @@ class TestTheBeatOnAProjector(unittest.TestCase):
     def test_it_says_when_this_was_checked(self):
         self.assertIn(elevation_trap.CHECKED_ON, self.said)
 
-    def test_it_prints_on_a_console_that_only_speaks_ascii(self):
-        """A borrowed podium laptop. Beat one died here first."""
-        for console in ("cp437", "cp1252", "ascii"):
-            with self.subTest(console=console):
-                self.said.encode(console)
+    # Printing on a borrowed podium laptop -- the console that killed beat one
+    # -- is checked in `tests/test_beats.py` under issue #67, over every module
+    # that renders a beat rather than over this one. `beats.render` also refuses
+    # a non-ASCII character outright, so it now fails when somebody runs the
+    # beat rather than only when somebody runs the suite.
 
 
 class TestItRunsWithTheNetworkActuallyGone(unittest.TestCase):
@@ -210,11 +210,12 @@ class TestTheEvidenceIsCommittedAndTraceable(unittest.TestCase):
             with self.subTest(capture=name):
                 self.assertTrue(capture["url"].startswith("https://epqs.nationalmap.gov/"))
 
-    def test_the_committed_rendering_is_what_the_code_produces_today(self):
-        path = elevation_trap.CAPTURE_DIR / elevation_trap.BEAT_NAME
-        with open(path, encoding="utf-8", newline="") as handle:
-            written = handle.read()
-        self.assertEqual(written.replace("\r\n", "\n"), elevation_trap.beat() + "\n")
+    # The committed rendering, held to what `beat()` produces today, is checked
+    # in `tests/test_beats.py` under issue #67 -- over every beat, and through
+    # `cache.long_path`, which the copy that stood here was not. That is the
+    # same miss issue #76 found in `manual_links.capture_text`: it would have
+    # failed on a checkout whose paths run past 260 characters, which this
+    # repo's own worktrees already do.
 
 
 if __name__ == "__main__":

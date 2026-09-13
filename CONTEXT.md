@@ -172,6 +172,7 @@ they are collected here so no page has to stop and explain them twice.
 | Code review | Checking the work before it goes out the door |
 | Rewriting history | Going back and altering field book entries already made |
 | Force push | Tearing a page out of the field book and writing a new one in its place |
+| Seam | The one place a rule or a shape lives, so everything using it inherits the rule rather than restating it. The standard detail every sheet references, instead of the same note redrawn on each |
 | Markdown | Plain text with a few marks — anyone can read it, and it opens in nine years without software. **Not** "a field book"; that is git, and a commit is the entry |
 | Context window | What is spread on the desk right now. Anything off it might as well not exist |
 | Token | A crew-hour for the machine — the unit the tool counts and bills *you* in, never the unit you bill a client in |

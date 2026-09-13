@@ -105,6 +105,7 @@ import sys
 import tomllib
 from pathlib import Path
 
+from . import beats
 from .cache import long_path, write_text
 # The same fold-a-TOML-string-into-one-line helper the lead-time table
 # uses. Imported rather than copied: two identical private helpers reading
@@ -1018,9 +1019,20 @@ def build(document, rates=None):
 def summary(document, rates=None):
     """The same build-up, as a console rendering and as the committed fallback.
 
-    **Plain ASCII, deliberately.** An em dash here is a `UnicodeEncodeError` and
-    a traceback on any Windows console that has not been told to use UTF-8 --
-    which is the default, and every borrowed podium laptop. There is a test.
+    **Plain ASCII, deliberately**, and `beats.render` refuses anything else. An
+    em dash here is a `UnicodeEncodeError` and a traceback on any Windows
+    console that has not been told to use UTF-8 -- which is the default, and
+    every borrowed podium laptop.
+
+    **Note which of this module's two outputs that applies to.** The Markdown
+    build-up beside this is written as UTF-8 and is full of multiplication and
+    division signs and em dashes, correctly: it is read in an editor or on the
+    site, not printed at a console. This one is printed, at 1:18, on somebody
+    else's laptop. Same module, opposite rules.
+
+    Issue #67 built the guard for the failure beats. This is not a beat -- it
+    renders an estimate, and it has no captures and no `beat()` -- but the
+    console it prints to is the same console.
     """
     rates = rates or load_rates()
     built = lines(document, rates)
@@ -1074,7 +1086,7 @@ def summary(document, rates=None):
         "",
         "  An RPLS reads this and decides. Nobody has walked the corridor.",
     ]
-    return "\n".join(out) + "\n"
+    return beats.render(out) + "\n"
 
 
 def write(document, out_dir, rates=None):

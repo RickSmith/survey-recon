@@ -214,13 +214,14 @@ class TestItSurvivesTheLaptopItWillActuallyRunOn(unittest.TestCase):
     The first version of `beat()` printed an em dash. On a Windows console that
     has not been told to use UTF-8 -- which is the default, and every borrowed
     podium laptop -- that is a `UnicodeEncodeError` and a traceback where the
-    beat should be. Nothing else in this package prints a non-ASCII character.
-    """
+    beat should be.
 
-    def test_the_beat_prints_on_a_console_that_only_speaks_ascii(self):
-        for console in ("cp437", "cp1252", "ascii"):
-            with self.subTest(console=console):
-                manual_links.beat().encode(console)
+    **The check on `beat()` itself moved to `tests/test_beats.py`** under issue
+    #67, where it is applied to every module that renders a beat, found rather
+    than listed. A copy here would be a second copy of a rule that already went
+    unenforced once. What stays is `report()`, which is this module's own and
+    which no beat seam covers.
+    """
 
     def test_the_guard_report_prints_there_too(self):
         said = manual_links.report(
@@ -230,21 +231,14 @@ class TestItSurvivesTheLaptopItWillActuallyRunOn(unittest.TestCase):
         said.encode("cp437")
 
 
-class TestTheFallbackARunCanBeReadFrom(unittest.TestCase):
-    """Issue #27 wants a capture "that can stand in if the live thing breaks."
-
-    The page captures are the beat's *inputs*. This is its *output*, written
-    out and committed, so a presenter whose Python will not start can open a
-    text file instead. Pinned to `beat()` by this test, the same way the
-    committed `screening.json` is pinned by the replay check -- otherwise it is
-    a file that silently stops matching the code that made it.
-    """
-
-    def test_the_committed_rendering_is_what_the_code_produces_today(self):
-        path = manual_links.CAPTURE_DIR / manual_links.BEAT_NAME
-        with open(long_path(path), encoding="utf-8", newline="") as handle:
-            written = handle.read()
-        self.assertEqual(written.replace("\r\n", "\n"), manual_links.beat() + "\n")
+# Issue #27 wants a capture "that can stand in if the live thing breaks." The
+# page captures are the beat's *inputs*; the rendered beat is its *output*,
+# written out and committed so a presenter whose Python will not start can open
+# a text file instead. It is pinned to `beat()` the way the committed
+# `screening.json` is pinned by the replay check.
+#
+# **That check moved to `tests/test_beats.py`** under issue #67, where it runs
+# over every beat rather than over this one.
 
 
 class TestTheBeatItself(unittest.TestCase):
