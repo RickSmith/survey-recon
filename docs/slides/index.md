@@ -96,6 +96,7 @@ page is what was on the screen in the room.
 | `corridor-screen/tests/test_money_slide.py` | Holds the money slide to the crew-day build-up its figures come from |
 | `corridor-screen/tests/test_datum_gap.py` | Holds the datum-gap slide to the research note and the SH16 run |
 | `corridor-screen/tests/test_concept_slides.py` | Holds the concept slides to the translation table, and to what they ported |
+| `corridor-screen/tests/test_interjections.py` | Counts Seneca's interjections, keeps them one to a block, and refuses one that talks down to the room |
 
 ## Where the clock lives
 
@@ -113,6 +114,37 @@ agrees with it.
 **The clock is never on the slide.** A time printed on a projector is a promise
 to three hundred people that the session is where it says it is, and the first
 live demo that runs long turns every slide into an accusation.
+
+## The questions the room is already asking
+
+The deck carries **6 audience-proxy interjections**, written into the speaker
+notes. Each one is a question a firm owner in the room is already thinking and
+will not raise a hand to ask, said out loud by Seneca so the answer gets given
+to everybody. The form is the same every time:
+
+```
+**Seneca (audience proxy), <where on the slide>:** "<the question, in the
+room's own words>"
+
+**Answer:** <what goes back, and which committed file it stands on>
+```
+
+The shape is written out above rather than a real one quoted, because a real
+one quoted here is a second copy of a line, and the copy is what drifts.
+
+They are **one to a block, spread across the two hours** — the cold open, Act I,
+the stretch, Act II, Act III and the seal slide. One block cannot carry two,
+and the session does not go an hour without the room having a voice.
+
+**One of them is genuinely skeptical**, and its own note says so. It asks what
+the agent actually saved, in hours, on this job, and the answer is that nobody
+measured it — the same rule the money slide's note sets for the presenter. A
+skeptical question the presenter is glad to hear is a cue rather than
+skepticism, and a room of principals can tell the difference from the back.
+
+Scripted so they land. Rehearsed so they do not sound scripted — which means
+rehearsing them in the run-through against the clock, not reading them off a
+page on the day.
 
 ## Making a cut
 
