@@ -301,6 +301,14 @@ client is, what you already have — everything is wired up correctly.
     **Shows:** the app with `/grill-with-docs` typed and the first interview
     question on screen. Use a made-up job, not a real one.
 
+!!! note "The picture shows a longer name than you will type"
+    Look closely and the shot reads `/mattpocock-skills:grill-with-docs`. It was
+    taken on a machine where these five commands were installed as a plugin, and
+    the app puts the plugin's name in front of anything that arrives that way.
+
+    **Yours came out of the folder you copied, so yours has no prefix. Type
+    `/grill-with-docs`.** Both run the same procedure.
+
 If instead it says it does not know that command, the `.claude` folder did not
 come across. Go back to step 5 and use the command rather than dragging.
 
