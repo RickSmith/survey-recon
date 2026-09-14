@@ -46,7 +46,7 @@ from tests.build_up_figures import (
     figures,
     rate_handles,
 )
-from tests.markdown_docs import flat, text_of
+from tests.markdown_docs import flat, headings, local_link_targets, text_of
 
 REPO = Path(__file__).resolve().parents[2]
 BRIEF = REPO / "docs" / "for-principals" / "index.md"
@@ -115,16 +115,6 @@ PROMPT = re.compile(r"(?:^|\s)\$\s+\w", re.MULTILINE)
 # which is exactly why it must not reach the handout.
 LIVE_MANUAL = "txdot.gov/manuals/row/ess"
 SUPERSEDED_MANUAL = "onlinemanuals.txdot.gov"
-
-
-def headings(markdown):
-    """Every section heading on the page, as its words, lowercased.
-
-    The hashes and the emphasis come off, because what is being asked is what
-    the section is about rather than how it is typeset.
-    """
-    found = re.findall(r"^#{1,6}\s+(.*)$", markdown, flags=re.MULTILINE)
-    return [line.replace("*", "").replace("`", "").strip().lower() for line in found]
 
 
 def readable_words(markdown):
@@ -297,10 +287,8 @@ class TheBriefsLinksGoSomewhere(unittest.TestCase):
     def test_every_page_it_links_to_is_committed(self):
         """`mkdocs build --strict` catches this on the site build, and by then
         the page is already on a projector. Catch it in the suite instead."""
-        for target in re.findall(r"\]\(([^)]+)\)", text_of(BRIEF)):
-            if target.startswith("http") or target.startswith("#"):
-                continue
-            page = (BRIEF.parent / target.split("#")[0]).resolve()
+        for target in local_link_targets(text_of(BRIEF)):
+            page = (BRIEF.parent / target).resolve()
             self.assertTrue(page.exists(), f"{target} is not a file in docs/")
 
 
