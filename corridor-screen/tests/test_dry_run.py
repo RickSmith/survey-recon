@@ -49,6 +49,8 @@ PAGE = REPO / "docs" / "presenting" / "dry-run.md"
 PLAN = REPO / "docs" / "plan-of-record.md"
 NAV = REPO / "mkdocs.yml"
 DOCS_WORKFLOW = REPO / ".github" / "workflows" / "docs.yml"
+README = REPO / "corridor-screen" / "README.md"
+DECK = REPO / "docs" / "slides" / "beyond-the-prompt.md"
 
 # `0:57–1:18`, with the en dash the plan of record actually uses. Anchored to
 # the whole cell the way `test_fallbacks` anchors its own, because what is being
@@ -147,6 +149,52 @@ def content_words(phrase):
     return [word for word in found if word not in small]
 
 
+def slugify(heading):
+    """A heading, as the anchor MkDocs will put on it.
+
+    This is python-markdown's own default `slugify`, which the `toc` extension
+    uses and `mkdocs.yml` switches on with `permalink: true`. Reproduced rather
+    than imported because the tests import nothing outside the standard library
+    and this repo's own package -- the same rule `corridor_screen` runs under.
+
+    Worth knowing what it does to a heading like "0:00 · Cold open": the colon
+    and the middle dot are dropped rather than replaced, the two spaces they
+    leave collapse to one dash, and the answer is `000-cold-open` with one dash
+    and not two.
+    """
+    value = re.sub(r"[^\w\s-]", "", heading.lower()).strip()
+    return re.sub(r"[-\s]+", "-", value)
+
+
+def block_sections(markdown):
+    """The per-block instructions, as {heading: body}, in the order written.
+
+    A block section is a third-level heading that opens with a start time --
+    "### 0:30 · Act I — The grilling". The time is what separates it from the
+    other third-level headings on the page, which are ordinary prose sections
+    and have no business being counted as blocks of the session.
+
+    Ordinary `dict` here rather than anything fancier: insertion order is the
+    document's order, which is what the clock-order check reads.
+    """
+    sections, heading, body = {}, None, []
+    for line in markdown.splitlines():
+        if line.startswith("### "):
+            if heading is not None:
+                sections[heading] = "\n".join(body)
+            title = line[4:].strip()
+            heading, body = (title, []) if A_START.match(title.split()[0]) else (None, [])
+        elif line.startswith("#"):
+            if heading is not None:
+                sections[heading] = "\n".join(body)
+            heading, body = None, []
+        elif heading is not None:
+            body.append(line)
+    if heading is not None:
+        sections[heading] = "\n".join(body)
+    return sections
+
+
 def cut_line():
     """The three cuts, in order, as (what goes, what it becomes)."""
     section = markdown_section(text_of(PLAN), "### Cut line, in order")
@@ -217,6 +265,152 @@ class TestTheSheetIsTheRunOfShow(unittest.TestCase):
 
     def test_the_sheet_ends_where_the_session_ends(self):
         self.assertEqual(end_row()[0], self.plan[-1][1])
+
+
+class TestEveryBlockHasItsOwnInstructions(unittest.TestCase):
+    """#124. The sheet measured the two hours and said nothing about running them.
+
+    A timing sheet tells you a block ran long. It does not tell you what the
+    block was supposed to do, what to type, or what should have come back --
+    and a demo that prints nothing for four seconds looks exactly like a demo
+    that has hung. The person holding the stopwatch is the one who most needs
+    to be able to tell those apart, and they are the one who wrote none of it.
+
+    So every block of the run of show has a section of its own above, and the
+    sections arrive in clock order. A block added to the session cannot quietly
+    turn up without instructions, which is the failure this is really for: the
+    plan of record is edited far more often than this page will be.
+    """
+
+    def setUp(self):
+        self.plan = run_of_show()
+        self.sections = block_sections(text_of(PAGE))
+
+    def test_every_block_has_a_section(self):
+        for start, _end, _minutes, name in self.plan:
+            with self.subTest(block=name):
+                self.assertTrue(
+                    any(start in heading and name in heading for heading in self.sections),
+                    f"no section for {start} {name}; the page has {self.sections}",
+                )
+
+    def test_the_sections_are_in_clock_order(self):
+        """A presenter reads this while something is on a projector.
+
+        Out of order it is a reference document, and a reference document is
+        not what somebody four minutes behind can use.
+        """
+        found = [heading.split()[0] for heading in self.sections]
+        self.assertEqual(found, [start for start, _end, _m, _n in self.plan])
+
+    def test_no_section_invents_a_block(self):
+        self.assertEqual(len(self.sections), len(self.plan))
+
+    def test_every_section_says_what_is_on_screen_and_what_to_do(self):
+        """The two questions somebody driving this asks in that order."""
+        for heading, body in block_sections(text_of(PAGE)).items():
+            with self.subTest(block=heading):
+                self.assertIn("**On screen.**", body)
+                self.assertIn("**You do.**", body)
+
+
+class TestTheCommandsAreTheOnesThisRepoDocuments(unittest.TestCase):
+    """The two screening lines, character for character, against the README.
+
+    `corridor-screen/README.md` is where [the fallback
+    card](../../docs/presenting/fallbacks.md) tells a presenter to copy the
+    cold-open line from rather than retype it -- it is 119 characters and five
+    flags, and the day you need it is the day you will mistype it. A runbook
+    holding a *nearly* identical copy is worse than one holding none, because
+    it is the copy that will be to hand.
+    """
+
+    def readme_lines(self):
+        found = re.findall(
+            r"^python -m corridor_screen --route.*$",
+            text_of(README),
+            flags=re.MULTILINE,
+        )
+        self.assertTrue(found, "the README no longer gives a screening line")
+        return found
+
+    def test_the_page_carries_every_screening_line_the_readme_does(self):
+        page = text_of(PAGE)
+        for line in self.readme_lines():
+            with self.subTest(line=line):
+                self.assertIn(line, page)
+
+    def test_the_live_line_and_the_cache_only_line_are_both_there(self):
+        """One proves the demo is real; the other proves it survives the venue.
+
+        A page with only the live line leaves a presenter with no offline path.
+        A page with only the cache-only line is quietly rehearsing the fallback
+        as though it were the plan, which the plan of record is blunt about.
+        """
+        lines = self.readme_lines()
+        self.assertTrue(any("--mode cache-only" in line for line in lines))
+        self.assertTrue(any("--mode cache-only" not in line for line in lines))
+
+
+class TestThePageWarnsWhatARehearsalWritesOver(unittest.TestCase):
+    """The trap nothing else in this repo says out loud.
+
+    `--out ../project-sh16` is the documented line and it writes into the
+    committed demo artifacts. `run_id` carries a timestamp, so **every** run
+    leaves the working tree dirty, including one that found identical numbers.
+    A rehearsal that found different ones leaves it dirty and failing
+    `test_plan_of_record.py`, which reads that file.
+
+    A presenter who does the honest thing -- rehearse live -- has then modified
+    the repo they are about to put on a projector, and nothing told them.
+    """
+
+    def setUp(self):
+        self.page = plain(text_of(PAGE))
+
+    def test_it_has_a_section_about_it(self):
+        found = headings(text_of(PAGE))
+        self.assertTrue(
+            any("rehearsal changes" in heading for heading in found),
+            f"no section about what a rehearsal writes over; the page has {found}",
+        )
+
+    def test_it_names_the_committed_file_that_gets_written_over(self):
+        self.assertIn("screening.json", self.page)
+
+    def test_it_says_to_send_the_rehearsal_output_somewhere_else(self):
+        self.assertIn("send the output somewhere else", self.page.lower())
+
+    def test_it_says_to_check_git_status_before_the_laptop_closes(self):
+        """The check is worth nothing on Monday. It has to be that evening."""
+        self.assertIn("git status", self.page)
+        self.assertIn("before you close the laptop", self.page.lower())
+
+
+class TestTheRoomHasAVoiceInTheRehearsalToo(unittest.TestCase):
+    """Six interjections, counted from the deck rather than from this page.
+
+    `docs/slides/index.md` says they are one to a block, spread across the two
+    hours, and that they have to be rehearsed **against the clock** rather than
+    read off a page on the day. That makes them part of the run-through rather
+    than a detail of the deck, so the runbook has to place them -- and the
+    number it places has to be the number there are.
+    """
+
+    def test_the_page_places_as_many_as_the_deck_carries(self):
+        in_deck = len(re.findall(r"Seneca \(audience proxy\)", text_of(DECK)))
+        self.assertGreater(in_deck, 0, "the deck no longer carries any interjections")
+        placed = [
+            heading
+            for heading, body in block_sections(text_of(PAGE)).items()
+            if "Seneca" in body
+        ]
+        self.assertEqual(
+            len(placed),
+            in_deck,
+            f"the deck carries {in_deck} interjections and the runbook places "
+            f"{len(placed)}: {placed}",
+        )
 
 
 class TestItIsAFormRatherThanAReport(unittest.TestCase):
@@ -437,6 +631,27 @@ class TestThePageIsReachableAndItsLinksAre(unittest.TestCase):
                 Path(long_path(resolved)).exists(),
                 f"{PAGE.name} links to {target}, which is not in the repo",
             )
+
+    def test_every_link_into_this_page_lands_on_a_heading(self):
+        """The jump links, against the anchors MkDocs will actually generate.
+
+        `mkdocs build --strict` does **not** catch this one. A link to a
+        heading that does not exist builds clean and silently does nothing when
+        clicked, which on a page somebody is following step by step is the
+        worst kind of broken: it looks like the page has no more to say.
+
+        Written after `#000--cold-open` shipped with one dash too many, which
+        is what python-markdown's slugifier does to "0:00 · Cold open" and not
+        what typing it by hand does.
+        """
+        anchors = {slugify(heading) for heading in headings(text_of(PAGE))}
+        wanted = re.findall(r"\]\(#([^)]+)\)", text_of(PAGE))
+        self.assertTrue(wanted, "the page has no jump links; this check is idle")
+        for anchor in wanted:
+            with self.subTest(anchor=anchor):
+                self.assertIn(
+                    anchor, anchors, f"#{anchor} is linked and is not a heading here"
+                )
 
     def test_it_names_the_test_that_keeps_it_honest(self):
         """This file, named on the page it checks.
