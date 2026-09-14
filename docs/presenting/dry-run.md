@@ -17,6 +17,13 @@ none of them has: a sheet somebody can write on.
 **Print it.** The timekeeper writes on it. A page on a screen is a page
 somebody has to hold a laptop to use.
 
+**If the machine is new, start one page earlier.**
+[Setting up a second machine](second-machine.md) takes a bare Windows laptop to
+one that can run all of this. It is worth reading even on a machine you trust,
+because one of its steps is invisible: the three commands Act I runs on the
+projector come from a plugin rather than from this repo, and a fresh clone does
+not have them.
+
 ---
 
 ## Who is in the room
