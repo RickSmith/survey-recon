@@ -1,6 +1,6 @@
 """Reading a committed markdown document, for the tests that check one.
 
-Four test files hold a page in `docs/` to what it claims:
+Five test files hold a page in `docs/` to what it claims:
 
 * `test_fallbacks.py` — the fallback card, against the run of show
 * `test_deck.py` — the slide deck, against the same table
@@ -8,6 +8,8 @@ Four test files hold a page in `docs/` to what it claims:
   SH16 run in `project-sh16/screening.json`
 * `test_principals_brief.py` — the one-page handout, against the crew-day
   build-up its cost figures are read out of
+* `test_day_zero.py` — the setup guide, against the toolkit README it has to
+  hand out the same three download addresses as
 
 All of them have to open a file, find a heading, and read a table out from under
 it. Those three functions were written twice before they were written here, and
@@ -26,6 +28,7 @@ prose. Sharing those would be sharing a coincidence.
 """
 
 import json
+import re
 
 from corridor_screen.cache import long_path
 
@@ -132,3 +135,38 @@ def json_of(path):
     they all load and it is read the same way every time.
     """
     return json.loads(text_of(path))
+
+
+def headings(markdown):
+    """Every section heading in a document, lowercased, with the typesetting off.
+
+    The hashes, the bold and the backticks come off, because what a caller is
+    asking is what the section is *about* rather than how it is set.
+
+    This was written in `test_principals_brief.py` first, to tell a page that
+    answers a question in a section from one that mentions it in a sentence.
+    `test_day_zero.py` needed the same distinction for the same reason -- a stub
+    can mention three prerequisites, only a real page has a section for each --
+    and a second copy is what this module exists to delete.
+    """
+    found = re.findall(r"^#{1,6}\s+(.*)$", markdown, flags=re.MULTILINE)
+    return [line.replace("*", "").replace("`", "").strip().lower() for line in found]
+
+
+def local_link_targets(markdown):
+    """Every link on a page that points at another file in this repo.
+
+    Addresses and same-page anchors are dropped; what comes back is the part
+    before any `#`, ready to be resolved against the page's own folder.
+
+    Two test files check that these resolve, and they check it for the same
+    reason: `mkdocs build --strict` already catches a link to a page that does
+    not exist, but only once somebody builds the site, and by then the page may
+    be on a projector. The suite runs on every pull request.
+    """
+    targets = []
+    for target in re.findall(r"\]\(([^)]+)\)", markdown):
+        if target.startswith("http") or target.startswith("#"):
+            continue
+        targets.append(target.split("#")[0])
+    return targets

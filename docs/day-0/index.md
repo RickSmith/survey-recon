@@ -6,7 +6,7 @@ five commands that carry a job from "somebody wants something" to "you signed
 it."
 
 You do not need to have used a command line before. Where this page asks you to
-type something, it gives you the exact line to type and says what it does.
+type something, it gives you the exact line and says what it does.
 
 !!! tip "If you would rather install nothing"
     [For principals](../for-principals/index.md) is one page, with no terminal on
@@ -29,8 +29,8 @@ This page does not quote a price — prices change, and a stale number on a page
 nobody updates is worse than no number at all.
 
 **Nothing on this page needs Node, npm, Docker, Python, or an API key.** That is
-deliberate. The usual way to install the five commands needs all of the first
-three, so they are copied into this repo as plain text instead.
+deliberate. The usual way to install the five commands needs the first three of
+those, so they are copied into this repo as plain text instead.
 [The toolkit page](../toolkit/index.md) says what that cost.
 
 ---
@@ -38,8 +38,8 @@ three, so they are copied into this repo as plain text instead.
 ## Step 1 — Make a GitHub account
 
 GitHub is where the work orders live. In survey terms it is the job file: every
-work order, every revision, and every check print, in one place, with a date and
-a name on each one.
+work order, every revision, and every check print in one place, with a date and a
+name on each one.
 
 Go to <https://github.com/signup> and work through the form. It asks for an email
 address, a password, and a username. The username is public, so use something you
@@ -52,7 +52,7 @@ would put on a business card.
 
 GitHub emails you a code and asks you to type it back. If the email does not
 arrive within a minute or two, check the junk folder before asking for another
-one — a second request usually invalidates the first code.
+one — a second request usually makes the first code stop working.
 
 !!! info "Screenshot 2 — the email verification step"
     **Not captured yet.** Must show: the screen asking for the code from the
@@ -67,11 +67,13 @@ That is the whole account. You do not need to create anything inside it today.
 git is the thing that keeps every version of every file. Nothing you do with an
 agent overwrites the last good copy, because git still has it.
 
-The vocabulary is on the [vocabulary page](../vocabulary/index.md). The short
-version: a **branch** is a working copy nobody else is affected by, a **commit**
-is a field book entry, and a **pull request** is the check print you redline.
+Three words you will meet, in survey terms:
 
-Download it from <https://git-scm.com/downloads> and pick your operating system.
+- A **branch** is a working copy nobody else is affected by
+- A **commit** is a field book entry
+- A **pull request** is the check print you redline
+
+Download git from <https://git-scm.com/downloads> and pick your operating system.
 
 !!! info "Screenshot 3 — the git download page"
     **Not captured yet.** Must show: the download page with the Windows button
@@ -93,9 +95,9 @@ Two screens worry people, so they are worth naming before you meet them:
   way
 
 !!! info "Screenshot 4 — the installer page about your PATH"
-    **Not captured yet.** Must show: the whole installer window on the PATH
-    page, with the default middle option selected, so a reader can compare
-    without reading the words.
+    **Not captured yet.** Must show: the whole installer window on the PATH page,
+    with the default middle option selected, so a reader can compare without
+    reading the words.
 
 !!! info "Screenshot 5 — the installer page about the default editor"
     **Not captured yet.** Must show: the drop-down list of editors, open, with
@@ -125,40 +127,41 @@ Claude account from the top of this page.
 !!! info "Screenshot 7 — the app's sign-in screen"
     **Not captured yet.** Must show: the sign-in screen as the app first opens.
 
-The app has more than one side to it. The one this repo uses is the side that
+The app has more than one side to it. The side this repo uses is the one that
 works on a folder of files on your own machine, rather than on a conversation.
 That is the side that can read your job folder, write into it, and run the five
 commands.
 
 !!! info "Screenshot 8 — where the app opens a folder"
-    **Not captured yet.** Must show: the app's coding side, with the control
-    that picks a folder clearly visible, and no personal file names in the
-    window.
+    **Not captured yet.** Must show: the app's coding side, with the control that
+    picks a folder clearly visible, and no real file names in the window.
 
-**Nothing leaves your machine except what you hand the agent.** What you do hand
-it goes to a company's servers, so treat it the way you would treat an email
-outside the firm. The list of what never leaves the office is
-[here](../governance/what-never-leaves.md), and filling it in is the part of this
-setup with real consequences.
+**Decide now what you will and will not hand it.** Whatever you give the agent
+goes to a company's servers, so treat it the way you would treat an email leaving
+the firm. The checklist of
+[what never leaves the office](../governance/what-never-leaves.md) is the place
+to settle that, and filling it in is the part of this setup with real
+consequences.
 
 ---
 
 ## Step 4 — Get this repo onto your machine
 
-You need the `toolkit` folder out of this repo. The quickest way is to download
-the whole thing as a zip file.
+A **repository**, or repo, is a folder that git is keeping the history of. This
+one holds the worked example, the data sources, and the `toolkit` folder you are
+about to copy.
 
-Go to
+The quickest way to get it is to download the whole thing as a zip file. Go to
 [the repo on GitHub](https://github.com/RickSmith/survey-recon), press the green
 button near the top of the file list, and choose **Download ZIP**. Unzip it
 somewhere you can find again.
 
 !!! info "Screenshot 9 — the green button and the Download ZIP entry"
-    **Not captured yet.** Must show: the green button pressed, with the menu
-    open and Download ZIP visible in it.
+    **Not captured yet.** Must show: the green button pressed, with the menu open
+    and Download ZIP visible in it.
 
-You are welcome to use git for this instead if you already know how. The zip is
-here because it is one click and it cannot go wrong.
+If you already know how to use git for this, use git. The zip is here because it
+is one click and needs nothing explained first.
 
 ---
 
@@ -171,41 +174,60 @@ Make a folder for the job you want to work on. An empty one is fine.
 
     A folder inside OneDrive, inside a firm name with spaces in it, inside
     Documents, inside three more folders, gets past the 260 characters Windows
-    opens without being asked. When that happens the failure does not say
-    "the path is too long" — it says the file does not exist, which sends you
-    looking for the wrong problem. This repo has a piece of code in it that
-    exists only because of this.
+    opens without being asked. When that happens the failure does not say "the
+    path is too long" — it says the file does not exist, which sends you looking
+    for the wrong problem. This repo carries a piece of code that exists only
+    because of this.
 
 Now copy the **contents** of the `toolkit` folder into your job folder. Not the
 folder itself — what is inside it.
 
-On Windows, open PowerShell in your job folder and run this, with the path to
-where you unzipped the repo in place of `<path-to>`:
+### Opening a command line in that folder
+
+On Windows, open the job folder in File Explorer, hold **Shift**, right-click on
+an empty part of the window, and choose the entry that opens PowerShell or
+Windows Terminal there. That gets you a command line already pointed at the right
+folder, so nothing on this page has to explain how to change directories.
+
+!!! info "Screenshot 10 — opening a command line in the job folder"
+    **Not captured yet.** Must show: the Windows 11 right-click menu over an
+    empty part of a folder window, with the entry that opens a terminal there
+    highlighted.
+
+On a Mac, right-click the folder and use the Finder service that opens Terminal
+at that folder.
+
+### The command
+
+On Windows, with the path to where you unzipped the repo in place of
+`<path-to>`:
 
 ```powershell
 Copy-Item -Path "<path-to>\survey-recon\toolkit\*" -Destination . -Recurse -Force
 ```
 
-On a Mac, in Terminal, from inside your job folder:
+On a Mac:
 
 ```bash
 cp -R <path-to>/survey-recon/toolkit/. .
 ```
 
 !!! danger "Do not drag these across by hand"
-    One of the folders you are copying is called `.claude`. It starts with a
-    dot, and both File Explorer and Finder hide it by default. Drag the files
-    across and you will almost certainly leave it behind — and the first sign of
-    that is the app saying it does not know the command you just typed.
+    One of the folders you are copying is called `.claude`, and it is the one
+    that carries the five commands. A name starting with a dot is treated
+    differently by both systems:
 
-    The two commands above copy it. Both were run on Windows 11 and confirmed to
-    bring `.claude` with them.
+    - **On a Mac, Finder hides it.** You cannot select what you cannot see.
+      `Cmd`-`Shift`-`.` shows hidden files if you want to look
+    - **On Windows, File Explorer shows it**, but it sorts away from the files
+      you are looking at and is easy to leave out of a selection
 
-    If you want to see it for yourself, turn on hidden files first.
+    Either way the first sign of getting it wrong is the app saying it does not
+    know the command you just typed.
 
-!!! info "Screenshot 10 — turning on hidden files in File Explorer"
-    **Not captured yet.** Must show: the View ribbon in Windows 11 File
-    Explorer with the Hidden items checkbox, ticked.
+    **The Windows command above was run and checked on 2026-09-13**, on Windows
+    11 with PowerShell 5.1: `.claude` came across with everything else. The macOS
+    command is `toolkit/README.md`'s own, and has not been re-run here.
 
 When it has worked, the top of your job folder looks like this:
 
@@ -216,12 +238,38 @@ your-job-folder/
 ├── docs/
 │   └── agents/
 ├── CLAUDE.md
-└── CONTEXT.md
+├── CONTEXT.md
+└── README.md
 ```
 
 ---
 
-## Step 6 — Check that it worked
+## Step 6 — Fill in `CLAUDE.md` and `CONTEXT.md`
+
+**You now have somebody else's agent. This step makes it yours.**
+
+Two of the files you just copied have blanks in them. Anything in «guillemets» is
+one. Open them in any text editor — Notepad is fine.
+
+**`CLAUDE.md`** is the employee handbook, and it wants three things: your firm
+name, who signs, and the list of what never leaves the office. That last list is
+the one with real consequences, and the
+[checklist](../governance/what-never-leaves.md) is there to work through.
+
+**`CONTEXT.md`** is the glossary. It wants six words you are tired of explaining.
+Six is plenty for a first version — it grows on its own, and the first command
+you run adds to it as terms get settled.
+
+!!! info "Screenshot 11 — the handbook with its blanks still in it"
+    **Not captured yet.** Must show: `CLAUDE.md` open in a plain text editor with
+    at least one «guillemet» blank visible, so a reader knows what they are
+    looking for.
+
+Everything else in the folder can wait.
+
+---
+
+## Step 7 — Check that it worked
 
 Open the Claude desktop app, point it at your job folder, and type:
 
@@ -232,7 +280,7 @@ Open the Claude desktop app, point it at your job folder, and type:
 If it starts interviewing you about the job — what the corridor is, who the
 client is, what you already have — everything is wired up correctly.
 
-!!! info "Screenshot 11 — the agent answering the command"
+!!! info "Screenshot 12 — the agent answering the command"
     **Not captured yet.** Must show: the app with `/grill-with-docs` typed and
     the first interview question on screen. Use a made-up job, not a real one.
 
@@ -242,7 +290,7 @@ come across. Go back to step 5 and use the command rather than dragging.
 **That interview is the step that earns the other four commands.** It is the same
 twenty minutes you already spend on the phone before you quote a job. An agent
 that starts work before the scope is settled produces a confident, fast, wrong
-answer, exactly the way a new hire does.
+answer, in much the way a new hire does.
 
 ---
 
@@ -261,9 +309,9 @@ as plain files in the job folder, which needs nothing at all. See
 [`issue-tracker.md`](https://github.com/RickSmith/survey-recon/blob/main/toolkit/docs/agents/issue-tracker.md)
 in the kit.
 
-!!! info "Screenshot 12 — the GitHub CLI download page"
-    **Not captured yet.** Must show: the download page with the Windows
-    installer link visible.
+!!! info "Screenshot 13 — the GitHub CLI download page"
+    **Not captured yet.** Must show: the download page with the Windows installer
+    link visible.
 
 ---
 
@@ -271,10 +319,11 @@ in the kit.
 
 | What you see | What it usually is |
 |---|---|
-| The app does not know `/grill-with-docs` | The hidden `.claude` folder did not come across. Step 5 |
+| The app does not know `/grill-with-docs` | The `.claude` folder did not come across. Step 5 |
 | A file "does not exist" that you can see in File Explorer | The path is too long. Move the job folder to `C:\jobs\` and try again |
 | `git` is not recognized as a command | The git installer did not finish, or the machine has not been restarted since |
-| The verification email never arrives | Check junk. Ask for a new code only after that, since a new one cancels the old |
+| The verification email never arrives | Check junk. Ask for a new code only after that, since a new one stops the old one working |
+| The agent answers, but talks about no firm in particular | `CLAUDE.md` still has its blanks in it. Step 6 |
 
 **This table is short on purpose, and it is meant to grow.** It lists what has
 actually stopped somebody, not everything that could. When a step stops you, the
@@ -287,8 +336,8 @@ than explained away.
 
 ## What next
 
-- **[The toolkit](../toolkit/index.md)** — the two files to fill in before you
-  start, and what each of the five commands does
+- **[The toolkit](../toolkit/index.md)** — what each of the five commands does,
+  and the order they run in
 - **[Managing your agent](../managing-your-agent/index.md)** — the supervision
   loop, using this repo's own mistakes as the worked example
 - **[The worked example](../scenarios/sh16/index.md)** — a real TxDOT right of

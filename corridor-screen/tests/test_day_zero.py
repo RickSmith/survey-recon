@@ -1,4 +1,4 @@
-"""The Day 0 setup guide, held to the five things #28 asks of it.
+"""The Day 0 setup guide, held to the parts of #28 a machine can settle.
 
 `docs/day-0/index.md` is the only page in this repo a reader opens before they
 own anything. Every other page assumes the three prerequisites are installed.
@@ -7,7 +7,7 @@ This one is the reason they are.
 That makes it the page whose failure is hardest to see from the inside. A
 maintainer with git, a GitHub account and the desktop app already working cannot
 tell by reading whether the page gets somebody there, because the page cannot
-fail for them. So the parts of #28 a machine can settle are settled here:
+fail for them. So:
 
 * **It is reachable in one click**, from the landing page and from the top level
   of the menu -- an acceptance criterion that is one edit to `mkdocs.yml` away
@@ -18,29 +18,30 @@ fail for them. So the parts of #28 a machine can settle are settled here:
 * **The addresses are the toolkit's addresses.** Every download link on the page
   is one `toolkit/README.md` already hands out. Two documents sending a reader to
   two different installers is how one of them ends up wrong
-* **It covers all three, and then checks that it worked.** Three sections and a
-  verification, rather than three mentions
+* **It covers all three, fills the kit in, and then checks that it worked** --
+  sections, rather than mentions
 * **The screenshot slots are honest.** Numbered without gaps, each saying what it
-  must show, and none left behind once the image beside it exists
+  must show, and each either carrying its image or saying on the page that it
+  does not
 
 **Why this file can check screenshots at all.** It cannot check that a
 screenshot is good, or that it is of the right thing. It checks the two failures
-that have no other alarm: a slot nobody ever filled going to the projector
-looking like a finished page, and an image landing in the folder that no slot on
-the page points at. Both are silent. `mkdocs build --strict` catches a broken
-image reference; nothing catches an image that is simply never referenced.
+that have no other alarm: a slot nobody ever filled reaching the projector
+looking like a finished page, and an image landing in the folder that no slot
+points at. `mkdocs build --strict` catches a broken image reference; nothing
+catches an image that is simply never referenced.
 
 **What this file deliberately does not do.** It does not check that the guide
-works. Only a person who has never done it can settle that, which is
+works. Only somebody who has never done it can settle that, which is
 [#9](https://github.com/RickSmith/survey-recon/issues/9), and no test replaces
-it.
+it. Two of #28's six criteria are that person's, not this file's.
 """
 
 import re
 import unittest
 from pathlib import Path
 
-from tests.markdown_docs import flat, text_of
+from tests.markdown_docs import flat, headings, local_link_targets, text_of
 
 REPO = Path(__file__).resolve().parents[2]
 
@@ -50,13 +51,20 @@ LANDING = REPO / "docs" / "index.md"
 NAV = REPO / "mkdocs.yml"
 TOOLKIT_README = REPO / "toolkit" / "README.md"
 
-# The three prerequisites. Their addresses are not written here -- they are read
-# back out of `toolkit/README.md` below, which is the document that already
-# promises them. Written twice, they would drift the first time one of them
-# moved.
+# The three prerequisites, plus the step that turns a copied folder into *your
+# firm's* agent rather than a stranger's. Their addresses are not written here --
+# they are read back out of `toolkit/README.md` below, which is the document that
+# already promises them. Written twice, they would drift the first time one of
+# them moved.
 #
 # Each entry is a word the guide has to have a section about.
 THE_THREE = ["GitHub account", "git", "Claude desktop app"]
+
+# `toolkit/README.md` puts "Filling it in" before "Checking that it worked", and
+# it is right to. A reader who copies the kit and stops has an agent holding a
+# handbook that still says «FIRM NAME», which is the one outcome this guide's own
+# opening sentence promises against.
+FILLING_IN = "claude.md"  # lowercased, because `headings` lowercases what it returns
 
 # What a fourth prerequisite looks like sneaking in through a code block. These
 # are the exact tools `CLAUDE.md` rules out of the attendee path:
@@ -86,20 +94,24 @@ DENIAL = re.compile(
 
 # A screenshot slot. One admonition, one number, one short title.
 #
-#   !!! info "Screenshot 4 - the installer page about your PATH"
+#   !!! info "Screenshot 4 — the installer page about your PATH"
 #
 # The number is what makes the set checkable: a slot inserted in the middle
 # without renumbering, and a slot deleted, both show up as a gap.
 SLOT = re.compile(r'^!!!\s+\w+\s+"Screenshot (\d+)\s*[-—]\s*(.+)"\s*$', re.MULTILINE)
+
+# An image inside a slot, as the page references it. Every capture lands in
+# `docs/day-0/img/`, so a slot carrying one of these is a slot that has been
+# filled.
+IMAGE_IN_A_SLOT = re.compile(r"\]\(img/([^)\s]+)\)")
 
 # What every slot has to promise, so whoever holds the camera does not have to
 # guess. A slot that says only "screenshot here" is a slot that gets captured
 # wrong once and re-captured on the morning of the session.
 WHAT_IT_MUST_SHOW = "Must show:"
 
-# The sentence a slot carries while it is still empty. It is what makes an
-# unfilled slot visible to a reader rather than only to a maintainer, and it is
-# how this file tells an empty slot from a filled one.
+# The sentence an empty slot carries. It is what makes the gap visible to a
+# reader rather than only to a maintainer.
 NOT_CAPTURED = "Not captured yet"
 
 
@@ -123,6 +135,12 @@ def captured_images():
     )
 
 
+def slots():
+    """Every screenshot slot as (number, title, the text under it), in order."""
+    parts = re.split(SLOT, guide())[1:]
+    return [tuple(parts[at:at + 3]) for at in range(0, len(parts), 3)]
+
+
 def code_blocks(markdown):
     """Everything inside triple-backtick fences, as a list of blocks.
 
@@ -135,12 +153,6 @@ def code_blocks(markdown):
 def sentences(markdown):
     """The page as sentences, flattened, for checks that need one at a time."""
     return re.split(r"(?<=[.!?])\s+", flat(markdown))
-
-
-def headings(markdown):
-    """Every heading on the page, lowercased, with the typesetting taken off."""
-    found = re.findall(r"^#{1,6}\s+(.*)$", markdown, flags=re.MULTILINE)
-    return [line.replace("*", "").replace("`", "").strip().lower() for line in found]
 
 
 def addresses(markdown):
@@ -164,7 +176,7 @@ def prerequisite_addresses():
 
 
 class TheGuideIsReachableInOneClick(unittest.TestCase):
-    """#28, last criterion: reachable within one click of the landing page."""
+    """#28: reachable within one click of the site's landing page."""
 
     def test_the_landing_page_links_to_it(self):
         self.assertIn(
@@ -190,7 +202,7 @@ class TheGuideIsReachableInOneClick(unittest.TestCase):
 
 
 class TheGuideStartsFromZero(unittest.TestCase):
-    """#28, first criterion: starts from zero, assumes no terminal experience."""
+    """#28: starts from zero and assumes no terminal experience."""
 
     def test_it_is_no_longer_a_stub(self):
         markdown = guide().lower()
@@ -206,6 +218,17 @@ class TheGuideStartsFromZero(unittest.TestCase):
                 f"The words being somewhere in the prose is the page mentioning "
                 f"a prerequisite, which is what the stub already did.",
             )
+
+    def test_it_has_the_reader_fill_the_kit_in(self):
+        """Installing three things and copying a folder is not a working agent.
+        It is a working agent belonging to nobody, reading a handbook with the
+        firm name still in guillemets."""
+        self.assertTrue(
+            any(FILLING_IN in heading for heading in headings(guide())),
+            "no section of the guide has the reader fill in CLAUDE.md, so they "
+            "finish with a handbook that names no firm and no signer. "
+            "toolkit/README.md puts this before the check that it worked.",
+        )
 
     def test_it_ends_by_checking_that_it_worked(self):
         """A setup guide that stops at the last install leaves the reader
@@ -225,7 +248,7 @@ class TheGuideStartsFromZero(unittest.TestCase):
 
 
 class TheGuideNeedsNothingBeyondTheThree(unittest.TestCase):
-    """#28, fifth criterion: never requires Node, npx, or an API key."""
+    """#28: never requires Node, npx, or an API key."""
 
     def test_no_code_block_installs_a_fourth_thing(self):
         for block in code_blocks(guide()):
@@ -253,10 +276,15 @@ class TheGuideNeedsNothingBeyondTheThree(unittest.TestCase):
     def test_the_optional_fourth_thing_is_marked_optional(self):
         """GitHub CLI is the one honest asterisk, and both the toolkit README and
         the toolkit page mark it as skippable. A setup guide that lists it beside
-        the three turns three prerequisites into four."""
+        the three turns three prerequisites into four.
+
+        Skipped rather than passed when the guide does not mention it at all. A
+        conditional check that returns early reports success while testing
+        nothing, which is worse than reporting that it did not run.
+        """
         markdown = guide()
         if "cli.github.com" not in markdown:
-            return
+            self.skipTest("the guide does not mention GitHub CLI")
         self.assertIn(
             "optional",
             flat(markdown).lower(),
@@ -301,29 +329,21 @@ class TheAddressesAreTheToolkitsAddresses(unittest.TestCase):
 
 
 class TheScreenshotSlotsAreHonest(unittest.TestCase):
-    """#28, second criterion: screenshots at every step a reader could get lost.
+    """#28: screenshots at every step where a reader could get lost.
 
     The slots are the specification for the captures. They are checked; the
     photographs are not, and cannot be.
     """
 
-    def slots(self):
-        return SLOT.findall(guide())
-
-    def bodies(self):
-        """Each slot as (number, title, everything under it), in page order."""
-        parts = re.split(SLOT, guide())[1:]
-        return [tuple(parts[at:at + 3]) for at in range(0, len(parts), 3)]
-
     def test_there_are_slots_at_all(self):
         self.assertTrue(
-            self.slots(),
+            slots(),
             "no screenshot slots on a guide whose issue calls for screenshots "
             "at every step where a reader could get lost",
         )
 
     def test_they_are_numbered_from_one_without_gaps(self):
-        numbers = [int(number) for number, _ in self.slots()]
+        numbers = [int(number) for number, _, _ in slots()]
         self.assertEqual(
             list(range(1, len(numbers) + 1)),
             numbers,
@@ -333,7 +353,7 @@ class TheScreenshotSlotsAreHonest(unittest.TestCase):
 
     def test_every_slot_says_what_it_must_show(self):
         """A slot without this is a slot that gets captured twice."""
-        for number, _, body in self.bodies():
+        for number, _, body in slots():
             self.assertIn(
                 WHAT_IT_MUST_SHOW,
                 body,
@@ -341,18 +361,33 @@ class TheScreenshotSlotsAreHonest(unittest.TestCase):
                 f"cannot be captured without asking",
             )
 
-    def test_an_uncaptured_slot_says_so_on_the_page(self):
-        """While the folder is empty, every slot is empty, and a reader is told
-        rather than left wondering whether their browser failed to load an
-        image."""
-        if captured_images():
-            return
-        for number, _, body in self.bodies():
+    def test_every_slot_either_carries_its_image_or_says_it_does_not(self):
+        """Checked one slot at a time, deliberately.
+
+        The first version of this checked the folder instead: if any image had
+        been captured, it stopped checking every slot. The day the first
+        screenshot landed, the other eleven would have gone unwatched -- which is
+        exactly the silent failure this class exists to catch, rebuilt inside the
+        check meant to catch it.
+        """
+        for number, _, body in slots():
+            if IMAGE_IN_A_SLOT.search(body):
+                continue
             self.assertIn(
                 NOT_CAPTURED,
                 body,
-                f"screenshot {number} has no image and does not say so",
+                f"screenshot {number} has no image and does not say so, so it "
+                f"reads on the page as though it were finished",
             )
+
+    def test_every_image_a_slot_claims_is_really_there(self):
+        for number, _, body in slots():
+            for name in IMAGE_IN_A_SLOT.findall(body):
+                self.assertTrue(
+                    (IMAGES / name).is_file(),
+                    f"screenshot {number} points at img/{name}, which is not in "
+                    f"docs/day-0/img/",
+                )
 
     def test_every_captured_image_is_on_the_page(self):
         """The failure with no other alarm. A broken image reference stops
@@ -373,10 +408,8 @@ class TheGuidesLinksGoSomewhere(unittest.TestCase):
     def test_every_page_it_links_to_is_committed(self):
         """`mkdocs build --strict` catches this too, but only once somebody
         builds the site. The suite runs on every pull request."""
-        for target in re.findall(r"\]\(([^)]+)\)", guide()):
-            if target.startswith("http") or target.startswith("#"):
-                continue
-            page = (GUIDE.parent / target.split("#")[0]).resolve()
+        for target in local_link_targets(guide()):
+            page = (GUIDE.parent / target).resolve()
             self.assertTrue(page.exists(), f"{target} is not a file in docs/")
 
 
