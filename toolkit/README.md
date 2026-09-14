@@ -68,6 +68,11 @@ Either way, the command above copies it and the question does not arise. If you
 drag files across by hand instead, you will very likely leave `.claude` behind
 and wonder why the commands do not exist.
 
+*The Windows half was checked on 2026-09-13, on Windows 11: the `.claude` folder
+carries no "hidden" marking, and that marking is what File Explorer actually goes
+by. The Mac half is Finder's long-standing handling of names that start with a
+dot, and was not re-tested here.*
+
 When you are done, the top of your job folder looks like this:
 
 ```

@@ -107,8 +107,8 @@ write them this way, so use its layout rather than inventing one:
 Then **"publish to the issue tracker" means write a new file under
 `.scratch/`**, and **"fetch the relevant ticket" means read the file**.
 
-**`.scratch` starts with a dot.** Finder hides it. File Explorer shows it, but
-sorts it away from your other folders. It is also the kind of name that tools
+**`.scratch` starts with a dot.** Finder hides it. File Explorer shows it, but a
+name like that is easy to skim past. It is also the kind of name that tools
 ignore by habit — check your `.gitignore` and make sure it is not in there, or
 your work orders will never be saved. If you would rather they lived somewhere
 obvious, rename the folder here and the agent will follow.
