@@ -50,7 +50,8 @@ nav:
       - What the capture found: scenarios/sh16/capture-note.md
   - If it breaks on the day: presenting/fallbacks.md
   - Corridor screening:
-      - corridor-screen/spec.md
+      - corridor-screen/index.md
+      - The specification: corridor-screen/spec.md
       - Lead times and their sources: corridor-screen/lead-times.md
       - The right-of-entry letters: corridor-screen/roe-letters.md
   - Data sources:
