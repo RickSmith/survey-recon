@@ -57,7 +57,9 @@ If you have never installed any of the three, start at
 
 The [installation notes](https://github.com/RickSmith/survey-recon/blob/main/toolkit/README.md)
 have the exact copy command for Windows and for macOS, and the one trap worth
-knowing — `.claude` starts with a dot, so File Explorer and Finder both hide it.
+knowing — `.claude` starts with a dot, and dragging it across by hand is easy
+to get wrong. Finder hides it. File Explorer shows it, but sorts it away from
+the files you are looking at.
 
 ---
 
