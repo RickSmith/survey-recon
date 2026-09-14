@@ -50,6 +50,7 @@ nav:
       - What the capture found: scenarios/sh16/capture-note.md
   - The dry run: presenting/dry-run.md
   - If it breaks on the day: presenting/fallbacks.md
+  - Setting up a second machine: presenting/second-machine.md
   - Corridor screening:
       - corridor-screen/index.md
       - The specification: corridor-screen/spec.md
