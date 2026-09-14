@@ -145,5 +145,5 @@ working from.
 
 - **[Managing your agent](../managing-your-agent/index.md)** — the supervision
   loop in practice, using this repo's own check prints as the worked example
-- **[Going further](../going-further/index.md)** — the full skill set, the npx
-  route, and what else is out there
+- **[Going further](../going-further/index.md)** — the other sixteen skills, the
+  two ways to install them, Hermes, and a QC starter. **None of it is required**
