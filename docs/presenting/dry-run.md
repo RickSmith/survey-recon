@@ -56,7 +56,9 @@ there is still time to care.
 7. **Prove the tool runs, before anybody is watching.** Run the cache-only line
    from [the cold open](#000-cold-open) once. It takes about a second and a
    half, it touches no network at all, and it ends on `parcels 524`. If it does
-   not, you have found your first problem and you have found it early.
+   not, you have found your first problem and you have found it early. **In a
+   rehearsal, seed the scratch folder first** — see [below](#seed-the-scratch-folder-first-or-you-rehearse-without-a-fallback),
+   because a cache-only run cannot read a cache that is not there.
 
 **Do not fix anything you find in the first ten minutes of the run itself.**
 Write it down and keep going. A rehearsal that stops to fix things measures
@@ -113,6 +115,38 @@ changed:
 python -m corridor_screen --route SH0016-KG --begin-dfo 347.7 --end-dfo 356.367 --out ../../dry-run-scratch
 ```
 
+### Seed the scratch folder first, or you rehearse without a fallback
+
+**The cache lives inside the output folder.** A scratch folder starts empty, so
+`--mode cache-only` pointed at one has nothing to read and stops on the first
+service — and that line is the whole of your no-network fallback. Copy the
+cache across once, before the run. From the **repo root**:
+
+```bash
+mkdir -p ../dry-run-scratch && cp -r project-sh16/cache ../dry-run-scratch/cache
+```
+
+It is the same folder the command above writes to; that line reads
+`../../dry-run-scratch` only because every command in this page is run from
+`corridor-screen`, one level further down.
+
+**Then prove it**, from `corridor-screen`, before anybody is watching:
+
+```bash
+python -m corridor_screen --route SH0016-KG --begin-dfo 347.7 --end-dfo 356.367 --out ../../dry-run-scratch --mode cache-only
+```
+
+About a second and a half, every service `skipped`, ending on `parcels 524`.
+A rehearsal that never tests the fallback has not rehearsed the thing most
+likely to be needed.
+
+**Run the blocks in order.** `crew_day` at 1:18 and `live_check` at 0:57 both
+read `screening.json` out of the folder `--out` names, and neither one is
+polite about it — a scratch folder that has not had the cold open's screening
+run sent to it gives you a bare `FileNotFoundError` on the projector. On the
+day this cannot happen, because `project-sh16` is already populated. In the
+rehearsal it can, and it looks like a broken tool rather than a skipped step.
+
 **Then check before you close the laptop:**
 
 ```bash
@@ -158,7 +192,7 @@ findings, ending on the parcel count. The whole run took **19 seconds** on
 2026-09-13, and the committed run of that morning took 21:
 
 ```
-corridor-screen 0.1.0  run texas-bexar-sh0016-kg-20260913T213813  mode live
+corridor-screen 0.1.0  run texas-bexar-sh0016-kg-20260913T213813  mode cache-first
   ping  TxDOT_Roadways     ok       264 ms
   ping  ArcGIS_Geometry    ok       266 ms
   ...
@@ -176,6 +210,13 @@ and ending:
   parcels     524
   warnings    0
 ```
+
+**Read the mode word in that first line.** The command carries no `--mode`, so
+the run is `cache-first` — it calls every service for real and falls back to the
+cache only where one will not answer. That is why the `ping` lines below it read
+`ok` and carry real milliseconds. The word changes to `cache-only` the moment
+you switch, and it is the line that tells a watching room which one they are
+getting.
 
 **Point at the wrong-file check.** It prints the corridor length, both end
 coordinates and a map link *before* it does anything else. A corridor drawn
