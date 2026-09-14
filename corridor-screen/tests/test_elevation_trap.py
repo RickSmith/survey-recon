@@ -27,6 +27,7 @@ Everything here reads from committed captures in
 """
 
 import json
+import re
 import unittest
 from pathlib import Path
 
@@ -35,6 +36,11 @@ from corridor_screen import elevation_trap
 # The socket guard `test_offline` built under #19, so "it works offline" is
 # proven rather than asserted.
 from tests.test_offline import no_network
+
+# The shared reader, so a page opens the same way here as in the four other
+# test files that hold a committed document to what it claims. `text_of` is
+# also the door that survives a long Windows path.
+from tests.markdown_docs import plain, table_rows, text_of
 
 REPO = Path(__file__).resolve().parents[2]
 
@@ -216,6 +222,69 @@ class TestTheEvidenceIsCommittedAndTraceable(unittest.TestCase):
     # same miss issue #76 found in `manual_links.capture_text`: it would have
     # failed on a checkout whose paths run past 260 characters, which this
     # repo's own worktrees already do.
+
+
+# The two documents that tell a reader how many captures there are.
+THE_PAGE = REPO / "docs" / "managing-your-agent" / "the-wrong-answer.md"
+THE_CAPTURE_README = elevation_trap.CAPTURE_DIR / "README.md"
+
+# Both of them spell the number out, which is how this repo writes a count in
+# prose. Indexing by the count is deliberate: it reads as `NUMBER_WORDS[12]`
+# giving "twelve", so a reader can check the table without counting it.
+NUMBER_WORDS = (
+    "zero", "one", "two", "three", "four", "five", "six", "seven", "eight",
+    "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen",
+    "sixteen", "seventeen", "eighteen", "nineteen", "twenty",
+)
+
+
+class TestTheCountInTheProseComesFromTheDictionary(unittest.TestCase):
+    """Issue #109. Four places said how many captures there are, and the set
+    had grown past every one of them: the page said nine, the capture README
+    said ten, a comment beside `CAPTURES` said five, and `CAPTURES` held twelve.
+    The README's own table was right, four lines under a sentence that was not.
+
+    **A count carried by prose is a number with no evidence behind it**, which
+    is exactly the failure the captures underneath it exist to teach. So the
+    number is read out of `CAPTURES` here. The next capture added fails this
+    test rather than quietly making two sentences wrong.
+
+    `the-beat.txt` sits in that folder and in that table and is **not** a
+    captured response -- it is the rendered fallback. It is outside the count,
+    and mistaking it for evidence is the likeliest way one of those four
+    numbers went wrong in the first place.
+    """
+
+    def setUp(self):
+        self.count = len(elevation_trap.CAPTURES)
+        self.word = NUMBER_WORDS[self.count]
+
+    def stated(self, path, pattern):
+        """The number word a document actually writes, so a failure says which
+        word it found rather than only that a string was missing."""
+        found = re.search(pattern, plain(text_of(path)))
+        self.assertIsNotNone(found, f"{path.name} no longer states a count at all")
+        return found.group(1).lower()
+
+    def test_the_page_states_as_many_responses_as_there_are(self):
+        self.assertEqual(
+            self.stated(THE_PAGE, r"(\w+) responses are committed"), self.word,
+            f"the-wrong-answer.md disagrees with CAPTURES, which holds {self.count}",
+        )
+
+    def test_the_capture_readme_states_as_many_as_there_are(self):
+        self.assertEqual(
+            self.stated(THE_CAPTURE_README, r"All (\w+) were fetched"), self.word,
+            f"the capture README disagrees with CAPTURES, which holds {self.count}",
+        )
+
+    def test_the_capture_readme_has_a_row_for_every_capture(self):
+        """The table was the one thing that stayed right while three sentences
+        rotted, so it is worth holding it there."""
+        described = {cells[0] for cells in table_rows(text_of(THE_CAPTURE_README)) if cells}
+        for name, capture in elevation_trap.CAPTURES.items():
+            with self.subTest(capture=name):
+                self.assertIn(f"`{capture['file']}`", described)
 
 
 if __name__ == "__main__":
