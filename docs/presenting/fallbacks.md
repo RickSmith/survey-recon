@@ -10,8 +10,8 @@ moment you need it.
 | Time | What is on screen | Reach for | What it stands in for |
 |---|---|---|---|
 | 0:00–0:08 | Cold open — the agent takes the SH16 job | `python -m corridor_screen --route SH0016-KG --begin-dfo 347.7 --end-dfo 356.367 --out ../project-sh16 --mode cache-only` | The whole screening run. Fourteen services, every answer off the disk, finishing at `parcels 524`. It makes no network calls at all, not even the reachability ping |
-| 0:08–0:20 | What is an agent | not recorded — #81 through #86 | The deck. These slides are written. What is missing is a copy of them you can open with the network gone: the rendered deck is built on every push and published with the site, and this card does not send anybody to a website. Export the PDF onto the laptop once the deck is finished |
-| 0:20–0:30 | Vocabulary of managing one | not recorded — #81 through #86 | The same deck, and the same missing export. The words themselves are in `CONTEXT.md`, which is not a slide and will not save this block |
+| 0:08–0:20 | What is an agent | on the laptop — the deck PDF, put there by [the dry run](dry-run.md) | The block itself. These twelve minutes are slides and nothing else, so the slides are the fallback. The PDF is rendered on every push and published with the site, which is exactly where you cannot reach it, so it gets downloaded before the day rather than during it |
+| 0:20–0:30 | Vocabulary of managing one | on the laptop — the same PDF, put there by [the dry run](dry-run.md) | The same ten-minute answer, from the same file. The words themselves are in `CONTEXT.md`, which is not a slide and will not save this block |
 | 0:30–0:46 | Act I — the grilling | `corridor-screen/captures/the-grilling/README.md` · `corridor-screen/captures/the-grilling/the-grilling.md` · `corridor-screen/captures/the-grilling/the-tickets.md` | The real `/grill-with-docs` run that wrote the spec. The README is Act I on one screen — 19 questions, what the agent recommended, what Rick answered. Open that first; the other two are the full run and the 35 work orders that followed |
 | 0:46–0:52 | The money slide | `project-sh16/crew-day.md` · `docs/for-principals/index.md` | The two money slides, each from the file it was written out of. The build-up carries every figure on the first — 38 crew-days, 18 office days, rate `A4` — because that is where the slide reads them from. The principals brief carries the second, including the TxDOT sentence about a non-compliant survey and its citation |
 | 0:52–0:57 | Stretch and questions | nothing live | Nothing on screen to lose |
@@ -54,29 +54,45 @@ disclosure is on the slide as well as here.
 **Open a file rather than a website.** Every path above is a file in this
 repo, on the laptop, in a folder. None of them is a link.
 
+**One row is a file that is not in this repo**, and it says so: the deck PDF,
+for the two blocks that are nothing but slides. Nothing rendered is committed
+here, so that copy gets onto the laptop because a person put it there.
+[The dry run](dry-run.md) carries the step, under *Put the deck on the
+laptop*, and it is the reason a row of that kind is allowed to name something
+this repo cannot check for you.
+
 ## What has no fallback yet, and why
 
-**2 blocks have nothing to reach for**, and both of them are the same piece of
-work: the deck.
+**0 blocks have nothing to reach for**. Every block of the two hours now has a
+file, a command, or a copy the runbook puts on the laptop before the day.
 
-The slides for those two blocks are written. **That is not the same as having a
-fallback**, and the difference is the whole reason this section exists. What is
-missing is a copy of those slides a presenter can open on a laptop with no
-network, and there are two reasons there is not one.
+**The deck used to be on this list and is not any more**, and it is the only
+row here that was closed by writing down a step rather than by committing
+something. It is worth reading, because the shape of it will come round again.
 
-Nothing rendered is committed. `.github/workflows/slides.yml` builds the web
-page and the PDF on every push, and they are published with the site. The card's
-own rule one heading down is to open a file rather than a website, so a deck
-that only exists on the web is a deck you do not have at the podium.
+Two blocks — 0:08 and 0:20 — are slides and nothing else, twenty-two minutes
+with no demo to run. Their slides were written under #81 through #86, and this
+card went on saying those blocks had nothing for as long as it took somebody to
+notice that **written is not the same as reachable**. `slides.yml` renders the
+PDF on every push and `docs.yml` publishes it with the site, which is precisely
+where a presenter with no network cannot get at it. And the deck's **source** is
+committed and is still not the fallback: every slide carries its speaker note,
+several of those notes are about handling the room rather than the subject, and
+that is a crib sheet rather than something to put on a projector.
 
-The deck's **source** is committed and is still not the fallback. Every slide in
-it carries its speaker note, and several of those notes are about handling the
-room rather than about the subject. It is a crib sheet for the presenter, not
-something to put on a projector.
+Committing the rendered PDF would have closed it in one line. It was decided
+against under [#123](https://github.com/RickSmith/survey-recon/issues/123), on
+the grounds that nothing rendered is committed here and a stale binary nobody
+re-renders is a worse trap than a missing one — it opens, it looks right, and it
+is three weeks old. So the fallback is a step instead: [the dry
+run](dry-run.md) has the presenter download it and open it once with the
+network off, and again before 8 October.
 
-So what is waiting is the export, and the export waits on the whole deck,
-because it is one file. That is **#81 through #86**. Until they land, an audit
-can do nothing but name it.
+**That is a weaker guarantee than every other row on this card, and it is the
+honest one.** Everything else here is checked on every pull request. This one
+cannot be, because the file is not in the repo. What is checked is that the
+step exists and gives the right address — `test_dry_run.py` — which is the most
+a test can do about a thing a person has to remember.
 
 **The money slide used to be on this list and is not any more**, and nothing had
 to be recorded for it. Both of its slides were written out of files that were

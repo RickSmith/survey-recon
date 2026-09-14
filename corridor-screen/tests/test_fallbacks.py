@@ -59,11 +59,28 @@ PLAN = REPO / "docs" / "plan-of-record.md"
 # `0:57–1:18`, with the en dash the plan of record actually uses.
 A_TIME = re.compile(r"^\d:\d\d\u2013\d:\d\d$")
 
-# The three ways a "reach for" cell is allowed to start. Anything else is a
+# The four ways a "reach for" cell is allowed to start. Anything else is a
 # sentence somebody wrote in a hurry, and a presenter cannot act on one of
 # those at four minutes past the hour. A cell that is ready opens with a code
 # span -- a backtick -- because what it holds is a path or a command.
-A_CODE_SPAN, GAP, NOTHING_LIVE = "`", "not recorded", "nothing live"
+#
+# `on the laptop` is the fourth and it arrived last, under #123. It covers a
+# fallback that is a real file in a known place and is **not in this repo**,
+# because nothing rendered is committed here and a person put it there instead.
+# Today there is exactly one: the deck PDF, for the two blocks that are slides
+# and nothing else. Calling that `not recorded` would send a presenter at 0:09
+# to give up on a file sitting on their own desktop.
+A_CODE_SPAN, GAP, NOTHING_LIVE, ON_LAPTOP = (
+    "`",
+    "not recorded",
+    "nothing live",
+    "on the laptop",
+)
+
+# The page that has to be carrying the step, for a row of that fourth kind.
+# A file somebody has to remember to bring is only a fallback if the remembering
+# is written down somewhere they will read it.
+THE_RUNBOOK = "dry-run.md"
 
 
 def run_of_show():
@@ -179,14 +196,19 @@ class TestTheCardCoversTheWholeSession(unittest.TestCase):
         self.assertEqual(times, sorted(times, key=run_of_show().index))
         self.assertEqual(list(dict.fromkeys(times)), run_of_show())
 
-    def test_every_row_says_plainly_which_of_the_three_things_it_is(self):
-        """Ready, not recorded, or nothing to lose. No fourth kind of sentence."""
+    def test_every_row_says_plainly_which_of_the_four_things_it_is(self):
+        """Ready, on the laptop, not recorded, or nothing to lose.
+
+        No fifth kind of sentence. The list grew once, under #123, and it grew
+        because a real fallback did not fit any of the three -- not because a
+        row was awkward to word. That is the bar for growing it again.
+        """
+        shapes = (A_CODE_SPAN, ON_LAPTOP, GAP, NOTHING_LIVE)
         for time, block, reach_for, _covers in card_rows():
             with self.subTest(block=block):
                 self.assertTrue(
-                    reach_for.startswith((A_CODE_SPAN, GAP, NOTHING_LIVE)),
-                    f"{time} reads {reach_for!r}, which is none of "
-                    f"{A_CODE_SPAN!r}, {GAP!r} or {NOTHING_LIVE!r}",
+                    reach_for.startswith(shapes),
+                    f"{time} reads {reach_for!r}, which is none of {shapes!r}",
                 )
 
 
@@ -283,6 +305,81 @@ class TestEveryFallbackPlaysWithNoNetwork(unittest.TestCase):
                 with self.subTest(command=named):
                     _code, said = play(named)
                     self.assertGreater(len(said.strip()), 0, f"{named} printed nothing")
+
+
+class TestAnOnTheLaptopRowNamesTheStepThatPutsItThere(unittest.TestCase):
+    """The fourth kind of row, and the weakest guarantee on the card.
+
+    Every other row is checked on every pull request -- the file is opened, the
+    command is run with the network taken away at the socket. This one cannot
+    be, because the file is not in the repo. Nothing rendered is committed
+    here, so the deck PDF gets onto the laptop because somebody downloaded it.
+
+    What can still be checked is the only thing standing between that and an
+    empty promise: **the step is written down, and the row says where.** A
+    fallback that depends on a person remembering is a fallback exactly as far
+    as the remembering is somewhere they will read it, and no further. The card
+    says so about itself, in the same words, under *What has no fallback yet*.
+    """
+
+    def laptop_rows(self):
+        return [row for row in card_rows() if row[2].startswith(ON_LAPTOP)]
+
+    def test_it_names_no_file_in_this_repo(self):
+        """Same rule a gap has, for the opposite reason.
+
+        A gap may not name a file because it has none. This may not name one
+        because the file it means is not here -- and a backticked path in this
+        cell would send a presenter looking in the repo for something that is
+        on their desktop. Both failures read as a whole fallback at four
+        minutes past the hour.
+        """
+        for time, block, reach_for, _covers in self.laptop_rows():
+            with self.subTest(block=block):
+                self.assertEqual(
+                    named_in(reach_for),
+                    [],
+                    f"{time} points at a file this repo does not hold, and then "
+                    f"names a path in it",
+                )
+
+    def test_it_points_at_the_runbook(self):
+        for time, block, reach_for, _covers in self.laptop_rows():
+            with self.subTest(block=block):
+                self.assertIn(
+                    THE_RUNBOOK,
+                    reach_for,
+                    f"{time} says a person puts it there and does not say where "
+                    f"that person is told to",
+                )
+
+    def test_the_runbook_it_points_at_is_a_page_in_this_repo(self):
+        """A pointer to a page that is not there is worse than no pointer.
+
+        `mkdocs build --strict` would catch this too, and only once somebody
+        builds the site -- which on the morning of the talk is nobody.
+        """
+        if not self.laptop_rows():
+            return
+        page = CARD.parent / THE_RUNBOOK
+        self.assertTrue(
+            Path(long_path(page)).is_file(), f"{THE_RUNBOOK} is cited and is not here"
+        )
+        self.assertGreater(len(text_of(page).strip()), 0)
+
+    def test_the_card_says_out_loud_that_this_one_is_not_checked(self):
+        """The overclaim this repo keeps apologizing for, refused in advance.
+
+        A reader counting green checks would otherwise take every row on this
+        card as equally proven. One of them is a person's memory with a note
+        beside it, and the card is the place that has to say so.
+        """
+        if not self.laptop_rows():
+            return
+        self.assertIn(
+            "weaker guarantee than every other row on this card",
+            " ".join(text_of(CARD).split()),
+        )
 
 
 class TestAGapSaysSoAndNamesTheWorkThatWouldCloseIt(unittest.TestCase):
