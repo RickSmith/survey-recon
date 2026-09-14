@@ -48,6 +48,7 @@ nav:
   - The worked example - SH16:
       - scenarios/sh16/index.md
       - What the capture found: scenarios/sh16/capture-note.md
+  - The dry run: presenting/dry-run.md
   - If it breaks on the day: presenting/fallbacks.md
   - Corridor screening:
       - corridor-screen/index.md
