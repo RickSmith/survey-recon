@@ -46,9 +46,11 @@ address, a password, and a username. The username is public, so use something yo
 would put on a business card.
 
 !!! info "Screenshot 1 — the GitHub sign-up page"
-    **Not captured yet.** Must show: the sign-up form as it first loads, with
-    nothing typed into it, so a reader can match the page in front of them
-    against the page on this one.
+    ![the GitHub sign-up page](img/01-github-signup.png)
+
+    **Shows:** the sign-up form as it first loads, with nothing typed into it,
+    so a reader can match the page in front of them against the page on this
+    one.
 
 GitHub emails you a code and asks you to type it back. If the email does not
 arrive within a minute or two, check the junk folder before asking for another
@@ -76,8 +78,10 @@ Three words you will meet, in survey terms:
 Download git from <https://git-scm.com/downloads> and pick your operating system.
 
 !!! info "Screenshot 3 — the git download page"
-    **Not captured yet.** Must show: the download page with the Windows button
-    visible, and the version number beside it.
+    ![the git download page](img/03-git-download.png)
+
+    **Shows:** the download page with the Windows button visible, and the
+    version number beside it.
 
 ### On Windows
 
@@ -125,7 +129,9 @@ Download it from <https://claude.ai/download>, install it, and sign in with the
 Claude account from the top of this page.
 
 !!! info "Screenshot 7 — the app's sign-in screen"
-    **Not captured yet.** Must show: the sign-in screen as the app first opens.
+    ![the app's sign-in screen](img/07-claude-sign-in.png)
+
+    **Shows:** the sign-in screen as the app first opens.
 
 The app has more than one side to it. The side this repo uses is the one that
 works on a folder of files on your own machine, rather than on a conversation.
@@ -133,8 +139,10 @@ That is the side that can read your job folder, write into it, and run the five
 commands.
 
 !!! info "Screenshot 8 — where the app opens a folder"
-    **Not captured yet.** Must show: the app's coding side, with the control that
-    picks a folder clearly visible, and no real file names in the window.
+    ![where the app opens a folder](img/08-claude-open-folder.png)
+
+    **Shows:** the app's coding side, with the control that picks a folder
+    clearly visible, and no real file names in the window.
 
 **Decide now what you will and will not hand it.** Whatever you give the agent
 goes to a company's servers, so treat it the way you would treat an email leaving
@@ -157,8 +165,10 @@ button near the top of the file list, and choose **Download ZIP**. Unzip it
 somewhere you can find again.
 
 !!! info "Screenshot 9 — the green button and the Download ZIP entry"
-    **Not captured yet.** Must show: the green button pressed, with the menu open
-    and Download ZIP visible in it.
+    ![the green button and the Download ZIP entry](img/09-github-download-zip.png)
+
+    **Shows:** the green button pressed, with the menu open and Download ZIP
+    visible in it.
 
 If you already know how to use git for this, use git. The zip is here because it
 is one click and needs nothing explained first.
@@ -184,15 +194,19 @@ folder itself — what is inside it.
 
 ### Opening a command line in that folder
 
-On Windows, open the job folder in File Explorer, hold **Shift**, right-click on
-an empty part of the window, and choose the entry that opens PowerShell or
-Windows Terminal there. That gets you a command line already pointed at the right
-folder, so nothing on this page has to explain how to change directories.
+On Windows 11, open the job folder in File Explorer, right-click an empty part of
+the window, and choose **Open in Terminal**. That gets you a command line already
+pointed at the right folder, so nothing on this page has to explain how to change
+directories.
+
+If that entry is not in the menu, hold **Shift** and right-click again. Older
+Windows keeps it out of the plain menu.
 
 !!! info "Screenshot 10 — opening a command line in the job folder"
-    **Not captured yet.** Must show: the Windows 11 right-click menu over an
-    empty part of a folder window, with the entry that opens a terminal there
-    highlighted.
+    ![opening a command line in the job folder](img/10-open-terminal-here.png)
+
+    **Shows:** the Windows 11 right-click menu over an empty part of a folder
+    window, with the entry that opens a terminal there highlighted.
 
 On a Mac, right-click the folder and use the Finder service that opens Terminal
 at that folder.
@@ -261,9 +275,10 @@ Six is plenty for a first version — it grows on its own, and the first command
 you run adds to it as terms get settled.
 
 !!! info "Screenshot 11 — the handbook with its blanks still in it"
-    **Not captured yet.** Must show: `CLAUDE.md` open in a plain text editor with
-    at least one «guillemet» blank visible, so a reader knows what they are
-    looking for.
+    ![the handbook with its blanks still in it](img/11-claude-md-blanks.png)
+
+    **Shows:** `CLAUDE.md` open in a plain text editor with at least one
+    «guillemet» blank visible, so a reader knows what they are looking for.
 
 Everything else in the folder can wait.
 
@@ -281,8 +296,10 @@ If it starts interviewing you about the job — what the corridor is, who the
 client is, what you already have — everything is wired up correctly.
 
 !!! info "Screenshot 12 — the agent answering the command"
-    **Not captured yet.** Must show: the app with `/grill-with-docs` typed and
-    the first interview question on screen. Use a made-up job, not a real one.
+    ![the agent answering the command](img/12-grill-with-docs.png)
+
+    **Shows:** the app with `/grill-with-docs` typed and the first interview
+    question on screen. Use a made-up job, not a real one.
 
 If instead it says it does not know that command, the `.claude` folder did not
 come across. Go back to step 5 and use the command rather than dragging.
@@ -310,8 +327,9 @@ as plain files in the job folder, which needs nothing at all. See
 in the kit.
 
 !!! info "Screenshot 13 — the GitHub CLI download page"
-    **Not captured yet.** Must show: the download page with the Windows installer
-    link visible.
+    ![the GitHub CLI download page](img/13-github-cli-download.png)
+
+    **Shows:** the download page with the Windows installer link visible.
 
 ---
 
