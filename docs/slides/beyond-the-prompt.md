@@ -72,6 +72,15 @@ person chose it. Somebody will ask why not 200 or 500. The answer is that it
 is stated rather than derived, so it can be argued with -- and it can be
 changed and the run done again, which is the bullet's own promise.
 
+**Seneca (audience proxy), while the run is still going:** "Hold on. Whose
+data is that? Did one of our client files just go into that thing?"
+
+**Answer:** None of it. Fourteen public services, and no client file was
+opened -- it is the first thing a principal thinks watching this, so it is on
+the slide rather than in an answer. The rule a firm writes down is
+docs/governance/what-never-leaves.md, and the whole test on it is one
+sentence: would I email this outside the firm?
+
 Fallback: docs/presenting/fallbacks.md, row one. The whole run replays off the
 disk with --mode cache-only and makes no network call at all. Do not retype
 that line; copy it from corridor-screen/README.md under "If the network is
@@ -489,6 +498,14 @@ somebody will check.
 general, swappable parcel-source config. Rick cut it -- never mind for this,
 stick to Bexar County. An agent will happily build the general case nobody
 asked for, and the person paying for it is the one who stops that.
+
+**Seneca (audience proxy), after the last bullet:** "Nineteen questions before
+it does a minute of work. Who is paying for that hour?"
+
+**Answer:** You are, the same way you pay for a scoping call. Nobody timed it,
+so I am not going to tell you it was free. What it bought is the last bullet:
+five of those answers changed the shape of the tool, and a wrong answer to any
+of the five is the kind of thing that comes back as rework a month later.
 -->
 
 ---
@@ -587,8 +604,22 @@ citation, on one page written for this room.
 
 One slide, and nothing else. This is a holding card for the break.
 
-Take questions from the floor. If the room is quiet, Seneca has the
-audience-proxy interjections for exactly this moment - see #35.
+Take questions from the floor. If the room is quiet, Seneca goes first, and
+this is the one to open with.
+
+**Seneca (audience proxy), once the floor has gone quiet:** "Plain question.
+What did this actually save you, in hours, on this job?"
+
+**Answer:** We do not know. Nothing in this repo has measured what it saves,
+and a figure invented on this stage is the one you would quote back at me in
+six months' time. The argument before the break was rework, not speed, and
+that one we can show you. What it costs to find out for yourself is three
+things, and docs/day-0/index.md walks all three: git, a GitHub account, and
+the desktop app.
+
+**This is the sceptical one.** It is not a setup, and it is not answered with
+a figure. Seneca does not smile on the way in and Rick does not reach for a
+number; the moment either of those happens, the room knows it was staged.
 
 Nothing is on screen to lose here, so there is no fallback to reach for.
 -->
@@ -670,6 +701,14 @@ own monuments, which is the stronger claim, and that is the next slide.
 Zero `condition unknown` here, and say that rather than skipping it. It is
 the third answer -- nobody looked at all -- and a corridor where it is not
 zero is a corridor with a gap nobody has measured.
+
+**Seneca (audience proxy), after the first bullet:** "Eleven out of eleven not
+found. Is the tool broken, or is that real?"
+
+**Answer:** Real, and it is the finding. NGS published a report with a date on
+it for every one of the eleven, and the tool copied the words instead of
+softening them. The expensive version of this slide is a crew rolling out to
+recover eleven marks that the last person to look could not find.
 -->
 
 ---
@@ -945,6 +984,16 @@ prose. The table lists tracts that were flagged; a thing nothing can flag was
 never going to appear in it. Say "the run says so" and open the memo if the
 room wants to see the sentence.
 
+**Seneca (audience proxy), after the first bullet:** "Five hundred and
+twenty-four tracts. Am I checking every one of them myself before I price it?"
+
+**Answer:** No. You check the eight it flagged, and you check the handles --
+A4 is half an hour on every tract in the corridor, and it carries a name so
+you can argue with that one rate instead of with the total. What nobody can
+check for you is the part it says it could not check, gated access and
+livestock, which is why those sit on top of the memo rather than at the back
+of it.
+
 Fallback: all three files are committed under project-sh16/, so the drawing, the
 table and the run are on the laptop whatever the network does.
 -->
@@ -1206,6 +1255,15 @@ the decisions, or personally reviews and approves proposed decisions prior to
 their implementation. An agent that ran unsupervised and handed over a finished
 product did not have its decisions approved before it made them. That is the
 whole argument for small assignments with a check print at the end of each.
+
+**Seneca (audience proxy), after the last bullet:** "If I seal something it got
+wrong, does my carrier care that a computer did it?"
+
+**Answer:** Nobody here has put that question to a carrier, so the honest
+answer is not found rather than no. What the board has said is on the slide:
+the tool does not change who answers for the work. docs/governance/index.md
+says to ask your carrier in writing -- does our cover change if AI tools are
+used on a job -- and that sentence is worth writing down before you leave.
 
 Fallback: docs/governance/seal-and-responsible-charge.md quotes all of it and
 needs no network.
