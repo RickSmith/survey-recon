@@ -105,10 +105,18 @@ SLOT = re.compile(r'^!!!\s+\w+\s+"Screenshot (\d+)\s*[-—]\s*(.+)"\s*$', re.MUL
 # filled.
 IMAGE_IN_A_SLOT = re.compile(r"\]\(img/([^)\s]+)\)")
 
-# What every slot has to promise, so whoever holds the camera does not have to
-# guess. A slot that says only "screenshot here" is a slot that gets captured
-# wrong once and re-captured on the morning of the session.
-WHAT_IT_MUST_SHOW = "Must show:"
+# What every slot has to say about its picture. Two spellings, because the
+# sentence outlives the capture:
+#
+#   **Not captured yet.** Must show: the sign-up form as it first loads
+#   **Shows:** the sign-up form as it first loads
+#
+# Before the shot it stops whoever holds the camera having to guess, and a slot
+# saying only "screenshot here" is one that gets taken wrong and re-taken on the
+# morning of the session. After the shot the same sentence is the caption, and
+# it is the only way anybody re-taking the picture in a year knows what it was
+# supposed to contain. Screens change; the requirement does not.
+WHAT_IT_SHOWS = ("Must show:", "**Shows:**")
 
 # The sentence an empty slot carries. It is what makes the gap visible to a
 # reader rather than only to a maintainer.
@@ -351,14 +359,14 @@ class TheScreenshotSlotsAreHonest(unittest.TestCase):
             "1. They are how whoever holds the camera keeps their place.",
         )
 
-    def test_every_slot_says_what_it_must_show(self):
-        """A slot without this is a slot that gets captured twice."""
+    def test_every_slot_says_what_it_shows(self):
+        """A slot without this is a slot that gets captured twice, and a picture
+        nobody can re-take correctly once the screen behind it changes."""
         for number, _, body in slots():
-            self.assertIn(
-                WHAT_IT_MUST_SHOW,
-                body,
-                f"screenshot {number} does not say what it has to show, so it "
-                f"cannot be captured without asking",
+            self.assertTrue(
+                any(wording in body for wording in WHAT_IT_SHOWS),
+                f"screenshot {number} does not say what it shows, in either the "
+                f"wording an empty slot uses or the wording a filled one does",
             )
 
     def test_every_slot_either_carries_its_image_or_says_it_does_not(self):
