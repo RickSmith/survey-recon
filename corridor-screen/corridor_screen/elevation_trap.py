@@ -114,7 +114,13 @@ VERDICT = (
 POINT = "SH16 at Bandera Road, San Antonio (-98.644635, 29.528488)"
 
 # The committed evidence. Every entry carries the exact request it came from,
-# because a capture nobody can repeat is not evidence. All five answered 200.
+# because a capture nobody can repeat is not evidence. Every one answered 200,
+# which `test_elevation_trap` checks rather than this comment asserting it.
+#
+# No count is written here on purpose. This comment said "all five" while the
+# dictionary held twelve, and it was one of four places stating a number that
+# had stopped being true -- the failure this whole beat is about, in the module
+# that teaches it.
 BASE = "https://epqs.nationalmap.gov/v1/json"
 CAPTURES = {
     "feet": {

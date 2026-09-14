@@ -83,14 +83,6 @@ the caller finds out inside a second.
     condition on the same day. The check that keeps working is whether the body
     parses as JSON at all.
 
-!!! note "Do not match on that message"
-    That is the exact body of the committed capture. **The text varies between
-    runs** — an earlier draft of this page quoted a different 
-    from a live call rather than from the evidence, and
-    [sources we did not use](../data-sources/not-used.md) records this endpoint
-    giving  for the same condition on the
-    same day. The check that works is whether the body parses as JSON at all.
-
 Put the two side by side and the beat is the comparison:
 
 | | What happens | Who notices |
@@ -165,7 +157,7 @@ it away from you:
 python -m corridor_screen.elevation_trap --show
 ```
 
-Nine responses are committed in `corridor-screen/captures/silent-nodata/`, with
+Twelve responses are committed in `corridor-screen/captures/silent-nodata/`, with
 the exact request each came from. **Every one of them answered HTTP 200** — that
 is the point of the set. Not one is an error by the only test most code applies.
 

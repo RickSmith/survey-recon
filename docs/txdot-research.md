@@ -211,7 +211,32 @@ Also: Bexar railroads/schools/school-districts MapServers · CoSA Cemetery Stewa
 | **USGS 3DEP `identify` / EPQS elevation** | Timed out 3 of 4 attempts. Keep off the critical path. |
 | **FEMA NFHL robots-blocked** | Use Esri Living Atlas `USA_Flood_Hazard_Reduced_Set` instead (250-record cap). |
 | **`FEMA_Flood_Zones` on services9** | Ranks high in search but is **Salem, MA only**. Easy trap. |
-| **3DEP silently returned `NoData`** | Ignored `sr=4326`, read lon/lat as Web Mercator meters. Returned a plausible non-answer rather than an error. |
+| **3DEP silently returned `NoData`** | Ignored `sr=4326`, read lon/lat as Web Mercator meters. Returned a plausible non-answer rather than an error. **Re-tested 2026-09-13 and not reproduced — see the note below.** |
+
+!!! warning "Corrected 2026-09-13, while building [#104](https://github.com/RickSmith/survey-recon/issues/104)"
+    **The `NoData` row above is what the research recorded on 2026-09-12. It is
+    kept because this page is a dated record.** It is not what the service did
+    when the beat was actually run, and it should not be quoted as a finding.
+
+    Re-tested on 2026-09-13 under
+    [issue #26](https://github.com/RickSmith/survey-recon/issues/26), with every
+    response committed in `corridor-screen/captures/silent-nodata/`:
+
+    - `sr` **is** discarded in silence, exactly as recorded — but the answer
+      comes back **correct** either way, so nothing moved the point
+    - `wkid` is **honored**. The same point sent as Web Mercator meters with
+      `wkid=3857` answers the right elevation
+    - **No response holds the token `NoData`.** The Gulf of Mexico point, which
+      is where one would belong, answers plain text inside an HTTP 200 instead
+    - The live hazard is the **unit**: `units=US_Feet` returns the height in
+      meters, as a JSON string, with no error
+
+    Also not reproduced: *"timed out 3 of 4 attempts"* in the row above it. Ten
+    attempts on 2026-09-13 all answered, though one took 16.35 seconds. Both
+    re-tests are written up on
+    [sources we looked at and did not use](data-sources/not-used.md), and how
+    the wrong description traveled from this page into the glossary is
+    [the description that outlived its evidence](managing-your-agent/the-description-that-outlived-its-evidence.md).
 
 ---
 
