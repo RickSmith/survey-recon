@@ -648,6 +648,8 @@ Texas has no self-executing right of entry for surveyors. **Tex. Occ. Code § 10
 
 A tool will not assert a legal conclusion about access to somebody's land from a parcel polygon. TxDOT's own procedure is that every request is documented by written letter, and that **oral right of entry is valid for one day and for the one person who received it** ([Survey Manual Ch. 2 §3](https://www.txdot.gov/manuals/row/ess/surveying_procedures/right_of_entry.html)).
 
+**The letters themselves, and the day the second one fires, are on [The right-of-entry letters](roe-letters.md).** That page quotes both statutes in full, derives the 21-day follow-up rather than claiming it is a published figure, and says plainly that a scheduled job writes the second letter and no model does.
+
 ## 12. What this cannot see
 
 [CONTEXT.md](https://github.com/RickSmith/survey-recon/blob/main/CONTEXT.md) defines a flagged parcel as one carrying a school, cemetery, railroad, pipeline, **gated access or livestock**.
@@ -659,6 +661,8 @@ A tool that says "I cannot see this, you must" is more use than one that quietly
 ## 13. Lead times
 
 **The lead-time table is checked-in data, not code.** One row per parcel type, in TOML — a plain text settings format meant for people to read and edit — with a mandatory source column. Python 3.11 reads TOML with nothing installed, and TOML carries comments, which matters when every row needs a citation beside it.
+
+**Every number in the table below is sourced on its own page.** [Lead times and their sources](lead-times.md) carries the statute and the link for each row, the date somebody opened it, and the language that page actually carried on that date. This section states the figures; that page is why they are the figures.
 
 | Type | Driver | Lead time |
 |---|---|---|
