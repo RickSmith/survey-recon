@@ -48,6 +48,7 @@ REPO = Path(__file__).resolve().parents[2]
 PAGE = REPO / "docs" / "presenting" / "dry-run.md"
 PLAN = REPO / "docs" / "plan-of-record.md"
 NAV = REPO / "mkdocs.yml"
+DOCS_WORKFLOW = REPO / ".github" / "workflows" / "docs.yml"
 
 # `0:57–1:18`, with the en dash the plan of record actually uses. Anchored to
 # the whole cell the way `test_fallbacks` anchors its own, because what is being
@@ -336,6 +337,79 @@ class TestThePageDoesTheJobTheIssueAskedFor(unittest.TestCase):
         holding it is writing on it.
         """
         self.assertIn("print", self.page.lower())
+
+
+class TestTheDeckGetsOntoTheLaptop(unittest.TestCase):
+    """The one step on this page that closes a hole rather than measuring one.
+
+    Issue #123. Two blocks of the session -- 0:08 and 0:20 -- are slides and
+    nothing else, and the rendered deck lives only on the published site. That
+    is twenty-two minutes with nothing to open, and the fallback card said so
+    for weeks while pointing at work orders that had already closed.
+
+    Committing the PDF would have closed it in one line and was decided
+    against: nothing rendered is committed here, and a stale binary nobody
+    re-renders is a worse trap than a missing one, because it opens. So the
+    fallback is a step, and a step is worth what the page telling you to take
+    it is worth.
+
+    The address is not typed in here either. It is built from `site_url` and
+    the path `.github/workflows/docs.yml` refuses to publish without, so a site
+    that moves fails this rather than quietly handing a presenter a dead link.
+    """
+
+    def setUp(self):
+        self.page = plain(text_of(PAGE))
+
+    def published_pdf(self):
+        site = re.search(r"^site_url:\s*(\S+)", text_of(NAV), flags=re.MULTILINE)
+        self.assertIsNotNone(site, "mkdocs.yml no longer says where the site lives")
+        published = re.search(r"test -s site/(\S+\.pdf)", text_of(DOCS_WORKFLOW))
+        self.assertIsNotNone(
+            published, "docs.yml no longer checks a rendered PDF before publishing"
+        )
+        return site.group(1).rstrip("/") + "/" + published.group(1)
+
+    def test_the_page_has_a_section_for_it(self):
+        found = headings(text_of(PAGE))
+        self.assertTrue(
+            any("deck on the laptop" in heading for heading in found),
+            f"no section about putting the deck on the laptop; the page has {found}",
+        )
+
+    def test_it_gives_the_address_the_site_actually_publishes(self):
+        self.assertIn(self.published_pdf(), self.page)
+
+    def test_it_says_to_open_the_copy_with_the_network_off(self):
+        """A download is not a fallback until somebody has opened it once.
+
+        A file that landed in the wrong folder, or landed at zero bytes, looks
+        exactly like one that worked right up to the moment it is needed.
+        """
+        self.assertIn("turn the wi-fi off and open the file", self.page.lower())
+
+    def test_it_says_to_do_it_again_before_the_day(self):
+        """The deck re-renders on every push. The laptop's copy does not.
+
+        A PDF pulled down for the rehearsal is the rehearsal's deck, three
+        weeks stale on the day, and nothing on its face says so.
+        """
+        self.assertIn("do it again before 8 october", self.page.lower())
+
+    def test_it_says_why_the_file_is_not_in_the_repo(self):
+        """A reader who does not know why will helpfully commit the PDF."""
+        self.assertIn("nothing rendered is committed", self.page.lower())
+
+    def test_the_fallback_card_agrees_this_is_where_the_step_lives(self):
+        """Both directions, because a one-way pointer is how the first one rotted.
+
+        The card sends a presenter here for those two blocks. If this page ever
+        stops carrying the step, the card is sending them to a page that does
+        not have it, and `test_fallbacks.py` cannot see that from its side.
+        """
+        card = plain(text_of(PAGE.parent / "fallbacks.md"))
+        self.assertIn("dry-run.md", card)
+        self.assertIn("Put the deck on the laptop", card)
 
 
 class TestThePageIsReachableAndItsLinksAre(unittest.TestCase):

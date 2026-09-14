@@ -36,6 +36,7 @@ before the day, so that it is not handed to whoever sat closest.
 ## Before you start
 
 - The laptop the session will actually run from. Not a different one
+- **The deck PDF on that laptop.** See below — this one is a step, not a check
 - [The fallback card](fallbacks.md), **on paper**
 - This page, **on paper**, one copy per timekeeper
 - A second window already open in the `corridor-screen` folder, so the cold-open
@@ -45,6 +46,34 @@ before the day, so that it is not handed to whoever sat closest.
 
 **Do not fix anything you find in the first ten minutes.** Write it down and
 keep going. A rehearsal that stops to fix things measures nothing.
+
+### Put the deck on the laptop
+
+Two blocks of this session are nothing but slides — *What is an agent* at 0:08
+and *Vocabulary of managing one* at 0:20. Twenty-two minutes with no demo to
+run and no file to open. If the network goes, those are the two blocks with
+nothing behind them.
+
+The deck is rendered to a PDF on every push and published with the site. **It
+lives on the web, and the web is the thing that fails.** So download it:
+
+```
+https://ricksmith.github.io/survey-recon/slides/beyond-the-prompt.pdf
+```
+
+Then do the part people skip. **Turn the Wi-Fi off and open the file.** A
+download that landed in the wrong folder, or landed as a zero-byte file, looks
+exactly like a download that worked until the moment you need it.
+
+**Do it again before 8 October.** The deck re-renders every time anybody pushes
+to the repo, and the copy on your laptop does not. A PDF pulled down for the
+rehearsal is the rehearsal's deck, and it will not say so on its face — it will
+just quietly be missing the last three weeks of edits.
+
+*Why this is a step rather than a file in the repo:* nothing rendered is
+committed here, and a stale PDF sitting in a clone that nobody re-renders is a
+worse trap than no PDF at all. The decision is
+[#123](https://github.com/RickSmith/survey-recon/issues/123).
 
 ## The timing sheet
 
