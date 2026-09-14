@@ -35,7 +35,7 @@ ours, shortened from
 
 | Command | What it does | Worth your time? |
 |---|---|---|
-| `/wait-what` | Fire it the moment an answer does not make sense. It re-explains, in your own glossary's words | **Yes. Start here.** It installs nothing and it is the one that rescues a bad afternoon |
+| `/wait-what` | Fire it the moment an answer does not make sense. It re-explains, in your own glossary's words | **Yes. If you only take one, take this one** |
 | `/handoff` | Squeezes a long conversation into a note, so a fresh session can carry on | Yes. The agent forgets between sessions. This is the field book entry that survives |
 | `/to-questionnaire` | Turns a decision you cannot make alone into a short form for the one person who can | Yes. It is a request for information, in the shape you already send one |
 | `/ask-matt` | Asks what you are trying to do, then names which of his skills fits | Yes, if you forget which command is which |
@@ -48,7 +48,9 @@ ours, shortened from
 
 ### The ones the agent reaches for on its own
 
-You do not type these. The agent opens one when the job fits.
+You can type these, and mostly you will not have to: upstream's reference list
+marks them **model-invoked**, meaning the agent opens one itself when the job
+fits. The four already in your kit work the same way.
 
 | Skill | What it does | Worth having? |
 |---|---|---|
@@ -59,29 +61,37 @@ You do not type these. The agent opens one when the job fits.
 | `prototype` | Builds a throwaway to answer "would this even feel right?" | Maybe. Useful before you commit to a shape |
 | `writing-for-agents` | How to write a document an agent will read | Yes, once you start editing your own `CLAUDE.md` |
 
-!!! danger "`research` writes citations, and a citation can be confidently wrong"
-    This repo has the receipt. A superseded TxDOT manual address was written into
-    a source list, and it was still live on the internet, so nothing looked
-    broken:
+!!! danger "Any skill can write a citation, and a citation can be confidently wrong"
+    This repo has the receipt, from its own work rather than from this skill. A
+    superseded TxDOT manual address was quoted, with a date, out of a manual
+    that has not been at that address for years — and the address does not
+    answer at all, so what an agent sees is a timeout that looks like bad
+    Wi-Fi:
     [the manual that was real, and out of date](../managing-your-agent/the-superseded-manual.md).
 
-    Use it. Then open every link it hands you. **A citation you did not open is
-    a citation you are taking on faith,** and your seal goes on the document,
-    not the agent's.
+    Use `research`. Then open every link it hands you. **A citation you did not
+    open is a citation you are taking on faith,** and your seal goes on the
+    document, not the agent's.
 
 ### Two ways to get them
 
-**Route A — install the set as a plugin.** Upstream ships the whole thing
-through Claude Code's official marketplace, so there is nothing to add first.
-From inside the app:
+**Route A — install the set as a plugin.** A **plugin** is a bundle of skills
+the app fetches and keeps up to date for you, instead of you holding the files.
+[Upstream's own installation notes](https://github.com/mattpocock/skills#installation-30-second-setup)
+say the set is listed in the app's official catalog, so there is nothing to add
+first. Typed into the Claude desktop app:
 
 ```
 /plugin install mattpocock-skills
 ```
 
-That costs **no new prerequisite.** You already have the app. The set arrives
-read-only and updates when he ships a change — you are subscribing, not keeping
-a copy.
+That costs **no new prerequisite.** You already have the app. Upstream describes
+what arrives as read-only, updating when he ships a change — you are
+subscribing, not keeping a copy.
+
+**We have not walked a first-time reader through this route.** The
+[Day 0 setup](../day-0/index.md) pages are screenshot-checked; this is one line
+off somebody else's README.
 
 **Route B — the `npx` route.** This is the one the toolkit was built to avoid:
 
@@ -112,8 +122,9 @@ administrator rights.
 
     You can see it in the names. A skill that arrived as a plugin reads
     `/mattpocock-skills:grill-with-docs`. The one you copied is plain
-    `/grill-with-docs`. That is the same collision the
-    [Day 0 screenshot note](../day-0/index.md) explains.
+    `/grill-with-docs`. That prefix is what the
+    [Day 0 screenshot note](../day-0/index.md) is about — there it explains a
+    picture; here it is how you tell two copies apart.
 
     **Pick one.** Either delete the nine copied folders and live on the plugin's
     updates, or skip the plugin and keep the copies you can edit. Running both
@@ -131,30 +142,36 @@ it is here because the session says the name out loud.
 
 | | What it is | Where |
 |---|---|---|
-| **Hermes 4** | A family of language models from Nous Research. Open weights — you can download the model itself, not only call it over the wire | [Model card](https://huggingface.co/NousResearch/Hermes-4-405B) |
-| **Hermes Agent** | A program that runs on a server you control, remembers across sessions, and writes its own procedures as it goes. MIT licensed | [Project](https://hermes-agent.nousresearch.com/) · [source](https://github.com/NousResearch/hermes-agent) |
+| **Hermes 4** | A family of language models from Nous Research. **Open weights** — the model itself is a file you can download, not only a service you call | [Model card](https://huggingface.co/NousResearch/Hermes-4-405B) |
+| **Hermes Agent** | A program that runs on a server you control, remembers across sessions, and writes its own procedures as it goes | [Project](https://hermes-agent.nousresearch.com/) · [source and license](https://github.com/NousResearch/hermes-agent) |
 
 The model card describes the 405B version as built on Meta's Llama-3.1-405B and
-carrying the Llama 3 license, with 70B and 14B versions alongside it. **The
-license is not the same for every size.** Read the card for the one you mean
-rather than this table.
+carrying the Llama 3 license, with 70B and 14B versions alongside it. Those
+numbers are model sizes, and bigger means more hardware to run it. **The license
+is not the same for every size.** Read the card for the size you mean rather
+than this table. The Agent is separate work, published under the MIT license —
+the same permissive license as the five commands in your kit.
 
 ### What it is good for
 
 - **Work that carries on when nobody is at the keyboard.** That is the whole
   point of it, and it is a real point
-- **Running on hardware you control.** Its documentation describes a cheap
-  rented server, Docker, or your own machine
+- **Running on hardware you control.** Its
+  [own documentation](https://hermes-agent.nousresearch.com/docs/) describes
+  running it on a cheap rented server, or on your own machine
 - **Holding the weights.** With an open-weight model, the thing answering you is
   a file you have. Nobody can retire it out from under you. For a firm that has
   watched software go away, that is not nothing
-- **Filling in forms and calling services.** The model card advertises tool
-  calling and structured output — that is the difference between a model that
-  writes prose and one that can work a service
+- **Filling in forms and calling services.** The model card advertises **tool
+  calling** and **structured output** — being able to call a service and to
+  answer in a fixed shape rather than in prose. That is the difference between
+  a model that writes you a paragraph about a parcel and one that can go and
+  ask about it
 
 ### What it is not
 
-- **It is not a lighter lift than what you already have.** Setup asks for
+- **It is not a lighter lift than what you already have.** Its
+  [setup documentation](https://hermes-agent.nousresearch.com/docs/) asks for
   credentials through Nous Portal, or your own key for another provider. **An
   API key does not belong in the attendee path**, which is why this sits on this
   page and not in the kit
@@ -206,6 +223,7 @@ in larger type than this one does.
 
 ---
 
-**If you take one thing off this page:** type `/wait-what` the next time an
-answer does not make sense. It installs nothing, it costs nothing, and it is the
-one that changes an afternoon.
+**If you take one thing off this page:** get `/wait-what`, by either route
+above, and type it the next time an answer does not make sense. It is not in
+your kit, so it costs you one of the two installs — and it is the cheapest
+thing on this page to be wrong about.

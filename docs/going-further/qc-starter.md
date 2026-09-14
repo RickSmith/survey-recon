@@ -104,9 +104,16 @@ Save the block below as `.claude/skills/qc-check/SKILL.md` in your own project,
 next to the five commands you copied. Then type `/qc-check` after the agent
 hands you something.
 
+**It is text on this page rather than a sixth folder in the toolkit, and that is
+deliberate.** The kit's five commands are Matt Pocock's, vendored unchanged and
+accounted for. This one is ours, it is untested, and it does not belong sitting
+among them looking like it has the same standing.
+
 The agent checking its own homework is worth exactly what that sounds like —
-**some.** It reliably catches a missing unit or an unopened link. It cannot
-catch a number that is plausible and wrong. That is what the person is for.
+**some.** The list aims at the mechanical misses: a missing unit, a link nothing
+ever fetched, a gap the document does not admit to. **How often it actually
+catches them here is untested.** What it certainly cannot catch is a number that
+is plausible and wrong. That is what the person is for.
 
 ```markdown
 ---
