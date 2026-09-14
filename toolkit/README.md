@@ -55,11 +55,18 @@ On macOS or Linux, in Terminal, from inside your job folder:
 cp -R <path-to>/survey-recon/toolkit/. .
 ```
 
-**Watch for the hidden folder.** `.claude` starts with a dot, so Windows File
-Explorer and macOS Finder both hide it by default. If you drag files across by
-hand instead of running the command above, you will very likely leave it behind
-and wonder why the commands do not exist. Turn on hidden files first, or use the
-command.
+**Do not drag these across by hand.** One of the folders you are copying is
+called `.claude`, and it is the one that carries the five commands. A name
+starting with a dot is treated differently by each system:
+
+- **On a Mac, Finder hides it.** You cannot select what you cannot see.
+  `Cmd`-`Shift`-`.` shows hidden files if you want to look
+- **On Windows, File Explorer shows it**, but it sorts away from the files you
+  are looking at and is easy to leave out of a selection
+
+Either way, the command above copies it and the question does not arise. If you
+drag files across by hand instead, you will very likely leave `.claude` behind
+and wonder why the commands do not exist.
 
 When you are done, the top of your job folder looks like this:
 
@@ -97,7 +104,7 @@ Open the Claude desktop app, point it at your job folder, and type:
 
 If it starts interviewing you about the job, everything is wired up. If it says
 it does not know that command, the `.claude` folder did not come across — see the
-hidden-folder warning above.
+warning about dragging files by hand, above.
 
 ## The order the five commands run in
 
