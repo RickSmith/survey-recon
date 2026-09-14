@@ -16,9 +16,9 @@ kind of writing goes wrong:
   nothing to do for two hours
 * **All of them in one place.** Placed at a specific time is the whole point —
   clustered in Act I, they are a warm-up act rather than the room's own voice
-* **The sceptical one quietly becoming a setup.** This is the failure worth
+* **The skeptical one quietly becoming a setup.** This is the failure worth
   the most attention. A question the presenter is glad to be asked is not
-  scepticism, it is a cue, and a room of principals knows the difference
+  skepticism, it is a cue, and a room of principals knows the difference
   immediately
 * **Condescension.** `CLAUDE.md`: *"Never condescend about the programming
   gap. These are licensed professionals who know things you do not."* Seneca
@@ -38,7 +38,9 @@ import unittest
 from collections import namedtuple
 
 from tests.deck_reader import REPO, noted, slides
-from tests.markdown_docs import flat, plain, text_of
+from tests.markdown_docs import (
+    flat, markdown_section, plain, table_rows, text_of, unemphasized,
+)
 
 CONTEXT = REPO / "CONTEXT.md"
 SLIDES_PAGE = REPO / "docs" / "slides" / "index.md"
@@ -65,10 +67,10 @@ A_MARKER = re.compile(
 # answer is improvised is a question the presenter walks into.
 AN_ANSWER = "**Answer:**"
 
-# The sentence that marks the sceptical one, in the note beside it. There is
+# The sentence that marks the skeptical one, in the note beside it. There is
 # exactly one, and the check below reads its answer rather than trusting this
 # label on its own.
-THE_SCEPTICAL_ONE = "**This is the sceptical one.**"
+THE_SKEPTICAL_ONE = "**This is the skeptical one.**"
 
 Interjection = namedtuple("Interjection", "slide block cue question answer")
 
@@ -128,12 +130,31 @@ def minutes_into_the_session(block):
 
 
 def said_in(interjection):
-    """The question and the answer as one lowercased line.
+    """The question and the answer as one lowercased line, emphasis off.
 
     Both halves, because condescension is at least as likely in the answer as
     in the question, and an answer is the half the presenter says.
+
+    **The emphasis comes off with `markdown_docs.unemphasized`**, which is what
+    stops a phrase evading the list below by being italicised. *Don't worry
+    about that part* is the same sentence to the room and a different string to
+    a test, and a note is exactly where somebody would italicise it.
     """
-    return f"{interjection.question} {interjection.answer}".lower()
+    return unemphasized(f"{interjection.question} {interjection.answer}").lower()
+
+
+def slides_whose_note_says(phrase):
+    """Every slide whose speaker note carries a phrase, wrapping and all.
+
+    Three checks here look for a sentence in a note that somebody else wrote --
+    the money slide's pricing rule, the stretch block's offer of a prompt, the
+    line marking the skeptical one. All three are hard-wrapped prose, so all
+    three look at the flattened note: `markdown_docs.flat` exists because a
+    check that fails when a paragraph is re-wrapped punishes editing, and the
+    failure it produces here would be a misleading one -- *the money slide no
+    longer carries its pricing rule*, about a rule that never moved.
+    """
+    return [slide for slide in slides() if phrase in flat(slide.note)]
 
 
 class TestThereAreRoughlySixOfThem(unittest.TestCase):
@@ -228,13 +249,18 @@ class TestTheyAskWhatAPrincipalWouldAsk(unittest.TestCase):
     SOFTWARE_WORDS = ("branch", "commit", "pull request", "markdown", "context window", "token")
 
     def translated_terms(self):
-        """The software column of the translation table in `CONTEXT.md`."""
-        return [
-            row[0].lower()
-            for row in [line.strip("|").split("|") for line in text_of(CONTEXT).splitlines()
-                        if line.strip().startswith("|")]
-            if len(row) == 2
-        ]
+        """The software column of **the translation table** in `CONTEXT.md`.
+
+        That table, not every table. `CONTEXT.md` carries six two-column
+        vocabulary tables, and the first draft of this read all of them --
+        which would have gone on passing happily while the translation table
+        itself lost the row this file leans on.
+
+        The reading is `markdown_docs`'s, not a second copy of it. That module
+        exists to delete the copy.
+        """
+        table = markdown_section(text_of(CONTEXT), "## Translation table")
+        return [row[0].lower() for row in table_rows(table)]
 
     def test_the_banned_words_are_the_repos_own_list(self):
         """If a term left the translation table, this file should not be the
@@ -286,50 +312,58 @@ class TestNoneOfThemCondescend(unittest.TestCase):
                     self.assertNotIn(phrase, said_in(one))
 
 
-class TestOneOfThemIsGenuinelySceptical(unittest.TestCase):
-    """*"At least one is genuinely sceptical, not a setup."*
+class TestOneOfThemIsGenuinelySkeptical(unittest.TestCase):
+    """*"At least one is genuinely skeptical, not a setup."*
 
-    The test of a real sceptical question is what the answer is allowed to be.
+    The test of a real skeptical question is what the answer is allowed to be.
     A setup is answered with the thing the presenter wanted to say next. This
     one is answered with *we do not know*, which is the deck's own standing
     rule about the agent's savings -- read out of the money slide's note here
     rather than restated, so the day that rule changes, this check says so.
     """
 
-    def sceptical(self):
-        found = [one for one in interjections() if THE_SCEPTICAL_ONE in one.slide.note]
-        self.assertEqual(len(found), 1, "exactly one interjection is the sceptical one")
+    def skeptical(self):
+        marked = [slide.number for slide in slides_whose_note_says(THE_SKEPTICAL_ONE)]
+        found = [one for one in interjections() if one.slide.number in marked]
+        self.assertEqual(len(found), 1, "exactly one interjection is the skeptical one")
         return found[0]
 
     def money_slide_note(self):
-        notes = [flat(slide.note) for slide in slides()
-                 if slide.note and "Do not price the agent here" in slide.note]
-        self.assertEqual(len(notes), 1, "the money slide no longer carries its pricing rule")
-        return notes[0]
+        found = slides_whose_note_says("Do not price the agent here")
+        self.assertEqual(len(found), 1, "the money slide no longer carries its pricing rule")
+        return flat(found[0].note)
 
     def test_the_money_slide_still_refuses_to_price_the_agent(self):
-        """The rule the sceptical answer obeys, in the place it was written."""
+        """The rule the skeptical answer obeys, in the place it was written."""
         self.assertIn("Nothing in this repo has measured what it saves", self.money_slide_note())
 
-    def test_the_sceptical_answer_refuses_the_number_it_was_asked_for(self):
+    def test_the_skeptical_answer_refuses_the_number_it_was_asked_for(self):
         """Asked what it saved, in hours. Answered *nobody measured that*.
 
-        An answer that produced a figure here would be inventing one on the
-        one slide in the deck whose note forbids exactly that.
+        Both halves are checked, because either one alone passes a sentence
+        that should not pass. *We measured it: nine hours* carries the word;
+        an answer with no figure in it might still be dodging the question
+        rather than conceding it.
         """
-        self.assertIn("measured", self.sceptical().answer.lower())
+        answer = self.skeptical().answer
+        self.assertIn("measured", answer.lower())
+        self.assertIsNone(
+            re.search(r"\d", answer),
+            "the answer to what it saved is a figure, which is the thing "
+            "the money slide's note forbids",
+        )
 
-    def test_the_sceptical_question_asks_for_the_number(self):
-        """It is scepticism about the claim, not a general worry about
+    def test_the_skeptical_question_asks_for_the_number(self):
+        """It is skepticism about the claim, not a general worry about
         computers. If it stops asking for the saving, it stops being the
         question this room actually has."""
-        self.assertIn("save", self.sceptical().question.lower())
+        self.assertIn("save", self.skeptical().question.lower())
 
     def test_no_interjection_prices_the_agent(self):
         """Hours, never a price per seat or per month.
 
         That is the money block's own rule, read out of its note here rather
-        than restated, and the sceptical interjection is the likeliest place in
+        than restated, and the skeptical interjection is the likeliest place in
         the deck to break it: asked what it saves, in hours, by somebody who
         buys things for a living. A price said on a stage in October is stale
         by the spring, and it is the sentence that gets quoted back.
@@ -349,16 +383,15 @@ class TestTheDeckNoLongerPromisesThemLater(unittest.TestCase):
     promised material is the block that has to have it.
     """
 
-    def stretch_note(self):
-        notes = [slide.note for slide in slides()
-                 if slide.note and "If the room is quiet" in slide.note]
-        self.assertEqual(len(notes), 1, "the stretch note no longer offers the room a prompt")
-        return flat(notes[0])
-
     def test_the_stretch_block_carries_one_of_them(self):
-        stretch = [one for one in interjections() if "If the room is quiet" in one.slide.note]
+        """The note that offers the room a prompt is the note that has to hold
+        one. A presenter reading *Seneca has something for this moment* at 0:52
+        with nothing written under it is worse off than one reading nothing."""
+        offered = slides_whose_note_says("If the room is quiet")
+        self.assertEqual(len(offered), 1, "no note offers the room a prompt any more")
+        written = [one for one in interjections() if one.slide.number == offered[0].number]
         self.assertEqual(
-            len(stretch), 1,
+            len(written), 1,
             "the stretch note promises the room a question and none is written there",
         )
 

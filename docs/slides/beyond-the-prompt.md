@@ -612,14 +612,14 @@ What did this actually save you, in hours, on this job?"
 
 **Answer:** We do not know. Nothing in this repo has measured what it saves,
 and a figure invented on this stage is the one you would quote back at me in
-six months' time. The argument before the break was rework, not speed, and
-that one we can show you. What it costs to find out for yourself is three
-things, and docs/day-0/index.md walks all three: git, a GitHub account, and
-the desktop app.
+six months' time. Nobody up here can tell you what it would do for your firm.
+You would have to run it on a job whose cost you already know.
 
-**This is the sceptical one.** It is not a setup, and it is not answered with
-a figure. Seneca does not smile on the way in and Rick does not reach for a
-number; the moment either of those happens, the room knows it was staged.
+**This is the skeptical one.** It is not a setup, it is not answered with a
+figure, and it does not turn into an invitation. Seneca does not smile on the
+way in, Rick does not reach for a number, and the answer stops at the
+concession rather than landing on the next slide -- an answer that finishes by
+selling something is the shape of a setup, whatever the question was.
 
 Nothing is on screen to lose here, so there is no fallback to reach for.
 -->

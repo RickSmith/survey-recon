@@ -136,11 +136,11 @@ They are **one to a block, spread across the two hours** — the cold open, Act 
 the stretch, Act II, Act III and the seal slide. One block cannot carry two,
 and the session does not go an hour without the room having a voice.
 
-**One of them is genuinely sceptical**, and its own note says so. It asks what
+**One of them is genuinely skeptical**, and its own note says so. It asks what
 the agent actually saved, in hours, on this job, and the answer is that nobody
 measured it — the same rule the money slide's note sets for the presenter. A
-sceptical question the presenter is glad to hear is a cue rather than
-scepticism, and a room of principals can tell the difference from the back.
+skeptical question the presenter is glad to hear is a cue rather than
+skepticism, and a room of principals can tell the difference from the back.
 
 Scripted so they land. Rehearsed so they do not sound scripted — which means
 rehearsing them in the run-through against the clock, not reading them off a
