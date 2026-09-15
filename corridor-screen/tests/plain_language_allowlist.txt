@@ -30,15 +30,19 @@
 # EXEMPT in test_plain_language.py and the reason is in
 # docs/adr/0003-produced-artifacts-stay-as-produced.md.
 #
-# Counted on 2026-09-15: 20 pages here, 58 faults between them. 22 pages in
+# Counted on 2026-09-15: 18 pages here, 53 faults between them. 24 pages in
 # scope pass.
 #
 # #135 swept docs/data-sources/ and took its 8 pages and 39 faults off this
 # list. Eight of the 22 passing pages pass because #135 fixed them.
 
-# --- #136  docs/governance/ --- 4 pages, 9 faults
-docs/governance/ai-use-policy.md
-docs/governance/index.md
+# --- #136  docs/governance/ --- 2 pages, 4 faults
+#
+# Every fault left on these two pages is a word-for-word quotation of law: three
+# blockquotes of statute and board rule on the seal page, one of 22 Tex. Admin.
+# Code 138.61(a) on the other. Shortening a quotation would falsify a citation,
+# which CLAUDE.md forbids outright. The counter reads a blockquote as our own
+# prose, so it counts those four. See the pull request for #136.
 docs/governance/seal-and-responsible-charge.md
 docs/governance/what-never-leaves.md
 
