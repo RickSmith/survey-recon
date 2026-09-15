@@ -1,6 +1,6 @@
 """Reading a committed markdown document, for the tests that check one.
 
-Five test files hold a page in `docs/` to what it claims:
+Six test files hold a page in `docs/` to what it claims:
 
 * `test_fallbacks.py` — the fallback card, against the run of show
 * `test_deck.py` — the slide deck, against the same table
@@ -10,8 +10,10 @@ Five test files hold a page in `docs/` to what it claims:
   build-up its cost figures are read out of
 * `test_day_zero.py` — the setup guide, against the toolkit README it has to
   hand out the same three download addresses as
+* `test_plain_language.py` — every page, against the plain-language standard.
+  The one that reads prose rather than tables. See the second half of this file
 
-All of them have to open a file, find a heading, and read a table out from under
+The first five have to open a file, find a heading, and read a table out from under
 it. Those three functions were written twice before they were written here, and
 the second copy is what this module exists to delete. The reason is
 `test_fallbacks.py`'s own, about the helpers it borrows rather than copies:
@@ -209,19 +211,18 @@ _QUOTE_MARK = re.compile(r"^\s*>\s?")
 # start of the next one: whitespace, then a capital, a quote or an opening
 # bracket. Without that second half the reader cuts "TxDOT's spec.md file" and
 # "Python 3.11 or newer" into fragments.
-_SENTENCE_END = re.compile(r"(?<=[.!?])[\"')\]]?\s+(?=[\"'(\[A-Z])")
-
-# The abbreviations in these pages that end in a period and are followed by a
-# capital, which is the one shape `_SENTENCE_END` reads as a break when it is
-# not one. Matched against the last word before the break.
 #
-# What is left after this list still errs toward splitting, and that is the safe
-# direction: a sentence cut in two is under the word limit, so the reader
-# under-reports rather than failing a page for a sentence nobody wrote.
-_ABBREVIATION = re.compile(
-    r"(?:^|\s)(?:[A-Z]\.)+$"
-    r"|(?:^|\s)(?:Mr|Mrs|Ms|Dr|St|Inc|Co|No|vs|Fig|Sec|Ch|Ed|Jr|Sr|Ave|Rd)\.$"
-)
+# **An abbreviation before a capital still reads as a break**, so "the U.S.
+# Geological Survey" would come back as two sentences. There is no guard against
+# that, because no page in `docs/` does it -- every one of `Mr. Dr. St. Inc. No.
+# vs.` and the `U.S.` shape was searched for and found zero times before a
+# capital. A guard written for cases nobody has is a comment claiming a
+# measurement that was not made.
+#
+# It is also the safe direction if it ever happens. A sentence cut in two is
+# under the word limit, so the reader under-reports rather than failing a page
+# for a sentence nobody wrote.
+_SENTENCE_END = re.compile(r"(?<=[.!?])[\"')\]]?\s+(?=[\"'(\[A-Z])")
 
 # Three words or fewer is a fragment, not a sentence. "Not this." is something
 # these pages do on purpose, and counting it would put noise in front of the
@@ -302,17 +303,11 @@ def sentences(markdown):
     """Every sentence of writing on a page, with the typesetting taken off.
 
     Fragments of three words or fewer are dropped. See `_SENTENCE_END` for
-    where the cut is made and `_ABBREVIATION` for what it gets wrong.
+    where the cut is made and what it gets wrong.
     """
     found = []
     for paragraph in paragraphs(markdown):
-        parts = []
-        for piece in _SENTENCE_END.split(unemphasized(paragraph)):
-            if parts and _ABBREVIATION.search(parts[-1]):
-                parts[-1] = f"{parts[-1]} {piece}"
-            else:
-                parts.append(piece)
-        for part in parts:
+        for part in _SENTENCE_END.split(unemphasized(paragraph)):
             part = part.strip()
             if len(part.split()) > _FRAGMENT_WORDS:
                 found.append(part)

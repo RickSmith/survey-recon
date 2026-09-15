@@ -51,8 +51,21 @@ On every SH16 segment read on 2026-09-13 its value is a single underscore.
 Naming the character itself is shorter and clearer: *its value is a single `_`
 character*.
 
-**Put a bad example inside a code fence.** The check reads prose, and fenced text
-is not prose. Without the fence, quoting a fault commits it.
+**Put a bad example inside a code fence.** A **code fence** is a block wrapped in
+three backticks, the way the quotation above is. Markdown shows it exactly as
+typed, and the check skips it. Without the fence, quoting a fault commits it.
+
+## What the test cannot see
+
+The check reads paragraphs. It skips code fences, tables, headings, list items
+and raw HTML, because a rule about word count applied to a command line would
+fail a page for quoting a command correctly.
+
+**A long bullet therefore passes.** Eighty words in a bullet are not counted;
+the same eighty words in a paragraph fail. That is a limit of the counter and
+not a loophole in the standard. The three rules apply to every sentence you
+write, wherever it sits. A green test means nothing was caught, not that the
+page is done.
 
 ## The four faults no test counts
 

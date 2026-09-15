@@ -8,12 +8,14 @@ This table is the one place the list is written down.
 and checks the pages in `docs/` against it. Adding a row here adds a rule.
 Deleting a row drops one.
 
-The list is a blunt instrument and it is meant to be. It finds nothing in this
-repo today, which is the point: it costs nothing to keep and it stops the drift
-later. When it does fire on a word you used correctly, the plainer word in the
-second column is usually shorter anyway.
+The list is a blunt instrument and it is meant to be. It fires once on this repo
+as it stands, on `docs/data-sources/txdot-roadways.md`, and that one hit is a
+word used correctly. `SKILL.md` works through it. Near enough to zero is the
+point: the list costs nothing to keep and it stops the drift later. When it does
+fire on a word you used correctly, the plainer word in the second column is
+usually shorter anyway.
 
-The first twenty-one are the strongest signals. The next nineteen are words
+The first twenty-one rows are the strongest signals. The next nineteen are words
 people do use, which machines reach for far too often. The last fifteen are
 joining words that arrive in clusters.
 
@@ -83,7 +85,14 @@ MIT licensed, © 2026 Luis Guzman. Read at commit
 [`4b7c37f`](https://github.com/lguz/humanize-writing-skill/commit/4b7c37fa5148fd499e18498fcc91bb10ed801733)
 on 2026-09-15.
 
-The rows are the same words. The second column is shortened, and the three tiers
-are one table here so that a test can read the list from a single place. That
-dictionary in turn credits Wikipedia's "Signs of AI writing" page, GPTZero's
-vocabulary research, and several editing forums.
+The words are the same. Three things about the shape differ, and none of them
+adds or drops a word:
+
+- Upstream has three tables of 18, 18 and 15 rows. They are one table here, so a
+  test can read the list from a single place
+- Upstream writes four rows as a pair, `intricate / intricacies`. Each pair is
+  two rows here, which is what makes the count 55 rather than 51
+- The second column is shortened
+
+That dictionary in turn credits Wikipedia's "Signs of AI writing" page,
+GPTZero's vocabulary research, and several editing forums.

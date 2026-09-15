@@ -46,14 +46,29 @@ read better would make the stage demo a lie. `docs/agents/` is read by software.
 `docs/adr/0003-produced-artifacts-stay-as-produced.md` writes that down.
 
 **On reproducing #133's counts.** They do not reproduce here, and the difference
-is in the reader rather than in the pages. Triage measured 2,031 sentences with
-94 over forty words; `markdown_docs.sentences` finds 2,366 sentences with 44
-over. The direction of the gap says the earlier splitter merged sentences that
-this one separates -- most likely across the `**` that ends a bold run, which
-`unemphasized` takes off first. The one number both agree on is the worst
-sentence in the repo, at 219 words in `docs/slides/index.md`. What matters for
-this test is not the historical count but that the ruler is written down, so
-read `markdown_docs.prose` before arguing with a number here.
+is in the reader rather than in the pages. Measured on 2026-09-15:
+
+|  | #133, at triage | `markdown_docs.sentences` |
+|---|---|---|
+| Pages in `docs/` | 38 | 40 |
+| Sentences | 2,031 | 2,391 |
+| Over 40 words | 94 | 44 |
+| 2 or more em dashes | 55 | 52 |
+
+The em dash counts nearly agree. The sentence counts do not, and the gap runs
+the way it would if the earlier splitter merged sentences that this one
+separates -- most likely across the `**` that ends a bold run, which
+`unemphasized` takes off before the split. The two page counts differ because
+this test scans everything under `docs/` that is not exempt, where #133 also
+held out `docs/vocabulary/index.md` as too short to bother with. It passes.
+
+Both agree on the worst sentence in the repo, at 219 words in
+`docs/slides/index.md`.
+
+**#133's per-child table is therefore stale.** It tells #135 that
+`docs/data-sources/` holds 31 sentences over forty words. Read the allowlist
+header for the figures this test actually produces, and read
+`markdown_docs.prose` before arguing with any of them.
 """
 
 import re
@@ -371,6 +386,30 @@ class TestThePagesThemselves(unittest.TestCase):
         for name in allowlisted():
             with self.subTest(page=name):
                 self.assertFalse(is_exempt(name), f"{name} is exempt, not owed")
+
+    def test_the_adr_names_every_exempt_path(self):
+        """`EXEMPT` is the list that bites. ADR 0003 is the list people read.
+
+        Five places in this repo describe what is exempt: this tuple, the header
+        of the allowlist, the ADR, the skill, and the row in `CONTEXT.md`. Four
+        of those are prose about a decision and only this one is enforced, which
+        is exactly the arrangement that drifts -- and it already had, on first
+        review, with `CONTEXT.md` naming two paths where this tuple has four.
+
+        The word list solved the same problem by moving the single source of
+        truth into the skill. That does not work here, because the tuple has to
+        be readable before any file is opened. So the ADR is held to the tuple
+        instead, and a path added to one without the other fails loudly.
+        """
+        adr = text_of(REPO / "docs" / "adr"
+                      / "0003-produced-artifacts-stay-as-produced.md")
+        for entry in EXEMPT:
+            with self.subTest(path=entry):
+                self.assertIn(
+                    entry.rstrip("/"),
+                    adr,
+                    f"{entry} is exempt in the code and unexplained in the ADR",
+                )
 
     def test_the_files_outside_the_tree_stay_outside_it(self):
         scanned = set(scanned_files())
