@@ -100,7 +100,7 @@ work without the real thing, **this is not a job for the tool.**
 
 > *Rule.* 22 Tex. Admin. Code § 138.61(a), (c): reveal client confidences only
 > with informed consent or where the law requires, and exercise reasonable care to
-> prevent unauthorised disclosure by employees and associates.
+> prevent unauthorized disclosure by employees and associates.
 > *Board guidance.* PAO 71: "Licensees should also be aware of how any AI software
 > utilizes and stores data that is provided to it to ensure that the
 > confidentiality of any client's data is maintained."
@@ -188,11 +188,12 @@ disciplined for hiding one.
 
 > *Firm choice.* The same-day rule, the write-it-down step and the no-blame
 > sentence are ours. Set your own and put your own name on them.
-> *Rule*, for one part of it. 22 Tex. Admin. Code § 138.55(c): surveyors "shall
-> first notify involved parties of any land surveying decisions or practices that
-> might endanger the health, safety, property or welfare of the public," and shall
-> report to the board or the authorities where a risk remains unresolved. Where
-> the error reaches that threshold, telling people is not a firm preference.
+> *Rule*, for one part of it. 22 Tex. Admin. Code § 138.55(c) says surveyors
+> "shall first notify involved parties of any land surveying decisions or
+> practices that might endanger the health, safety, property or welfare of the
+> public." It also requires a report to the board or the authorities where a
+> risk remains unresolved. Where the error reaches that threshold, notifying
+> involved parties is a rule and not a firm preference.
 
 ## 10. Review
 

@@ -159,10 +159,11 @@ page 110. <https://pels.texas.gov/downloads/lawrules.pdf>
 **The rule** is § 138.61, and it is broad: client confidences and private
 information.
 
-**The specific list** — pricing, employee information, screenshots, the
-placeholder method — is **our choice**, not a legal requirement. It is drawn from
-what the rule protects and from what actually goes wrong. Adapt it. Just do not
-let anyone tell you the list is the law; the law is the rule it came from.
+**The specific list** is **our choice**, not a legal requirement. It names
+pricing, employee information, screenshots and the placeholder method. It is
+drawn from what the rule protects and from what actually goes wrong. Adapt it.
+Just do not let anyone tell you the list is the law. The law is the rule it came
+from.
 
 ## What we could not confirm
 
@@ -170,7 +171,7 @@ let anyone tell you the list is the law; the law is the rule it came from.
   software.** **Not found.** We read the TBPELS *Acts and Rules* effective
   18 June 2026 and the full policy advisory opinion index at
   <https://pels.texas.gov/policy.htm> on 2026-09-12. The obligation is stated as a
-  standard — confidentiality and reasonable care — and not as a list. The list is
+  standard (confidentiality and reasonable care) and not as a list. The list is
   ours
 - **What any particular AI vendor does with what you type.** **Not checked, and
   not checkable from here.** It differs by vendor, by plan, and by settings, and

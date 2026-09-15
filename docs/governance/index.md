@@ -67,9 +67,9 @@ That was true before AI and it is true now. Two rules put it beyond argument, an
 **directly supervised**, and § 131.2(11), which defines that supervision as
 approving decisions **before they are acted on**.
 
-Which is why the way of working this session teaches — a written scope, small
-pieces, a check before anything is accepted — is not a software habit borrowed for
-show. **It is the shape the rule already asks for.**
+The way of working this session teaches is a written scope, small pieces, and a
+check before anything is accepted. **That is the shape the rule already asks
+for.**
 
 ---
 

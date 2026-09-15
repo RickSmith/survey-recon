@@ -143,8 +143,8 @@ supervision," still valid.
 
 **22 Tex. Admin. Code § 138.33(e)** governs preliminary documents. A preliminary
 document must name its purpose, the surveyor of record, the registration number
-and the release date, must **not** be signed or sealed, and must carry this exact
-text in the signature space or on the face of the document:
+and the release date. It must **not** be signed or sealed. It must also carry
+this exact text in the signature space or on the face of the document:
 
 > Preliminary, this document shall not be recorded for any purpose and shall not be
 > used or viewed or relied upon as a final survey document
@@ -263,8 +263,8 @@ ceilings.
 | Work performed by more than one surveyor not attributed to each surveyor | § 138.33(g) | Reprimand / $500 |
 
 **Source:** 22 Tex. Admin. Code § 139.37, "Sanctions and Penalties — Surveying,"
-as printed in the TBPELS *Acts and Rules* effective 18 June 2026 — subsection (a)
-on page 107, the table at subsection (b) on page 110.
+as printed in the TBPELS *Acts and Rules* effective 18 June 2026. Subsection (a)
+is on page 107, and the table at subsection (b) is on page 110.
 <https://pels.texas.gov/downloads/lawrules.pdf>
 
 Note there is a near-identical table for **engineers** at § 139.35, pages 104–106.
