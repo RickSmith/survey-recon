@@ -25,9 +25,9 @@ https://services.arcgis.com/g1fRTDLeMgspWrYp/arcgis/rest/services/BCAD_Parcels/F
 | Paging cap | 2,000 |
 | Key or account | none |
 
-**2278 is NAD 83 Texas South Central**, the State Plane zone Bexar County falls
-in — the zone covers a good deal more of Texas than this one county — and it is
-in the units a Texas surveyor works in.
+**2278 is NAD 83 Texas South Central.** That is the State Plane zone Bexar
+County falls in, and it reports in the units a Texas surveyor works in. The zone
+covers a good deal more of Texas than this one county.
 
 The tool asks for `outSR=4326` and lets the server convert. It performs no datum
 transformation of its own, which is not only convenience: the TxDOT Survey
@@ -79,11 +79,11 @@ Both [spec section 10](../corridor-screen/spec.md) and
 [the research notes](../txdot-research.md) originally listed the parcel fields
 as `AcctNumb`, `Owner`, `LglDesc`, `LglAcres` and `PropUse`.
 
-**Those field names are real. They belong to the other service** — Bexar
-County's own at `maps.bexar.org` — not to this one, which the specification
-tells the tool to prefer. Both were read on 2026-09-12 and the two field lists
-compared. This service publishes `Geo_id`, `PropID`, `Owner_Name`, `legal_desc`,
-`legal_acre` and `state_cd`.
+**Those field names are real. They belong to the other service**, Bexar
+County's own at `maps.bexar.org`. They do not belong to this one, which the
+specification tells the tool to prefer. Both were read on 2026-09-12 and the
+two field lists compared. This service publishes `Geo_id`, `PropID`,
+`Owner_Name`, `legal_desc`, `legal_acre` and `state_cd`.
 
 A tool that asked this service for `AcctNumb` would get nothing back and raise
 nothing — every parcel unidentified, quietly. The code follows the service
@@ -132,9 +132,9 @@ returns. Guessing that `F1` means one thing, and putting that guess in front of
 a surveyor pricing a job, is exactly the confident wrongness this repo exists to
 warn about. The code is reported as the code it is.
 
-Every row also says in `id_source` which of the three identifiers it got —
-`Geo_id`, `PropID` or `synthetic` — because only the first two can be quoted
-back to Bexar County.
+Every row also says in `id_source` which of the three identifiers it got:
+`Geo_id`, `PropID` or `synthetic`. Only the first two can be quoted back to
+Bexar County.
 
 ### A blank here is a space, not a null, and that has bitten
 

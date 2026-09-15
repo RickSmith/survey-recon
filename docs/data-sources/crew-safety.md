@@ -60,14 +60,14 @@ https://carto.nationalmap.gov/arcgis/rest/services/structures/MapServer
 
 ## Trap one: every layer exists twice, and the copies are identical
 
-The service publishes two group layers — `Labels` at 0 and `Features` at 35 —
-and **every feature layer appears once under each**. Hospitals are layer 14 and
+The service publishes two group layers: `Labels` at 0 and `Features` at 35.
+**Every feature layer appears once under each.** Hospitals are layer 14 and
 also layer 49. Ambulance services are 15 and also 50. Fire and EMS are 16 and
 also 51. Police stations are 18 and also 53.
 
-Read live on 2026-09-13, both copies of all four answered **the tool's own
-25-mile envelope around the SH16 corridor** — `-99.105, 29.1204` to
-`-98.1843, 29.9365` — with the same count:
+**The tool's own 25-mile envelope around the SH16 corridor** runs
+`-99.105, 29.1204` to `-98.1843, 29.9365`. Read live on 2026-09-13, both copies
+of all four answered it with the same count:
 
 | Kind | Lower layer | Count | Upper layer | Count |
 |---|---|---|---|---|
@@ -107,12 +107,12 @@ nothing, raises nothing, and every hospital comes out unnamed.
 
 ## `LOADDATE` is a real date field, so it arrives as milliseconds
 
-Same trap as TxDOT's ROW map sheet dates, written up on
-[the ROW map sheets page](row-map-sheets.md): ArcGIS sends a real date field as
-milliseconds since 1970, and on Windows the obvious way to read one raises an
-error on any value before 1970. `arcgis.from_epoch_ms` is the one function both
-services read their dates through — it was written for the ROW sheets and moved
-when this service turned out to need it too.
+This is the same trap as TxDOT's ROW map sheet dates, written up on
+[the ROW map sheets page](row-map-sheets.md). ArcGIS sends a real date field as
+milliseconds since 1970. On Windows the obvious way to read one raises an error
+on any value before 1970. Both services read their dates through one function,
+`arcgis.from_epoch_ms`. It was written for the ROW sheets and moved here when
+this service turned out to need it too.
 
 **It matters here for a different reason.** `LOADDATE` is the day USGS loaded
 the record, **not** the day anybody confirmed the place is still there. On the
@@ -250,13 +250,13 @@ around this corridor, so none of them is asked for.
 
     **One section 8 check is deliberately not applied.** Section 8 asks that
     "any part of every returned record falls within the half-width plus a
-    stated margin." That test is right for a parcel and wrong for this sheet: a
-    hospital two miles off the centerline is a correct answer, and doubting it
-    for being outside the ribbon would be a warning that teaches the reader to
+    stated margin." That test is right for a parcel and wrong for this sheet. A
+    hospital two miles off the centerline is a correct answer. Doubting it for
+    being outside the ribbon would be a warning that teaches the reader to
     ignore warnings. What *is* applied is
-    `checks.check_records_in_requested_extent`, which tests each record against
-    the 25-mile box that was actually asked about — and that one matters here
-    more than anywhere, because its documented failure case is this very
+    `checks.check_records_in_requested_extent`. It tests each record against
+    the 25-mile box that was actually asked about. That check matters here more
+    than anywhere. Its documented failure case is this very
     server returning schools in Fredericksburg and Kerrville for a query whose
     geometry stopped inside Bexar County. An earlier pass of this ticket
     skipped it on a confusion between the two checks. That was wrong and the

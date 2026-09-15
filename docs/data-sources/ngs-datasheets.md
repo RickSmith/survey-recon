@@ -42,8 +42,8 @@ box), `/pid` (named marks) and `/meta`. It caps at 500 records.
 
 **The datasheets feature service** is a plain ArcGIS feature service. It takes
 arbitrary geometry, pages at 2,000, and answers in the same shape as every other
-source this tool calls — which means the reachability ping, the field-list check,
-the paging loop and the provenance record all reach it without a second code
+source this tool calls. So the reachability ping, the field-list check, the
+paging loop and the provenance record all reach it without a second code
 path.
 
 So the tool calls the feature service. The API was still worth one call, for the
@@ -163,8 +163,8 @@ point to testing any part of a shape, the note recorded that the strict form
 parcel is an area and can be clipped by a ribbon. A mark is a point and is either
 in or out.
 
-The query itself asks about a **box** around the corridor, not the ribbon, for
-the reason written up on [the flag services page](flag-services.md): asked with a
+The query itself asks about a **box** around the corridor, not the ribbon. The
+reason is written up on [the flag services page](flag-services.md). Asked with a
 polyline and a distance, a service can buffer into the wrong county and answer
 without erroring. Asked with an envelope it answers about the envelope, and the
 tool then measures each mark itself.

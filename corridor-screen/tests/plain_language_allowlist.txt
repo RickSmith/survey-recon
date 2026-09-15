@@ -30,18 +30,11 @@
 # EXEMPT in test_plain_language.py and the reason is in
 # docs/adr/0003-produced-artifacts-stay-as-produced.md.
 #
-# Counted on 2026-09-15: 28 pages here, 97 faults between them. 14 pages in
+# Counted on 2026-09-15: 20 pages here, 58 faults between them. 22 pages in
 # scope already pass.
-
-# --- #135  docs/data-sources/ --- 8 pages, 39 faults
-docs/data-sources/bcad-parcels.md
-docs/data-sources/crew-safety.md
-docs/data-sources/flag-services.md
-docs/data-sources/ngs-datasheets.md
-docs/data-sources/not-used.md
-docs/data-sources/row-map-sheets.md
-docs/data-sources/txdot-control-points.md
-docs/data-sources/txdot-roadways.md
+#
+# #135 swept docs/data-sources/ and took its 8 pages and 39 faults off this
+# list.
 
 # --- #136  docs/governance/ --- 4 pages, 9 faults
 docs/governance/ai-use-policy.md

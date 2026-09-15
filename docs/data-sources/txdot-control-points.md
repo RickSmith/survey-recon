@@ -75,9 +75,9 @@ https://services.arcgis.com/KTcxiTD9dsQw4r7Z/arcgis/rest/services/TxDOT_Control_
 ```
 
 That exists. It is layer 0. It answers a corridor query without erroring. And it
-holds **control sections** — the numbered highway segments in
+holds **control sections**, the numbered highway segments in
 [CONTEXT.md](https://github.com/RickSmith/survey-recon/blob/main/CONTEXT.md),
-like SH16's 0291-09 — which are not survey control and are not monuments. Two
+like SH16's 0291-09. Those are not survey control and are not monuments. Two
 TxDOT datasets, both called "control," one of them a line and one of them a
 monument.
 
@@ -161,8 +161,8 @@ The condition values on this service, read live:
 | `Poor` | 9 | condition reported |
 
 **`Destroyed` is kept apart from the NGS `MARK NOT FOUND`.** They cost a crew
-the same trip, but they are different claims — one says somebody looked and
-could not find it, the other says it is gone — and the second is the stronger
+the same trip, but they are different claims. One says somebody looked and
+could not find it. The other says it is gone, and that is the stronger
 statement. Merging them would lose which of the two TxDOT actually said.
 
 `Good` and `Poor` are reported and left alone. What `Poor` is worth to a
@@ -183,10 +183,10 @@ A crew drives to the monument, not to the record. Reporting four where there are
 two doubles the control an estimator believes is already set, and that is a
 discount on a price nobody chose to give.
 
-So the output reports both numbers — `points_in_corridor` counts records,
-`distinct_stations` counts monuments — and **drops neither record.** All 274
-duplicated pairs agree on condition, so there is no call to be made about which
-record to believe, only a count to be honest about.
+So the output reports both numbers and **drops neither record.** The
+`points_in_corridor` key counts records, and `distinct_stations` counts
+monuments. All 274 duplicated pairs agree on condition, so there is no call to
+be made about which record to believe, only a count to be honest about.
 
 ---
 
@@ -195,7 +195,7 @@ record to believe, only a count to be honest about.
 The research note lists `SRVY_CTRL_DCMNT_ADDR` as "(PDF link)".
 
 **Read on 2026-09-12, that field is null on all 766 records.** `PDF_Filename`
-does carry a name — `SCP_32.pdf` — but it is a bare filename, and TxDOT
+does carry a name, such as `SCP_32.pdf`. But it is a bare filename, and TxDOT
 publishes no base address anywhere to hang it on. Neither field gets a reader to
 the document.
 
