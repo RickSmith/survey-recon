@@ -100,7 +100,7 @@ work without the real thing, **this is not a job for the tool.**
 
 > *Rule.* 22 Tex. Admin. Code § 138.61(a), (c): reveal client confidences only
 > with informed consent or where the law requires, and exercise reasonable care to
-> prevent unauthorised disclosure by employees and associates.
+> prevent unauthorized disclosure by employees and associates.
 > *Board guidance.* PAO 71: "Licensees should also be aware of how any AI software
 > utilizes and stores data that is provided to it to ensure that the
 > confidentiality of any client's data is maintained."
