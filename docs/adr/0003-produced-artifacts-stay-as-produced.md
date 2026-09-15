@@ -31,14 +31,18 @@ reads well is not a question that applies to it.
 
 ## The difference between exempt and allowlisted
 
-The plain-language test carries a list of pages not swept yet. That list is a
-debt. Each child work order of #133 deletes its own lines, and when the list is
-empty the list goes too.
+The plain-language test used to carry a list of pages not swept yet. That list
+was a debt. Each child work order of #133 deleted its own lines. The list
+emptied on 2026-09-15 and issue #147 deleted the file.
 
-These two files are not on it, and must never be. An exemption is a decision
-that stands. A test in `test_plain_language.py` fails if either one turns up on
-the allowlist, because a child work order would then delete the line in good
-faith and the exemption would quietly be gone.
+These two files were never on it, and a test failed if either one turned up
+there. An exemption is a decision that stands, not a debt somebody pays off. A
+child work order deleting an exempt page's line in good faith would have ended
+the exemption without anyone noticing.
+
+The list is gone. The exemptions are not, and that is the whole difference. The
+only way a page in `docs/` goes unmeasured now is the `EXEMPT` tuple in
+`test_plain_language.py`, and a test holds this record to that tuple.
 
 Three more paths are exempt for their own reasons, none of them this one:
 

@@ -187,7 +187,7 @@ def local_link_targets(markdown):
 # That definition lives here rather than in the test file for this module's own
 # stated reason: a second reader would drift the first time somebody fixed one
 # of them. It is also the boundary issue #133's counts were measured across, so
-# changing it changes what the allowlist means.
+# changing it changes what the standard itself covers.
 
 # `~~~` is the other fence markdown allows. No page in `docs/` uses it today,
 # and a reader that only knew about backticks would start counting a command as

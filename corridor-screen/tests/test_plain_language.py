@@ -17,33 +17,27 @@ what can be counted is counted here, on every pull request.
 * 2 or more em dashes
 * any of the 55 words in `banned-words.md`
 
-**Why an allowlist.** The pages are not swept yet. That work is the six child
-work orders of #133, one per folder, one pull request each. Without a list of
-the files not yet done this test would land red and stay red, and a red check
-everyone has learned to ignore is worse than no check. So every unswept file is
-named in `plain_language_allowlist.txt` and skipped, each child deletes its own
-lines in the same pull request that fixes those files, and when the list is
-empty the file and the code that reads it go too. The length of that list is how
-much of #133 is left.
-
-**How the allowlist is kept honest.** Two tests do it between them.
-`test_every_page_not_on_the_list_is_clean` holds every other file to the three
-rules. `test_every_file_on_the_list_really_is_dirty` fails on an entry that has
-nothing wrong with it. Take a line out without fixing the file and the first
-test picks it up; fix a file and forget to take its line out and the second one
-does.
+**How it landed green, which is the part worth keeping.** The pages were not
+swept when this test was written. Landing it red would have been honest and
+useless, because a red check everyone has learned to ignore is worse than no
+check at all. So the pages not swept yet were listed in a file and skipped, the
+six child work orders of #133 swept one folder each and deleted their own lines,
+and the list emptied on 2026-09-15. Issue #147 then deleted the list and the
+code that read it. Every scanned page is now held to all three rules and no page
+can opt out. The next person who wants a repo-wide standard has the same problem
+to solve, and this is what solved it here.
 
 **Where the word list lives.** In the skill, not here. The skill is the document
 a person and an agent both read, and a second copy of fifty-five words would
 drift the first time somebody edited one of them. This file parses the table.
 
-**What is permanently exempt, which is not the same as allowlisted.** An
-allowlist entry is a debt that gets paid. An exemption is a decision that
-stands. `docs/corridor-screen/spec.md` and `docs/txdot-research.md` are the
-agent's own dated output and the evidence the demo happened; rewriting them to
-read better would make the stage demo a lie. `docs/agents/` is read by software.
-`docs/slides/beyond-the-prompt.md` is slide bullets and is already short.
-`docs/adr/0003-produced-artifacts-stay-as-produced.md` writes that down.
+**What is permanently exempt.** An exemption is a decision that stands, and the
+`EXEMPT` tuple below is the only way a scanned page is not measured. Nothing
+else adds to it. `docs/corridor-screen/spec.md` and `docs/txdot-research.md` are
+the agent's own dated output and the evidence the demo happened; rewriting them
+to read better would make the stage demo a lie. `docs/agents/` is read by
+software. `docs/slides/beyond-the-prompt.md` is slide bullets and is already
+short. `docs/adr/0003-produced-artifacts-stay-as-produced.md` writes that down.
 
 **On reproducing #133's counts.** They do not reproduce here, and the difference
 is in the reader rather than in the pages. Measured on 2026-09-15:
@@ -66,9 +60,20 @@ Both agree on the worst sentence in the repo, at 219 words in
 `docs/slides/index.md`.
 
 **#133's per-child table is therefore stale.** It tells #135 that
-`docs/data-sources/` holds 31 sentences over forty words. Read the allowlist
-header for the figures this test actually produces, and read
-`markdown_docs.prose` before arguing with any of them.
+`docs/data-sources/` holds 31 sentences over forty words. The figures this
+reader actually produced are below, counted as each child work order landed.
+Read `markdown_docs.prose` before arguing with any of them.
+
+| Work order | What it swept | Pages | Faults |
+|---|---|---|---|
+| #135 | `docs/data-sources/` | 8 | 39 |
+| #136 | `docs/governance/` | 4 | 9 |
+| #137 | `docs/presenting/` | 3 | 17 |
+| #138 | `docs/managing-your-agent/` | 3 | 7 |
+| #139 | the prose in `docs/corridor-screen/` | 3 | 7 |
+| #140 | the twelve pages with no folder of their own | 7 | 18 |
+
+Twenty-eight of the 42 pages in scope pass because of those six.
 """
 
 import re
@@ -80,7 +85,6 @@ from tests.markdown_docs import sentences, table_rows, text_of
 REPO = Path(__file__).resolve().parents[2]
 SKILL = REPO / "toolkit" / ".claude" / "skills" / "plain-language"
 WORD_LIST = SKILL / "banned-words.md"
-ALLOWLIST = Path(__file__).resolve().parent / "plain_language_allowlist.txt"
 
 # The numbers. They are the same three the skill states, and a test below holds
 # the skill to them.
@@ -98,8 +102,9 @@ SCANNED = (
     SKILL,
 )
 
-# Settled in #133 and recorded in ADR 0003. These never go on the allowlist and
-# they never come off this tuple. A folder is written with a trailing slash.
+# Settled in #133 and recorded in ADR 0003. These never come off this tuple, and
+# this tuple is the only way out of the standard. A folder is written with a
+# trailing slash.
 EXEMPT = (
     "docs/agents/",
     "docs/corridor-screen/spec.md",
@@ -108,7 +113,7 @@ EXEMPT = (
 )
 
 # Not scanned at all, which is the strongest form of exempt there is: they are
-# not under any path in SCANNED, so no allowlist entry could ever reach them.
+# not under any path in SCANNED, so the check never opens them at all.
 # `CONTEXT.md` is a glossary and stays dense, `CLAUDE.md` is rules for an agent.
 # #133, decision 2. Checked, because "outside the tree" is the kind of fact that
 # quietly stops being true when somebody widens a search path.
@@ -185,22 +190,6 @@ def faults(markdown):
         for word, pattern in BANNED:
             if pattern.search(sentence):
                 found.append(f"the word {word!r}: {sentence[:90]}")
-    return found
-
-
-def allowlisted():
-    """The files not swept yet. An empty or absent list means #133 is finished.
-
-    Blank lines and `#` comments are skipped, so the list can explain itself to
-    the person deleting lines out of it.
-    """
-    if not ALLOWLIST.is_file():
-        return []
-    found = []
-    for line in text_of(ALLOWLIST).splitlines():
-        line = line.strip()
-        if line and not line.startswith("#"):
-            found.append(line)
     return found
 
 
@@ -362,7 +351,7 @@ class TestTheSkillStatesTheSameRules(unittest.TestCase):
 
 
 class TestThePagesThemselves(unittest.TestCase):
-    """The standard, applied. The allowlist is what keeps this green today."""
+    """The standard, applied. The pages are what keep this green."""
 
     def test_something_is_being_scanned(self):
         """First, so a wrong path reports as one failure rather than as success.
@@ -371,11 +360,16 @@ class TestThePagesThemselves(unittest.TestCase):
         """
         self.assertGreater(len(scanned_files()), 30)
 
-    def test_every_page_not_on_the_list_is_clean(self):
-        skip = set(allowlisted())
+    def test_every_scanned_page_is_clean(self):
+        """Every page in scope, with no exception. There is no way to opt out.
+
+        Until #147 this test skipped the pages named in an allowlist, which was
+        a debt the six children of #133 paid off one folder at a time. The list
+        emptied and went. What is left is the standard with nothing in front of
+        it: add a page under `docs/` and it is held to all three rules on the
+        next pull request.
+        """
         for name in scanned_files():
-            if name in skip:
-                continue
             with self.subTest(page=name):
                 self.assertEqual(
                     faults(text_of(REPO / name)),
@@ -383,50 +377,14 @@ class TestThePagesThemselves(unittest.TestCase):
                     f"{name} breaks the plain-language standard",
                 )
 
-    def test_every_file_on_the_list_really_is_dirty(self):
-        """An entry with nothing wrong with it is a line somebody forgot to cut.
-
-        This is the other half of the allowlist being honest. Together with the
-        test above it means the list cannot be padded and cannot go stale.
-        """
-        for name in allowlisted():
-            with self.subTest(page=name):
-                self.assertNotEqual(
-                    faults(text_of(REPO / name)),
-                    [],
-                    f"{name} is clean now and its line in "
-                    f"{ALLOWLIST.name} should be deleted",
-                )
-
-    def test_every_file_on_the_list_exists_and_is_scanned(self):
-        scanned = set(scanned_files())
-        for name in allowlisted():
-            with self.subTest(page=name):
-                self.assertIn(
-                    name,
-                    scanned,
-                    "an allowlist entry that is not scanned does nothing",
-                )
-
-    def test_nothing_permanently_exempt_is_on_the_list(self):
-        """The two are different promises and must not be confused.
-
-        The allowlist empties out and gets deleted. The exemptions do not. An
-        exempt file on the allowlist would be deleted from it by whichever child
-        work order owns that folder, and then the exemption would be gone.
-        """
-        for name in allowlisted():
-            with self.subTest(page=name):
-                self.assertFalse(is_exempt(name), f"{name} is exempt, not owed")
-
     def test_the_adr_names_every_exempt_path(self):
         """`EXEMPT` is the list that bites. ADR 0003 is the list people read.
 
-        Five places in this repo describe what is exempt: this tuple, the header
-        of the allowlist, the ADR, the skill, and the row in `CONTEXT.md`. Four
-        of those are prose about a decision and only this one is enforced, which
-        is exactly the arrangement that drifts -- and it already had, on first
-        review, with `CONTEXT.md` naming two paths where this tuple has four.
+        Four places in this repo describe what is exempt: this tuple, the ADR,
+        the skill, and the row in `CONTEXT.md`. Three of those are prose about a
+        decision and only this one is enforced, which is exactly the arrangement
+        that drifts -- and it already had, on first review, with `CONTEXT.md`
+        naming two paths where this tuple has four.
 
         The word list solved the same problem by moving the single source of
         truth into the skill. That does not work here, because the tuple has to
