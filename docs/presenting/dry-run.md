@@ -20,9 +20,9 @@ somebody has to hold a laptop to use.
 **If the machine is new, start one page earlier.**
 [Setting up a second machine](second-machine.md) takes a bare Windows laptop to
 one that can run all of this. It is worth reading even on a machine you trust,
-because one of its steps is invisible: the three commands Act I runs on the
-projector come from a plugin rather than from this repo, and a fresh clone does
-not have them.
+because one of its steps is invisible. The three commands Act I runs on the
+projector come from a plugin rather than from this repo. A fresh clone does not
+have them.
 
 ---
 
@@ -148,11 +148,11 @@ A rehearsal that never tests the fallback has not rehearsed the thing most
 likely to be needed.
 
 **Run the blocks in order.** `crew_day` at 1:18 and `live_check` at 0:57 both
-read `screening.json` out of the folder `--out` names, and neither one is
-polite about it — a scratch folder that has not had the cold open's screening
-run sent to it gives you a bare `FileNotFoundError` on the projector. On the
-day this cannot happen, because `project-sh16` is already populated. In the
-rehearsal it can, and it looks like a broken tool rather than a skipped step.
+read `screening.json` out of the folder `--out` names. Neither one is polite
+about it. A scratch folder that has not had the cold open's screening run sent
+to it gives you a bare `FileNotFoundError` on the projector. On the day this
+cannot happen, because `project-sh16` is already populated. In the rehearsal it
+can, and it looks like a broken tool rather than a skipped step.
 
 **Then check before you close the laptop:**
 
@@ -330,7 +330,7 @@ that carries it is *cannot be invoiced*.
 
 **Open beside it, if you want the figures on screen:**
 [`project-sh16/crew-day.md`](https://github.com/RickSmith/survey-recon/blob/main/project-sh16/crew-day.md)
-— 38 crew-days, 18 office days, rate `A4` — and
+(38 crew-days, 18 office days, rate `A4`) and
 [the principals brief](../for-principals/index.md) for the second slide.
 
 **Wrong rather than slow.** Nothing can break here that is not the projector.
@@ -408,7 +408,7 @@ table, the crew-day build-up.
 
 **Open:**
 [`project-sh16/bid-memo.md`](https://github.com/RickSmith/survey-recon/blob/main/project-sh16/bid-memo.md)
-— the document a principal reads before pricing — then
+(the document a principal reads before pricing), then
 [`project-sh16/flagged-parcels.md`](https://github.com/RickSmith/survey-recon/blob/main/project-sh16/flagged-parcels.md),
 **8 of 524 tracts**, sorted so the one needing a phone call soonest is first.
 `project-sh16/flagged-parcels.svg` is the projector drawing of the same thing.
@@ -528,8 +528,8 @@ line, and the one most likely to be played from a file. The recording is at
 **On screen.** A section break, then three: the pattern said out loud, Monday
 morning, and the form.
 
-**You do.** Say the pattern — **corridor → public data → flagged list → lead
-times** — and say out loud that it works for a ranch boundary and an ALTA as
+**You do.** Say the pattern: **corridor → public data → flagged list → lead
+times**. Then say out loud that it works for a ranch boundary and an ALTA as
 well as for a highway. Then open one issue live and fill the first box in
 yourself, so the room watches somebody do it once.
 
@@ -544,8 +544,8 @@ it. No client names, no job numbers.
 and that is a fact about the ask rather than a failure of it. With no network,
 put the form file on screen, read the question out, and ask the room to do it
 from their seats that evening. **The short link and the QR code do not exist
-yet** — [#10](https://github.com/RickSmith/survey-recon/issues/10), then
-[#38](https://github.com/RickSmith/survey-recon/issues/38) — so the route on
+yet.** They are [#10](https://github.com/RickSmith/survey-recon/issues/10),
+then [#38](https://github.com/RickSmith/survey-recon/issues/38). So the route on
 the slide is typed rather than scanned.
 
 **This block is on the never-cut list.**
@@ -662,8 +662,8 @@ hands it to a timekeeper. A third copy nobody tests is a third copy that rots,
 and this repo has published four corrections already for exactly that.
 
 **What no test can check** is whether the output quoted above is still what
-these commands print. Those blocks were captured from real runs on 2026-09-13 —
-live and cache-only both, and each of the beats — and they are here so a
-presenter knows the difference between a demo that is slow and a demo that is
-wrong. If you run one in the rehearsal and it does not look like this, that is
-a finding, and it becomes an issue like any other.
+these commands print. Those blocks were captured from real runs on 2026-09-13
+(live and cache-only both, and each of the beats). They are here so a presenter
+knows the difference between a demo that is slow and a demo that is wrong. If
+you run one in the rehearsal and it does not look like this, that is a finding,
+and it becomes an issue like any other.

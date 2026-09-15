@@ -90,7 +90,7 @@ Download it from <https://claude.ai/download> and sign in.
 
 ## Step 4 — Get the repo
 
-In **Git Bash** — Start menu, "Git Bash" — not PowerShell:
+In **Git Bash** (Start menu, "Git Bash"), not PowerShell:
 
 ```bash
 mkdir -p /c/dev && cd /c/dev && git clone https://github.com/RickSmith/survey-recon.git

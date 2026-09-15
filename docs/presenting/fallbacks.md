@@ -13,7 +13,7 @@ moment you need it.
 | 0:08–0:20 | What is an agent | on the laptop — the deck PDF, put there by [the dry run](dry-run.md) | The block itself. These twelve minutes are slides and nothing else, so the slides are the fallback. The PDF is rendered on every push and published with the site, which is exactly where you cannot reach it, so it gets downloaded before the day rather than during it |
 | 0:20–0:30 | Vocabulary of managing one | on the laptop — the same PDF, put there by [the dry run](dry-run.md) | The same ten-minute answer, from the same file. The words themselves are in `CONTEXT.md`, which is not a slide and will not save this block |
 | 0:30–0:46 | Act I — the grilling | `corridor-screen/captures/the-grilling/README.md` · `corridor-screen/captures/the-grilling/the-grilling.md` · `corridor-screen/captures/the-grilling/the-tickets.md` | The real `/grill-with-docs` run that wrote the spec. The README is Act I on one screen — 19 questions, what the agent recommended, what Rick answered. Open that first; the other two are the full run and the 35 work orders that followed |
-| 0:46–0:52 | The money slide | `project-sh16/crew-day.md` · `docs/for-principals/index.md` | The two money slides, each from the file it was written out of. The build-up carries every figure on the first — 38 crew-days, 18 office days, rate `A4` — because that is where the slide reads them from. The principals brief carries the second, including the TxDOT sentence about a non-compliant survey and its citation |
+| 0:46–0:52 | The money slide | `project-sh16/crew-day.md` · `docs/for-principals/index.md` | The two money slides, each from the file it was written out of. The build-up carries every figure on the first (38 crew-days, 18 office days, rate `A4`) because that is where the slide reads them from. The principals brief carries the second, including the TxDOT sentence about a non-compliant survey and its citation |
 | 0:52–0:57 | Stretch and questions | nothing live | Nothing on screen to lose |
 | 0:57–1:18 | Act II — find the control | `docs/scenarios/sh16/capture-note.md` · `project-sh16/screening.json` | Eleven NGS marks, every one `MARK NOT FOUND`; two distinct TxDOT monuments; 69 ROW sheets reaching the corridor, of which 15 are SH16's own. The capture note reads the findings out in the order you need them |
 | 0:57–1:18 | The one genuinely live call | `docs/scenarios/sh16/capture-note.md` | The NGS cross-check as it ran on 2026-09-13 — five marks in both, five conditions agreeing. Losing it costs the live moment and nothing else. Say that out loud and move on |
@@ -70,20 +70,21 @@ file, a command, or a copy the runbook puts on the laptop before the day.
 row here that was closed by writing down a step rather than by committing
 something. It is worth reading, because the shape of it will come round again.
 
-Two blocks — 0:08 and 0:20 — are slides and nothing else, twenty-two minutes
-with no demo to run. Their slides were written under #81 through #86, and this
-card went on saying those blocks had nothing for as long as it took somebody to
-notice that **written is not the same as reachable**. `slides.yml` renders the
-PDF on every push and `docs.yml` publishes it with the site, which is precisely
-where a presenter with no network cannot get at it. And the deck's **source** is
-committed and is still not the fallback: every slide carries its speaker note,
-several of those notes are about handling the room rather than the subject, and
-that is a crib sheet rather than something to put on a projector.
+Two blocks, 0:08 and 0:20, are slides and nothing else. That is twenty-two
+minutes with no demo to run. Their slides were written under #81 through #86.
+This card went on saying those blocks had nothing, for as long as it took
+somebody to notice that **written is not the same as reachable**. The file
+`slides.yml` renders the PDF on every push. Then `docs.yml` publishes it with
+the site, which is precisely where a presenter with no network cannot get at
+it. The deck's **source** is committed, and it is still not the fallback. Every
+slide carries its speaker note. Several of those notes are about handling the
+room rather than the subject. That is a crib sheet, not something to put on a
+projector.
 
 Committing the rendered PDF would have closed it in one line. It was decided
 against under [#123](https://github.com/RickSmith/survey-recon/issues/123), on
-the grounds that nothing rendered is committed here and a stale binary nobody
-re-renders is a worse trap than a missing one — it opens, it looks right, and it
+two grounds. Nothing rendered is committed here. And a stale binary nobody
+re-renders is a worse trap than a missing one: it opens, it looks right, and it
 is three weeks old. So the fallback is a step instead: [the dry
 run](dry-run.md) has the presenter download it and open it once with the
 network off, and again before 8 October.
@@ -91,8 +92,8 @@ network off, and again before 8 October.
 **That is a weaker guarantee than every other row on this card, and it is the
 honest one.** Everything else here is checked on every pull request. This one
 cannot be, because the file is not in the repo. What is checked is that the
-step exists and gives the right address — `test_dry_run.py` — which is the most
-a test can do about a thing a person has to remember.
+step exists and gives the right address. `test_dry_run.py` is what checks it.
+That is the most a test can do about a thing a person has to remember.
 
 **The money slide used to be on this list and is not any more**, and nothing had
 to be recorded for it. Both of its slides were written out of files that were
@@ -117,8 +118,8 @@ now, redacted and cut to the grilling itself, under #75.
 
 Two honest limits on it, both written on the capture. It is a **transcript, not
 a recording** — there is no video of that session and there never was. And that
-run did `/grill-with-docs` and `/to-spec` but never `/to-tickets`, so the work
-orders are captured as a **result** — 35 of them, stamped across 89 seconds —
+run did `/grill-with-docs` and `/to-spec` but never `/to-tickets`. So the work
+orders are captured as a **result** (35 of them, stamped across 89 seconds)
 rather than as a run.
 
 ## How this page is kept honest
@@ -138,7 +139,7 @@ holds it to all of this:
   actually say so
 
 Files named in the prose rather than in the table are not checked. There is
-exactly one — the Act I spec — so if that file ever moves, this page will not
+exactly one, the Act I spec. So if that file ever moves, this page will not
 notice and you will.
 
 **A named work order is checked for shape, not for state.** The test reads the
@@ -148,9 +149,9 @@ what proves the rest of the card works at a podium. So a work order can close
 without the gap closing, and this page goes on pointing at finished work.
 
 That is not hypothetical. It is what these rows did. #12 built the deck
-skeleton, #31 ported the concept slides and #32 built the money slide; all three
-closed, all three rows still read `not recorded`, and a presenter reading down
-the page would have taken the gap as closed along with them. The slides landed.
+skeleton, #31 ported the concept slides and #32 built the money slide. All three
+closed. All three rows still read `not recorded`. A presenter reading down the
+page would have taken the gap as closed along with them. The slides landed.
 The export did not. Written under
 [issue #96](https://github.com/RickSmith/survey-recon/issues/96), and the reason
 the check stays out of the suite is in the test file beside the test it is
