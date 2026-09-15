@@ -19,7 +19,7 @@ up and ask it, and that person can type the command.
 
 ## What was proposed, and why it looked reasonable
 
-Work order #128 asks for a daily check until 2026-10-01, after the endpoint
+Work order #128 asked for a daily check until 2026-10-01, after the endpoint
 returned an empty list one day and refused with a 403 an hour later. Sixteen
 days of somebody remembering is a weak link, and it is weak in two directions:
 forget a day and the record has a hole, remember twice and you have made two
@@ -36,10 +36,17 @@ catch.
 
 ## What replaces it
 
-Nothing automatic. #128 keeps its by-hand check and its own caution, written
-before any of this came up: **once a day, and not once more.** With no scheduled
-run in the way, a call typed by a person is the only call that day, which is
-simpler than the thing that was proposed and does the same job.
+Nothing automatic, and less checking rather than the same amount by hand.
+
+Turning this down settled the larger question behind it, so Rick amended #128 on
+the same day. The daily check is dropped. Somebody checks when they want to
+know, and once on or before 2026-10-01, which is the check the decision to cut
+the live moment is made on.
+
+**That leaves the rate with nothing holding it down but the person typing.** The
+caution on #128 was written when a daily check was the plan: three of our own
+calls in ninety minutes is the leading guess for the 403. With no schedule and
+no daily habit, nobody should batch several checks into one sitting.
 
 ## If this comes round again
 
