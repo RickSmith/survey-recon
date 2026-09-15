@@ -205,10 +205,10 @@ genuinely autonomous, because nobody starts it. It is not Hermes.
 That is a gap between a locked decision and a delivered thing, and it is
 settled rather than left open:
 [ADR 0002](../adr/0002-the-hermes-segment-runs-on-a-schedule.md) keeps the cron
-job and keeps the name, and says why. The short version is that a public run
-summary evidences the segment's claim better than a model call would. The claim
-is that day 21 arrives whether or not a person is looking. Reaching a hosted
-Hermes model would also put an API key in the attendee path.
+job and keeps the name, and says why. The short version is that the segment
+claims day 21 arrives whether or not a person is looking, and a public run
+summary shows that better than a model call would. Reaching a hosted Hermes
+model would also put an API key in the attendee path.
 
 **So say it on stage.** The block is called Hermes and a cron job runs it. A
 substitution nobody mentions is the thing this repo's own history exists to
