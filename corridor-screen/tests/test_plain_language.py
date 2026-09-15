@@ -263,6 +263,38 @@ class TestTheRulesCatchWhatTheyClaim(unittest.TestCase):
         )
         self.assertEqual(faults(page), [])
 
+    def test_a_blockquote_is_not_prose(self):
+        """A quotation is somebody else's sentence, so it is not counted.
+
+        `docs/governance/` quotes statute and board rules at length. Four of
+        those sentences run past forty words because the Texas Legislature and
+        the board wrote them that way, and `CLAUDE.md` does not allow a citation
+        to be altered. #136 settled it: the counter stopped reading blockquotes.
+
+        Without this test the skip is one line in `prose` that a refactor could
+        drop, and the page it protects would start failing for quoting the law
+        correctly.
+        """
+        page = "> " + "word " * 60 + "\n> and it ends here.\n"
+        self.assertEqual(faults(page), [])
+
+    def test_a_paragraph_under_a_blockquote_is_still_prose(self):
+        """The skip takes the quotation and nothing else.
+
+        A blockquote becomes a blank line rather than disappearing, so the
+        paragraph after it is still its own paragraph. If the two ran together
+        the page would be measured as sentences nobody wrote.
+        """
+        page = (
+            "> " + "quoted " * 60 + "\n"
+            "\n"
+            + "The " + "word " * WORD_LIMIT + "ends here.\n"
+        )
+        self.assertTrue(
+            any("words:" in fault for fault in faults(page)),
+            "prose after a blockquote stopped being counted",
+        )
+
 
 class TestTheWordList(unittest.TestCase):
     """The skill's table, which is where the word list is actually kept."""

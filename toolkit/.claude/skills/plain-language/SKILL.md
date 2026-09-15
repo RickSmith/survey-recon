@@ -58,9 +58,21 @@ typed, and the check skips it. Without the fence, quoting a fault commits it.
 
 ## What the test cannot see
 
-The check reads paragraphs. It skips code fences, tables, headings, list items
-and raw HTML, because a rule about word count applied to a command line would
-fail a page for quoting a command correctly.
+The check reads paragraphs. It skips code fences, blockquotes, tables, headings,
+list items and raw HTML, because a rule about word count applied to a command
+line would fail a page for quoting a command correctly.
+
+**A blockquote is skipped whole, and that costs something.** Work order #136
+found four sentences in `docs/governance/` that run past forty words because the
+Texas Legislature and the board wrote them that way. Shortening one would
+falsify a citation, which this repo does not do. Quoted text is not your writing,
+so the counter stopped reading it on 2026-09-15.
+
+The price is that a blockquote used as a **callout** holds writing that *is*
+yours. That writing is no longer counted. The file
+`docs/governance/ai-use-policy.md` marks every rule in the template that way, in
+blocks beginning `> *Rule.*`, `> *Board guidance.*` or `> *Firm choice.*`. Apply
+the three rules to those by hand.
 
 **A long bullet therefore passes.** Eighty words in a bullet are not counted;
 the same eighty words in a paragraph fail. That is a limit of the counter and
