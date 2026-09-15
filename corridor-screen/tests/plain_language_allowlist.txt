@@ -42,6 +42,18 @@ docs/governance/ai-use-policy.md
 docs/governance/index.md
 docs/governance/seal-and-responsible-charge.md
 docs/governance/what-never-leaves.md
+# Counted on 2026-09-15: 16 pages here, 49 faults between them. 26 pages in
+# scope pass.
+#
+# #135 swept docs/data-sources/ and took its 8 pages and 39 faults off this
+# list. #136 swept docs/governance/ and took its 4 pages and 9 faults off.
+# Twelve of the 26 passing pages pass because of those two.
+#
+# #136 also changed what the counter reads. Four sentences in docs/governance/
+# run past forty words because the Texas Legislature and the board wrote them
+# that way, quoted in blockquotes. Shortening one would falsify a citation, so
+# the counter stopped reading blockquotes. A blockquote used as a callout is
+# therefore no longer counted either, and the plain-language skill says so.
 
 # --- #138  docs/managing-your-agent/ --- 3 pages, 7 faults
 docs/managing-your-agent/the-claim-we-got-wrong.md
