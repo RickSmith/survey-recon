@@ -176,8 +176,9 @@ python -m corridor_screen.live_check --out ../project-sh16
 
 Everything above replays from disk. This one call goes out to NGS while the
 room watches. It is worth making because **it asks a different NGS endpoint
-than the screening run uses**. That is the Data Explorer API with a point and a
-radius, against the datasheets feature service with a corridor. Different service,
+than the screening run uses**. This call asks the Data Explorer API for a point
+and a radius. The screening run asks the datasheets feature service for a
+corridor. Different service,
 different query, even different spellings of the same fields.
 
 Run on 2026-09-13 against this capture:

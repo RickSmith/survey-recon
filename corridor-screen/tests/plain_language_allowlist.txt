@@ -12,10 +12,10 @@
 # HOW THIS LIST GOT SHORTER
 #
 # Each child work order of #133 owned one folder. It fixed those pages and
-# deleted their lines from this file, in the same pull request. Delete a line
-# without fixing the page and test_every_page_not_on_the_list_is_clean catches
-# it. Fix a page and forget the line and
-# test_every_file_on_the_list_really_is_dirty catches that.
+# deleted their lines from this file, in the same pull request. Two tests kept
+# that honest, and both still run. Delete a line without fixing the page and
+# test_every_page_not_on_the_list_is_clean catches it. Fix a page and forget the
+# line and test_every_file_on_the_list_really_is_dirty catches that.
 #
 # IT IS EMPTY, AND THIS FILE IS OWED A DELETION
 #

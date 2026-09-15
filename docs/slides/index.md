@@ -52,9 +52,10 @@ page is what was on the screen in the room.
     [#38](https://github.com/RickSmith/survey-recon/issues/38), and neither
     exists yet.
 
-    **#85 and #86 landed within an hour of each other.** Every slide in the
-    deck now carries its own content, and every one is read back against a
-    committed source on every test run.
+    **#85 and #86 landed within an hour of each other**, and the last two rows
+    of that table went in together. Every slide in the deck now carries its own
+    content, and every one is read back against a committed source on every
+    test run.
 
 !!! info "What building the frame turned up"
     On **13 September 2026**, when the skeleton landed, four work orders
@@ -66,7 +67,8 @@ page is what was on the screen in the room.
     None of it was visible until there was a slide to hang each block on. Those
     slides said `no work order yet` rather than pointing at an issue nobody had
     written. That is the same rule as everywhere else here: **not found**, never
-    the stronger claim. The gap was closed the same day, by #81 through #86.
+    the stronger claim. Issues #81 through #86 were opened the same day and
+    closed the gap.
 
 ## How it is put together
 

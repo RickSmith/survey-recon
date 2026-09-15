@@ -2,9 +2,9 @@
 
 **Four minutes. Nothing to install, and no command line on this page.**
 
-An **agent** screened a real TxDOT job from public records. Think of an agent as
-a capable new hire who reads fast, works overnight, and is sometimes confidently
-wrong. The job was SH16 through Bexar County, 8.69 miles. It produced a bid
+Think of an **agent** as a capable new hire who reads fast, works overnight, and
+is sometimes confidently wrong. One screened a real TxDOT job from public
+records: SH16 through Bexar County, 8.69 miles. It produced a bid
 memo, a flagged parcel table with statutory notice periods, and a
 [crew-day build-up](https://github.com/RickSmith/survey-recon/blob/main/project-sh16/crew-day.md)
 with its arithmetic shown. A licensed surveyor directed and checked it.

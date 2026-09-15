@@ -107,8 +107,8 @@ Justified: the TxDOT ROW map server blocks intermittently, USGS elevation timed 
 | 1:54–2:00 | 6 | **Accountability · Monday morning · the live issue.** |
 
 **Where Act II's figures come from.** They are read out of
-[`project-sh16/screening.json`](https://github.com/RickSmith/survey-recon/blob/main/project-sh16/screening.json)
-, the SH16 run of 2026-09-13. `corridor-screen/tests/test_plan_of_record.py`
+[`project-sh16/screening.json`](https://github.com/RickSmith/survey-recon/blob/main/project-sh16/screening.json),
+the SH16 run of 2026-09-13. `corridor-screen/tests/test_plan_of_record.py`
 fails if this page and that run ever disagree. Two of them are easy to say wrongly
 to a room:
 
