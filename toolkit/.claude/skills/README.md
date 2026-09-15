@@ -100,6 +100,35 @@ language.
 
 ---
 
+## One skill in here is ours
+
+`plain-language/` was not copied from anywhere. We wrote it, and it is the only
+folder in this directory that is not somebody else's file.
+
+| Folder | Called by | Why |
+|---|---|---|
+| `plain-language/` | nothing — it fires when a page is being written | How to write a page a surveyor can read, and the three rules a test counts |
+
+The other nine tell an agent how to do the *work*. This one tells it how to
+*write*. Those are different jobs, and we had the second one wrong for a while:
+the pages in `docs/` were written in the flat, dense style a machine falls into
+when nobody says otherwise. Long sentences. Dashes doing the work of periods.
+One sentence in the deck notes ran 219 words.
+
+So the standard got written down, and
+`corridor-screen/tests/test_plain_language.py` counts the part of it that can be
+counted. A rule nobody checks is a wish.
+
+**It ships in this kit on purpose.** An attendee who takes the toolkit home and
+points an agent at their own documents gets the same standard we hold ourselves
+to. Read `plain-language/SKILL.md` and edit it — it is a statement about how your
+firm writes, and yours will differ from ours.
+
+It carries a second file, `banned-words.md`, the way `tdd/` carries `tests.md`.
+That is where the word list lives.
+
+---
+
 ## Where these came from
 
 | | |
@@ -122,7 +151,9 @@ nothing inside them.
 
 ### What we changed
 
-Nothing. Every `SKILL.md` here is byte-for-byte the upstream file.
+Nothing. Every `SKILL.md` that came from Matt Pocock is byte-for-byte the
+upstream file. `plain-language/` is ours and came from nobody, as the section
+above says.
 
 That includes their spelling. This repository writes US English, and these files
 do not. They stay British, because correcting somebody else's document is how a

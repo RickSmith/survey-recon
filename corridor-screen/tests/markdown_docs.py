@@ -1,6 +1,6 @@
 """Reading a committed markdown document, for the tests that check one.
 
-Five test files hold a page in `docs/` to what it claims:
+Six test files hold a page in `docs/` to what it claims:
 
 * `test_fallbacks.py` — the fallback card, against the run of show
 * `test_deck.py` — the slide deck, against the same table
@@ -10,8 +10,10 @@ Five test files hold a page in `docs/` to what it claims:
   build-up its cost figures are read out of
 * `test_day_zero.py` — the setup guide, against the toolkit README it has to
   hand out the same three download addresses as
+* `test_plain_language.py` — every page, against the plain-language standard.
+  The one that reads prose rather than tables. See the second half of this file
 
-All of them have to open a file, find a heading, and read a table out from under
+The first five have to open a file, find a heading, and read a table out from under
 it. Those three functions were written twice before they were written here, and
 the second copy is what this module exists to delete. The reason is
 `test_fallbacks.py`'s own, about the helpers it borrows rather than copies:
@@ -170,3 +172,143 @@ def local_link_targets(markdown):
             continue
         targets.append(target.split("#")[0])
     return targets
+
+
+# ---------------------------------------------------------------------------
+# Prose, for the plain-language check
+# ---------------------------------------------------------------------------
+#
+# `test_plain_language.py` holds the pages in `docs/` to a sentence length, an
+# em dash count and a word list. Before it can do that, something has to decide
+# which part of a page is *writing*. A table cell is not a sentence. A heading
+# is not a sentence. A `bash` block is not English at all, and a word-count rule
+# applied to a command line would fail a page for quoting a command correctly.
+#
+# That definition lives here rather than in the test file for this module's own
+# stated reason: a second reader would drift the first time somebody fixed one
+# of them. It is also the boundary issue #133's counts were measured across, so
+# changing it changes what the allowlist means.
+
+# `~~~` is the other fence markdown allows. No page in `docs/` uses it today,
+# and a reader that only knew about backticks would start counting a command as
+# a sentence the day somebody did.
+_FENCE = re.compile(r"^\s*(```|~~~)")
+
+_HTML_COMMENT = re.compile(r"<!--.*?-->", flags=re.DOTALL)
+
+# A list item: a bullet or a number, and the space after it. The space is what
+# separates `- the point` from the `---` rule between two sections.
+_LIST_ITEM = re.compile(r"^([-*+]|\d+[.)])\s")
+
+_ADMONITION = re.compile(r"^(!!!|\?\?\?)\s")
+
+# A blockquote's `> ` is typesetting, not a word. Left on, a quotation that ran
+# over four lines would arrive at the word count four words heavier than the
+# sentence somebody actually wrote.
+_QUOTE_MARK = re.compile(r"^\s*>\s?")
+
+# A sentence ends at `.`, `!` or `?`, but only where what follows looks like the
+# start of the next one: whitespace, then a capital, a quote or an opening
+# bracket. Without that second half the reader cuts "TxDOT's spec.md file" and
+# "Python 3.11 or newer" into fragments.
+#
+# **An abbreviation before a capital still reads as a break**, so "the U.S.
+# Geological Survey" would come back as two sentences. There is no guard against
+# that, because no page in `docs/` does it -- every one of `Mr. Dr. St. Inc. No.
+# vs.` and the `U.S.` shape was searched for and found zero times before a
+# capital. A guard written for cases nobody has is a comment claiming a
+# measurement that was not made.
+#
+# It is also the safe direction if it ever happens. A sentence cut in two is
+# under the word limit, so the reader under-reports rather than failing a page
+# for a sentence nobody wrote.
+_SENTENCE_END = re.compile(r"(?<=[.!?])[\"')\]]?\s+(?=[\"'(\[A-Z])")
+
+# Three words or fewer is a fragment, not a sentence. "Not this." is something
+# these pages do on purpose, and counting it would put noise in front of the
+# sentences that are genuinely too long.
+_FRAGMENT_WORDS = 3
+
+
+def prose(markdown):
+    """The parts of a page that are writing, with everything else blanked out.
+
+    Out come fenced code, HTML comments, table rows, headings, list items, raw
+    HTML tags and the `!!!` line that opens an admonition. The admonition's own
+    body stays, because it is prose; only the marker is typesetting.
+
+    **A removed line becomes a blank line rather than disappearing.** A table
+    sitting between two paragraphs is a paragraph break, and dropping its rows
+    outright would join the paragraph above to the one below and invent a
+    sentence that runs across both.
+
+    **A list item takes its continuation lines with it.** Only the first line of
+    a bullet carries the bullet; the rest are indented under it. Blanking the
+    marker line alone would leave the tail of every wrapped bullet behind as a
+    paragraph starting in the middle of a sentence.
+    """
+    kept = []
+    fenced = False
+    # The indent of a list item whose continuation lines are still being
+    # skipped, or None. A blank line does not clear it, because a loose list
+    # puts a blank line between one item and the next.
+    inside_item = None
+    for line in _HTML_COMMENT.sub("", markdown).splitlines():
+        if _FENCE.match(line):
+            fenced = not fenced
+            kept.append("")
+            continue
+        if fenced:
+            kept.append("")
+            continue
+        line = _QUOTE_MARK.sub("", line)
+        stripped = line.strip()
+        if not stripped:
+            kept.append("")
+            continue
+        indent = len(line) - len(line.lstrip())
+        if inside_item is not None:
+            if indent > inside_item:
+                kept.append("")
+                continue
+            inside_item = None
+        if _LIST_ITEM.match(stripped):
+            inside_item = indent
+            kept.append("")
+            continue
+        if stripped[0] in "|#<" or _ADMONITION.match(stripped) or set(stripped) <= set("-*_ "):
+            kept.append("")
+            continue
+        kept.append(line)
+    return "\n".join(kept)
+
+
+def paragraphs(markdown):
+    """The prose of a page, one entry per paragraph, each on a single line.
+
+    Every page in `docs/` is hard-wrapped at about eighty characters, so a
+    sentence is almost never on one line. `flat` above does this for a whole
+    document; a sentence check needs the paragraph breaks kept, because a
+    sentence does not run across one.
+    """
+    found = []
+    for block in re.split(r"\n\s*\n", prose(markdown)):
+        one_line = flat(block)
+        if one_line:
+            found.append(one_line)
+    return found
+
+
+def sentences(markdown):
+    """Every sentence of writing on a page, with the typesetting taken off.
+
+    Fragments of three words or fewer are dropped. See `_SENTENCE_END` for
+    where the cut is made and what it gets wrong.
+    """
+    found = []
+    for paragraph in paragraphs(markdown):
+        for part in _SENTENCE_END.split(unemphasized(paragraph)):
+            part = part.strip()
+            if len(part.split()) > _FRAGMENT_WORDS:
+                found.append(part)
+    return found
