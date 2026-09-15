@@ -117,8 +117,8 @@ knows. Everything else falls through to meters, including the surveyor's own
 unit. Knowing that matters, because "just match the capitalization" is the wrong
 lesson and would leave you exposed.
 
-**`US_Feet` is the one that matters.** It is not a typo — it is the US survey
-foot, what EPSG numbers `9003` and what TxDOT's Survey Manual requires in
+**`US_Feet` is the one that matters.** It is the US survey foot, not a typo. It
+is what EPSG numbers `9003` and what TxDOT's Survey Manual requires in
 deliverables ([TxDOT Survey Manual, Ch. 3, Control Points](https://www.txdot.gov/manuals/row/ess/index.html)). A surveyor asking in the unit of their own profession gets meters.
 
 **There is no field to check.** The response carries a `spatialReference` for

@@ -26,7 +26,7 @@ https://services.arcgis.com/g1fRTDLeMgspWrYp/arcgis/rest/services/BCAD_Parcels/F
 | Key or account | none |
 
 **2278 is NAD 83 Texas South Central.** That is the State Plane zone Bexar
-County falls in, and it reports in the units a Texas surveyor works in. The zone
+County falls in, and it is in the units a Texas surveyor works in. The zone
 covers a good deal more of Texas than this one county.
 
 The tool asks for `outSR=4326` and lets the server convert. It performs no datum
@@ -133,8 +133,8 @@ a surveyor pricing a job, is exactly the confident wrongness this repo exists to
 warn about. The code is reported as the code it is.
 
 Every row also says in `id_source` which of the three identifiers it got:
-`Geo_id`, `PropID` or `synthetic`. Only the first two can be quoted back to
-Bexar County.
+`Geo_id`, `PropID` or `synthetic`. It says so because only the first two can be
+quoted back to Bexar County.
 
 ### A blank here is a space, not a null, and that has bitten
 

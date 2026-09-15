@@ -1,8 +1,8 @@
 # The flag services
 
 **What we use them for:** finding the things on a parcel that cost time: a
-school, a cemetery, a railroad, a pipeline. A lead time is then attached to each
-one.
+school, a cemetery, a railroad, a pipeline. The tool then attaches a lead time
+to each one.
 
 Written under [issue #17](https://github.com/RickSmith/survey-recon/issues/17).
 Every endpoint below was queried live on 2026-09-12 and returned real results.
@@ -105,9 +105,9 @@ is `on` a **parcel**, and a parcel reaches well past the ribbon. A cemetery at
 the back of a tract whose frontage is on the pavement is on that tract, and
 belongs on that row. Asking only about the ribbon would miss it.
 
-The precise work is then done by the tool's own geometry, against the parcel
-outlines. That work is deciding whether a feature is on this parcel, beside it,
-or neither. The service narrows the search. It does not decide the answer.
+Whether a feature is on this parcel, beside it, or neither is the precise work.
+The tool's own geometry does it, against the parcel outlines. The service
+narrows the search. It does not decide the answer.
 
 ---
 

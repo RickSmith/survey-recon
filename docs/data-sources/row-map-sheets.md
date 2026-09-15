@@ -122,9 +122,10 @@ rather than take a number on trust.
 ## What the tool asks for, and what it does with the answer
 
 A box around the corridor, grown by the half-width. That is the same envelope
-the NGS marks are asked about, and for the same reason. It is written up in
-[the flag services](flag-services.md). Asked with a polyline and a distance, a
-service can buffer into the wrong county and answer without erroring.
+the NGS marks are asked about, and for the same reason. The reason is written
+up in [the flag services](flag-services.md). Asked with a polyline and a
+distance, a service can buffer into the wrong county and answer without
+erroring.
 
 Every returned sheet is then measured against the centerline, and one is over
 the corridor when any part of its line comes within the half-width. A sheet is

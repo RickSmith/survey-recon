@@ -62,8 +62,8 @@ The most expensive kind. No error, no delay, no clue.
   distance it returned schools sixty miles up the road, for a query whose
   geometry stopped inside Bexar. Asked with an envelope it was correct every
   time — [the flag services](flag-services.md)
-- **A flood layer holding Salem, Massachusetts**, which ranks high in a search —
-  recorded in older notes and **not verified by us** —
+- **A flood layer holding Salem, Massachusetts**, which ranks high in a search.
+  Recorded in older notes and **not verified by us** —
   [sources we did not use](not-used.md)
 
 ### It answers, and you asked the wrong thing
@@ -81,8 +81,8 @@ The most expensive kind. No error, no delay, no clue.
   code for the US survey foot, and the parcel query takes it and hands back a
   different corridor — [the geometry service](arcgis-geometry-service.md)
 - **The same silence on a second, unrelated service.** The USGS elevation
-  endpoint takes `US_Feet` — the surveyor's own unit — and answers in meters,
-  as a believable number, with no field anywhere saying which unit it is —
+  endpoint takes `US_Feet`, the surveyor's own unit, and answers in meters. The
+  answer is a believable number, and no field anywhere says which unit it is —
   [sources we did not use](not-used.md)
 
 ### The field is not called what the document says
@@ -100,18 +100,18 @@ The most expensive kind. No error, no delay, no clue.
 
 - **Dates that crash rather than come out wrong.** ArcGIS sends a real date
   field as milliseconds, so every ROW sheet older than 1970 is a negative
-  number — and on Windows the obvious way to read one raises an error, on
+  number. On Windows the obvious way to read one raises an error, on
   exactly the oldest sheets — [ROW map sheets](row-map-sheets.md)
 - **An identifier that is not unique.** Six of the 27 SH16 sheets share one
   `ROW_MAP_ID` — [ROW map sheets](row-map-sheets.md)
 - **A date that may not be a date.** `1900-01-01` appears 368 times in 20,276
   records, with no empty dates anywhere. Whether it is a placeholder **could not
   be confirmed** — [ROW map sheets](row-map-sheets.md)
-- **A field that exists and is empty.** `COUNTY` is a single underscore on every
-  roadway segment read — [TxDOT Roadways](txdot-roadways.md)
+- **A field that exists and is empty.** `COUNTY` is a single `_` character on
+  every roadway segment read — [TxDOT Roadways](txdot-roadways.md)
 - **Every layer published twice.** Hospitals are layer 14 *and* layer 49. Both
-  copies returned identical counts and identifier sets, so it does not bite —
-  but only because somebody checked —
+  copies returned identical counts and identifier sets, so it does not bite.
+  That is known only because somebody checked —
   [the crew safety services](crew-safety.md)
 
 ### The host is unreliable, or the data is older than it looks

@@ -31,10 +31,10 @@
 # docs/adr/0003-produced-artifacts-stay-as-produced.md.
 #
 # Counted on 2026-09-15: 20 pages here, 58 faults between them. 22 pages in
-# scope already pass.
+# scope pass.
 #
 # #135 swept docs/data-sources/ and took its 8 pages and 39 faults off this
-# list.
+# list. Eight of the 22 passing pages pass because #135 fixed them.
 
 # --- #136  docs/governance/ --- 4 pages, 9 faults
 docs/governance/ai-use-policy.md
