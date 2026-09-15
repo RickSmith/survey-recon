@@ -123,6 +123,7 @@ research page the description came from, and it is not in either. That is
 *not found* rather than *it never happened*, and the difference is that somebody
 looked.
 
-What we are saying is narrower, and it is the whole point. **This repo's rule is
-"cite it or say you could not confirm it." It had an uncited claim sitting in
-its glossary. The glossary is the one file every other page is told to trust.**
+What we are saying is narrower, and it is the whole point: **this repo's rule is
+"cite it or say you could not confirm it," and an uncited claim sat in its
+glossary anyway. The glossary is the one file every other page is told to
+trust.**
