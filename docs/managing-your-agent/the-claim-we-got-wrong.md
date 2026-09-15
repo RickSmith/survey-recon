@@ -63,8 +63,8 @@ Read that last paragraph again.
 
 The work order was wrong. A licensed human wrote it. The agent was told, in
 writing, to publish a false statement of law to an audience of licensed
-professionals — and the only reason it did not is that it checked a citation it
-had been handed rather than repeating it.
+professionals. It did not publish it. The only reason is that it checked a
+citation it had been handed rather than repeating it.
 
 This session's thesis is that the agent is the one that gets confidently wrong
 and the human is the one who catches it. That is usually the direction. **It is
