@@ -96,7 +96,7 @@ no railroad and no mapped pipeline within 300 feet of this centerline.
 
 The tool reports `0 returned` rather than leaving the flag type off the list,
 because "we looked and found none" and "we did not look" are different answers.
-`screened_for` on every parcel names all four types, so no parcel reads as
+Every parcel's `screened_for` names all four types, so no parcel reads as
 clear of something nobody checked.
 
 ### The ROW sheet dates crash on Windows, rather than coming out wrong
@@ -175,9 +175,9 @@ python -m corridor_screen.live_check --out ../project-sh16
 ```
 
 Everything above replays from disk. This one call goes out to NGS while the
-room watches, and it is worth making because **it asks a different NGS endpoint
-than the screening run uses** — the Data Explorer API with a point and a radius,
-against the datasheets feature service with a corridor. Different service,
+room watches. It is worth making because **it asks a different NGS endpoint
+than the screening run uses**. That is the Data Explorer API with a point and a
+radius, against the datasheets feature service with a corridor. Different service,
 different query, even different spellings of the same fields.
 
 Run on 2026-09-13 against this capture:
@@ -209,8 +209,8 @@ Replay the whole corridor with no network at all:
 python -m corridor_screen --route SH0016-KG --begin-dfo 347.7 --end-dfo 356.367 --out ../project-sh16 --mode cache-only
 ```
 
-A live run and a replay of this capture were compared and differ in **74
-places, every one of them the run's own account of itself** — when it ran, its
+A live run and a replay of this capture were compared. They differ in **74
+places, every one of them the run's own account of itself**: when it ran, its
 mode, and the ping and status fields on each service. Every parcel, flag, lead
 time, mark, sheet and the whole crew safety sheet are identical. The comparison
 is itself a command, and it runs in the test suite with the network taken away.

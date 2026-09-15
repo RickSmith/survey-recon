@@ -9,12 +9,12 @@
 
     What the tool found, and every surprise it turned up, is on
     [What the capture found](capture-note.md). The memo built from that run is
-    [`project-sh16/bid-memo.md`](https://github.com/RickSmith/survey-recon/blob/main/project-sh16/bid-memo.md);
-    the flagged parcel table is
-    [`project-sh16/flagged-parcels.md`](https://github.com/RickSmith/survey-recon/blob/main/project-sh16/flagged-parcels.md)
+    [`project-sh16/bid-memo.md`](https://github.com/RickSmith/survey-recon/blob/main/project-sh16/bid-memo.md).
+    The flagged parcel table is
+    [`project-sh16/flagged-parcels.md`](https://github.com/RickSmith/survey-recon/blob/main/project-sh16/flagged-parcels.md),
     with its projector drawing beside it at
-    [`flagged-parcels.svg`](https://github.com/RickSmith/survey-recon/blob/main/project-sh16/flagged-parcels.svg);
-    and the crew-day build-up is
+    [`flagged-parcels.svg`](https://github.com/RickSmith/survey-recon/blob/main/project-sh16/flagged-parcels.svg).
+    The crew-day build-up is
     [`project-sh16/crew-day.md`](https://github.com/RickSmith/survey-recon/blob/main/project-sh16/crew-day.md),
     with a plain-text fallback beside it at
     [`crew-day.txt`](https://github.com/RickSmith/survey-recon/blob/main/project-sh16/crew-day.txt)

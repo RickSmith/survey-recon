@@ -1,25 +1,30 @@
-# Pages not yet swept to the plain-language standard.
+# Pages not yet swept to the plain-language standard. There are none left.
 #
 # Issue #133 set the standard. Issue #134 wrote it down as a skill, at
 # toolkit/.claude/skills/plain-language/, and built the test beside this file
-# that counts the three rules a machine can count. This is the list of pages
-# that do not meet it yet.
+# that counts the three rules a machine can count. This was the list of pages
+# that did not meet it yet.
 #
 # A page named here is skipped. A page not named here is held to all three
-# rules and fails the build if it breaks one.
+# rules and fails the build if it breaks one. Nothing is named here, so every
+# page in scope is held to all three rules.
 #
-# HOW THIS LIST GETS SHORTER
+# HOW THIS LIST GOT SHORTER
 #
-# Each child work order of #133 owns one folder. It fixes those pages and
-# deletes their lines from this file, in the same pull request. Delete a line
+# Each child work order of #133 owned one folder. It fixed those pages and
+# deleted their lines from this file, in the same pull request. Delete a line
 # without fixing the page and test_every_page_not_on_the_list_is_clean catches
 # it. Fix a page and forget the line and
 # test_every_file_on_the_list_really_is_dirty catches that.
 #
-# WHEN IT IS EMPTY
+# IT IS EMPTY, AND THIS FILE IS OWED A DELETION
 #
-# Delete this file and the allowlisted() function in test_plain_language.py.
-# The length of this list is how much of #133 is left.
+# This file and the allowlisted() function in test_plain_language.py are meant
+# to go when the list empties. They are still here because deleting them also
+# means editing that test's docstring, the row in CONTEXT.md and the wording in
+# ADR 0003, and #140 put every file outside its own twelve pages out of scope.
+# The deletion is issue #147. Until it lands, an empty list is the honest state:
+# #133 is finished and the scaffolding has not been taken down yet.
 #
 # WHAT IS NOT HERE, AND MUST NEVER BE
 #
@@ -30,27 +35,18 @@
 # EXEMPT in test_plain_language.py and the reason is in
 # docs/adr/0003-produced-artifacts-stay-as-produced.md.
 #
-# Counted on 2026-09-15: 7 pages here, 18 faults between them. 35 pages in
-# scope pass.
+# Counted on 2026-09-15: 0 pages here. All 42 pages in scope pass.
 #
-# Five of the six children are done. #135 swept docs/data-sources/ and took
-# its 8 pages and 39 faults off this list, #136 swept docs/governance/ and took
-# 4 pages and 9 faults, #137 swept docs/presenting/ and took 3 pages and 17
-# faults, #138 swept docs/managing-your-agent/ and took 3 pages and 7 faults,
-# #139 swept the prose in docs/corridor-screen/ and took 3 pages and 7 faults.
-# Twenty of the 35 passing pages pass because of those five.
+# All six children are done. #135 swept docs/data-sources/ and took its 8 pages
+# and 39 faults off this list, #136 swept docs/governance/ and took 4 pages and
+# 9 faults, #137 swept docs/presenting/ and took 3 pages and 17 faults, #138
+# swept docs/managing-your-agent/ and took 3 pages and 7 faults, #139 swept the
+# prose in docs/corridor-screen/ and took 3 pages and 7 faults, #140 swept the
+# twelve pages with no folder of their own and took the last 7 pages and 18
+# faults. Twenty-eight of the 42 passing pages pass because of those six.
 #
 # #136 also changed what the counter reads. Four sentences in docs/governance/
 # run past forty words because the Texas Legislature and the board wrote them
 # that way, quoted in blockquotes. Shortening one would falsify a citation, so
 # the counter stopped reading blockquotes. A blockquote used as a callout is
 # therefore no longer counted either, and the plain-language skill says so.
-
-# --- #140  everything left over --- 7 pages, 18 faults
-docs/day-0/index.md
-docs/for-principals/index.md
-docs/going-further/index.md
-docs/plan-of-record.md
-docs/scenarios/sh16/capture-note.md
-docs/scenarios/sh16/index.md
-docs/slides/index.md

@@ -292,8 +292,8 @@ Open the Claude desktop app, point it at your job folder, and type:
 /grill-with-docs
 ```
 
-If it starts interviewing you about the job — what the corridor is, who the
-client is, what you already have — everything is wired up correctly.
+It should start interviewing you about the job: what the corridor is, who the
+client is, what you already have. If it does, everything is wired up correctly.
 
 !!! info "Screenshot 12 — the agent answering the command"
     ![the agent answering the command](img/12-grill-with-docs.png)
