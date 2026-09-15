@@ -2,12 +2,12 @@
 
 **This is the spec.** Section 1 is settled; do not re-open it. Section 8 lists what is genuinely still open.
 
-**Session:** Beyond the Prompt: Getting Started with Agentic AI for Geomatics Tools and Workflows
-**Presenters:** Rick Smith + Seneca Holland (audience proxy)
-**Date:** Thursday, October 8, 2026 · 2 hours · watch-only
-**Audience:** mostly firm owners and principals
-**Repo:** `survey-recon`
-**Rev 5:** 2026-09-12
+- **Session:** Beyond the Prompt: Getting Started with Agentic AI for Geomatics Tools and Workflows
+- **Presenters:** Rick Smith + Seneca Holland (audience proxy)
+- **Date:** Thursday, October 8, 2026 · 2 hours · watch-only
+- **Audience:** mostly firm owners and principals
+- **Repo:** `survey-recon`
+- **Rev 5:** 2026-09-12
 
 Companion: `txdot-research.md` — verified endpoints, TxDOT rules, ROE lead times.
 
@@ -40,7 +40,7 @@ Companion: `txdot-research.md` — verified endpoints, TxDOT rules, ROE lead tim
 
 **Where a decision above got narrowed.** The table stands as written; this is the pointer, not an edit to it. **Decision 2** named Hermes (Nous Research) for autonomous work, and **decision 16** filed the ROE letters as the Hermes beat. What was built under [#34](https://github.com/RickSmith/survey-recon/issues/34) is a scheduled GitHub Actions workflow, which is autonomous and is not Hermes. The account is [ADR 0002](adr/0002-the-hermes-segment-runs-on-a-schedule.md): the cron job stays, the name stays, and the presenter says so out loud. Overriding a decision is allowed here. Overriding one quietly is not.
 
-**On the name:** "recon" is the audience's own word for the desktop work before a bid — it describes the work rather than the arithmetic, survives the generalization problem (you recon a ranch boundary the same as a corridor), and carries no "AI" branding to date it.
+**On the name:** "recon" is the audience's own word for the desktop work before a bid. It describes the work rather than the arithmetic. It survives the generalization problem, because you recon a ranch boundary the same as a corridor. And it carries no "AI" branding to date it.
 
 ---
 
@@ -107,8 +107,8 @@ Justified: the TxDOT ROW map server blocks intermittently, USGS elevation timed 
 | 1:54–2:00 | 6 | **Accountability · Monday morning · the live issue.** |
 
 **Where Act II's figures come from.** They are read out of
-[`project-sh16/screening.json`](https://github.com/RickSmith/survey-recon/blob/main/project-sh16/screening.json)
-— the SH16 run of 2026-09-13 — and `corridor-screen/tests/test_plan_of_record.py`
+[`project-sh16/screening.json`](https://github.com/RickSmith/survey-recon/blob/main/project-sh16/screening.json),
+the SH16 run of 2026-09-13. `corridor-screen/tests/test_plan_of_record.py`
 fails if this page and that run ever disagree. Two of them are easy to say wrongly
 to a room:
 
@@ -142,7 +142,7 @@ Placed **after** an hour of the agent succeeding — that's when it lands.
 
 What saved it was not cleverness. It was a rule written in `CLAUDE.md` for a different purpose entirely: *never invent a requirement — cite the section and its URL, or say you could not confirm it.* The claim had no citation, so the agent went to find one, and the search that was meant to confirm it disproved it. **The rule that catches an error is usually boring and was written for something else.** That is the argument for writing the handbook before you need it.
 
-Punchline for owners: **you seal it, you own it.** TBPELS *has* spoken directly to AI — PAO 71 — and its answer is that AI is a tool and the licensee is responsible for whatever they sign and seal. The existing responsibility doctrine is the answer, from the board's own mouth.
+Punchline for owners: **you seal it, you own it.** TBPELS *has* spoken directly to AI, in PAO 71. Its answer is that AI is a tool and the licensee is responsible for whatever they sign and seal. The existing responsibility doctrine is the answer, from the board's own mouth.
 
 *(That punchline said the opposite until 2026-09-12, on four pages. The account is at [The claim we got wrong](managing-your-agent/the-claim-we-got-wrong.md), beside the force-push record.)*
 

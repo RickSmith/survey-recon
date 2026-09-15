@@ -63,10 +63,9 @@ fits. The four already in your kit work the same way.
 
 !!! danger "Any skill can write a citation, and a citation can be confidently wrong"
     This repo has the receipt, from its own work rather than from this skill. A
-    superseded TxDOT manual address was quoted, with a date, out of a manual
-    that has not been at that address for years — and the address does not
-    answer at all, so what an agent sees is a timeout that looks like bad
-    Wi-Fi:
+    superseded TxDOT manual address was quoted, with a date. The manual has not
+    been at that address for years. The address does not answer at all, so what
+    an agent sees is a timeout that looks like bad Wi-Fi:
     [the manual that was real, and out of date](../managing-your-agent/the-superseded-manual.md).
 
     Use `research`. Then open every link it hands you. **A citation you did not
@@ -186,8 +185,8 @@ the same permissive license as the five commands in your kit.
 
 ### What this repo built instead, and why
 
-The session's Hermes block — the right-of-entry letter that sends itself on day
-21 — **is a scheduled GitHub Actions job, and it is not Hermes.** The presenter
+The session's Hermes block is the right-of-entry letter that sends itself on day
+21. **It is a scheduled GitHub Actions job, and it is not Hermes.** The presenter
 says so on stage, and it is written down twice: in
 [ADR 0002](../adr/0002-the-hermes-segment-runs-on-a-schedule.md) and on
 [the right-of-entry letters page](../corridor-screen/roe-letters.md).

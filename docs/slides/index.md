@@ -31,53 +31,44 @@ page is what was on the screen in the room.
 
     The skeleton was built under
     [issue #12](https://github.com/RickSmith/survey-recon/issues/12). Ten
-    pieces of content have landed, each checked against its own source on every
-    test run: the cold-open slide under
-    [#81](https://github.com/RickSmith/survey-recon/issues/81), its figures
-    read out of the SH16 run; Act I under
-    [#82](https://github.com/RickSmith/survey-recon/issues/82), its counts
-    tallied off the captured grilling rather than read out of its prose; Act II
-    under [#83](https://github.com/RickSmith/survey-recon/issues/83), every
-    figure read out of the SH16 run and the three figures #80 retired checked
-    for by name; the money slide under
-    [#32](https://github.com/RickSmith/survey-recon/issues/32), its figures read
-    out of the crew-day build-up; the datum gap under
-    [#33](https://github.com/RickSmith/survey-recon/issues/33), its counts read
-    out of the SH16 run; the concept slides under
-    [#31](https://github.com/RickSmith/survey-recon/issues/31), held to the
-    translation table in `CONTEXT.md`; and Hermes under
-    [#34](https://github.com/RickSmith/survey-recon/issues/34), whose day 21 is
-    derived from the lead-time table rather than written on the slide; and
-    Act III under
-    [#84](https://github.com/RickSmith/survey-recon/issues/84), each of its
-    three slides read back out of the document it frames; the review, seal and
-    three failures under
-    [#85](https://github.com/RickSmith/survey-recon/issues/85), every figure
-    and date on those five slides read back out of the committed captures the
-    beats were built from; and the close under
-    [#86](https://github.com/RickSmith/survey-recon/issues/86), whose three
-    slides are held to the form and the pages they send a room to, and to
-    offering a way in that can be **typed** — the short link and the QR code
-    are [#10](https://github.com/RickSmith/survey-recon/issues/10) and
+    pieces of content have landed. Each is checked against its own source on
+    every test run.
+
+    | What landed | Work order | What it is checked against |
+    |---|---|---|
+    | The cold-open slide | [#81](https://github.com/RickSmith/survey-recon/issues/81) | Its figures, read out of the SH16 run |
+    | Act I | [#82](https://github.com/RickSmith/survey-recon/issues/82) | Its counts, tallied off the captured grilling rather than read out of its prose |
+    | Act II | [#83](https://github.com/RickSmith/survey-recon/issues/83) | Every figure, read out of the SH16 run. The three figures #80 retired are checked for by name |
+    | The money slide | [#32](https://github.com/RickSmith/survey-recon/issues/32) | Its figures, read out of the crew-day build-up |
+    | The datum gap | [#33](https://github.com/RickSmith/survey-recon/issues/33) | Its counts, read out of the SH16 run |
+    | The concept slides | [#31](https://github.com/RickSmith/survey-recon/issues/31) | The translation table in `CONTEXT.md` |
+    | Hermes | [#34](https://github.com/RickSmith/survey-recon/issues/34) | Its day 21, derived from the lead-time table rather than written on the slide |
+    | Act III | [#84](https://github.com/RickSmith/survey-recon/issues/84) | Each of its three slides, read back out of the document it frames |
+    | The review, seal and three failures | [#85](https://github.com/RickSmith/survey-recon/issues/85) | Every figure and date on those five slides, read back out of the committed captures the beats were built from |
+    | The close | [#86](https://github.com/RickSmith/survey-recon/issues/86) | The form, and the pages those three slides send a room to, and offering a way in that can be **typed** |
+
+    The short link and the QR code are
+    [#10](https://github.com/RickSmith/survey-recon/issues/10) and
     [#38](https://github.com/RickSmith/survey-recon/issues/38), and neither
     exists yet.
 
-    **#85 and #86 landed within an hour of each other**, which is why the
-    sentence above reads the way it does. Every slide in the deck now carries
-    its own content, and every one is read back against a committed source on
-    every test run.
+    **#85 and #86 landed within an hour of each other**, and the last two rows
+    of that table went in together. Every slide in the deck now carries its own
+    content, and every one is read back against a committed source on every
+    test run.
 
 !!! info "What building the frame turned up"
-    On **13 September 2026**, when the skeleton landed, the four work orders
-    that existed for slide content — #31 through #34 — covered 12 of the 34
+    On **13 September 2026**, when the skeleton landed, four work orders
+    existed for slide content: #31 through #34. They covered 12 of the 34
     unfinished slides. The other **22**, across six of the eleven blocks, had
     nobody writing them: the cold open, Act I, most of Act II, all of Act III,
     the failure beat and the close.
 
     None of it was visible until there was a slide to hang each block on. Those
     slides said `no work order yet` rather than pointing at an issue nobody had
-    written — the same rule as everywhere else here: **not found**, never the
-    stronger claim. #81 through #86 were opened the same day and closed the gap.
+    written. That is the same rule as everywhere else here: **not found**, never
+    the stronger claim. Issues #81 through #86 were opened the same day and
+    closed the gap.
 
 ## How it is put together
 
@@ -167,21 +158,26 @@ to cut are not marked, and the tests refuse to let them be.
 ## How this deck is kept honest
 
 `corridor-screen/tests/test_deck.py` reads the deck on every test run and holds
-it to all of this — every block covered, in order, in one unbroken run each;
-the clock in every note and on no slide; a break at the head of every block and
-the Acts marked as Acts; the cut line marked and nothing the plan protects
-marked; every file a speaker note sends a presenter to committed; every claim
-with legal weight carrying its source **on the slide**; nothing in the theme
-under 28pt; and no slide asking for more room than 1920 x 1080 has.
+it to all of this:
+
+- every block covered, in order, in one unbroken run each
+- the clock in every note and on no slide
+- a break at the head of every block, and the Acts marked as Acts
+- the cut line marked, and nothing the plan protects marked
+- every file a speaker note sends a presenter to committed
+- every claim with legal weight carrying its source **on the slide**
+- nothing in the theme under 28pt
+- no slide asking for more room than 1920 x 1080 has
 
 Every count in the boxes above is checked against the deck as well, because a
 number written in prose beside a thing is a number that rots.
 
 The money slide gets a second file of its own,
 `corridor-screen/tests/test_money_slide.py`, for the same reason. Every figure
-on it is read back out of the crew-day build-up in `project-sh16/` and compared
-— the day counts, the hours, the rate handles, and **every number anywhere on
-the block** unless it sits on a line carrying its own source. The build-up is
+on it is read back out of the crew-day build-up in `project-sh16/` and
+compared: the day counts, the hours, the rate handles, and **every number
+anywhere on the block**. The one exception is a number sitting on a line that
+carries its own source. The build-up is
 regenerated whenever the tool runs; a slide is not. That block is read out loud
 to a room that prices this work for a living.
 
