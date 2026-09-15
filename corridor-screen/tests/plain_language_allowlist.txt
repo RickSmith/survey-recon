@@ -30,11 +30,12 @@
 # EXEMPT in test_plain_language.py and the reason is in
 # docs/adr/0003-produced-artifacts-stay-as-produced.md.
 #
-# Counted on 2026-09-15: 20 pages here, 58 faults between them. 22 pages in
+# Counted on 2026-09-15: 17 pages here, 41 faults between them. 25 pages in
 # scope pass.
 #
 # #135 swept docs/data-sources/ and took its 8 pages and 39 faults off this
-# list. Eight of the 22 passing pages pass because #135 fixed them.
+# list. #137 swept docs/presenting/ and took its 3 pages and 17 faults off.
+# Eleven of the 25 passing pages pass because of those two.
 
 # --- #136  docs/governance/ --- 4 pages, 9 faults
 docs/governance/ai-use-policy.md
@@ -42,10 +43,6 @@ docs/governance/index.md
 docs/governance/seal-and-responsible-charge.md
 docs/governance/what-never-leaves.md
 
-# --- #137  docs/presenting/ --- 3 pages, 17 faults
-docs/presenting/dry-run.md
-docs/presenting/fallbacks.md
-docs/presenting/second-machine.md
 
 # --- #138  docs/managing-your-agent/ --- 3 pages, 7 faults
 docs/managing-your-agent/the-claim-we-got-wrong.md
