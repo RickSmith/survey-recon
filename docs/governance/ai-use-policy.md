@@ -191,9 +191,9 @@ disciplined for hiding one.
 > *Rule*, for one part of it. 22 Tex. Admin. Code § 138.55(c) says surveyors
 > "shall first notify involved parties of any land surveying decisions or
 > practices that might endanger the health, safety, property or welfare of the
-> public." The same rule requires a report to the board or the authorities where
-> a risk remains unresolved. Where the error reaches that threshold, the rule
-> requires you to tell people. It is not a firm preference.
+> public." It also requires a report to the board or the authorities where a
+> risk remains unresolved. Where the error reaches that threshold, notifying
+> involved parties is a rule and not a firm preference.
 
 ## 10. Review
 

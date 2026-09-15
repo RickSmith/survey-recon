@@ -202,9 +202,9 @@ _LIST_ITEM = re.compile(r"^([-*+]|\d+[.)])\s")
 
 _ADMONITION = re.compile(r"^(!!!|\?\?\?)\s")
 
-# A blockquote's `> ` is typesetting, not a word. Left on, a quotation that ran
-# over four lines would arrive at the word count four words heavier than the
-# sentence somebody actually wrote.
+# A blockquote. `prose` below drops the whole line, because a blockquote is
+# somebody else being quoted and the plain-language standard is about what this
+# repo wrote. See that function for the whole argument.
 _QUOTE_MARK = re.compile(r"^\s*>\s?")
 
 # A sentence ends at `.`, `!` or `?`, but only where what follows looks like the
@@ -233,9 +233,23 @@ _FRAGMENT_WORDS = 3
 def prose(markdown):
     """The parts of a page that are writing, with everything else blanked out.
 
-    Out come fenced code, HTML comments, table rows, headings, list items, raw
-    HTML tags and the `!!!` line that opens an admonition. The admonition's own
-    body stays, because it is prose; only the marker is typesetting.
+    Out come fenced code, HTML comments, blockquotes, table rows, headings,
+    list items, raw HTML tags and the `!!!` line that opens an admonition. The
+    admonition's own body stays, because it is prose; only the marker is
+    typesetting.
+
+    **A blockquote goes out whole, mark and words together.** It used to have
+    only its `> ` taken off, which left the quotation to be counted as though
+    this repo had written it. `docs/governance/` is where that became untenable:
+    four of its sentences run past forty words because the Texas Legislature and
+    the board wrote them that way, and shortening one would falsify a citation.
+    The same reasoning is already in this function for a command line. A word
+    limit applied to quoted text fails a page for quoting something correctly.
+
+    **The cost is real and a reviewer carries it.** A blockquote used as a
+    callout holds this repo's own writing, and there are such callouts in
+    `docs/governance/ai-use-policy.md`. Those are no longer counted. See the
+    plain-language skill, which says so where it lists what the test cannot see.
 
     **A removed line becomes a blank line rather than disappearing.** A table
     sitting between two paragraphs is a paragraph break, and dropping its rows
@@ -261,7 +275,9 @@ def prose(markdown):
         if fenced:
             kept.append("")
             continue
-        line = _QUOTE_MARK.sub("", line)
+        if _QUOTE_MARK.match(line):
+            kept.append("")
+            continue
         stripped = line.strip()
         if not stripped:
             kept.append("")
