@@ -151,8 +151,8 @@ likely to be needed.
 read `screening.json` out of the folder `--out` names. Neither one is polite
 about it. A scratch folder that has not had the cold open's screening run sent
 to it gives you a bare `FileNotFoundError` on the projector. On the day this
-cannot happen, because `project-sh16` is already populated. In the
-rehearsal it can, and it looks like a broken tool rather than a skipped step.
+cannot happen, because `project-sh16` is already populated. In the rehearsal it
+can, and it looks like a broken tool rather than a skipped step.
 
 **Then check before you close the laptop:**
 
@@ -544,9 +544,9 @@ it. No client names, no job numbers.
 and that is a fact about the ask rather than a failure of it. With no network,
 put the form file on screen, read the question out, and ask the room to do it
 from their seats that evening. **The short link and the QR code do not exist
-yet.** That is [#10](https://github.com/RickSmith/survey-recon/issues/10), then
-[#38](https://github.com/RickSmith/survey-recon/issues/38). So the route on the
-slide is typed rather than scanned.
+yet.** They are [#10](https://github.com/RickSmith/survey-recon/issues/10),
+then [#38](https://github.com/RickSmith/survey-recon/issues/38). So the route on
+the slide is typed rather than scanned.
 
 **This block is on the never-cut list.**
 
@@ -662,8 +662,8 @@ hands it to a timekeeper. A third copy nobody tests is a third copy that rots,
 and this repo has published four corrections already for exactly that.
 
 **What no test can check** is whether the output quoted above is still what
-these commands print. Those blocks were captured from real runs on 2026-09-13,
-live and cache-only both, and each of the beats. They are here so a presenter
+these commands print. Those blocks were captured from real runs on 2026-09-13
+(live and cache-only both, and each of the beats). They are here so a presenter
 knows the difference between a demo that is slow and a demo that is wrong. If
 you run one in the rehearsal and it does not look like this, that is a finding,
 and it becomes an issue like any other.

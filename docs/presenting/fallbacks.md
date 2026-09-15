@@ -73,7 +73,7 @@ something. It is worth reading, because the shape of it will come round again.
 Two blocks, 0:08 and 0:20, are slides and nothing else. That is twenty-two
 minutes with no demo to run. Their slides were written under #81 through #86.
 This card went on saying those blocks had nothing, for as long as it took
-somebody to notice that **written is not the same as reachable**. The workflow
+somebody to notice that **written is not the same as reachable**. The file
 `slides.yml` renders the PDF on every push. Then `docs.yml` publishes it with
 the site, which is precisely where a presenter with no network cannot get at
 it. The deck's **source** is committed, and it is still not the fallback. Every
@@ -92,8 +92,8 @@ network off, and again before 8 October.
 **That is a weaker guarantee than every other row on this card, and it is the
 honest one.** Everything else here is checked on every pull request. This one
 cannot be, because the file is not in the repo. What is checked is that the
-step exists and gives the right address (`test_dry_run.py`). That is the most a
-test can do about a thing a person has to remember.
+step exists and gives the right address. `test_dry_run.py` is what checks it.
+That is the most a test can do about a thing a person has to remember.
 
 **The money slide used to be on this list and is not any more**, and nothing had
 to be recorded for it. Both of its slides were written out of files that were

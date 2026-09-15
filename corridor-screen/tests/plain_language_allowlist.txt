@@ -43,7 +43,6 @@ docs/governance/index.md
 docs/governance/seal-and-responsible-charge.md
 docs/governance/what-never-leaves.md
 
-
 # --- #138  docs/managing-your-agent/ --- 3 pages, 7 faults
 docs/managing-your-agent/the-claim-we-got-wrong.md
 docs/managing-your-agent/the-description-that-outlived-its-evidence.md
