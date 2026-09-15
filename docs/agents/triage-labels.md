@@ -29,3 +29,14 @@ Use `ready-for-human` when a person has to do it. Having two labels is only wort
 `wontfix` was on this repo before any of this was set up — GitHub creates it with every new repo. The other four were added by hand.
 
 Worth knowing, because the setup skill writes this vocabulary into a document but does not create the labels themselves. If a label in the middle column does not exist on the repo, `gh issue create --label` fails, and it fails at the moment you are trying to publish a batch of work orders.
+
+## `wontfix` leaves something behind
+
+A closed work order says *no*. It does not say *why*, and six weeks later nobody remembers which it was.
+
+So when an **enhancement** is turned down, the reasoning goes in `.out-of-scope/` at the root, one file per idea. `/triage` reads that folder before it looks at anything new, which is how an idea that comes round a second time gets met with the first answer instead of a fresh argument. `.out-of-scope/README.md` explains the rules.
+
+Two things that do **not** go in there:
+
+- **A bug.** A bug that will not be fixed is closed with an explanation on the work order. It is not a rejected feature
+- **Something already built.** Close that one by pointing at where it lives. Filing it as a rejection would teach the next reader that a feature we shipped is one we refused
