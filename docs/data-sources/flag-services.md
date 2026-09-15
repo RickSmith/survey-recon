@@ -1,7 +1,7 @@
 # The flag services
 
-**What we use them for:** finding the things on a parcel that cost time — a
-school, a cemetery, a railroad, a pipeline — so that a lead time can be attached
+**What we use them for:** finding the things on a parcel that cost time: a
+school, a cemetery, a railroad, a pipeline. The tool then attaches a lead time
 to each one.
 
 Written under [issue #17](https://github.com/RickSmith/survey-recon/issues/17).
@@ -29,7 +29,7 @@ https://gis.rrc.texas.gov/server/rest/services/rrc_public/tpms/MapServer/0
 ```
 
 All four are public, need no key and no account, and support paging. All four
-cap a single answer at 2,000 records — 1,000 for TPMS — so every query pages
+cap a single answer at 2,000 records, or 1,000 for TPMS. So every query pages
 until the server stops setting `exceededTransferLimit`.
 
 **TPMS** is the Texas Pipeline Mapping System, published by the Railroad
@@ -105,8 +105,8 @@ is `on` a **parcel**, and a parcel reaches well past the ribbon. A cemetery at
 the back of a tract whose frontage is on the pavement is on that tract, and
 belongs on that row. Asking only about the ribbon would miss it.
 
-The precise work — is this feature on this parcel, beside it, or neither — is
-then done by the tool's own geometry, against the parcel outlines. The service
+Whether a feature is on this parcel, beside it, or neither is the precise work.
+The tool's own geometry does it, against the parcel outlines. The service
 narrows the search. It does not decide the answer.
 
 ---
@@ -121,8 +121,8 @@ section 4 is built on it.
 
 Asked the same way, the USGS `structures` service answers wrong.
 
-Tested live on 2026-09-12, with the SH16 Bexar centerline — a line that begins
-and ends inside Bexar County — and a 400 ft distance:
+The SH16 Bexar centerline begins and ends inside Bexar County. Tested live on
+2026-09-12, with that line and a 400 ft distance:
 
 | Asked with | Schools returned | Where they were |
 |---|---|---|
@@ -203,10 +203,10 @@ So zero pipelines on this corridor is a real answer from a source that plainly
 holds data there, rather than an empty answer from a source that holds none.
 
 !!! success "Ruled on 2026-09-13, on [PR #53](https://github.com/RickSmith/survey-recon/pull/53)"
-    Correcting a settled specification is not the agent's call, so the tool
-    followed the service, recorded the difference here and at the bottom of
-    `corridor-screen/corridor_screen/sources.py`, and raised section 6 for a
-    ruling — the same route
+    Correcting a settled specification is not the agent's call. So the tool
+    followed the service, and recorded the difference here and at the bottom of
+    `corridor-screen/corridor_screen/sources.py`. It then raised section 6 for a
+    ruling. That is the same route
     [PR #52](https://github.com/RickSmith/survey-recon/pull/52) took for the
     parcel field names.
 
@@ -220,8 +220,8 @@ holds data there, rather than an empty answer from a source that holds none.
 
 Smaller, but it would have shipped every school unnamed.
 
-The USGS `structures` layers **publish** their fields in capitals —
-`NAME`, `PERMANENT_IDENTIFIER`, `FTYPE`, `FCODE` — and **answer** a query in
+The USGS `structures` layers **publish** their fields in capitals:
+`NAME`, `PERMANENT_IDENTIFIER`, `FTYPE`, `FCODE`. They **answer** a query in
 lower case: `name`, `permanent_identifier`. The `transportation` layers on the
 same host publish and answer in lower case.
 
@@ -248,8 +248,8 @@ The transport succeeded. The status line said `200`. Nothing about the response
 was a failure except its contents.
 
 **The reachability ping believed the status line and said `ok`.** Ninety seconds
-later the field list check found none of its 44 fields and stopped the run,
-which is exactly what it is for — it refused to screen a corridor while
+later the field list check found none of its 44 fields and stopped the run.
+That is exactly what it is for. It refused to screen a corridor while
 pretending pipelines had been checked, and it left `screening.json` alone.
 
 But the ping had already saved that error body into the cache, on top of the
@@ -267,9 +267,9 @@ The ping now reads the body. A `200` carrying an error is reported
 `blocked` with the service's own message as its reason, which costs the pipeline
 flag and nothing else — no parcel is ever reported clear of pipelines that were
 never checked. The error body is still saved, because
-[spec section 14](../corridor-screen/spec.md) says every response is saved, but
-under its own `error-` cache key beside the good one rather than over it, and
-its provenance record carries the reported error in `warnings` so that
+[spec section 14](../corridor-screen/spec.md) says every response is saved. It
+goes under its own `error-` cache key, beside the good one rather than over it.
+Its provenance record carries the reported error in `warnings`, so that
 `http_status = 200` sitting in the same file cannot mislead a later reader.
 
 Written under [issue #62](https://github.com/RickSmith/survey-recon/issues/62).
@@ -329,7 +329,7 @@ Antonio Central yards. There simply is no track within 300 ft of this stretch of
 Bandera Road.
 
 The pair of numbers in each row matters. The honesty block in `screening.json`
-carries both — `record_count` and `records_used` — so a reader sees "39 returned,
+carries both, `record_count` and `records_used`. A reader sees "39 returned,
 6 used" rather than a bare 6. The 33 schools that were not used are a normal
 answer to the question that was asked, because the box is wider than the
 corridor. Hiding them would make the 6 look like the whole world.

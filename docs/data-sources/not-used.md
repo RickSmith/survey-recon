@@ -51,7 +51,7 @@ returned record is measured against the extent it was supposed to come from.
 
 **Read the caveat before the numbers: this was not an exact replication.** The
 research recorded `sr=4326` being ignored. Today's `v1` endpoint does not take
-`sr` at all — it takes `wkid` — so we could not repeat the original request
+`sr` at all. It takes `wkid`, so we could not repeat the original request
 against the original endpoint. What follows is what this endpoint does now.
 
 **It answered every time, and the times varied a lot.** Ten attempts across two
@@ -112,13 +112,13 @@ unrecognized value returns the metric answer, unchanged, with no error.
 `corridor-screen/captures/silent-nodata/`, with the exact request beside it.
 
 **It is not case sensitivity.** Lowercase `feet` returns 866.87, the same as
-`Feet` (`units-lowercase-feet.json`). The service has a short list of words it knows, and everything else —
-including the surveyor's own unit — falls through to meters. Knowing that
-matters, because "just match the capitalization" is the wrong lesson and would
-leave you exposed.
+`Feet` (`units-lowercase-feet.json`). The service has a short list of words it
+knows. Everything else falls through to meters, including the surveyor's own
+unit. Knowing that matters, because "just match the capitalization" is the wrong
+lesson and would leave you exposed.
 
-**`US_Feet` is the one that matters.** It is not a typo — it is the US survey
-foot, what EPSG numbers `9003` and what TxDOT's Survey Manual requires in
+**`US_Feet` is the one that matters.** It is the US survey foot, not a typo. It
+is what EPSG numbers `9003` and what TxDOT's Survey Manual requires in
 deliverables ([TxDOT Survey Manual, Ch. 3, Control Points](https://www.txdot.gov/manuals/row/ess/index.html)). A surveyor asking in the unit of their own profession gets meters.
 
 **There is no field to check.** The response carries a `spatialReference` for
@@ -150,9 +150,9 @@ network, on ten attempts. We are **not** saying the research was wrong: it is
 dated, it named a different parameter, services change, and a slow network
 somewhere else will see the timeouts we did not.
 
-The hazard has not gone anywhere. It has changed shape — from "a plausible wrong
-number" to "a 200 that will not parse" and "a parameter quietly ignored" — and
-both of those still defeat a caller that only checks the status code.
+The hazard has not gone anywhere. It has changed shape, from "a plausible wrong
+number" to "a 200 that will not parse" and "a parameter quietly ignored." Both
+of those still defeat a caller that only checks the status code.
 
 What we are also saying, plainly, is that **we could not confirm the `NoData`**.
 We looked in every response committed for this beat and in the research page the
@@ -183,7 +183,7 @@ The second one is the more useful lesson anyway, and it is not really about
 FEMA. **A service whose name matches what you want, which answers without
 erroring, and which holds data for the wrong part of the country, is the single
 easiest trap in this whole exercise.** This repo walked into it a second time
-with pipelines — see below — after having already written it down.
+with pipelines, described below, after having already written it down.
 
 ---
 
@@ -207,8 +207,8 @@ returned a real number. `TxDOT_Control_Sections` returns real highway segments
 at the layer number everybody guesses.
 
 **A dead service is the easy case.** You see it, you retry, you stop. The
-expensive failure is the service that answers — plausibly, promptly, and about
-the wrong thing — and the only defense is knowing roughly what the answer should
+expensive failure is the service that answers plausibly, promptly, and about
+the wrong thing. The only defense is knowing roughly what the answer should
 look like before you ask. A corridor with zero pipelines looked wrong enough to
 check the county, and then the state. That is what caught it: not a check in the
 code, a person who expected something else.

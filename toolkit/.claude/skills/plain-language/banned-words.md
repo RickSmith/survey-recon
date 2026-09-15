@@ -8,9 +8,10 @@ This table is the one place the list is written down.
 and checks the pages in `docs/` against it. Adding a row here adds a rule.
 Deleting a row drops one.
 
-The list is a blunt instrument and it is meant to be. It fires once on this repo
-as it stands, on `docs/data-sources/txdot-roadways.md`, and that one hit is a
-word used correctly. `SKILL.md` works through it. Near enough to zero is the
+The list is a blunt instrument and it is meant to be. It fired once on this
+repo, on `docs/data-sources/txdot-roadways.md`, and that one hit was a word used
+correctly. `SKILL.md` works through it. Work order #135 made the change on
+2026-09-15, so the list now fires nowhere. Near enough to zero is the
 point: the list costs nothing to keep and it stops the drift later. When it does
 fire on a word you used correctly, the plainer word in the second column is
 usually shorter anyway.

@@ -1,9 +1,9 @@
 # The TxDOT Roadways service
 
 **What we use it for:** the corridor's centerline. You give the tool a route
-name and two Distance From Origin numbers — "SH16 from Loop 410 to Old Bandera Rd"
-— and this is the service that turns those three things into a line on the
-ground. Everything else in a screening run hangs off that line.
+name and two Distance From Origin numbers, as in "SH16 from Loop 410 to Old
+Bandera Rd." This is the service that turns those three things into a line on
+the ground. Everything else in a screening run hangs off that line.
 
 Written under [issue #21](https://github.com/RickSmith/survey-recon/issues/21).
 Read live on 2026-09-13.
@@ -29,8 +29,8 @@ https://services.arcgis.com/KTcxiTD9dsQw4r7Z/arcgis/rest/services/TxDOT_Roadways
 | Key or account | none |
 
 **WKID** is Esri's number for a coordinate system, the way an EPSG code is. This
-service stores in Web Mercator; the tool asks for `outSR=4326` — longitude and
-latitude — and TxDOT's server does the conversion.
+service stores in Web Mercator. The tool asks for `outSR=4326`, which is
+longitude and latitude, and TxDOT's server does the conversion.
 
 No datum transformation happens inside this tool, which is deliberate. The TxDOT
 Survey Manual states that **"TxDOT will not accept any datum transformations for
@@ -64,8 +64,8 @@ So the route argument for the SH16 corridor is `SH0016-KG`: **state highway 16,
 single roadbed**. Zero-padded to four digits, then the roadbed code.
 
 **Check it yourself.** Neither this table nor the `COUNTY` finding below is in
-the committed capture — the tool only ever asks for the one route it was given —
-so both are reproduced with a query rather than asserted:
+the committed capture, because the tool only ever asks for the one route it was
+given. So both are reproduced with a query rather than asserted:
 
 ```
 POST .../TxDOT_Roadways/FeatureServer/0/query
@@ -85,7 +85,7 @@ four-thousand-mile corridor on line one.
 ## Trap two: the `COUNTY` field is `_` on every segment
 
 The layer publishes a `COUNTY` field. On every SH16 segment read on 2026-09-13
-its value is a single underscore.
+its value is a single `_` character.
 
 ```
 WHERE RTE_NM='SH0016-KG' AND COUNTY='Bexar'   →  0 rows

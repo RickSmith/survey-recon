@@ -41,15 +41,16 @@ to use instead. Read that file when you need a replacement or when the test
 names a word you want to argue about.
 
 A true hit on a plain English word is rare, and it is still worth fixing. This
-repo has exactly one, on `docs/data-sources/txdot-roadways.md`, where a page
-names the `_` character in English:
+repo had exactly one, on `docs/data-sources/txdot-roadways.md`, where a page
+named the `_` character in English:
 
 ```
 On every SH16 segment read on 2026-09-13 its value is a single underscore.
 ```
 
 Naming the character itself is shorter and clearer: *its value is a single `_`
-character*.
+character*. Work order #135 made that change on 2026-09-15, so the list now
+fires nowhere in this repo.
 
 **Put a bad example inside a code fence.** A **code fence** is a block wrapped in
 three backticks, the way the quotation above is. Markdown shows it exactly as

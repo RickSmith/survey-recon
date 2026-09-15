@@ -30,7 +30,7 @@ https://maps.dot.state.tx.us/arcgis/rest/services/ROW/ROW_Maps_CL_2017/MapServer
 
 It is a **MapServer**, not a FeatureServer. Every other service the corridor
 tool calls is a FeatureServer on a cloud host; this one is TxDOT's own server.
-The URL shape is the same — `<base>/<layer>/query` — so nothing in the tool had
+The URL shape is the same, `<base>/<layer>/query`, so nothing in the tool had
 to change to reach it.
 
 [Spec section 5](../corridor-screen/spec.md) calls this host **"the least
@@ -95,10 +95,11 @@ and **no record has a null date at all**. A date column with no nulls and a
 368-record spike on one day looks like a placeholder for "no date recorded."
 
 **We could not confirm that.** Against it: the layer also holds
-`LRD-001801-IH0035-19000608` — a June 1900 date, not the January one — and
-**501 records dated after `1900-01-01` and before 1917**, which is before the
-Texas Highway Department existed. So early dates are common here for reasons we
-have not established, and `1900-01-01` may be one of them rather than a blank.
+`LRD-001801-IH0035-19000608`, which is a June 1900 date rather than the January
+one. It also holds **501 records dated after `1900-01-01` and before 1917**,
+which is before the Texas Highway Department existed. So early dates are common
+here for reasons we have not established, and `1900-01-01` may be one of them
+rather than a blank.
 
 Where we looked: the layer's own field metadata, which documents nothing about
 it; and four record counts by date, queried live on 2026-09-12 and cached at
@@ -106,9 +107,9 @@ it; and four record counts by date, queried live on 2026-09-12 and cached at
 `.meta.toml` beside it. We did not ask the ROW Division. Until somebody does,
 treat a `1900-01-01` sheet as a date you should check against the drawing.
 
-**The output carries this doubt, not just this page.** `row_maps.notes` holds a
-`the oldest date may not be a date` entry, and the tool says the same thing on
-screen when the range starts on `1900-01-01` — because a caveat kept somewhere
+**The output carries this doubt, not just this page.** The `row_maps.notes`
+block holds a `the oldest date may not be a date` entry. The tool says the same
+thing on screen when the range starts on `1900-01-01`. A caveat kept somewhere
 else is a caveat nobody reads at the moment they are about to quote 1900.
 
 **The tool does not guess.** It reports the range the data gives and names the
@@ -120,10 +121,11 @@ rather than take a number on trust.
 
 ## What the tool asks for, and what it does with the answer
 
-A box around the corridor, grown by the half-width — the same envelope the NGS
-marks are asked about, and for the same reason, written up in
-[the flag services](flag-services.md): asked with a polyline and a distance, a
-service can buffer into the wrong county and answer without erroring.
+A box around the corridor, grown by the half-width. That is the same envelope
+the NGS marks are asked about, and for the same reason. The reason is written
+up in [the flag services](flag-services.md). Asked with a polyline and a
+distance, a service can buffer into the wrong county and answer without
+erroring.
 
 Every returned sheet is then measured against the centerline, and one is over
 the corridor when any part of its line comes within the half-width. A sheet is
@@ -176,8 +178,8 @@ where=CNTY_NM='BEXAR' AND RTE_NM='SH0016'
 There is no PDF link anywhere in this layer. What you get is the sheet count,
 the dates, the control sections and the sheet names.
 
-The drawings come through **RPAM**, TxDOT's Real Property Asset Map — in
-TxDOT's own words, "an online application populated with geo-referenced
+The drawings come through **RPAM**, TxDOT's Real Property Asset Map. In
+TxDOT's own words, it is "an online application populated with geo-referenced
 features that represent all real property assets comprising the highway right
 of way and is the replacement for paper right-of-way maps." A map not available
 there is obtained by **Open Records Request**, quoting the `MAP_NM` values.
@@ -219,10 +221,10 @@ is what [spec section 10](../corridor-screen/spec.md) asks for.
     `notes`. Neither contradicts section 10; both are a superset of it.
 
     Settled on the same ruling, because it is a judgment about what a reader
-    will quote rather than a fact: `sheet_count` and `date_range` cover
-    **every** route reaching the corridor and stay that way, so on SH16 they
-    read 69 and 1900–2005 while the corridor's own route reads 15 and
-    1944–1998 inside `by_route`.
+    will quote rather than a fact. The `sheet_count` and `date_range` keys
+    cover **every** route reaching the corridor, and they stay that way. So on
+    SH16 they read 69 and 1900–2005, while the corridor's own route reads 15
+    and 1944–1998 inside `by_route`.
 
     Amending a settled specification is not the agent's call — the precedent is
     `AcctNumb` on [PR #52](https://github.com/RickSmith/survey-recon/pull/52),
