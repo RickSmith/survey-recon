@@ -82,6 +82,7 @@ nav:
       - TxDOT research: txdot-research.md
       - Decision 0001 - sanity checks warn: adr/0001-sanity-checks-warn-dead-services-stop.md
       - Decision 0002 - Hermes runs on a schedule: adr/0002-the-hermes-segment-runs-on-a-schedule.md
+      - Decision 0003 - produced artifacts stay as produced: adr/0003-produced-artifacts-stay-as-produced.md
       - Where the work orders live: agents/issue-tracker.md
       - What the labels mean: agents/triage-labels.md
       - Where the domain notes live: agents/domain.md
