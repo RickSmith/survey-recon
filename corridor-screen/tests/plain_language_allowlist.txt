@@ -30,25 +30,21 @@
 # EXEMPT in test_plain_language.py and the reason is in
 # docs/adr/0003-produced-artifacts-stay-as-produced.md.
 #
-# Counted on 2026-09-15: 10 pages here, 25 faults between them. 32 pages in
+# Counted on 2026-09-15: 7 pages here, 18 faults between them. 35 pages in
 # scope pass.
 #
-# Four of the six children are done. #135 swept docs/data-sources/ and took
+# Five of the six children are done. #135 swept docs/data-sources/ and took
 # its 8 pages and 39 faults off this list, #136 swept docs/governance/ and took
 # 4 pages and 9 faults, #137 swept docs/presenting/ and took 3 pages and 17
-# faults, #138 swept docs/managing-your-agent/ and took 3 pages and 7 faults.
-# Seventeen of the 32 passing pages pass because of those four.
+# faults, #138 swept docs/managing-your-agent/ and took 3 pages and 7 faults,
+# #139 swept the prose in docs/corridor-screen/ and took 3 pages and 7 faults.
+# Twenty of the 35 passing pages pass because of those five.
 #
 # #136 also changed what the counter reads. Four sentences in docs/governance/
 # run past forty words because the Texas Legislature and the board wrote them
 # that way, quoted in blockquotes. Shortening one would falsify a citation, so
 # the counter stopped reading blockquotes. A blockquote used as a callout is
 # therefore no longer counted either, and the plain-language skill says so.
-
-# --- #139  docs/corridor-screen/ prose --- 3 pages, 7 faults
-docs/corridor-screen/index.md
-docs/corridor-screen/lead-times.md
-docs/corridor-screen/roe-letters.md
 
 # --- #140  everything left over --- 7 pages, 18 faults
 docs/day-0/index.md

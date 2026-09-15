@@ -53,17 +53,17 @@ means filing notice with the county clerk **within 10 days** —
 
 [Tex. Util. Code § 251.151(a)](https://statutes.capitol.texas.gov/Docs/UT/htm/UT.251.htm)
 
-Notice to a notification center — Texas 811 — *"not earlier than the 14th day
-before the date the excavation is to begin or later than the 48th hour before
-the time the excavation is to begin, excluding Saturdays, Sundays, and legal
-holidays."*
+Notice goes to a notification center, which in Texas is Texas 811. It must be
+given *"not earlier than the 14th day before the date the excavation is to begin
+or later than the 48th hour before the time the excavation is to begin,
+excluding Saturdays, Sundays, and legal holidays."*
 
 So 48 hours is a **floor**, not a booking, and the weekend and holiday exclusion
 can make it longer on the calendar than it is on paper. The tool records two
 working days, **and records that they are working days.**
 
 That last part matters. Two working days and two calendar days are different
-promises, and the tool will not convert one into the other — doing so would mean
+promises. The tool will not convert one into the other. Doing so would mean
 inventing a calendar of weekends and Texas legal holidays that it does not have
 and could not check. So every number carries a `lead_time_basis` saying which
 days it counts, the loader refuses a confirmed row that does not say, and the

@@ -200,15 +200,15 @@ rather than leaving somebody to find out.
 segment: decision 2 names "Claude Code as the spine + Hermes (Nous Research)
 for autonomous work," and decision 16 files the ROE letters as "the Hermes
 beat." What is built is a GitHub Actions schedule reading a clock. It is
-genuinely autonomous — nobody starts it — and it is not Hermes.
+genuinely autonomous, because nobody starts it. It is not Hermes.
 
 That is a gap between a locked decision and a delivered thing, and it is
 settled rather than left open:
 [ADR 0002](../adr/0002-the-hermes-segment-runs-on-a-schedule.md) keeps the cron
-job and keeps the name, and says why. The short version is that the claim the
-segment makes — day 21 arrives whether or not a person is looking — is better
-evidenced by a public run summary than by a model call, and that reaching a
-hosted Hermes model would put an API key in the attendee path.
+job and keeps the name, and says why. The short version is that a public run
+summary evidences the segment's claim better than a model call would. The claim
+is that day 21 arrives whether or not a person is looking. Reaching a hosted
+Hermes model would also put an API key in the attendee path.
 
 **So say it on stage.** The block is called Hermes and a cron job runs it. A
 substitution nobody mentions is the thing this repo's own history exists to

@@ -2,10 +2,10 @@
 
 The tool this repo is named for.
 
-You give it the centerline of a corridor. It widens that line into a ribbon, asks
-a fixed list of public map services what is inside the ribbon, and writes out one
-file: every parcel in the corridor, what about each one costs time, and how many
-days of notice each of those things needs.
+You give it the centerline of a corridor. It widens that line into a ribbon. It
+asks a fixed list of public map services what is inside the ribbon. It writes
+out one file: every parcel in the corridor, what about each one costs time, and
+how many days of notice each of those things needs.
 
 It is a first pass before you price a job. **It does not decide anything.** It
 reports, and an RPLS reads it and decides.
