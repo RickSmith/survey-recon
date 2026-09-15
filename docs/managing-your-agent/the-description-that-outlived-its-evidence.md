@@ -59,9 +59,9 @@ for the run of show. Then the beat was actually run, on 2026-09-13 under issue
 corrected. The glossary was not, because nothing pointed from one to the other.
 
 So the repo held the corrected account and the wrong one at the same time. Both
-`d905bac` and `01dbc29` are dated 2026-09-13 — the captures and the corrected
-write-up — and the glossary entry sitting beside them went on saying something
-else, in the file every other page is told to trust.
+`d905bac` and `01dbc29` are dated 2026-09-13. They are the captures and the
+corrected write-up. The glossary entry sitting beside them went on saying
+something else, in the file every other page is told to trust.
 
 ## The part that should worry you
 
@@ -112,8 +112,8 @@ history can see where the description came from.
 
 We are not saying the September research was wrong.
 
-It is dated. It named a parameter — `sr` — that the current `v1` endpoint does
-not take at all, so the original request cannot be repeated against the original
+It is dated. It named a parameter, `sr`, that the current `v1` endpoint does not
+take at all. So the original request cannot be repeated against the original
 endpoint. A service that behaved one way on 2026-09-12 and another way on
 2026-09-13 is an ordinary thing for a service to be.
 
@@ -123,6 +123,6 @@ research page the description came from, and it is not in either. That is
 *not found* rather than *it never happened*, and the difference is that somebody
 looked.
 
-What we are saying is narrower, and it is the whole point: **a repo whose rule
-is "cite it or say you could not confirm it" had an uncited claim sitting in its
-glossary, and the glossary is the one file every other page is told to trust.**
+What we are saying is narrower, and it is the whole point. **This repo's rule is
+"cite it or say you could not confirm it." It had an uncited claim sitting in
+its glossary. The glossary is the one file every other page is told to trust.**

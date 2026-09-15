@@ -55,8 +55,8 @@ Two ways, and both are ordinary.
 
 **It cites the link without opening it.** The URL is on `txdot.gov`. It appears
 high in search results. It has the right words in it. An agent under time
-pressure — like a person under time pressure — writes the citation from the
-search result. Nothing was fetched, so nothing failed.
+pressure writes the citation from the search result. So does a person under time
+pressure. Nothing was fetched, so nothing failed.
 
 **It finds an archived copy.** The Internet Archive has the old manual, and
 so do mirrors and quoted excerpts all over the web. Those load instantly and
@@ -84,10 +84,10 @@ onlinemanuals.txdot.gov/TxDOTOnlineManuals/TxDOTManuals/ess/index.htm
    nothing answers here today
 ```
 
-Both are captured. The check below does not need to know about two paths — it
-matches the **host**, whatever follows it — but the redirect stub is kept
-because it is the evidence for this diagram, and because it is the thing that
-explains why two different old addresses are still circulating.
+Both are captured. The check below does not need to know about two paths. It
+matches the **host**, whatever follows it. The redirect stub is kept anyway. It
+is the evidence for this diagram, and it is the thing that explains why two
+different old addresses are still circulating.
 
 ## Run it yourself
 
