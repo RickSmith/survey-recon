@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+<rect width="1920" height="1080" fill="#ffffff"/>
+<text x="60.0" y="78.0" font-size="44" fill="#111827" font-weight="700" text-anchor="start">The crew-day build-up, as a sheet</text>
+<text x="60.0" y="122.0" font-size="26" fill="#4b5563" font-weight="400" text-anchor="start">SH0016-KG DFO 347.7 to 356.367, 8.691 miles. Not an estimate: an estimate somebody can argue with, one rate at a time.</text>
+<text x="60.0" y="180.0" font-size="28" fill="#111827" font-weight="700" text-anchor="start">What went in</text>
+<text x="60.0" y="220.0" font-size="19" fill="#111827" font-weight="400" text-anchor="start" class="input">Corridor length</text>
+<text x="750.0" y="220.0" font-size="19" fill="#111827" font-weight="600" text-anchor="end">8.691 miles</text>
+<rect x="48" y="230" width="720" height="34" fill="#f9fafb"/>
+<text x="60.0" y="254.0" font-size="19" fill="#111827" font-weight="400" text-anchor="start" class="input">Tracts the corridor touches</text>
+<text x="750.0" y="254.0" font-size="19" fill="#111827" font-weight="600" text-anchor="end">524 tracts</text>
+<text x="60.0" y="288.0" font-size="19" fill="#111827" font-weight="400" text-anchor="start" class="input">Tracts carrying something that costs time</text>
+<text x="750.0" y="288.0" font-size="19" fill="#111827" font-weight="600" text-anchor="end">8 tracts</text>
+<rect x="48" y="298" width="720" height="34" fill="#f9fafb"/>
+<text x="60.0" y="322.0" font-size="19" fill="#111827" font-weight="400" text-anchor="start" class="input">Published NGS marks in the corridor</text>
+<text x="750.0" y="322.0" font-size="19" fill="#111827" font-weight="600" text-anchor="end">11 marks</text>
+<text x="60.0" y="356.0" font-size="19" fill="#111827" font-weight="400" text-anchor="start" class="input">Of those, recorded MARK NOT FOUND</text>
+<text x="750.0" y="356.0" font-size="19" fill="#111827" font-weight="600" text-anchor="end">11 marks</text>
+<rect x="48" y="366" width="720" height="34" fill="#f9fafb"/>
+<text x="60.0" y="390.0" font-size="19" fill="#111827" font-weight="400" text-anchor="start" class="input">Distinct TxDOT control monuments</text>
+<text x="750.0" y="390.0" font-size="19" fill="#111827" font-weight="600" text-anchor="end">2 monuments</text>
+<text x="60.0" y="424.0" font-size="19" fill="#111827" font-weight="400" text-anchor="start" class="input">ROW map sheets reaching the corridor</text>
+<text x="750.0" y="424.0" font-size="19" fill="#111827" font-weight="600" text-anchor="end">69 sheets</text>
+<rect x="48" y="434" width="720" height="34" fill="#f9fafb"/>
+<text x="60.0" y="458.0" font-size="19" fill="#111827" font-weight="400" text-anchor="start" class="input">Manholes to pop</text>
+<text x="750.0" y="458.0" font-size="19" fill="#b45309" font-weight="700" text-anchor="end" class="unmeasured-input">not measured</text>
+<text x="60.0" y="492.0" font-size="19" fill="#111827" font-weight="400" text-anchor="start" class="input">Culverts to locate</text>
+<text x="750.0" y="492.0" font-size="19" fill="#b45309" font-weight="700" text-anchor="end" class="unmeasured-input">not measured</text>
+<rect x="48" y="502" width="720" height="34" fill="#f9fafb"/>
+<text x="60.0" y="526.0" font-size="19" fill="#111827" font-weight="400" text-anchor="start" class="input">Times traffic control has to be set</text>
+<text x="750.0" y="526.0" font-size="19" fill="#b45309" font-weight="700" text-anchor="end" class="unmeasured-input">not measured</text>
+<text x="60.0" y="560.0" font-size="19" fill="#111827" font-weight="400" text-anchor="start" class="input">Miles worked on the centerline</text>
+<text x="750.0" y="560.0" font-size="19" fill="#b45309" font-weight="700" text-anchor="end" class="unmeasured-input">not measured</text>
+<rect x="48" y="570" width="720" height="34" fill="#f9fafb"/>
+<text x="60.0" y="594.0" font-size="19" fill="#111827" font-weight="400" text-anchor="start" class="input">Existing ROW width, lane count and traffic</text>
+<text x="750.0" y="594.0" font-size="19" fill="#b45309" font-weight="700" text-anchor="end" class="unmeasured-input">not measured</text>
+<text x="60.0" y="640.0" font-size="19" fill="#b45309" font-weight="600" text-anchor="start">5 of these 12 inputs were never measured, and they are not zero. Each</text>
+<text x="60.0" y="667.0" font-size="19" fill="#b45309" font-weight="600" text-anchor="start">one is a question somebody still has to answer.</text>
+<text x="860.0" y="180.0" font-size="28" fill="#111827" font-weight="700" text-anchor="start">Field hours</text>
+<text x="860.0" y="220.0" font-size="21" fill="#111827" font-weight="600" text-anchor="start" class="line">Look for the published NGS marks</text>
+<text x="1860.0" y="220.0" font-size="18" fill="#9ca3af" font-weight="400" text-anchor="end">A1</text>
+<text x="884.0" y="248.0" font-size="19" fill="#4b5563" font-weight="400" text-anchor="start">11 marks × 0.75 hours per mark = 8.25 hours</text>
+<text x="860.0" y="282.0" font-size="21" fill="#111827" font-weight="600" text-anchor="start" class="line">Set new control</text>
+<text x="1860.0" y="282.0" font-size="18" fill="#9ca3af" font-weight="400" text-anchor="end">A2, A3</text>
+<text x="884.0" y="310.0" font-size="19" fill="#4b5563" font-weight="400" text-anchor="start">8.691 miles × 0.5 pairs per mile × 3 hours per pair = 13.04 hours</text>
+<text x="860.0" y="344.0" font-size="21" fill="#111827" font-weight="600" text-anchor="start" class="line">Recover corners, tract by tract</text>
+<text x="1860.0" y="344.0" font-size="18" fill="#9ca3af" font-weight="400" text-anchor="end">A4</text>
+<text x="884.0" y="372.0" font-size="19" fill="#4b5563" font-weight="400" text-anchor="start">524 tracts × 0.5 hours per tract = 262.00 hours</text>
+<text x="860.0" y="406.0" font-size="21" fill="#111827" font-weight="600" text-anchor="start" class="line">Extra time on the flagged tracts</text>
+<text x="1860.0" y="406.0" font-size="18" fill="#9ca3af" font-weight="400" text-anchor="end">A5</text>
+<text x="884.0" y="434.0" font-size="19" fill="#4b5563" font-weight="400" text-anchor="start">8 tracts × 2 hours per tract = 16.00 hours</text>
+<text x="860.0" y="468.0" font-size="21" fill="#111827" font-weight="600" text-anchor="start" class="line">Set and retrieve traffic control</text>
+<text x="1860.0" y="468.0" font-size="18" fill="#9ca3af" font-weight="400" text-anchor="end">A6</text>
+<text x="884.0" y="496.0" font-size="19" fill="#b45309" font-weight="600" text-anchor="start" class="blocked-line">not measured × 1.25 hours per occupation = not measured</text>
+<text x="884.0" y="522.0" font-size="18" fill="#b45309" font-weight="400" text-anchor="start">No total: Times traffic control has to be set was never measured.</text>
+<text x="860.0" y="556.0" font-size="21" fill="#111827" font-weight="600" text-anchor="start" class="line">Chain the centerline</text>
+<text x="1860.0" y="556.0" font-size="18" fill="#9ca3af" font-weight="400" text-anchor="end">A7</text>
+<text x="884.0" y="584.0" font-size="19" fill="#b45309" font-weight="600" text-anchor="start" class="blocked-line">not measured × 5 hours per mile = not measured</text>
+<text x="884.0" y="610.0" font-size="18" fill="#b45309" font-weight="400" text-anchor="start">No total: Miles worked on the centerline was never measured.</text>
+<text x="860.0" y="650.0" font-size="28" fill="#111827" font-weight="700" text-anchor="start">Office hours</text>
+<text x="860.0" y="690.0" font-size="21" fill="#111827" font-weight="600" text-anchor="start" class="line">Hand-retrace the ROW map sheets</text>
+<text x="1860.0" y="690.0" font-size="18" fill="#9ca3af" font-weight="400" text-anchor="end">A8</text>
+<text x="884.0" y="718.0" font-size="19" fill="#4b5563" font-weight="400" text-anchor="start">69 sheets × 1.5 hours per sheet = 103.50 hours</text>
+<text x="860.0" y="752.0" font-size="21" fill="#111827" font-weight="600" text-anchor="start" class="line">Draft the deliverable</text>
+<text x="1860.0" y="752.0" font-size="18" fill="#9ca3af" font-weight="400" text-anchor="end">A9</text>
+<text x="884.0" y="780.0" font-size="19" fill="#4b5563" font-weight="400" text-anchor="start">8.691 miles × 4 hours per mile = 34.76 hours</text>
+<rect x="840" y="824" width="1020" height="196" rx="12" fill="#f9fafb" stroke="#d1d5db" stroke-width="2"/>
+<text x="860.0" y="868.0" font-size="22" fill="#111827" font-weight="700" text-anchor="start" class="field-total">Field  299.29 hours  =  38 crew-days of 2 people, rounded up</text>
+<text x="860.0" y="904.0" font-size="22" fill="#111827" font-weight="700" text-anchor="start" class="office-total">Office  138.26 hours  =  18 days, rounded up</text>
+<text x="860.0" y="936.0" font-size="19" fill="#4b5563" font-weight="400" text-anchor="start">The two are never added together. They are bought from different people.</text>
+<text x="860.0" y="970.0" font-size="19" fill="#b45309" font-weight="600" text-anchor="start" class="floor">Both are floors. 2 lines above have no total, and those hours are missing from</text>
+<text x="860.0" y="996.0" font-size="19" fill="#b45309" font-weight="600" text-anchor="start">the figure rather than zero in it.</text>
+<text x="60.0" y="1050.0" font-size="18" fill="#9ca3af" font-weight="400" text-anchor="start">Run texas-bexar-sh0016-kg-20260913T070646, finished 2026-09-13T07:07:07-05:00. Drawn from crew_day.lines() and crew_rates.toml. Nothing here was drawn by hand.</text>
+</svg>
