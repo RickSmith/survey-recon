@@ -14,8 +14,7 @@ is the same ground. The second answer is in meters.
 **No error was raised.** HTTP 200. Valid JSON. A number that is a perfectly
 ordinary elevation for San Antonio, three and a quarter times too small.
 
-This is failure beat two, written under
-[issue #26](https://github.com/RickSmith/survey-recon/issues/26).
+This is the second of the two failures the session shows on purpose.
 
 ## `US_Feet` is not a typo
 
@@ -118,8 +117,8 @@ Which is this repo's whole argument, arrived at from the wrong end.
 
 Worth recording, because it is the repo's own rule about dated research.
 
-[Issue #26](https://github.com/RickSmith/survey-recon/issues/26) describes the
-service ignoring **the coordinate-system parameter**. It still does. And an
+The original research note describes the service ignoring **the
+coordinate-system parameter**. It still does. And an
 earlier draft of this page said it did not — because it tested the wrong
 parameter.
 
@@ -180,3 +179,12 @@ written around this service before any of the above was found.
 
 **You still sign it.** A check can tell you two numbers disagree. It cannot tell
 you which one belongs in the deliverable.
+
+---
+
+## Where this came from
+
+The failure was reproduced and captured under
+[work order #26](https://github.com/RickSmith/survey-recon/issues/26). The
+decision not to call this service at all is
+[decision record 0001](../adr/0001-sanity-checks-warn-dead-services-stop.md).

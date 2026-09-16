@@ -8,7 +8,8 @@ answered `NoData`. **Three claims, and the evidence in this repo supports none
 of them.** The captures were committed on 2026-09-13. The glossary was not read
 against them.
 
-This page is the account of that, kept for the same reason
+Here is how a wrong description survived beside the evidence that disproved
+it, and how far it got. It is kept for the same reason
 [the claim we got wrong](the-claim-we-got-wrong.md) and
 [the force push](the-force-push.md) are kept. The correction is a new entry, not
 a quiet rewrite.
@@ -41,7 +42,7 @@ Survey Manual requires in deliverables
 
 The full write-up is
 [The answer that was wrong rather than missing](the-wrong-answer.md), which has
-been correct since [issue #26](https://github.com/RickSmith/survey-recon/issues/26).
+been correct since the captures were taken.
 
 ## How it survived
 
@@ -54,8 +55,8 @@ makes today.
 
 **What went wrong is what happened to it next.** The line was copied into
 `CONTEXT.md` as a settled fact, and `docs/plan-of-record.md` took its wording
-for the run of show. Then the beat was actually run, on 2026-09-13 under issue
-#26, and the captures came back saying something else. The write-up was
+for the run of show. Then the failure was actually run, on 2026-09-13, and the captures came
+back saying something else. The write-up was
 corrected. The glossary was not, because nothing pointed from one to the other.
 
 So the repo held the corrected account and the wrong one at the same time. Both
@@ -67,15 +68,15 @@ something else, in the file every other page is told to trust.
 
 It reached a slide.
 
-The skeleton beat 2 slide for [issue #85](https://github.com/RickSmith/survey-recon/issues/85)
-was written out of the glossary rather than out of the captures, and it
+The first draft of the slide for this failure was written out of the glossary
+rather than out of the captures, and it
 inherited all three errors word for word. **That is a slide about being
 confidently wrong, being confidently wrong, on a projector, to a room of people
 who can check it from their seats.**
 
-It was caught by a test — `corridor-screen/tests/test_beat_slides.py`, which
-reads every figure on those slides back out of the committed captures and
-refuses the one word the evidence does not support, by name.
+It was caught by an automatic check that reads every figure on those slides
+back out of the saved answers, and refuses the one word the evidence does not
+support, by name.
 
 !!! note "A glossary is not a source"
     The failure here is not that somebody wrote something wrong. It is that a
@@ -87,8 +88,7 @@ refuses the one word the evidence does not support, by name.
 
 ## What was changed
 
-On 2026-09-13, under
-[issue #104](https://github.com/RickSmith/survey-recon/issues/104):
+On 2026-09-13:
 
 - The `NoData` entry in `CONTEXT.md` was rewritten against the captures.
   `NoData` is still defined, because it is still a real thing an elevation
@@ -99,11 +99,12 @@ On 2026-09-13, under
   [the research page](../txdot-research.md) were marked where they read as this
   repo's own finding rather than as a quotation of the research
 - This page was added
-- `test_beat_slides.py` grew the check that was missing: the plan of record and
+- The automatic check grew the piece that was missing: the plan of record and
   the glossary are now held to the deck, the same way the fallback card already
   was
 
-**The folder is still called `silent-nodata`.** So is the title of issue #26.
+**The folder is still called `silent-nodata`.** So is the title of the work
+order that first described it.
 Renaming committed evidence to match a corrected story is its own kind of
 tidying-up, and the point of keeping the old name is that somebody reading the
 history can see where the description came from.
@@ -127,3 +128,12 @@ What we are saying is narrower, and it is the whole point: **this repo's rule is
 "cite it or say you could not confirm it," and an uncited claim sat in its
 glossary anyway. The glossary is the one file every other page is told to
 trust.**
+
+---
+
+## Where this came from
+
+The captures are from [work order #26](https://github.com/RickSmith/survey-recon/issues/26).
+The slide that inherited the wrong description was drafted under
+[#85](https://github.com/RickSmith/survey-recon/issues/85). The correction, and
+this page, are [#104](https://github.com/RickSmith/survey-recon/issues/104).

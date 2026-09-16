@@ -6,8 +6,7 @@ Ask a search engine for the TxDOT Survey Manual. The link you are handed is on
 **The manual is not there any more.** It is at `txdot.gov/manuals/row/ess/`, and
 the two are not the same document.
 
-This is failure beat one of the session, written under
-[issue #25](https://github.com/RickSmith/survey-recon/issues/25). It is not a
+This is the first of the two failures the session shows on purpose. It is not a
 story about a broken link. A broken link is easy — you click it, nothing loads,
 you look elsewhere. This one is worse than that, and the reason is the whole
 point.
@@ -120,24 +119,17 @@ so `python -m unittest discover -s tests -t .` catches one.
     reads as a guarantee and is not one. GitHub Actions ran two workflows at
     the time, the docs site and the slides, and neither ran a Python test.
 
-    #78 added `.github/workflows/tests.yml`, so the claim is true now. It is
-    recorded here rather than quietly corrected, because the gap between the
-    two drafts is the lesson.
+    A later work order added a workflow that runs the tests on every pull
+    request, so the claim is true now. It is recorded here rather than quietly
+    corrected, because the gap between the two drafts is the lesson.
 
-**Telling a citation from a warning.** Several pages here name
-`onlinemanuals.txdot.gov` on purpose, to warn about it — including the rule in
-CLAUDE.md forbidding it, and this page. A check that flagged its own rule is a
-check somebody deletes. So the test is whether the URL is **clickable**: a full
-address with `http://` or `https://` in front of it supports a claim; a hostname
-in a sentence does not.
+**How it tells a citation from a warning.** Several pages here name the old
+address on purpose, to warn about it, and this page is one of them. So the check
+looks only for a full, clickable address, with `http://` or `https://` in front
+of it. A hostname in a sentence is a warning. A full address is a claim.
 
-Two files hold real ones as fixtures and evidence, and each declares it in a
-line you meet before the URLs. The declaration exempts the **whole file**, which
-would be a loose thread — so a test pins the exempt list to exactly those two.
-Adding a third is a visible change to a test, not a quiet line in a file.
-
-That distinction is the only clever thing here. Everything else is a regular
-expression and a list of files, which is the point:
+That is the only clever part. Everything else is a pattern and a list of files,
+which is the point:
 
 > **The rule that catches an error is usually boring and was written for
 > something else.**
@@ -151,3 +143,12 @@ at 4pm on a Friday.
 
 **You still sign it.** The check catches a superseded address. It cannot tell
 you whether the section you quoted says what you think it says.
+
+---
+
+## Where this came from
+
+The failure was reproduced and written up under
+[work order #25](https://github.com/RickSmith/survey-recon/issues/25). The
+workflow that made "fails the build" true is
+[#78](https://github.com/RickSmith/survey-recon/issues/78).
