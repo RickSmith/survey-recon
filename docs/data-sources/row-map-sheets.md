@@ -1,15 +1,13 @@
 # The TxDOT ROW map sheet index
 
-**What we use it for:** counting the right-of-way map sheets over the corridor,
-and finding out how far back they go. A ROW map sheet is the historical record
-drawing of a right of way. A 1944 sheet means hand retracement off a scan that
-may barely be legible, and that is time somebody has to price.
+A right-of-way map sheet is the record drawing of a right of way, and the age
+of the sheets over a corridor is time somebody has to price. A 1944 sheet means
+hand retracement off a scan that may barely be legible. This service is how the
+tool counts the sheets over the corridor and finds out how far back they go.
 
-Written under [issue #16](https://github.com/RickSmith/survey-recon/issues/16).
-Every endpoint below was queried live on 2026-09-12 and returned real results.
-
-There are three traps here. One of them does not return a wrong answer — it
-stops the run.
+Every endpoint below was queried live on 12 September 2026 and returned real
+results. There are three traps here. One of them does not return a wrong
+answer. It stops the run.
 
 ---
 
@@ -142,7 +140,7 @@ output is what keeps the corridor's own route readable on its own.
 
 ## The corridor answer, and the county answer, and why they differ
 
-[Issue #16](https://github.com/RickSmith/survey-recon/issues/16) predicted **27
+An earlier count, made before the tool ran, predicted **27
 sheets spanning 1937 to 1998** for SH16 through Bexar. That number is right, and
 it is not the number the corridor run reports. Both were read live on
 2026-09-12 and both are cached.
@@ -238,3 +236,9 @@ The layer also publishes `ORIG_CTRL_SECT_NBR`, `CURR_CTRL_SECT_NBR`, `RTE_NM2`,
 the SH16 sheets `ORIG_CTRL_SECT_NBR` and `CURR_CTRL_SECT_NBR` both equal
 `CTRL_SECT_NBR`, so the tool does not ask for them. A corridor where a control
 section was renumbered would want all three.
+
+---
+
+## Where this came from
+
+This service was worked out under [work order #16](https://github.com/RickSmith/survey-recon/issues/16), which is also where the county count of 27 was first predicted.
