@@ -353,10 +353,9 @@ in the kit.
 
 **This table is short on purpose, and it is meant to grow.** It lists what has
 actually stopped somebody, not everything that could. When a step stops you, the
-fix belongs here — that is
-[issue #9](https://github.com/RickSmith/survey-recon/issues/9), where one
-surveyor walks this page cold and every place they get stuck gets fixed rather
-than explained away.
+fix belongs here. One surveyor is going to walk this page cold before the
+session, and every place they get stuck gets fixed rather than explained away.
+That work order is named at the end of this page.
 
 ---
 
@@ -371,3 +370,10 @@ than explained away.
 
 **You accept the work. Not the agent.** Everything after this page is about that
 one sentence.
+
+---
+
+## Where this came from
+
+The plan to have one surveyor walk this page cold, and to fix every place they
+get stuck, is [work order #9](https://github.com/RickSmith/survey-recon/issues/9).
