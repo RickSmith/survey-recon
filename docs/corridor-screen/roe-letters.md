@@ -210,13 +210,16 @@ claims day 21 arrives whether or not a person is looking, and a public run
 summary shows that better than a model call would. Reaching a hosted Hermes
 model would also put an API key in the attendee path.
 
-**So say it on stage.** The block is called Hermes and a cron job runs it. A
-substitution nobody mentions is the thing this repo's own history exists to
-make visible.
+The block is called Hermes in the session plan, and a scheduled task runs it.
+Both names are kept on purpose. A substitution nobody mentions is exactly the
+kind of thing this site exists to make visible.
 
 ---
 
-Built under [issue #34](https://github.com/RickSmith/survey-recon/issues/34).
-The session block is 1:48–1:54 on
-[the run of show](../plan-of-record.md), and it is **first on the cut line** —
-which is why the recording exists.
+## Where this came from
+
+The letters and the clock were built under
+[work order #34](https://github.com/RickSmith/survey-recon/issues/34). In the
+session the block runs from 1:48 to 1:54 on
+[the run of show](../plan-of-record.md), and it is first on the cut line,
+which is why a recording of it exists.
