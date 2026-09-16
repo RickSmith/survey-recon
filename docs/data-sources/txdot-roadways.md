@@ -1,14 +1,13 @@
 # The TxDOT Roadways service
 
-**What we use it for:** the corridor's centerline. You give the tool a route
-name and two Distance From Origin numbers, as in "SH16 from Loop 410 to Old
-Bandera Rd." This is the service that turns those three things into a line on
-the ground. Everything else in a screening run hangs off that line.
+The first thing the tool needs is the road. Not a drawing of it, and not
+coordinates: TxDOT's own centerline, asked for by the name TxDOT uses and the
+two mile markers you give it, as in "SH16 from Loop 410 to Old Bandera Rd."
+This is the service that turns those three things into a line on the ground.
+Everything else in a screening run hangs off that line.
 
-Written under [issue #21](https://github.com/RickSmith/survey-recon/issues/21).
-Read live on 2026-09-13.
-
-There are two traps here and both bite on the **first thing you type**.
+Read live on 13 September 2026. There are two traps here, and both bite on the
+**first thing you type**.
 
 ---
 
@@ -189,3 +188,9 @@ rather than leaving a blank — see [the capture note](../scenarios/sh16/capture
 is drawn on the [ROW map sheets](row-map-sheets.md), and the corridor this tool
 builds is a **stated** half-width either side of the centerline, never a
 measured one.
+
+---
+
+## Where this came from
+
+This service was worked out under [work order #21](https://github.com/RickSmith/survey-recon/issues/21).

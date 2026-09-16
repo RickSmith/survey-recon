@@ -1,12 +1,11 @@
 # The BCAD parcels service
 
-**What we use it for:** the parcels in the corridor. This is the **spine** of a
-screening run — every flag hangs off a parcel, the lead times are per parcel,
-and nothing useful exists in the output before this service answers. On SH16 it
-returns 530 records, 524 of which land in the corridor.
+Every tract the ribbon touches, from the county appraisal district's own map.
+This is the **spine** of a screening run. Every flag hangs off a tract, every
+wait is per tract, and nothing useful exists in the output before this service
+answers. On SH16 it returns 530 records, 524 of which land in the corridor.
 
-Written under [issue #21](https://github.com/RickSmith/survey-recon/issues/21).
-Read live on 2026-09-13.
+Read live on 13 September 2026.
 
 ---
 
@@ -291,3 +290,9 @@ parcel row rather than reported as false.
 **Whether you may enter.** Nothing here is a right of entry. A parcel polygon is
 not permission, and [spec section 11](../corridor-screen/spec.md) is blunt that
 the tool will not assert a legal conclusion about access from one.
+
+---
+
+## Where this came from
+
+This service was worked out under [work order #21](https://github.com/RickSmith/survey-recon/issues/21). The field-name ruling was made on [pull request #52](https://github.com/RickSmith/survey-recon/pull/52).

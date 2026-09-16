@@ -1,15 +1,14 @@
 # The TxDOT primary control points service
 
-**What we use it for:** finding TxDOT's own primary control along the corridor,
-beside the NGS marks. A corridor with TxDOT control already set in it is one
-where a crew ties into something that exists. A corridor without it is one where
-control gets set, and those are different lines on an estimate.
+Beside the NGS marks, TxDOT keeps its own primary control. A corridor with
+TxDOT control already set in it is one where a crew ties into something that
+exists. A corridor without it is one where control gets set, and those are
+different lines on an estimate. This service is how the tool finds TxDOT's
+monuments.
 
-Written under [issue #15](https://github.com/RickSmith/survey-recon/issues/15).
-Every endpoint below was queried live on 2026-09-12 and returned real results.
-
-There are four traps on this service. One of them is that the trap this repo
-kept warning about is not the trap that is actually here.
+Every endpoint below was queried live on 12 September 2026 and returned real
+results. There are four traps on this service. One of them is that the trap the
+earlier notes kept warning about is not the trap that is actually here.
 
 ---
 
@@ -43,14 +42,14 @@ Two pieces of vocabulary, because they are used throughout this page:
 ## Trap one: layer 0 does not do what we said it did
 
 [Spec section 6](../corridor-screen/spec.md), [the research
-note](../txdot-research.md) and issue #15 all said the same two things. The
+note](../txdot-research.md) and the work order all said the same two things. The
 first is right: **control is layer 67.** The second is what we checked:
 
 > A tool that assumes layer 0 does not error — it returns the wrong data,
 > quietly.
 
 !!! success "Both documents now carry the correction"
-    Raised on issue #15 rather than patched over, and **Rick ruled on
+    Raised on the work order rather than patched over, and **Rick ruled on
     2026-09-13** that specification section 6 should say what the services
     actually do. It now does, with a note recording the amendment. The research
     note carries a dated correction for the same claim. The account of what was
@@ -82,8 +81,8 @@ TxDOT datasets, both called "control," one of them a line and one of them a
 monument.
 
 An agent told to find "TxDOT control" and reaching for layer 0 lands there and
-gets a plausible answer to the wrong question. That is the failure mode issue
-#15 described. It just lives in the service name rather than the layer number.
+gets a plausible answer to the wrong question. That is the failure the work
+order described. It just lives in the service name rather than the layer number.
 
 **The guard is the same either way**, and it runs before any query is sent:
 `checks.confirm_fields` reads the layer's published field list and refuses to go
@@ -377,3 +376,9 @@ count beside it:
 | The layer's own description, including its field list | `txdot-primary-control-points-layer-67-me__8b04fd67b764` |
 | The corridor query | `txdot-control-offset-0__b994285d5935` |
 | The control sheet attachments | `txdot-control-attachments__f04e379578c8` |
+
+---
+
+## Where this came from
+
+This service was worked out under [work order #15](https://github.com/RickSmith/survey-recon/issues/15).

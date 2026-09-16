@@ -1,15 +1,17 @@
 # The crew safety services
 
-**What we use them for:** finding the nearest hospital, ambulance service, fire
-or EMS station and police station for a corridor — and how far each one is.
+Before the truck leaves the yard, a party chief wants to know one thing about
+a corridor that no estimator asks: if somebody gets hurt out here, where do we
+go. These four services are how the tool finds the nearest hospital, ambulance
+service, fire or EMS station and police station, and how far each one is.
 
 This is the only block in the output that nobody prices. Every other part of a
 screening run answers a bid question. This one answers a party chief's question,
 asked before the truck leaves the yard: **if somebody gets hurt out here, where
 do we go.**
 
-Written under [issue #18](https://github.com/RickSmith/survey-recon/issues/18).
-Every endpoint below was queried live on 2026-09-13 and returned real results.
+Every endpoint below was queried live on 13 September 2026 and returned real
+results.
 
 ---
 
@@ -92,7 +94,7 @@ places**: the nearest ambulance service is Alamo Area Ambulance, and the
 nearest fire or EMS station is Helotes Fire Department. Neither is a subset of
 the other.
 
-Issue #18 asks for "nearest EMS." Asking only one of the two layers would have
+The work order asked for "nearest EMS." Asking only one of the two layers would have
 answered that with half the data, so both are asked and both are reported,
 separately rather than merged.
 
@@ -236,14 +238,14 @@ around this corridor, so none of them is asked for.
     **Police was not in section 6.** It listed this server's layers as
     "Cemeteries, Historic, Hospitals, Ambulance, Fire and EMS, Schools — 2, 11,
     14, 15, 16, 23," with no police row.
-    [Issue #18](https://github.com/RickSmith/survey-recon/issues/18) asks for
+    The work order asks for
     "nearest hospital, nearest EMS, nearest police" in as many words, so layer
     18 is called. Section 6 now carries it, and its row is split in two because
     the flags and the safety sheet are different steps asked different
     questions.
 
     **Hospitals and EMS are a separate output, not flags.** Section 5 put them
-    in step 6, among the flags that hang off a parcel. Issue #18 says this "is
+    in step 6, among the flags that hang off a parcel. The work order says this "is
     a different output from the flagged parcel list. It answers a field-crew
     safety question, not a bid question." They are step 9 now, writing their
     own `crew_safety` block and attached to no parcel.
@@ -272,3 +274,9 @@ around this corridor, so none of them is asked for.
     [PR #56](https://github.com/RickSmith/survey-recon/pull/56). All four were
     raised on the pull request and ruled on by Rick. So were these, on
     2026-09-13 — sections 5, 6 and 10 now say what this page describes.
+
+---
+
+## Where this came from
+
+This block was worked out under [work order #18](https://github.com/RickSmith/survey-recon/issues/18).

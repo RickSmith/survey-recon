@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+<rect width="1920" height="1080" fill="#ffffff"/>
+<text x="60.0" y="78.0" font-size="44" fill="#111827" font-weight="700" text-anchor="start">How the screening works</text>
+<text x="60.0" y="122.0" font-size="26" fill="#4b5563" font-weight="400" text-anchor="start">One line goes in. One file comes out. Three documents are written from it, and a licensed surveyor reads them.</text>
+<defs><marker id="head" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 Z" fill="#111827"/></marker></defs>
+<rect x="60" y="190" width="330" height="210" rx="14" fill="#ffffff" stroke="#0f766e" stroke-width="3"/>
+<rect x="60" y="190" width="330" height="8" rx="4" fill="#0f766e"/>
+<text x="84.0" y="242.0" font-size="26" fill="#111827" font-weight="700" text-anchor="start">1. A centerline</text>
+<text x="84.0" y="278.0" font-size="20" fill="#4b5563" font-weight="400" text-anchor="start">TxDOT's own, by route and mile.</text>
+<text x="84.0" y="306.0" font-size="20" fill="#4b5563" font-weight="400" text-anchor="start">8.691 miles on this job.</text>
+<line x1="390" y1="295" x2="440" y2="295" stroke="#111827" stroke-width="3" marker-end="url(#head)"/>
+<rect x="440" y="190" width="330" height="210" rx="14" fill="#ffffff" stroke="#0f766e" stroke-width="3"/>
+<rect x="440" y="190" width="330" height="8" rx="4" fill="#0f766e"/>
+<text x="464.0" y="242.0" font-size="26" fill="#111827" font-weight="700" text-anchor="start">2. A ribbon</text>
+<text x="464.0" y="278.0" font-size="20" fill="#4b5563" font-weight="400" text-anchor="start">300 feet either side.</text>
+<text x="464.0" y="306.0" font-size="20" fill="#4b5563" font-weight="400" text-anchor="start">The ground the job touches.</text>
+<line x1="770" y1="295" x2="820" y2="295" stroke="#111827" stroke-width="3" marker-end="url(#head)"/>
+<rect x="820" y="190" width="400" height="210" rx="14" fill="#ffffff" stroke="#0f766e" stroke-width="3"/>
+<rect x="820" y="190" width="400" height="8" rx="4" fill="#0f766e"/>
+<text x="844.0" y="242.0" font-size="26" fill="#111827" font-weight="700" text-anchor="start">3. Public services asked</text>
+<text x="844.0" y="278.0" font-size="20" fill="#4b5563" font-weight="400" text-anchor="start">14 of them, in a fixed order.</text>
+<text x="844.0" y="306.0" font-size="20" fill="#4b5563" font-weight="400" text-anchor="start">Every answer saved with its date</text>
+<text x="844.0" y="334.0" font-size="20" fill="#4b5563" font-weight="400" text-anchor="start">and the exact request.</text>
+<line x1="1220" y1="295" x2="1270" y2="295" stroke="#111827" stroke-width="3" marker-end="url(#head)"/>
+<rect x="1270" y="190" width="330" height="210" rx="14" fill="#ffffff" stroke="#0f766e" stroke-width="3"/>
+<rect x="1270" y="190" width="330" height="8" rx="4" fill="#0f766e"/>
+<text x="1294.0" y="242.0" font-size="26" fill="#111827" font-weight="700" text-anchor="start">4. One file</text>
+<text x="1294.0" y="278.0" font-size="20" fill="#4b5563" font-weight="400" text-anchor="start">screening.json.</text>
+<text x="1294.0" y="306.0" font-size="20" fill="#4b5563" font-weight="400" text-anchor="start">Every answer, and every</text>
+<text x="1294.0" y="334.0" font-size="20" fill="#4b5563" font-weight="400" text-anchor="start">question nobody could answer.</text>
+<line x1="1435" y1="400" x2="1435" y2="450" stroke="#111827" stroke-width="3" marker-end="url(#head)"/>
+<text x="60.0" y="440.0" font-size="24" fill="#111827" font-weight="700" text-anchor="start">The services, by what they were asked for</text>
+<text x="60.0" y="476.0" font-size="19" fill="#0f766e" font-weight="700" text-anchor="start">the centerline</text>
+<text x="76.0" y="502.0" font-size="18" fill="#4b5563" font-weight="400" text-anchor="start" class="service">TxDOT_Roadways  1 returned</text>
+<text x="60.0" y="528.0" font-size="19" fill="#0f766e" font-weight="700" text-anchor="start">the ribbon</text>
+<text x="76.0" y="554.0" font-size="18" fill="#4b5563" font-weight="400" text-anchor="start" class="service">ArcGIS_Geometry  1 returned</text>
+<text x="60.0" y="580.0" font-size="19" fill="#0f766e" font-weight="700" text-anchor="start">the tracts</text>
+<text x="76.0" y="606.0" font-size="18" fill="#4b5563" font-weight="400" text-anchor="start" class="service">BCAD_Parcels  530 returned</text>
+<text x="60.0" y="632.0" font-size="19" fill="#0f766e" font-weight="700" text-anchor="start">flag:school</text>
+<text x="76.0" y="658.0" font-size="18" fill="#4b5563" font-weight="400" text-anchor="start" class="service">USGS_Structures_Schools  39 returned</text>
+<text x="60.0" y="684.0" font-size="19" fill="#0f766e" font-weight="700" text-anchor="start">flag:cemetery</text>
+<text x="76.0" y="710.0" font-size="18" fill="#4b5563" font-weight="400" text-anchor="start" class="service">USGS_Structures_Cemeteries  6 returned</text>
+<text x="450.0" y="476.0" font-size="19" fill="#0f766e" font-weight="700" text-anchor="start">flag:railroad</text>
+<text x="466.0" y="502.0" font-size="18" fill="#4b5563" font-weight="400" text-anchor="start" class="service">USGS_Transportation_Railroads  0 returned</text>
+<text x="450.0" y="528.0" font-size="19" fill="#0f766e" font-weight="700" text-anchor="start">flag:pipeline</text>
+<text x="466.0" y="554.0" font-size="18" fill="#4b5563" font-weight="400" text-anchor="start" class="service">RRC_TPMS_Pipelines  0 returned</text>
+<text x="450.0" y="580.0" font-size="19" fill="#0f766e" font-weight="700" text-anchor="start">control:ngs</text>
+<text x="466.0" y="606.0" font-size="18" fill="#4b5563" font-weight="400" text-anchor="start" class="service">NGS_Datasheets  31 returned</text>
+<text x="450.0" y="632.0" font-size="19" fill="#0f766e" font-weight="700" text-anchor="start">control:txdot</text>
+<text x="466.0" y="658.0" font-size="18" fill="#4b5563" font-weight="400" text-anchor="start" class="service">TxDOT_Primary_Control_Points  8 returned</text>
+<text x="450.0" y="684.0" font-size="19" fill="#0f766e" font-weight="700" text-anchor="start">row-maps</text>
+<text x="466.0" y="710.0" font-size="18" fill="#4b5563" font-weight="400" text-anchor="start" class="service">TxDOT_ROW_Maps  69 returned</text>
+<text x="840.0" y="476.0" font-size="19" fill="#0f766e" font-weight="700" text-anchor="start">safety:hospital</text>
+<text x="856.0" y="502.0" font-size="18" fill="#4b5563" font-weight="400" text-anchor="start" class="service">USGS_Structures_Hospitals  33 returned</text>
+<text x="840.0" y="528.0" font-size="19" fill="#0f766e" font-weight="700" text-anchor="start">safety:ambulance</text>
+<text x="856.0" y="554.0" font-size="18" fill="#4b5563" font-weight="400" text-anchor="start" class="service">USGS_Structures_Ambulance  33 returned</text>
+<text x="840.0" y="580.0" font-size="19" fill="#0f766e" font-weight="700" text-anchor="start">safety:fire_ems</text>
+<text x="856.0" y="606.0" font-size="18" fill="#4b5563" font-weight="400" text-anchor="start" class="service">USGS_Structures_Fire_EMS  140 returned</text>
+<text x="840.0" y="632.0" font-size="19" fill="#0f766e" font-weight="700" text-anchor="start">safety:police</text>
+<text x="856.0" y="658.0" font-size="18" fill="#4b5563" font-weight="400" text-anchor="start" class="service">USGS_Structures_Police  57 returned</text>
+<rect x="1270" y="530" width="330" height="160" rx="14" fill="#ffffff" stroke="#b45309" stroke-width="3"/>
+<rect x="1270" y="530" width="330" height="8" rx="4" fill="#b45309"/>
+<text x="1294.0" y="582.0" font-size="26" fill="#111827" font-weight="700" text-anchor="start">5. Three documents</text>
+<text x="1294.0" y="618.0" font-size="20" fill="#4b5563" font-weight="400" text-anchor="start">The bid memo.</text>
+<text x="1294.0" y="646.0" font-size="20" fill="#4b5563" font-weight="400" text-anchor="start">The flagged parcel table.</text>
+<text x="1294.0" y="674.0" font-size="20" fill="#4b5563" font-weight="400" text-anchor="start">The crew-day build-up.</text>
+<line x1="1435" y1="690" x2="1435" y2="740" stroke="#111827" stroke-width="3" marker-end="url(#head)"/>
+<rect x="1270" y="740" width="330" height="150" rx="14" fill="#f9fafb" stroke="#111827" stroke-width="3"/>
+<rect x="1270" y="740" width="330" height="8" rx="4" fill="#111827"/>
+<text x="1294.0" y="792.0" font-size="26" fill="#111827" font-weight="700" text-anchor="start">6. A surveyor decides</text>
+<text x="1294.0" y="828.0" font-size="20" fill="#4b5563" font-weight="400" text-anchor="start">524 tracts, 8 flagged, 11 marks,</text>
+<text x="1294.0" y="856.0" font-size="20" fill="#4b5563" font-weight="400" text-anchor="start">69 sheets. The tool decides nothing.</text>
+<text x="60.0" y="1050.0" font-size="18" fill="#9ca3af" font-weight="400" text-anchor="start">Run texas-bexar-sh0016-kg-20260913T070646, finished 2026-09-13T07:07:07-05:00. Drawn from the services block of screening.json. Nothing here was drawn by hand.</text>
+</svg>

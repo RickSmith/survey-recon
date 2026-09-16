@@ -5,10 +5,9 @@ This repo told people, on four pages, that TBPELS had not spoken directly to AI.
 **That was wrong.** The board approved a written opinion on AI on 14 November
 2024. It had been public for nearly two years when we wrote the opposite.
 
-This page is the account of that, kept for the same reason
-[the force push](the-force-push.md) is kept. A repo that claims its history is
-honest enough to project on a wall has to include the parts that are not
-flattering.
+Here is how it happened, what caught it, and what was changed. It is kept for
+the same reason [the force push](the-force-push.md) is kept: a record that
+leaves out the unflattering parts is not a record.
 
 ## What we said
 
@@ -52,14 +51,11 @@ tell, and nobody typed it into a search box next to the word "TBPELS."
 
 It survived four rewrites because each rewrite copied it from the last one.
 
-It was caught on **2026-09-12**, by an agent researching the governance pages
-under [issue #7](https://github.com/RickSmith/survey-recon/issues/7) — whose
-written acceptance criteria instructed it to state the claim. The agent looked
+It was caught on **2026-09-12**, by an agent writing the governance pages. The
+work order it was working from told it, in writing, to state the claim. The agent looked
 the claim up before writing it down, found PAO 71, and stopped.
 
 ## The uncomfortable part
-
-Read that last paragraph again.
 
 The work order was wrong. A licensed human wrote it. The agent was told, in
 writing, to publish a false statement of law to an audience of licensed
@@ -87,7 +83,7 @@ else.** This one was written about TxDOT manuals.
 
 ## What was changed
 
-On 2026-09-12, under issue #7:
+On 2026-09-12:
 
 - The false sentence was removed from `README.md`, `docs/index.md` and
   `docs/plan-of-record.md`, and replaced with what PAO 71 actually says
@@ -111,3 +107,11 @@ prepared. Those remain **not found**, and they are written up as not found on
 
 The difference between this page and the sentence it replaced is that "not found"
 now means somebody looked.
+
+---
+
+## Where this came from
+
+The claim was caught and corrected under
+[work order #7](https://github.com/RickSmith/survey-recon/issues/7), the one
+that was telling the agent to repeat it.
