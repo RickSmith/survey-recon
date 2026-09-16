@@ -200,6 +200,40 @@ where the time goes. The rest of the traffic control is read from
 `TCP(S-1)-08A` itself: the duration line is **one hour**, and **no posted speed
 anywhere in the six-sheet family puts a shadow truck on the job.**
 
+## The drawings
+
+Surveyors read drawings, and until this command the job came with a JSON file.
+It draws the run:
+
+```bash
+python -m corridor_screen.drawings --out ../project-sh16 --copy-to ../docs/scenarios/sh16/img
+```
+
+It writes five SVG files into `project-sh16/drawings/`, and the same five again
+wherever `--copy-to` points, which is where the site can show them.
+
+| Drawing | What it shows |
+|---|---|
+| `corridor-map.svg` | The centerline, the 300-foot ribbon, all 524 tracts, and the 8 flagged ones numbered |
+| `control-map.svg` | The 11 NGS marks, each with its PID and `MARK NOT FOUND`, and the 2 TxDOT monuments |
+| `crew-safety-map.svg` | The nearest hospital, ambulance, fire and police, with a straight line to the nearer end of the corridor |
+| `how-it-works.svg` | The tool in one picture: a line in, fourteen services asked, one file out, three documents, one surveyor |
+| `crew-day-sheet.svg` | The build-up laid out as a sheet, with the two lines that have no total shown as having no total |
+
+**Nothing on a drawing is drawn by hand.** Every shape comes from the cached
+service responses the run names, and every number is read from
+`screening.json`. The tests read the numbers back out of the SVG and compare.
+
+**The copies under `docs/` are held to the sources.** A test fails if a copy
+differs from its source by one byte, and another fails if re-drawing the
+committed run does not reproduce the committed files. So after any change to
+this command or to the run, run it again with `--copy-to` and commit what it
+wrote. The site never shows an older drawing than the run it describes.
+
+The maps have no basemap and no street names beyond the two ends of the
+corridor, because the tool never had any. That is a limit and it is stated on
+each map. The bid memo carries a link to the ground.
+
 ## The check that keeps a citation honest
 
 ```bash

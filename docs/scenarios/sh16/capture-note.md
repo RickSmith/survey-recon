@@ -1,23 +1,27 @@
-# The SH16 capture: what happened
+# What the capture found
 
-**What was run:** SH16 (Bandera Road), Loop 410 to Old Bandera Rd, Bexar County —
-8.69 miles, 300-foot half-width. Every step the tool has been built to do, against
-the live services.
+[The worked example](index.md) tells the story of the SH16 job. This page is
+the field notes behind it: which services were asked, what each one sent
+back, and the things that would have put a wrong number in front of a surveyor
+if nobody had read the answers closely.
 
-**When:** most of it on 2026-09-13; **9 of the 39 responses were captured on
-2026-09-12** while the services were being worked out, and were re-checked
-rather than re-fetched because nothing about them had changed. Every response is
-committed in
+**What was run.** SH16 (Bandera Road), Loop 410 to Old Bandera Rd, Bexar
+County. 8.69 miles, with a ribbon 300 feet either side of the centerline.
+Every step the tool knows how to do, against the live services.
+
+**When.** Most of it on 13 September 2026. Nine of the thirty-nine responses
+were captured the day before, while the services were being worked out, and
+were checked again rather than fetched again because nothing about them had
+changed. Every response is saved in
 [`project-sh16/cache/`](https://github.com/RickSmith/survey-recon/tree/main/project-sh16/cache),
-each with a `.meta.toml` beside it carrying its own capture time, the exact
-request URL and every parameter of the request. The per-file stamps are the
-authority; this paragraph is a summary of them.
+each with a small record beside it carrying its own capture time, the exact
+request, and every parameter. Those per-file records are the authority. This
+page summarizes them.
 
-**Say this on stage.** *"These were captured on the 12th and 13th of September,
-so we're not at the mercy of the hotel Wi-Fi. The code is live code and you can
-run it yourself."* Undisclosed caching, if noticed, costs you the room.
-
-Written under [issue #20](https://github.com/RickSmith/survey-recon/issues/20).
+**Why the answers were saved.** So the session does not depend on the hotel
+network, and so that anybody can run the same screening later and compare. The
+code is real code. The answers are from September, and every page that shows
+them says so.
 
 ---
 
@@ -112,8 +116,8 @@ ones that put time on an estimate. Written up on
 
 ### The corridor's 15 sheets and the county's 27 are both right
 
-[Issue #16](https://github.com/RickSmith/survey-recon/issues/16) predicted 27
-sheets spanning 1937–1998. That is correct for SH16 across the whole of Bexar
+An earlier count, made before the tool ran, predicted 27 sheets spanning
+1937–1998. That is correct for SH16 across the whole of Bexar
 County, over three control sections. This corridor sits inside **one** of those
 three and reaches 15 of them, 1944–1998. 15 + 8 + 4 = 27.
 
@@ -163,8 +167,8 @@ while the responses underneath carried the truth.
 
 So a run replayed entirely from disk looked identical to one that had just
 called fourteen services, on the single field whose job is to say where the
-answer came from. Fixed under
-[issue #19](https://github.com/RickSmith/survey-recon/issues/19).
+answer came from. It has been fixed, and the replay now says `from-cache`
+where it should.
 
 ---
 
@@ -218,3 +222,15 @@ is itself a command, and it runs in the test suite with the network taken away.
 
 See [the corridor-screen README](https://github.com/RickSmith/survey-recon/blob/main/corridor-screen/README.md)
 for both.
+
+---
+
+## Where this came from
+
+The capture was made under
+[work order #20](https://github.com/RickSmith/survey-recon/issues/20). The
+field that was not being honest about itself was fixed under
+[#19](https://github.com/RickSmith/survey-recon/issues/19). The count of
+twenty-seven county sheets against fifteen corridor sheets was predicted on
+[#16](https://github.com/RickSmith/survey-recon/issues/16), and both numbers
+turned out to be right.

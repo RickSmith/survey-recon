@@ -5,9 +5,10 @@ works from, states it plainly:
 
 > Do not squash commits or rewrite history
 
-It was broken once, on purpose, fifteen minutes after the repo existed. This page
-is the account of that. It is here because a record nobody can check is not worth
-showing anybody.
+It was broken once, on purpose, fifteen minutes after the repo existed. Here is
+what happened, who decided, and what it cost. It is written down because a
+record nobody can check is not worth showing anybody, and because the shape of
+it is the whole session in miniature.
 
 ## First, what a force push is
 
