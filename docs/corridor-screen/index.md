@@ -25,6 +25,8 @@ cost time, and a crew-day build-up you can argue with one line at a time.
 That is the whole tool. It is a first pass, made at a desk, before you price a
 job.
 
+![How the screening works: one line in, fourteen services asked, one file out, three documents, one surveyor](../scenarios/sh16/img/how-it-works.svg)
+
 ## What it refuses to do
 
 **It does not decide anything.** It reports. A licensed surveyor reads the
