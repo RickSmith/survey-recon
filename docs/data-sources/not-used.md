@@ -5,8 +5,6 @@ ones it does not, and why — because a source that was *considered and rejected
 is worth as much to somebody building their own version as a source that was
 kept. The wrong service usually does not announce itself. It answers.
 
-Written under [issue #21](https://github.com/RickSmith/survey-recon/issues/21).
-
 ---
 
 ## USGS 3DEP elevation — and the coordinate-system silence
@@ -90,9 +88,8 @@ same day returned `Call failed.  [Failed cloud operation: Open, Path:
 
 ### The unit is not honored either, and that one hands you a number
 
-Found on 2026-09-13 under
-[issue #26](https://github.com/RickSmith/survey-recon/issues/26), and it is a
-worse trap than either of the two above because it answers.
+Found on 2026-09-13, and it is a worse trap than either of the two above,
+because it answers.
 
 Same point, same second, one word different:
 
@@ -215,3 +212,9 @@ code, a person who expected something else.
 
 That is the same judgment a surveyor already applies to a plat that does not
 close. It is the part of this that does not automate.
+
+---
+
+## Where this came from
+
+The sources on this page were reviewed under [work order #21](https://github.com/RickSmith/survey-recon/issues/21). The elevation service was tested again under [#26](https://github.com/RickSmith/survey-recon/issues/26), which is the second failure the session shows on purpose.

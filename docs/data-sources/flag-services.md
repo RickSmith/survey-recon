@@ -1,14 +1,14 @@
 # The flag services
 
-**What we use them for:** finding the things on a parcel that cost time: a
-school, a cemetery, a railroad, a pipeline. The tool then attaches a lead time
-to each one.
+Some tracts cost time before a crew can set foot on them. A school means a
+district to call. A cemetery means fourteen days of written notice. A railroad
+or a pipeline means somebody else's permission and somebody else's clock.
+These four services are how the tool finds those things, and then attaches a
+wait to each one.
 
-Written under [issue #17](https://github.com/RickSmith/survey-recon/issues/17).
-Every endpoint below was queried live on 2026-09-12 and returned real results.
-
-Two of the four had a trap in them. Both are written up in full, because both
-are the kind that answers you rather than erroring at you.
+Every endpoint below was queried live on 12 September 2026 and returned real
+results. Two of the four had a trap in them. Both are written up in full,
+because both are the kind that answers you rather than erroring at you.
 
 ---
 
@@ -272,8 +272,6 @@ goes under its own `error-` cache key, beside the good one rather than over it.
 Its provenance record carries the reported error in `warnings`, so that
 `http_status = 200` sitting in the same file cannot mislead a later reader.
 
-Written under [issue #62](https://github.com/RickSmith/survey-recon/issues/62).
-
 ---
 
 ## What this added to spec section 10
@@ -297,8 +295,8 @@ Nothing named in section 10 was removed or renamed.
 | Field | Where | Why it is here |
 |---|---|---|
 | `lead_time_basis` | on every flag | Two working days and two calendar days are different promises. § 251.151(a) excludes weekends and holidays; § 711.041 does not. A bare number is what a reader turns into a date and gets wrong |
-| `lead_time_confirmed` · `lead_time_statutory` | on every flag | Issue #17 asks for "code and section **where it is statutory**." A reader has to be able to tell a statute from a company's published procedure |
-| `lead_time_not_found` | on every flag, and on the parcel row | Issue #17 asks that an unconfirmed lead time say "not found" and say where it looked. On the row it is what stops a school-only parcel reading as clear |
+| `lead_time_confirmed` · `lead_time_statutory` | on every flag | The work order asks for "code and section **where it is statutory**." A reader has to be able to tell a statute from a company's published procedure |
+| `lead_time_not_found` | on every flag, and on the parcel row | The work order asks that an unconfirmed lead time say "not found" and say where it looked. On the row it is what stops a school-only parcel reading as clear |
 | `lead_time_days_low` · `lead_time_note` · `lead_time_verified_on` · `lead_time_driver_detail` | on every flag | The railroad figure is a published *range*; carrying only the planning number hides what it was chosen from. The note and the date are what make a citation checkable a year later |
 | `max_lead_time_basis` | on the parcel row | Same reason as `lead_time_basis` |
 | `parcels_crossed` | on a corridor-level flag | The number that stops one easement's notice period being counted once per parcel |
@@ -333,3 +331,9 @@ carries both, `record_count` and `records_used`. A reader sees "39 returned,
 6 used" rather than a bare 6. The 33 schools that were not used are a normal
 answer to the question that was asked, because the box is wider than the
 corridor. Hiding them would make the 6 look like the whole world.
+
+---
+
+## Where this came from
+
+The four services were worked out under [work order #17](https://github.com/RickSmith/survey-recon/issues/17), and the host that fails without failing under [#62](https://github.com/RickSmith/survey-recon/issues/62). The rulings on the pipeline service were made on [pull request #53](https://github.com/RickSmith/survey-recon/pull/53).

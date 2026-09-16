@@ -1,7 +1,8 @@
 # Esri ArcGIS geometry service
 
-**What we use it for:** turning a centerline and a half-width into the corridor
-polygon — the ribbon itself.
+A centerline is a line. A job is a strip of ground either side of it. This
+service is the calculator that turns the one into the other: it takes the
+centerline and the half-width and hands back the ribbon as a shape.
 
 **Endpoint**
 
@@ -96,3 +97,9 @@ so a run replayed from cache never needs it.
 [`corridor-screen/corridor_screen/sources.py`](https://github.com/RickSmith/survey-recon/blob/main/corridor-screen/corridor_screen/sources.py),
 as `GEOMETRY`. The unit codes and the finding above are recorded beside the
 buffer call in `corridor.py`.
+
+---
+
+## Where this came from
+
+This service was worked out under [work order #21](https://github.com/RickSmith/survey-recon/issues/21).
