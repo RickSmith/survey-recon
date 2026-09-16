@@ -1,10 +1,12 @@
 # Going further
 
-Every page before this one was written to need three things: **git, a GitHub
-account, and the Claude desktop app.** That was a promise, and it was kept.
+You have the kit, and it needs nothing but **git, a GitHub account, and the
+Claude desktop app.** That was the promise, and every page before this one
+keeps it.
 
-**This page breaks it on purpose.** The things kept out of the main path get to
-exist here, and each one says what it costs before it says what it does.
+This page is what lies past the promise. Some of it is worth having. All of it
+costs something to install, or something to trust, and each item here says
+what it costs before it says what it does.
 
 !!! warning "Nothing on this page is required"
     The [take-home toolkit](../toolkit/index.md) is finished without any of it.
@@ -188,16 +190,16 @@ the same permissive license as the five commands in your kit.
 The session's Hermes block is the right-of-entry letter that sends itself on day
 21. **It is a scheduled GitHub Actions job, and it is not Hermes.** The presenter
 says so on stage, and it is written down twice: in
-[ADR 0002](../adr/0002-the-hermes-segment-runs-on-a-schedule.md) and on
-[the right-of-entry letters page](../corridor-screen/roe-letters.md).
+[the decision record](../adr/0002-the-hermes-segment-runs-on-a-schedule.md)
+and on [the right-of-entry letters page](../corridor-screen/roe-letters.md).
 
 The short version: the claim that block makes is *day 21 arrives whether or not
 a person is looking.* A public run summary anybody can open proves that better
 than a model call would, and it costs an attendee nothing.
 
-ADR 0002 names this page as the place a real second-agent example could still
-earn its keep. **It has not been built.** Said here rather than left as a gap
-somebody finds later.
+A real example of a second agent working while nobody watches could still earn
+a place on this page. **It has not been built.** Said here rather than left as
+a gap somebody finds later.
 
 ---
 
@@ -226,3 +228,12 @@ in larger type than this one does.
 above, and type it the next time an answer does not make sense. It is not in
 your kit, so it costs you one of the two installs — and it is the cheapest
 thing on this page to be wrong about.
+
+---
+
+## Where this came from
+
+Why the session's Hermes block is a scheduled job and not the Hermes agent is
+[decision record 0002](../adr/0002-the-hermes-segment-runs-on-a-schedule.md).
+Why the kit holds nine of the twenty-five skills and not all of them is in
+[the skills README](https://github.com/RickSmith/survey-recon/blob/main/toolkit/.claude/skills/README.md).

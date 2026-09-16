@@ -1,11 +1,13 @@
 # Governance
 
-Three documents to take home. One for your insurer, one for your wall, and one
-for the argument about who is responsible.
+Sooner or later your insurer, your lawyer, or a client is going to ask what
+your firm does about AI. These three pages are so you have an answer on paper
+before that day. One is for your insurer, one is for your wall, and one is for
+the argument about who is responsible.
 
-They are **templates and a reading of public sources, not legal advice**, and not
-TBPELS guidance. Have your own counsel and your carrier read them. What they do
-is save those people an hour and give them something to mark up.
+They are **templates and a reading of public sources, not legal advice**, and
+not board guidance. Have your own counsel and your carrier read them. What they
+do is save those people an hour and give them something to mark up.
 
 <div class="grid cards" markdown>
 
@@ -75,8 +77,8 @@ for.**
 
 ## What to do with these, in order
 
-The three cards above are in browsing order, heaviest last. This is the order to
-actually work through them.
+The three pages are in browsing order above. This is the order to actually
+work through them.
 
 1. **Read [the seal page](seal-and-responsible-charge.md) yourself.** Twenty
    minutes. It is the one with the citations, and you are the one who signs
