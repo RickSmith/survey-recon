@@ -2,12 +2,18 @@
 
 **Reconnaissance for survey work, with an AI agent doing the legwork.**
 
-Before you price a job you do a recon — what control already exists, how many
-tracts you are crossing, who you need permission from, how long the field crew
-really needs. This site shows how to hand that work to an AI agent, and, more
-importantly, how to supervise one well enough to trust the answer.
+Before you price a job, somebody in your office spends a week finding out what
+is already there. What control exists and whether it can still be found. How
+many tracts the job crosses. Who has to give permission, and how long that
+takes. How many days the crew really needs.
 
-Built for the TSPS 2026 convention session *"Beyond the Prompt."*
+This site shows that week handed to an AI agent, on a real TxDOT job, from
+public records only. It shows what the agent found in twenty-one seconds, what
+it got wrong, and what a licensed surveyor still had to do before anything
+could be signed.
+
+It was built for the TSPS 2026 convention session *Beyond the Prompt*, and it
+stays up afterwards for anybody who wants to try the same thing on Monday.
 
 ---
 
@@ -15,17 +21,20 @@ Built for the TSPS 2026 convention session *"Beyond the Prompt."*
 
 <div class="grid cards" markdown>
 
--   **[Day 0: Setup](day-0/index.md)**
+-   **[The worked example](scenarios/sh16/index.md)**
 
-    Start from zero. A GitHub account, git, and the Claude desktop app. Nothing else.
+    One real job, told start to finish. SH16 in Bexar County, 8.69 miles, 524
+    tracts, and eleven survey marks nobody could find. Read this one first.
 
 -   **[For principals](for-principals/index.md)**
 
-    One page. No terminal. What to tell your team on Monday, and what you still sign for.
+    Four minutes, nothing to install. What to tell your team on Monday, what it
+    costs in hours, and what you still sign for.
 
--   **[The worked example](scenarios/sh16/index.md)**
+-   **[Day 0: Setup](day-0/index.md)**
 
-    A real TxDOT ROW job on SH16 in Bexar County, start to finish, from public data.
+    Start from nothing. A GitHub account, git, and the Claude desktop app. That
+    is the whole list.
 
 -   **[Slides](slides/index.md)**
 
@@ -33,31 +42,42 @@ Built for the TSPS 2026 convention session *"Beyond the Prompt."*
 
 </div>
 
+## The idea, in one paragraph
+
+An agent is a new kind of employee. It reads fast, it works overnight, it never
+gets tired, and it is sometimes confidently wrong in exactly the way a new hire
+is confidently wrong. You already know how to manage that person. You give
+them a clear scope. You give them small jobs. You look at their work before it
+goes out the door. And you sign it, which means you own it.
+
+Software developers built a discipline for managing exactly this kind of
+worker, years before agents existed. This site borrows that discipline and
+translates every word of it into the words you already use. The
+[vocabulary page](vocabulary/index.md) has the whole table. *Issue* means
+*work order*. *Pull request* means *the check print you redline*. The table is
+short, and none of it is hard.
+
 ## What is in here
 
 | | |
 |---|---|
-| [The worked example](scenarios/sh16/index.md) | Estimating a TxDOT ROW retracement on SH16, using only public data |
-| [Data sources](data-sources/index.md) | Verified, working endpoints for TxDOT GIS, NGS, county parcels, and more |
-| [Managing your agent](managing-your-agent/index.md) | Work orders, check prints, and who signs — the supervision loop |
-| [Toolkit](toolkit/index.md) | An agent configuration you can copy into your own firm's projects |
-| [Governance](governance/index.md) | A firm AI-use policy, what never leaves the office, and seal language |
-| [Going further](going-further/index.md) | Where to take this after the session |
+| [The worked example](scenarios/sh16/index.md) | The SH16 job, told as a story, with maps |
+| [Managing your agent](managing-your-agent/index.md) | How the supervision works, and five times it caught something |
+| [Corridor screening](corridor-screen/index.md) | The tool that did the desk work, and what it refuses to do |
+| [Data sources](data-sources/index.md) | Every public service the tool asks, and the ways each one can answer wrong |
+| [Toolkit](toolkit/index.md) | The part you take home. One folder to copy into your own job |
+| [Governance](governance/index.md) | A firm AI-use policy, what never leaves the office, and the rules on sealing |
+| [Going further](going-further/index.md) | Where to take this after the session, and what each step costs |
 
-## The idea
+## Who signs
 
-An agent is a new kind of employee — capable, fast, tireless, and occasionally
-confidently wrong in the way a new hire is confidently wrong. Managing one well
-takes the same things managing any new hire takes: a clear scope of work, small
-assignments, visible progress, and somebody checking the work before it goes out
-the door.
-
-Software developers already built that discipline. This repo borrows it and
-translates it. The [vocabulary](vocabulary/index.md) page has the full table.
-
-**The accountability never moves.** TBPELS addressed AI directly in
-[Policy Advisory Opinion 71](https://pels.texas.gov/nm/2024/pao-71-response.pdf),
-approved 14 November 2024: AI software is a tool, nothing bans it, and "licensees
-are ultimately responsible for any work product they sign and seal." You seal it,
-you own it. What that means for your firm is on the
+Nothing on this site changes who is responsible. The board said so in writing
+on 14 November 2024, in
+[Policy Advisory Opinion 71](https://pels.texas.gov/nm/2024/pao-71-response.pdf):
+AI software is a tool, nothing bans it, and *licensees are ultimately
+responsible for any work product they sign and seal.* You seal it, you own it.
+What that means for your firm, with the rules quoted, is on the
 [Governance](governance/index.md) pages.
+
+Everything here comes from public data. No client data was used, and the whole
+site, code and records included, stays public.
