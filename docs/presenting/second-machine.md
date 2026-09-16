@@ -225,10 +225,10 @@ Open [the dry run](dry-run.md) and follow it. Three things to carry in:
 - **Use `--out ../../dry-run-scratch`** on every command that takes it, and run
   the blocks in order — two of them read the cold open's output.
 - **Print [the fallback card](fallbacks.md)** and the dry-run page.
-- **Expect the live NGS call at 0:57 to fail.** It is answering nothing, and
-  then refusing —
-  [#128](https://github.com/RickSmith/survey-recon/issues/128). That is NGS,
-  not your machine. Rehearse saying so and moving on.
+- **The live NGS call at 0:57 can fail, and has.** On 14 September it answered
+  nothing, then refused the call an hour later. The next day it was back, with
+  the same thirteen marks. That is NGS, not your machine. Rehearse saying so
+  and moving on.
 
 ## When something does not work
 
@@ -240,5 +240,15 @@ Open [the dry run](dry-run.md) and follow it. Three things to carry in:
 | `no cached response for this request` | You skipped Step 6, the cache seed. |
 | `FileNotFoundError` from `crew_day` or `live_check` | You ran the blocks out of order. Send the cold open's screening run to the same folder first. |
 | `/grill-with-docs` is not in the `/` list | You skipped Step 10. This one takes out Act I. |
-| `HTTP Error 403` from NGS | Expected, and not your machine. [#128](https://github.com/RickSmith/survey-recon/issues/128). |
+| `HTTP Error 403` from NGS | It has happened before, and it is NGS, not your machine. Say so and move on. |
 | A wall of `failed to delete ... Permission denied` | You are in the OneDrive checkout, not `C:\dev`. The git command still worked — read the last line. |
+
+---
+
+## Where this came from
+
+This page was written under
+[work order #131](https://github.com/RickSmith/survey-recon/issues/131), after
+a second machine turned out to have none of the three Act I commands. The two
+days the live NGS call failed, and what it did when it came back, are on
+[#128](https://github.com/RickSmith/survey-recon/issues/128).

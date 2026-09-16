@@ -152,14 +152,18 @@ That is not hypothetical. It is what these rows did. #12 built the deck
 skeleton, #31 ported the concept slides and #32 built the money slide. All three
 closed. All three rows still read `not recorded`. A presenter reading down the
 page would have taken the gap as closed along with them. The slides landed.
-The export did not. Written under
-[issue #96](https://github.com/RickSmith/survey-recon/issues/96), and the reason
-the check stays out of the suite is in the test file beside the test it is
-about.
+The export did not. The reason the check stays out of the suite is in the test
+file beside the test it is about.
 
 A fallback page that is out of date is worse than no page, because it gets
 followed. This one fails the test suite instead.
 
-Written under [issue #27](https://github.com/RickSmith/survey-recon/issues/27),
-which asked whether the set was complete. It was not, and the gaps above are
-the answer.
+---
+
+## Where this came from
+
+This card was written under
+[work order #27](https://github.com/RickSmith/survey-recon/issues/27), which
+asked whether the set of fallbacks was complete. It was not, and the section
+above is the answer. The finding that a closed work order is not a closed gap
+came out of [#96](https://github.com/RickSmith/survey-recon/issues/96).

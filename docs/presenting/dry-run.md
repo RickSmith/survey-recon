@@ -96,8 +96,8 @@ just quietly be missing the last three weeks of edits.
 
 *Why this is a step rather than a file in the repo:* nothing rendered is
 committed here, and a stale PDF sitting in a clone that nobody re-renders is a
-worse trap than no PDF at all. The decision is
-[#123](https://github.com/RickSmith/survey-recon/issues/123).
+worse trap than no PDF at all. The decision is written down; see the end of
+this page.
 
 ## What the rehearsal changes in the repo
 
@@ -233,8 +233,8 @@ right and it costs ten seconds.
 
 **Wrong rather than slow.** A `ping` line that says anything but `ok` names the
 service that is refusing. If the run stops there, that is the tool doing what
-[ADR 0001](../adr/0001-sanity-checks-warn-dead-services-stop.md) tells it to —
-a dead service stops the run rather than quietly returning less. Switch to the
+[its decision record](../adr/0001-sanity-checks-warn-dead-services-stop.md)
+tells it to: a dead service stops the run rather than quietly returning less. Switch to the
 cache. A finish on any parcel count other than **524** is not a slow demo, it
 is a different answer, and it needs saying out loud rather than reading past.
 
@@ -544,9 +544,8 @@ it. No client names, no job numbers.
 and that is a fact about the ask rather than a failure of it. With no network,
 put the form file on screen, read the question out, and ask the room to do it
 from their seats that evening. **The short link and the QR code do not exist
-yet.** They are [#10](https://github.com/RickSmith/survey-recon/issues/10),
-then [#38](https://github.com/RickSmith/survey-recon/issues/38). So the route on
-the slide is typed rather than scanned.
+yet.** Two open work orders, named at the end of this page, will make them. So
+the route on the slide is typed rather than scanned.
 
 **This block is on the never-cut list.**
 
@@ -667,3 +666,13 @@ these commands print. Those blocks were captured from real runs on 2026-09-13
 knows the difference between a demo that is slow and a demo that is wrong. If
 you run one in the rehearsal and it does not look like this, that is a finding,
 and it becomes an issue like any other.
+
+---
+
+## Where this came from
+
+The rehearsal itself is [work order #36](https://github.com/RickSmith/survey-recon/issues/36),
+which is the one to close afterward. The decision not to commit a rendered deck
+is [#123](https://github.com/RickSmith/survey-recon/issues/123). The short link
+and the QR code are [#10](https://github.com/RickSmith/survey-recon/issues/10)
+and then [#38](https://github.com/RickSmith/survey-recon/issues/38).
