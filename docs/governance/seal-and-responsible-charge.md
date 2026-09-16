@@ -1,7 +1,8 @@
 # The seal and responsible charge
 
-This page is the legal spine of the other two. It quotes the rules, gives the
-section numbers, and links the sources. Everything below was read on
+If your seal goes on the work, this is the page for you. It quotes the rules
+that put your name on an agent's output, gives the section numbers, and links
+the sources so your counsel can check every one. Everything below was read on
 **2026-09-12** from the board's own current publication.
 
 **This is not legal advice.** It is a reading of public documents, assembled so
