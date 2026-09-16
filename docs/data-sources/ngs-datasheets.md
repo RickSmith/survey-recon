@@ -1,13 +1,13 @@
 # The NGS datasheets service
 
-**What we use it for:** finding the NGS survey marks along the corridor, and
-carrying through the condition each one was last left in. Recovery costs less
-than setting new, so which of those two you are pricing is the single biggest
-lever in a control estimate — and a mark stamped `MARK NOT FOUND` is not a mark
-you have.
+Recovering a mark that exists costs less than setting a new one, so which of
+the two you are pricing is the biggest single lever in a control estimate. This
+service is how the tool finds the NGS marks along the corridor and, more
+important, the condition each one was last left in. A mark stamped `MARK NOT
+FOUND` is not a mark you have.
 
-Written under [issue #14](https://github.com/RickSmith/survey-recon/issues/14).
-Every endpoint below was queried live on 2026-09-12 and returned real results.
+Every endpoint below was queried live on 12 September 2026 and returned real
+results.
 
 There is one trap here and it is the quiet kind: a field that is called one
 thing in the specification and another thing on the service, where reading the
@@ -54,7 +54,7 @@ reason in the next section.
 ## The trap: the condition field is not called `condition`
 
 [Spec section 11](../corridor-screen/spec.md) says the `condition` field is
-carried through and never dropped. Issue #14 names `MARK NOT FOUND` as the value
+carried through and never dropped. The work order names `MARK NOT FOUND` as the value
 that matters. The Data Explorer API does publish a field called `condition`.
 
 **The feature service does not.** It publishes `LAST_COND`.
@@ -251,14 +251,19 @@ half-width. Control-hunting is a good reason to run the tool again with a wider
 
 ## What this does not tell you
 
-- **TxDOT primary control points are a separate work order**,
-  [issue #15](https://github.com/RickSmith/survey-recon/issues/15). They are layer
-  **67** on the TxDOT feature server. Until that lands, the output names
-  `txdot_points` as `not-screened` rather than leaving it out, so nobody reads a
-  missing block as an empty one.
+- **TxDOT's own monuments are a separate service**, layer **67** on the TxDOT
+  feature server, with [a page of their own](txdot-control-points.md). On SH16
+  the run found two of them. They are reported beside the NGS marks and never
+  added to them, because some monuments appear in both sets.
 - **NGS's condition is a report, not a survey.** `MARK NOT FOUND` means the last
   person who looked did not find it. It does not mean the mark is gone. Reading
   the datasheet's recovery history, and deciding what it is worth to your crew,
   is the sealing surveyor's call and not this tool's.
 - The tool reports `POOR`, `MONUMENTED` and anything else exactly as NGS wrote
   it, and does not grade them.
+
+---
+
+## Where this came from
+
+This service was worked out under [work order #14](https://github.com/RickSmith/survey-recon/issues/14). The center-versus-corridor ruling was made on [pull request #52](https://github.com/RickSmith/survey-recon/pull/52).

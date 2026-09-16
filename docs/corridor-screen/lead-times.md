@@ -5,10 +5,11 @@ how long you wait for permission before the work can start. It is the difference
 between a parcel you can shoot next Tuesday and one you cannot shoot until next
 month.
 
-This page is the citation list for every number the corridor tool prints. The
-numbers live in `corridor-screen/corridor_screen/lead_times.toml`, which is
-checked-in data rather than code, so the person who is accountable for a number
-can change it without touching Python and the change shows a readable diff.
+This page is where every number of days the corridor tool prints comes from.
+The numbers live in one plain text file,
+`corridor-screen/corridor_screen/lead_times.toml`, not in the program itself.
+So the person accountable for a number can change it without touching any
+code, and the change is visible line by line in the record.
 
 Every URL below was opened and read on **2026-09-12**, and the quoted language is
 what the page said on that date.
