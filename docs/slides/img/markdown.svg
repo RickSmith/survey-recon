@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 1000" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">
+<rect x="50" y="60" width="500" height="330" rx="14" fill="#eef2ef" stroke="#7a8a80" stroke-width="4"/>
+<text x="80" y="150" font-size="56" fill="#14281d" font-weight="400" text-anchor="start" font-family="Consolas, Menlo, monospace"># Heading</text>
+<text x="80" y="240" font-size="56" fill="#14281d" font-weight="400" text-anchor="start" font-family="Consolas, Menlo, monospace">**bold**</text>
+<text x="80" y="330" font-size="56" fill="#14281d" font-weight="400" text-anchor="start" font-family="Consolas, Menlo, monospace">- a point</text>
+<line x1="300" y1="400" x2="300" y2="470" stroke="#0b3d2e" stroke-width="8" stroke-linecap="round"/><path d="M274,460 L300,500 L326,460 Z" fill="#0b3d2e"/>
+<rect x="50" y="530" width="500" height="330" rx="14" fill="#ffffff" stroke="#0b3d2e" stroke-width="6"/>
+<text x="80" y="630" font-size="66" fill="#0b3d2e" font-weight="700" text-anchor="start" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">Heading</text>
+<text x="80" y="720" font-size="56" fill="#14281d" font-weight="700" text-anchor="start" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">bold</text>
+<text x="80" y="810" font-size="56" fill="#14281d" font-weight="400" text-anchor="start" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">• a point</text>
+</svg>

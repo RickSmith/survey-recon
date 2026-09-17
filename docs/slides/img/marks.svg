@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 1000" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">
+<line x1="110" y1="90" x2="190" y2="170" stroke="#b91c1c" stroke-width="14" stroke-linecap="round"/>
+<line x1="110" y1="170" x2="190" y2="90" stroke="#b91c1c" stroke-width="14" stroke-linecap="round"/>
+<line x1="260" y1="90" x2="340" y2="170" stroke="#b91c1c" stroke-width="14" stroke-linecap="round"/>
+<line x1="260" y1="170" x2="340" y2="90" stroke="#b91c1c" stroke-width="14" stroke-linecap="round"/>
+<line x1="410" y1="90" x2="490" y2="170" stroke="#b91c1c" stroke-width="14" stroke-linecap="round"/>
+<line x1="410" y1="170" x2="490" y2="90" stroke="#b91c1c" stroke-width="14" stroke-linecap="round"/>
+<line x1="110" y1="240" x2="190" y2="320" stroke="#b91c1c" stroke-width="14" stroke-linecap="round"/>
+<line x1="110" y1="320" x2="190" y2="240" stroke="#b91c1c" stroke-width="14" stroke-linecap="round"/>
+<line x1="260" y1="240" x2="340" y2="320" stroke="#b91c1c" stroke-width="14" stroke-linecap="round"/>
+<line x1="260" y1="320" x2="340" y2="240" stroke="#b91c1c" stroke-width="14" stroke-linecap="round"/>
+<line x1="410" y1="240" x2="490" y2="320" stroke="#b91c1c" stroke-width="14" stroke-linecap="round"/>
+<line x1="410" y1="320" x2="490" y2="240" stroke="#b91c1c" stroke-width="14" stroke-linecap="round"/>
+<line x1="110" y1="390" x2="190" y2="470" stroke="#b91c1c" stroke-width="14" stroke-linecap="round"/>
+<line x1="110" y1="470" x2="190" y2="390" stroke="#b91c1c" stroke-width="14" stroke-linecap="round"/>
+<line x1="260" y1="390" x2="340" y2="470" stroke="#b91c1c" stroke-width="14" stroke-linecap="round"/>
+<line x1="260" y1="470" x2="340" y2="390" stroke="#b91c1c" stroke-width="14" stroke-linecap="round"/>
+<line x1="410" y1="390" x2="490" y2="470" stroke="#b91c1c" stroke-width="14" stroke-linecap="round"/>
+<line x1="410" y1="470" x2="490" y2="390" stroke="#b91c1c" stroke-width="14" stroke-linecap="round"/>
+<line x1="110" y1="540" x2="190" y2="620" stroke="#b91c1c" stroke-width="14" stroke-linecap="round"/>
+<line x1="110" y1="620" x2="190" y2="540" stroke="#b91c1c" stroke-width="14" stroke-linecap="round"/>
+<line x1="260" y1="540" x2="340" y2="620" stroke="#b91c1c" stroke-width="14" stroke-linecap="round"/>
+<line x1="260" y1="620" x2="340" y2="540" stroke="#b91c1c" stroke-width="14" stroke-linecap="round"/>
+<text x="300" y="790" font-size="90" fill="#b91c1c" font-weight="700" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">11 of 11</text>
+<text x="300" y="870" font-size="56" fill="#14281d" font-weight="700" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">MARK NOT FOUND</text>
+<text x="300" y="950" font-size="56" fill="#7a8a80" font-weight="400" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">a report, not a verdict</text>
+</svg>

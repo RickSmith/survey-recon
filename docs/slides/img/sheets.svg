@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 1000" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">
+<rect x="120" y="80" width="300" height="220" rx="6" fill="#ffffff" stroke="#0b3d2e" stroke-width="5"/>
+<rect x="134" y="94" width="300" height="220" rx="6" fill="#ffffff" stroke="#0b3d2e" stroke-width="5"/>
+<rect x="148" y="108" width="300" height="220" rx="6" fill="#ffffff" stroke="#0b3d2e" stroke-width="5"/>
+<rect x="162" y="122" width="300" height="220" rx="6" fill="#ffffff" stroke="#0b3d2e" stroke-width="5"/>
+<rect x="176" y="136" width="300" height="220" rx="6" fill="#ffffff" stroke="#0b3d2e" stroke-width="5"/>
+<rect x="190" y="150" width="300" height="220" rx="6" fill="#ffffff" stroke="#0b3d2e" stroke-width="5"/>
+<text x="300" y="420" font-size="64" fill="#14281d" font-weight="700" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">69 sheets</text>
+<rect x="60" y="480" width="480" height="110" rx="12" fill="#ccfbf1" stroke="#0f766e" stroke-width="5"/>
+<text x="300" y="552" font-size="56" fill="#14281d" font-weight="700" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">15 are SH16's own</text>
+<rect x="60" y="620" width="480" height="110" rx="12" fill="#eef2ef" stroke="#7a8a80" stroke-width="5"/>
+<text x="300" y="692" font-size="56" fill="#14281d" font-weight="700" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">54 crossing routes</text>
+<text x="300" y="880" font-size="64" fill="#0b3d2e" font-weight="700" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">1944 to 1998</text>
+</svg>

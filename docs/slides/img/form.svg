@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 1000" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">
+<rect x="70" y="40" width="460" height="920" rx="14" fill="#ffffff" stroke="#0b3d2e" stroke-width="6"/>
+<text x="300" y="150" font-size="56" fill="#0b3d2e" font-weight="700" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">Introduce</text>
+<text x="300" y="215" font-size="56" fill="#0b3d2e" font-weight="700" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">yourself</text>
+<rect x="110" y="290" width="380" height="100" rx="10" fill="#eef2ef" stroke="#7a8a80" stroke-width="4"/>
+<text x="130" y="355" font-size="56" fill="#7a8a80" font-weight="400" text-anchor="start" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">who you are</text>
+<rect x="110" y="430" width="380" height="190" rx="10" fill="#fde68a" stroke="#b45309" stroke-width="5"/>
+<text x="130" y="500" font-size="56" fill="#b45309" font-weight="700" text-anchor="start" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">one job for</text>
+<text x="130" y="565" font-size="56" fill="#b45309" font-weight="700" text-anchor="start" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">an agent</text>
+<text x="300" y="700" font-size="56" fill="#7a8a80" font-weight="400" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">only this one</text>
+<text x="300" y="760" font-size="56" fill="#7a8a80" font-weight="400" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">required</text>
+<text x="300" y="860" font-size="56" fill="#14281d" font-weight="700" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">public.</text>
+<text x="300" y="920" font-size="56" fill="#14281d" font-weight="700" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">permanent.</text>
+</svg>

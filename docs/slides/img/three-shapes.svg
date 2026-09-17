@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 1000" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">
+<rect x="60" y="40" width="480" height="260" rx="24" fill="#eef2ef" stroke="#0b3d2e" stroke-width="6"/>
+<text x="300" y="150" font-size="64" fill="#14281d" font-weight="700" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">Chatbot</text>
+<text x="300" y="230" font-size="56" fill="#7a8a80" font-weight="400" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">you ask</text>
+<rect x="60" y="360" width="480" height="260" rx="24" fill="#bfe3d1" stroke="#0b3d2e" stroke-width="6"/>
+<text x="300" y="470" font-size="64" fill="#14281d" font-weight="700" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">Copilot</text>
+<text x="300" y="550" font-size="56" fill="#7a8a80" font-weight="400" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">you drive</text>
+<rect x="60" y="680" width="480" height="260" rx="24" fill="#0b3d2e" stroke="#0b3d2e" stroke-width="6"/>
+<text x="300" y="790" font-size="64" fill="#ffffff" font-weight="700" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">Agent</text>
+<text x="300" y="870" font-size="56" fill="#ffffff" font-weight="400" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">it acts</text>
+</svg>

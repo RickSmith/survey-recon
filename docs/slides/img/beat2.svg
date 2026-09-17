@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 1000" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">
+<text x="300" y="120" font-size="56" fill="#14281d" font-weight="700" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">same ground</text>
+<rect x="60" y="200" width="480" height="110" rx="12" fill="#ccfbf1" stroke="#0f766e" stroke-width="6"/>
+<text x="300" y="272" font-size="64" fill="#0f766e" font-weight="700" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">866.87</text>
+<text x="300" y="360" font-size="56" fill="#7a8a80" font-weight="400" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">asked in feet</text>
+<rect x="60" y="440" width="150" height="110" rx="12" fill="#fde68a" stroke="#b45309" stroke-width="6"/>
+<text x="135" y="512" font-size="64" fill="#b45309" font-weight="700" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">264</text>
+<text x="300" y="600" font-size="56" fill="#7a8a80" font-weight="400" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">asked in US_Feet</text>
+<text x="300" y="760" font-size="90" fill="#b91c1c" font-weight="700" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">meters</text>
+<text x="300" y="850" font-size="60" fill="#14281d" font-weight="700" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">no error</text>
+<text x="300" y="920" font-size="56" fill="#7a8a80" font-weight="400" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">either time</text>
+</svg>

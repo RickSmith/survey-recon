@@ -15,11 +15,11 @@
 section {
   width: 1920px;
   height: 1080px;
-  padding: 90px 120px;
+  padding: 80px 110px;
 
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 34pt;
-  line-height: 1.45;
+  font-size: 32pt;
+  line-height: 1.35;
   color: #14281d;
   background-color: #ffffff;
 
@@ -27,9 +27,9 @@ section {
 }
 
 section h1 {
-  font-size: 66pt;
+  font-size: 62pt;
   line-height: 1.15;
-  margin: 0 0 0.55em 0;
+  margin: 0 0 0.5em 0;
   color: #0b3d2e;
 }
 
@@ -53,7 +53,7 @@ section ol {
 }
 
 section li {
-  margin-bottom: 0.5em;
+  margin-bottom: 0.4em;
 }
 
 section strong {
@@ -61,8 +61,28 @@ section strong {
 }
 
 section code {
-  font-size: 0.85em;
+  font-size: 0.9em;
   background-color: #eef2ef;
+}
+
+/*
+  Pictures on a content slide.
+
+  A slide with a graphic beside its bullets uses Marp's split background,
+  written in the markdown as "![bg right:25%](img/name.svg)". Marp keeps the
+  right quarter for the picture and the bullets flow in the rest, so nothing
+  here has to know which slides carry one. The two rules below are for the
+  other kind, a picture in the flow of the slide, and they keep one from
+  pushing the page number off the canvas.
+*/
+section img {
+  max-width: 100%;
+  max-height: 780px;
+}
+
+section p:has(> img:only-child) {
+  margin: 0;
+  text-align: center;
 }
 
 /* The page number, bottom right. Still 28pt - everything is. */

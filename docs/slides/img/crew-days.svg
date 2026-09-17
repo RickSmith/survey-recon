@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 1000" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">
+<rect x="60" y="60" width="480" height="380" rx="20" fill="#ffffff" stroke="#0b3d2e" stroke-width="8"/>
+<text x="300" y="250" font-size="170" fill="#0b3d2e" font-weight="700" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">38</text>
+<text x="300" y="340" font-size="60" fill="#14281d" font-weight="700" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">crew-days</text>
+<text x="300" y="400" font-size="56" fill="#7a8a80" font-weight="400" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">in the field</text>
+<rect x="60" y="540" width="480" height="380" rx="20" fill="#ffffff" stroke="#0b3d2e" stroke-width="8"/>
+<text x="300" y="730" font-size="170" fill="#0b3d2e" font-weight="700" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">18</text>
+<text x="300" y="820" font-size="60" fill="#14281d" font-weight="700" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">days</text>
+<text x="300" y="880" font-size="56" fill="#7a8a80" font-weight="400" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">in the office</text>
+<text x="300" y="505" font-size="56" fill="#b45309" font-weight="700" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">never added</text>
+</svg>

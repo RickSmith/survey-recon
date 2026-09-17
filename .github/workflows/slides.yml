@@ -55,6 +55,7 @@ jobs:
             --env MARP_USER="$(id -u):$(id -g)" \
             "$MARP_IMAGE" \
             "$DECK" --theme-set docs/slides/themes --html --pdf \
+            --allow-local-files \
             --output _slides/beyond-the-prompt.pdf
 
       - name: Check both files actually exist

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 1000" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">
+<rect x="60" y="90" width="480" height="150" rx="14" fill="#ffffff" stroke="#7a8a80" stroke-width="6"/>
+<text x="300" y="185" font-size="56" fill="#7a8a80" font-weight="700" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">NATRF2022</text>
+<line x1="90" y1="110" x2="510" y2="220" stroke="#b91c1c" stroke-width="10" stroke-linecap="round"/>
+<rect x="60" y="300" width="480" height="150" rx="14" fill="#ffffff" stroke="#7a8a80" stroke-width="6"/>
+<text x="300" y="395" font-size="56" fill="#7a8a80" font-weight="700" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">NAPGD2022</text>
+<line x1="90" y1="320" x2="510" y2="430" stroke="#b91c1c" stroke-width="10" stroke-linecap="round"/>
+<rect x="60" y="510" width="480" height="150" rx="14" fill="#ffffff" stroke="#7a8a80" stroke-width="6"/>
+<text x="300" y="605" font-size="56" fill="#7a8a80" font-weight="700" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">SPCS2022</text>
+<line x1="90" y1="530" x2="510" y2="640" stroke="#b91c1c" stroke-width="10" stroke-linecap="round"/>
+<text x="300" y="800" font-size="60" fill="#14281d" font-weight="700" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">not in the</text>
+<text x="300" y="870" font-size="56" fill="#14281d" font-weight="700" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">April 2026 manual</text>
+</svg>

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 1000" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">
+<rect x="60" y="80" width="90" height="90" rx="12" fill="#ffffff" stroke="#0b3d2e" stroke-width="8"/>
+<path d="M80,125 L105,150 L135,105" fill="none" stroke="#0b3d2e" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="180" y="143" font-size="56" fill="#14281d" font-weight="700" text-anchor="start" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">one person</text>
+<rect x="60" y="300" width="90" height="90" rx="12" fill="#ffffff" stroke="#0b3d2e" stroke-width="8"/>
+<path d="M80,345 L105,370 L135,325" fill="none" stroke="#0b3d2e" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="180" y="363" font-size="56" fill="#14281d" font-weight="700" text-anchor="start" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">a policy</text>
+<rect x="60" y="520" width="90" height="90" rx="12" fill="#ffffff" stroke="#0b3d2e" stroke-width="8"/>
+<path d="M80,565 L105,590 L135,545" fill="none" stroke="#0b3d2e" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="180" y="583" font-size="56" fill="#14281d" font-weight="700" text-anchor="start" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">never leaves</text>
+<rect x="60" y="740" width="90" height="90" rx="12" fill="#ffffff" stroke="#0b3d2e" stroke-width="8"/>
+<path d="M80,785 L105,810 L135,765" fill="none" stroke="#0b3d2e" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="180" y="803" font-size="56" fill="#14281d" font-weight="700" text-anchor="start" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">who signs</text>
+</svg>

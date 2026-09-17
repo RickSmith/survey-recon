@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 1000" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">
+<path d="M180,80 C260,220 340,300 300,420 C270,520 380,580 420,640" fill="none" stroke="#ccfbf1" stroke-width="170" stroke-linecap="round"/>
+<path d="M180,80 C260,220 340,300 300,420 C270,520 380,580 420,640" fill="none" stroke="#0f766e" stroke-width="14" stroke-linecap="round"/>
+<line x1="240" y1="420" x2="360" y2="420" stroke="#b45309" stroke-width="8" stroke-linecap="round"/>
+<text x="300" y="840" font-size="64" fill="#0f766e" font-weight="700" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">300 ft</text>
+<text x="300" y="905" font-size="56" fill="#7a8a80" font-weight="400" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">each side</text>
+</svg>

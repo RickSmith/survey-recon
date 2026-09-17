@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 1000" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">
+<path d="M300,120 L560,600 L40,600 Z" fill="#fde68a" stroke="#b45309" stroke-width="14" stroke-linejoin="round"/>
+<text x="300" y="520" font-size="220" fill="#b45309" font-weight="700" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">!</text>
+<text x="300" y="740" font-size="56" fill="#14281d" font-weight="700" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">same voice</text>
+<text x="300" y="810" font-size="56" fill="#14281d" font-weight="700" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">right or wrong</text>
+</svg>

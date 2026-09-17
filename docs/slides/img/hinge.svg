@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 1000" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">
+<rect x="70" y="80" width="460" height="120" rx="10" fill="#0b3d2e" stroke="#0b3d2e" stroke-width="5"/>
+<text x="70" y="270" font-size="56" fill="#14281d" font-weight="400" text-anchor="start" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">asked</text>
+<text x="510" y="165" font-size="64" fill="#ffffff" font-weight="700" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">19</text>
+<rect x="70" y="370" width="314" height="120" rx="10" fill="#bfe3d1" stroke="#0b3d2e" stroke-width="5"/>
+<text x="70" y="560" font-size="56" fill="#14281d" font-weight="400" text-anchor="start" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">delegated</text>
+<text x="404" y="455" font-size="64" fill="#14281d" font-weight="700" text-anchor="start" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">13</text>
+<rect x="70" y="660" width="121" height="120" rx="10" fill="#fde68a" stroke="#0b3d2e" stroke-width="5"/>
+<text x="70" y="850" font-size="56" fill="#14281d" font-weight="400" text-anchor="start" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">changed the tool</text>
+<text x="211" y="745" font-size="64" fill="#14281d" font-weight="700" text-anchor="start" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">5</text>
+</svg>
