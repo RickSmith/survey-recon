@@ -219,6 +219,7 @@ wherever `--copy-to` points, which is where the site can show them.
 | `crew-safety-map.svg` | The nearest hospital, ambulance, fire and police, with a straight line to the nearer end of the corridor |
 | `how-it-works.svg` | The tool in one picture: a line in, fourteen services asked, one file out, three documents, one surveyor |
 | `crew-day-sheet.svg` | The build-up laid out as a sheet, with the two lines that have no total shown as having no total |
+| `corridor-slide.svg`, `control-slide.svg`, `safety-slide.svg` | The three maps again, for a projector. Same data and same frame, no side panel, and nothing on them under 32 px of type, because a room reads a slide from forty feet and a page from fourteen inches. The deck uses the first two as whole slides |
 
 **Nothing on a drawing is drawn by hand.** Every shape comes from the cached
 service responses the run names, and every number is read from

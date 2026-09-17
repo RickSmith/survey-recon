@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 1000" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">
+<rect x="130" y="100" width="340" height="480" rx="8" fill="#ffffff" stroke="#0b3d2e" stroke-width="6"/>
+<line x1="170" y1="180" x2="430" y2="180" stroke="#7a8a80" stroke-width="6" stroke-linecap="round"/>
+<line x1="170" y1="260" x2="430" y2="260" stroke="#7a8a80" stroke-width="6" stroke-linecap="round"/>
+<line x1="170" y1="340" x2="430" y2="340" stroke="#7a8a80" stroke-width="6" stroke-linecap="round"/>
+<line x1="170" y1="420" x2="430" y2="420" stroke="#7a8a80" stroke-width="6" stroke-linecap="round"/>
+<line x1="170" y1="500" x2="430" y2="500" stroke="#7a8a80" stroke-width="6" stroke-linecap="round"/>
+<path d="M470,300 C600,420 560,700 300,760" fill="none" stroke="#b91c1c" stroke-width="16" stroke-linecap="round"/>
+<path d="M300,760 L370,700 L360,800 Z" fill="#b91c1c"/>
+<text x="300" y="900" font-size="72" fill="#b91c1c" font-weight="700" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">sent back</text>
+<text x="300" y="965" font-size="56" fill="#7a8a80" font-weight="400" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">on the record</text>
+</svg>

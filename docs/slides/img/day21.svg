@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 1000" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">
+<line x1="300" y1="100" x2="300" y2="860" stroke="#0b3d2e" stroke-width="10" stroke-linecap="round"/>
+<circle cx="300" cy="120" r="30" fill="#0b3d2e" stroke="#ffffff" stroke-width="6"/>
+<text x="360" y="135" font-size="56" fill="#14281d" font-weight="700" text-anchor="start" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">day 0</text>
+<text x="360" y="195" font-size="56" fill="#7a8a80" font-weight="400" text-anchor="start" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">letter 1</text>
+<circle cx="300" cy="840" r="30" fill="#b45309" stroke="#ffffff" stroke-width="6"/>
+<text x="360" y="855" font-size="56" fill="#b45309" font-weight="700" text-anchor="start" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">day 21</text>
+<text x="360" y="915" font-size="56" fill="#7a8a80" font-weight="400" text-anchor="start" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">letter 2</text>
+<text x="240" y="500" font-size="56" fill="#7a8a80" font-weight="400" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">45 ÷ 2</text>
+<text x="240" y="560" font-size="56" fill="#7a8a80" font-weight="400" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">= 22</text>
+<text x="240" y="620" font-size="56" fill="#7a8a80" font-weight="400" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">→ 21</text>
+</svg>

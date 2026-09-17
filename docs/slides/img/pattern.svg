@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 1000" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">
+<rect x="70" y="60" width="460" height="150" rx="16" fill="#ffffff" stroke="#0b3d2e" stroke-width="6"/>
+<text x="300" y="158" font-size="60" fill="#14281d" font-weight="700" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">Corridor</text>
+<line x1="300" y1="210" x2="300" y2="270" stroke="#0b3d2e" stroke-width="8" stroke-linecap="round"/><path d="M274,260 L300,300 L326,260 Z" fill="#0b3d2e"/>
+<rect x="70" y="300" width="460" height="150" rx="16" fill="#bfe3d1" stroke="#0b3d2e" stroke-width="6"/>
+<text x="300" y="398" font-size="60" fill="#14281d" font-weight="700" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">Public data</text>
+<line x1="300" y1="450" x2="300" y2="510" stroke="#0b3d2e" stroke-width="8" stroke-linecap="round"/><path d="M274,500 L300,540 L326,500 Z" fill="#0b3d2e"/>
+<rect x="70" y="540" width="460" height="150" rx="16" fill="#ffffff" stroke="#0b3d2e" stroke-width="6"/>
+<text x="300" y="638" font-size="60" fill="#14281d" font-weight="700" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">Flagged list</text>
+<line x1="300" y1="690" x2="300" y2="750" stroke="#0b3d2e" stroke-width="8" stroke-linecap="round"/><path d="M274,740 L300,780 L326,740 Z" fill="#0b3d2e"/>
+<rect x="70" y="780" width="460" height="150" rx="16" fill="#bfe3d1" stroke="#0b3d2e" stroke-width="6"/>
+<text x="300" y="878" font-size="60" fill="#14281d" font-weight="700" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">Lead times</text>
+</svg>

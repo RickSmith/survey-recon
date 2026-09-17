@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 1000" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">
+<rect x="90" y="60" width="420" height="130" rx="14" fill="#ffffff" stroke="#0b3d2e" stroke-width="6"/>
+<text x="300" y="148" font-size="72" fill="#14281d" font-weight="700" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">The</text>
+<line x1="300" y1="190" x2="300" y2="220" stroke="#0b3d2e" stroke-width="8" stroke-linecap="round"/><path d="M274,210 L300,250 L326,210 Z" fill="#0b3d2e"/>
+<rect x="90" y="250" width="420" height="130" rx="14" fill="#ffffff" stroke="#0b3d2e" stroke-width="6"/>
+<text x="300" y="338" font-size="72" fill="#14281d" font-weight="700" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">crew</text>
+<line x1="300" y1="380" x2="300" y2="410" stroke="#0b3d2e" stroke-width="8" stroke-linecap="round"/><path d="M274,400 L300,440 L326,400 Z" fill="#0b3d2e"/>
+<rect x="90" y="440" width="420" height="130" rx="14" fill="#ffffff" stroke="#0b3d2e" stroke-width="6"/>
+<text x="300" y="528" font-size="72" fill="#14281d" font-weight="700" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">set</text>
+<line x1="300" y1="570" x2="300" y2="600" stroke="#0b3d2e" stroke-width="8" stroke-linecap="round"/><path d="M274,590 L300,630 L326,590 Z" fill="#0b3d2e"/>
+<rect x="90" y="630" width="420" height="130" rx="14" fill="#ffffff" stroke="#0b3d2e" stroke-width="6"/>
+<text x="300" y="718" font-size="72" fill="#14281d" font-weight="700" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">the</text>
+<line x1="300" y1="760" x2="300" y2="790" stroke="#0b3d2e" stroke-width="8" stroke-linecap="round"/><path d="M274,780 L300,820 L326,780 Z" fill="#0b3d2e"/>
+<rect x="90" y="820" width="420" height="130" rx="14" fill="#fde68a" stroke="#b45309" stroke-width="6"/>
+<text x="300" y="908" font-size="72" fill="#b45309" font-weight="700" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">?</text>
+</svg>

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 1000" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">
+<rect x="60" y="80" width="480" height="260" rx="14" fill="#eef2ef" stroke="#7a8a80" stroke-width="6"/>
+<text x="300" y="170" font-size="60" fill="#7a8a80" font-weight="700" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">March 2025</text>
+<text x="300" y="250" font-size="56" fill="#7a8a80" font-weight="400" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">retired</text>
+<line x1="80" y1="100" x2="520" y2="320" stroke="#b91c1c" stroke-width="14" stroke-linecap="round"/>
+<line x1="300" y1="370" x2="300" y2="440" stroke="#0b3d2e" stroke-width="8" stroke-linecap="round"/><path d="M274,430 L300,470 L326,430 Z" fill="#0b3d2e"/>
+<rect x="60" y="500" width="480" height="260" rx="14" fill="#ffffff" stroke="#0b3d2e" stroke-width="8"/>
+<text x="300" y="590" font-size="60" fill="#0b3d2e" font-weight="700" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">April 2026</text>
+<text x="300" y="670" font-size="56" fill="#0b3d2e" font-weight="400" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">in force</text>
+<text x="300" y="900" font-size="56" fill="#14281d" font-weight="400" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">same manual</text>
+<text x="300" y="965" font-size="56" fill="#14281d" font-weight="400" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">wrong year</text>
+</svg>

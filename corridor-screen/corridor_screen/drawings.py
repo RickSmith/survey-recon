@@ -98,7 +98,17 @@ NAMES = {
     "safety": "crew-safety-map.svg",
     "how": "how-it-works.svg",
     "sheet": "crew-day-sheet.svg",
+    # The same three maps again, for a projector. Same data, same frame, no
+    # side panel, and nothing on them under 32 pixels of type, because a room
+    # reads a slide from forty feet and a page from fourteen inches.
+    "corridor_slide": "corridor-slide.svg",
+    "control_slide": "control-slide.svg",
+    "safety_slide": "safety-slide.svg",
 }
+
+# The smallest type on a slide map. 32 px on a 1920-wide canvas is what the
+# deck's own theme floors at (28 pt), and a map label is not exempt from it.
+SLIDE_TYPE = 32
 
 # The same ink the parcel table uses, plus the few colors a map needs. Teal is
 # the site's own primary; amber is its accent and is what a flag reads as.
@@ -419,7 +429,7 @@ def footer(document, drawn_from):
     return [text(60, HEIGHT - 30, stamp, size=18, fill=FAINT)]
 
 
-def scale_bar(frame, x, y):
+def scale_bar(frame, x, y, size=20):
     """One mile, measured on this frame, drawn where the eye expects it."""
     length = frame.pixels_per_mile()
     return [
@@ -428,15 +438,15 @@ def scale_bar(frame, x, y):
         f'<line x1="{_n(x)}" y1="{_n(y - 10)}" x2="{_n(x)}" y2="{_n(y + 10)}" stroke="{INK}" stroke-width="3"/>',
         f'<line x1="{_n(x + length)}" y1="{_n(y - 10)}" x2="{_n(x + length)}" y2="{_n(y + 10)}" '
         f'stroke="{INK}" stroke-width="3"/>',
-        text(x + length / 2, y - 16, "1 mile", size=20, anchor="middle"),
+        text(x + length / 2, y - 16, "1 mile", size=size, anchor="middle"),
     ]
 
 
-def north_arrow(x, y):
+def north_arrow(x, y, size=24):
     return [
         f'<path d="M{_n(x)},{_n(y - 40)} L{_n(x + 14)},{_n(y + 10)} L{_n(x)},{_n(y)} '
         f'L{_n(x - 14)},{_n(y + 10)} Z" fill="{INK}"/>',
-        text(x, y + 38, "N", size=24, weight="700", anchor="middle"),
+        text(x, y + 38, "N", size=size, weight="700", anchor="middle"),
     ]
 
 
@@ -468,11 +478,12 @@ def marker_cross(x, y, size=11, stroke=AMBER, cls=None):
             f'stroke="{stroke}" stroke-width="5"/></g>')
 
 
-def numbered_dot(x, y, number, fill=AMBER, cls=None):
+def numbered_dot(x, y, number, fill=AMBER, cls=None, radius=16, size=20):
     cls = f' class="{cls}"' if cls else ""
-    return (f'<g{cls}><circle cx="{_n(x)}" cy="{_n(y)}" r="16" fill="{fill}" '
+    return (f'<g{cls}><circle cx="{_n(x)}" cy="{_n(y)}" r="{radius}" fill="{fill}" '
             f'stroke="{PAPER}" stroke-width="3"/>'
-            + text(x, y + 7, number, size=20, fill=PAPER, weight="700", anchor="middle")
+            + text(x, y + size * 0.35, number, size=size, fill=PAPER, weight="700",
+                   anchor="middle")
             + "</g>")
 
 
@@ -527,14 +538,25 @@ def base_map(frame, document, capture, parcels=True, faint=False):
     return body
 
 
-def end_labels(frame, document, above_first=True):
+def end_labels(frame, document, above_first=True, size=22, clamp=False):
+    """The two ends named. ``clamp`` keeps a label inside the frame's box when
+    the end it names sits near an edge, which the slide maps need and the page
+    maps do not."""
     body = []
+    left, top, width, height = frame.box
     for i, end in enumerate(ends(document)):
         if not end["point"]:
             continue
         x, y = frame.xy(*end["point"])
-        dy = -22 if (i == 0) == above_first else 40
-        body.append(text(x, y + dy, end["label"], size=22, weight="600", anchor="middle",
+        dy = -size if (i == 0) == above_first else size + 18
+        anchor = "middle"
+        if clamp:
+            half = 0.52 * size * len(end["label"]) / 2
+            if x - half < left:
+                anchor, x = "start", left
+            elif x + half > left + width:
+                anchor, x = "end", left + width
+        body.append(text(x, y + dy, end["label"], size=size, weight="600", anchor=anchor,
                          extra=' class="end-label"'))
     return body
 
@@ -1073,12 +1095,260 @@ def crew_day_sheet(document, capture=None, rates=None):
 # ------------------------------------------------------------------ writing
 
 
+# ------------------------------------------------------------------ the slide maps
+
+
+SLIDE_BOX = (60, 170, 1000, 850)
+SLIDE_PANEL = 1120
+
+
+def slide_header(title, subtitle):
+    return [
+        f'<rect width="{WIDTH}" height="{HEIGHT}" fill="{PAPER}"/>',
+        text(60, 84, title, size=56, weight="700"),
+        text(60, 138, subtitle, size=36, fill=MUTED),
+    ]
+
+
+def slide_footer(document, drawn_from):
+    run = document.get("run", {})
+    return [
+        text(60, HEIGHT - 60, f"Drawn from {drawn_from}. Nothing here was drawn by hand.",
+             size=28, fill=FAINT),
+        text(60, HEIGHT - 24, f"Run {run.get('run_id', '?')}, finished {run.get('finished_at', '?')}.",
+             size=28, fill=FAINT),
+    ]
+
+
+def slide_furniture(frame, document, above_first=True):
+    """End labels, a scale bar and a north arrow, at slide size."""
+    box = frame.box
+    return (end_labels(frame, document, above_first=above_first, size=SLIDE_TYPE + 2, clamp=True)
+            + scale_bar(frame, box[0] + 40, box[1] + box[3] - 40, size=SLIDE_TYPE)
+            + north_arrow(box[0] + box[2] - 50, box[1] + 70, size=SLIDE_TYPE + 4))
+
+
+def stat(x, y, big, small, fill=INK, cls=None):
+    """One figure and the words under it, for the right of a slide map."""
+    extra = f' class="{cls}"' if cls else ""
+    return [
+        text(x, y, big, size=64, weight="700", fill=fill, extra=extra),
+        text(x, y + 46, small, size=SLIDE_TYPE + 2, fill=MUTED),
+    ]
+
+
+def corridor_slide(document, capture):
+    """The corridor map for a projector: the ribbon, the tracts, the flags."""
+    frame = Frame(document["corridor"]["bbox"], SLIDE_BOX, pad=90)
+    rows = flagged(document)
+    parcels = document.get("parcels", [])
+    body = slide_header(
+        "Where the job is",
+        f"{corridor_title(document)}. {document['corridor'].get('half_width_ft', '?')} feet "
+        "either side of TxDOT's own centerline.",
+    )
+    body += base_map(frame, document, capture)
+    for place in flag_points(document, capture):
+        x, y = frame.xy(place["lon"], place["lat"])
+        body.append(marker_cross(x, y, size=16, cls="place") if place["type"] == "cemetery"
+                    else marker_square(x, y, size=13, cls="place"))
+    # The flagged tracts are filled and outlined, and not numbered: five of
+    # the eight on SH16 sit within a few hundred feet of each other, and eight
+    # numbered dots on a slide would cover the tracts they point at. The page
+    # map numbers them, because it has a list beside it to match them to.
+    rings_by_id = {p.get("id"): rings for p, rings in parcel_rings(document, capture)}
+    for parcel in rows:
+        rings = rings_by_id.get(parcel.get("id")) or []
+        if rings:
+            body.append(polygon(frame, rings, AMBER_FILL, AMBER, width=4.0, cls="flagged"))
+    body += slide_furniture(frame, document)
+
+    kinds = {}
+    for parcel in rows:
+        for flag in parcel.get("flags", []):
+            kinds[flag.get("type")] = kinds.get(flag.get("type"), 0) + 1
+    x, y = SLIDE_PANEL, 260
+    body += stat(x, y, f"{len(parcels)}", "tracts touch the ribbon", cls="stat-tracts")
+    y += 150
+    body += stat(x, y, f"{len(rows)}", "of them carry something that costs time",
+                 fill=AMBER, cls="stat-flagged")
+    y += 150
+    words = "  ·  ".join(
+        f"{count} {kind}{'' if count == 1 or kind.endswith('s') else 's'}"
+        for kind, count in sorted(kinds.items(), key=lambda item: -item[1])
+    )
+    body.append(text(x, y, words, size=SLIDE_TYPE + 6, fill=INK, weight="600"))
+    y += 110
+    legend = [
+        (f'<rect x="{x}" y="{y - 30}" width="52" height="36" fill="{TEAL_FILL}" stroke="{TEAL}" stroke-width="3"/>',
+         "the ribbon"),
+        (f'<rect x="{x}" y="{y + 40}" width="52" height="36" fill="{PARCEL_FILL}" stroke="{PARCEL_LINE}" stroke-width="3"/>',
+         "a tract the ribbon touches"),
+        (f'<rect x="{x}" y="{y + 110}" width="52" height="36" fill="{AMBER_FILL}" stroke="{AMBER}" stroke-width="3"/>',
+         "a tract that costs time"),
+        (marker_square(x + 26, y + 168, size=14), "a school"),
+        (marker_cross(x + 26, y + 238, size=17), "a cemetery"),
+    ]
+    for i, (symbol, label) in enumerate(legend):
+        body.append(symbol)
+        body.append(text(x + 76, y + i * 70, label, size=SLIDE_TYPE + 2, fill=MUTED))
+    body += slide_footer(document, "the roadway, buffer, parcel and flag responses in the cache")
+    return svg(body)
+
+
+def control_slide(document, capture):
+    """The control map for a projector: every mark, its PID, its condition."""
+    frame = Frame(document["corridor"]["bbox"], SLIDE_BOX, pad=90)
+    control = document.get("control", {})
+    marks = list(control.get("ngs_marks", []))
+    monuments = distinct_monuments(control.get("txdot_points", []))
+    risk = control.get("recovery_risk", {})
+    not_found = risk.get("mark_not_found", 0)
+    years = sorted({(m.get("last_recovered") or "")[:4] for m in marks if m.get("last_recovered")})
+    conditions = sorted(control.get("txdot_control", {}).get("by_condition", {}))
+
+    body = slide_header(
+        "What control is published here",
+        f"{len(marks)} NGS marks in the ribbon. {len(monuments)} TxDOT monuments.",
+    )
+    body += base_map(frame, document, capture, faint=True)
+    ordered = sorted(marks, key=lambda m: m.get("latitude") or 0, reverse=True)
+    for i, mark in enumerate(ordered):
+        if mark.get("longitude") is None or mark.get("latitude") is None:
+            continue
+        x, y = frame.xy(mark["longitude"], mark["latitude"])
+        body.append(marker_x(x, y, size=15, cls="mark"))
+        # Labels alternate sides of the line so neighbours do not overprint.
+        side = 1 if i % 2 == 0 else -1
+        body.append(text(x + side * 24, y + 12, mark.get("pid", "?"), size=SLIDE_TYPE,
+                         fill=RED, weight="700", anchor="start" if side > 0 else "end"))
+    for monument in monuments:
+        if monument.get("longitude") is None or monument.get("latitude") is None:
+            continue
+        x, y = frame.xy(monument["longitude"], monument["latitude"])
+        body.append(marker_triangle(x, y, size=18, cls="monument"))
+        body.append(text(x + 26, y + 40, monument.get("station", "?"), size=SLIDE_TYPE,
+                         fill=GREEN, weight="700"))
+    body += slide_furniture(frame, document)
+
+    x, y = SLIDE_PANEL, 260
+    body += stat(x, y, f"{len(marks)}", "NGS marks published in the ribbon", cls="stat-marks")
+    y += 150
+    body += stat(x, y, f"{not_found} of {len(marks)}", "recorded MARK NOT FOUND", fill=RED,
+                 cls="stat-not-found")
+    y += 110
+    if years:
+        span = years[0] if len(years) == 1 else f"{years[0]} to {years[-1]}"
+        body.append(text(x, y, f"Last looked for {span}", size=SLIDE_TYPE + 4, fill=MUTED))
+        y += 100
+    body += stat(x, y, f"{len(monuments)}", "TxDOT monuments, reported "
+                 + (", ".join(conditions) if conditions else "?"), fill=GREEN,
+                 cls="stat-monuments")
+    y += 150
+    for line in wrap("MARK NOT FOUND is a report with a date on it, not a verdict. "
+                     "Whether to look again or set new control is the surveyor's call.", 40):
+        body.append(text(x, y, line, size=SLIDE_TYPE, fill=MUTED))
+        y += 44
+    body += slide_footer(document, "the control block of screening.json")
+    return svg(body)
+
+
+def safety_slide(document, capture):
+    """The crew safety map for a projector: four places, four straight lines."""
+    places = nearest_places(document)
+    points = [(p["place"]["longitude"], p["place"]["latitude"]) for p in places]
+    bbox = document["corridor"]["bbox"]
+    if points:
+        bbox = union(bbox, bbox_of_points(points))
+    # A narrower box than the other two slide maps: the labels on this one
+    # stick out past the dots they name, and the panel on the right needs
+    # its room.
+    left, top, width, height = SLIDE_BOX
+    frame = Frame(grow(bbox, 0.06), (left, top, width - 120, height), pad=70)
+    body = slide_header(
+        "How far help is",
+        "Straight lines to the nearer end of the corridor. A straight line is not a drive.",
+    )
+    body += base_map(frame, document, capture, faint=True)
+    colors = {"hospital": VIOLET, "ambulance": RED, "fire_ems": AMBER, "police": TEAL}
+    # Where each label sits relative to its dot. Three of the four nearest
+    # places on SH16 are within a mile of the same end of the corridor, so
+    # labels all set to the right of their dots overprint each other. Each
+    # kind takes its own side, and a line too short to carry a distance box
+    # in its middle carries the distance on the label instead.
+    sides = {"hospital": "right", "police": "left", "ambulance": "below", "fire_ems": "right"}
+    for place in places:
+        x, y = frame.xy(place["place"]["longitude"], place["place"]["latitude"])
+        color = colors.get(place["kind"], INK)
+        distance = f"{place['end_miles']:.2f} mi"
+        label = place["label"]
+        if place["end_point"]:
+            ex, ey = frame.xy(*place["end_point"])
+            body.append(f'<line x1="{_n(x)}" y1="{_n(y)}" x2="{_n(ex)}" y2="{_n(ey)}" '
+                        f'stroke="{color}" stroke-width="5" stroke-dasharray="14 10" class="help-line"/>')
+            if math.hypot(ex - x, ey - y) >= 220:
+                mx, my = (x + ex) / 2, (y + ey) / 2
+                body.append(f'<rect x="{_n(mx - 80)}" y="{_n(my - 26)}" width="160" height="46" '
+                            f'rx="8" fill="{PAPER}" stroke="{color}" stroke-width="3"/>')
+                body.append(text(mx, my + 9, distance, size=SLIDE_TYPE, fill=color, weight="700",
+                                 anchor="middle", extra=' class="help-distance"'))
+            else:
+                label = f"{label} · {distance}"
+        body.append(f'<circle cx="{_n(x)}" cy="{_n(y)}" r="18" fill="{color}" '
+                    f'stroke="{PAPER}" stroke-width="4" class="help-place"/>')
+        side = sides.get(place["kind"], "right")
+        if side == "left":
+            body.append(text(x - 28, y + 11, label, size=SLIDE_TYPE, fill=color, weight="700",
+                             anchor="end"))
+        elif side == "below":
+            body.append(text(x, y + 60, label, size=SLIDE_TYPE, fill=color, weight="700",
+                             anchor="middle"))
+        else:
+            body.append(text(x + 28, y + 11, label, size=SLIDE_TYPE, fill=color, weight="700"))
+    # The end labels sit to the right of their dots on this map rather than
+    # above and below, because the places cluster at the Loop 410 end and a
+    # label under that dot lands on top of the ambulance.
+    box = frame.box
+    for i, end in enumerate(ends(document)):
+        if end["point"]:
+            x, y = frame.xy(*end["point"])
+            if i == 0:
+                body.append(text(x + 40, y + 12, end["label"], size=SLIDE_TYPE + 2, weight="600",
+                                 extra=' class="end-label"'))
+            else:
+                body.append(text(x - 40, y + 12, end["label"], size=SLIDE_TYPE + 2, weight="600",
+                                 anchor="end", extra=' class="end-label"'))
+    body += scale_bar(frame, box[0] + 40, box[1] + box[3] - 40, size=SLIDE_TYPE)
+    body += north_arrow(box[0] + box[2] - 50, box[1] + 70, size=SLIDE_TYPE + 4)
+
+    x, y = SLIDE_PANEL, 250
+    for place in places:
+        color = colors.get(place["kind"], INK)
+        p = place["place"]
+        body.append(f'<circle cx="{x + 16}" cy="{y - 12}" r="16" fill="{color}"/>')
+        for i, line in enumerate(wrap(f"{place['label']}: {p.get('name', '?')}", 36)):
+            body.append(text(x + 48, y, line, size=SLIDE_TYPE + 2, weight="700",
+                             extra=' class="help-row"' if i == 0 else ""))
+            y += 44
+        body.append(text(x + 48, y, f"{place['end_miles']:.2f} mi to {place['end_name']}",
+                         size=SLIDE_TYPE, fill=INK))
+        y += 42
+        body.append(text(x + 48, y, f"{place['other_miles']:.2f} mi to {place['other_name']}",
+                         size=SLIDE_TYPE, fill=MUTED))
+        y += 76
+    body += slide_footer(document, "the crew_safety block of screening.json")
+    return svg(body)
+
+
 DRAWINGS = (
     ("corridor", corridor_map),
     ("control", control_map),
     ("safety", crew_safety_map),
     ("how", how_it_works),
     ("sheet", crew_day_sheet),
+    ("corridor_slide", corridor_slide),
+    ("control_slide", control_slide),
+    ("safety_slide", safety_slide),
 )
 
 

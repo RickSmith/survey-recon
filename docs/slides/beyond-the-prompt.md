@@ -8,6 +8,8 @@ description: TSPS 2026 convention session on supervising an AI agent for survey 
 
 <!-- _class: title -->
 
+![bg](img/divider.svg)
+
 # Beyond the Prompt
 
 ## Getting Started with Agentic AI for Geomatics Tools and Workflows
@@ -33,6 +35,8 @@ Fallback if the command will not start: docs/presenting/fallbacks.md, row one.
 ---
 
 # The job we just handed it
+
+![bg right:24% contain](img/ribbon.svg)
 
 - **SH16, Loop 410 to Old Bandera Rd** — 8.69 miles, Bexar County
 - 300 ft each side of the centerline. We chose that and can modify if needed
@@ -91,6 +95,8 @@ down".
 
 <!-- _class: divider -->
 
+![bg](img/divider.svg)
+
 # What is an agent
 
 ## From a prediction engine to something that does work
@@ -112,6 +118,8 @@ line — §7 drops Hermes, the build-up and the token slide, in that order.
 ---
 
 # It predicts the next word
+
+![bg right:24% contain](img/next-word.svg)
 
 - It predicts the next word. Then the next one. That is the whole mechanism
 - Run that at scale — books, code, manuals, and yes, survey documentation
@@ -137,6 +145,8 @@ wrong. Beat 1 at 1:36 is where that lands.
 
 # Chatbot, copilot, agent
 
+![bg right:24% contain](img/three-shapes.svg)
+
 - **Chatbot** — you ask, it answers. You do all the work
 - **Copilot** — it drafts, you drive every step and accept or reject each one
 - **Agent** — you state the outcome; it plans, acts, checks, and goes again
@@ -158,6 +168,8 @@ cannot cost you anything. An agent can, because it acts.
 ---
 
 # The loop
+
+![bg right:24% contain](img/loop.svg)
 
 - **Goal** — you state the outcome
 - **Reason** — it plans the next step
@@ -185,6 +197,8 @@ A human decides what "done" means, before the loop starts. That is Act I.
 ---
 
 # Where it breaks
+
+![bg right:24% contain](img/caution.svg)
 
 - **Confidently wrong.** It invents things, and it believes stale things it finds
 - **Fooled by what it reads.** Give it least access, not the run of the yard
@@ -220,6 +234,8 @@ where it gets said properly.
 
 <!-- _class: divider -->
 
+![bg](img/divider.svg)
+
 # Vocabulary of managing one
 
 ## Every word here has a survey equivalent
@@ -238,8 +254,9 @@ authority for the words used here.
 
 # Markdown
 
-- **Markdown is plain text with a few marks** — not a CAD file, no proprietary
-  format, and no version that will not open in nine years
+![bg right:24% contain](img/markdown.svg)
+
+- **Markdown is plain text with a few marks** — not a CAD file, no proprietary format, and no version that will not open in nine years
 - The marks do the formatting: `#` makes a heading, `**this**` goes bold
 - Everything in this session is written in it, including these slides
 
@@ -257,6 +274,8 @@ same kind of file. Plain text on any machine, no software to buy.
 ---
 
 # The repo, and git
+
+![bg right:24% contain](img/field-book.svg)
 
 - A **repo** is the job folder. **Git** is the field book that never loses a page
 - A **branch** is a working copy nobody else is affected by
@@ -276,6 +295,8 @@ entry with a name and a date on it, and you are about to see the messy ones.
 ---
 
 # Issues, and pull requests
+
+![bg right:24% contain](img/check-print.svg)
 
 - An **issue** is a work order: what to do, and how you know it is done
 - A **pull request** is the check print you redline before anything is final
@@ -297,8 +318,9 @@ settled, and it is the authority, not this slide.
 
 # Context
 
-- The **context window** is what is spread on the desk right now. Anything off
-  the desk might as well not exist
+![bg right:24% contain](img/desk.svg)
+
+- The **context window** is what is spread on the desk right now. Anything off the desk might as well not exist
 - Every word it writes, it **re-reads** that whole window first
 - A handbook committed in the repo is on the desk every time. A conversation is not
 - **The survey parallel:** written office standards against hallway advice
@@ -319,8 +341,9 @@ conversation. Which is why the rules belong in a file, not in a chat.
 
 # Tokens
 
-- A **token** is a crew-hour for the machine — what the tool counts and bills
-  *you* in. Never the unit you bill a client in
+![bg right:24% contain](img/tokens.svg)
+
+- A **token** is a crew-hour for the machine — what the tool counts and bills *you* in. Never the unit you bill a client in
 - About **4 characters**, or three quarters of a word
 - *"Understanding AI is fascinating!"* is **7 tokens**, not four words
 - Which is why a long document costs more to work on than a short one
@@ -348,6 +371,8 @@ the tool costs *you*, which is the smaller of the two numbers by a distance.
 
 <!-- _class: divider act -->
 
+![bg](img/divider.svg)
+
 # Act I — The grilling
 
 ## The agent interviews you before it touches anything
@@ -368,6 +393,8 @@ screen. Nineteen questions, what was recommended, what Rick answered.
 ---
 
 # What the grilling is
+
+![bg right:24% contain](img/questions.svg)
 
 - You describe a job. The agent asks until it understands the scope
 - It is allowed to disagree with you, and it does
@@ -396,6 +423,8 @@ asks.
 
 # Live: the interview
 
+![bg right:24% contain](img/live.svg)
+
 - Run it against the SH16 scope, on the projector, at full size
 - Let the silences sit. The questions are the content
 - Watch for the one it asks that nobody in the room had thought of
@@ -416,6 +445,8 @@ corridor-screen/captures/the-grilling/the-grilling.md beside it.
 ---
 
 # Live: from answers to a scope of work
+
+![bg right:24% contain](img/live.svg)
 
 - The interview becomes a written scope you can read and argue with
 - Every decision is on the page, including the ones you did not make
@@ -468,6 +499,8 @@ Saturday went.
 
 # Why this is the hinge
 
+![bg right:24% contain](img/hinge.svg)
+
 - The work you do before the agent starts decides the outcome
 - A vague assignment produces confident, plausible, wrong work
 - **This is not new.** It is how you already supervise a party chief
@@ -512,6 +545,8 @@ of the five is the kind of thing that comes back as rework a month later.
 
 <!-- _class: divider -->
 
+![bg](img/divider.svg)
+
 # The money slide
 
 ## Rework is the argument. Speed is not.
@@ -529,6 +564,8 @@ build-up in project-sh16/, not from invention.
 ---
 
 # The billable-hour math
+
+![bg right:24% contain](img/crew-days.svg)
 
 - **38 crew-days** in the field — 299.29 hours at 8 to the day, 2 people to a crew
 - **18 days** in the office — 138.26 hours. The two are never added together
@@ -566,6 +603,8 @@ Fallback: project-sh16/crew-day.md is the build-up itself, with every step.
 
 # Rework, not speed
 
+![bg right:24% contain](img/invoice.svg)
+
 - **"There is no acceptable failure rate for any TxDOT survey"**
 - A non-compliant survey **cannot be invoiced**
 - Not a sentence about quality. A sentence about money
@@ -594,6 +633,8 @@ citation, on one page written for this room.
 ---
 
 <!-- _class: divider -->
+
+![bg](img/divider.svg)
 
 # Stretch + questions
 
@@ -627,6 +668,8 @@ Nothing is on screen to lose here, so there is no fallback to reach for.
 ---
 
 <!-- _class: divider act -->
+
+![bg](img/divider.svg)
 
 # Act II — Find the control
 
@@ -672,7 +715,29 @@ are. Do not reorder them for variety.
 
 ---
 
+![bg](../scenarios/sh16/img/corridor-slide.svg)
+
+<!--
+0:57–1:18 · 21 min · Act II — Find the control
+
+The corridor, drawn from the run. TxDOT's centerline, the 300-foot ribbon,
+every tract the ribbon touches, and the eight that carry something that costs
+time, filled in amber. Nothing on it was drawn by hand; the tests read the
+counts back out of the file.
+
+Point at the two ends and say which is which. Then point at the cluster of
+amber tracts in the middle: that is where seven of the eight are, and it is the
+school district land nobody has a notice period for.
+
+Fallback: docs/scenarios/sh16/img/corridor-slide.svg is the file itself, and it
+opens in any browser with no network.
+-->
+
+---
+
 # The NGS marks
+
+![bg right:24% contain](img/marks.svg)
 
 - **11 marks in the corridor. All 11 read `MARK NOT FOUND`**
 - That is a report with a date on it, not a verdict
@@ -713,7 +778,28 @@ recover eleven marks that the last person to look could not find.
 
 ---
 
+![bg](../scenarios/sh16/img/control-slide.svg)
+
+<!--
+0:57–1:18 · 21 min · Act II — Find the control
+
+The same corridor with the control on it. Eleven red crosses, one per NGS
+mark, each with its PID, and the two green triangles are TxDOT's own monuments.
+Every cross is a mark somebody looked for between 1995 and 2002 and did not
+find.
+
+Let the room read it before you talk. The picture makes the point the slide
+before it made in words: this is not eleven pieces of control you have.
+
+Fallback: docs/scenarios/sh16/img/control-slide.svg, drawn from the same run,
+opens with no network.
+-->
+
+---
+
 # The TxDOT control points
+
+![bg right:24% contain](img/monuments.svg)
 
 - **4 records in the corridor. They name 2 distinct monuments**
 - A crew drives to the monument. An estimator must not count it twice
@@ -758,6 +844,8 @@ date. Same corridor, two agencies -- and only the query happened on one day.
 
 # The right-of-way map sheets
 
+![bg right:24% contain](img/sheets.svg)
+
 - **69 sheets reach this corridor. 15 of them are SH16's own**
 - The other 54 belong to the crossing routes at the interchanges
 - SH16's 15 date **1944 to 1998** — fifty-four years of drawing
@@ -791,6 +879,8 @@ Records Request. Say that plainly -- it is a real gap and it costs real days.
 ---
 
 # The datum gap
+
+![bg right:24% contain](img/datum.svg)
 
 - **April 2026** Survey Manual: no realization, no epoch, no geoid model
 - No reference in it to **NATRF2022**, **NAPGD2022** or **SPCS2022**
@@ -835,6 +925,8 @@ the GEOID03 records are in project-sh16/cache/txdot-primary-control-points.
 
 # The one genuinely live call
 
+![bg right:24% contain](img/live.svg)
+
 - Everything so far came off the disk, captured in September, and we said so
 - This one goes out to the network now, in front of you
 - Last time: **5 marks in both, and all 5 conditions agreed**
@@ -864,6 +956,8 @@ way, and the command says so itself when there is no network.
 
 <!-- _class: divider act -->
 
+![bg](img/divider.svg)
+
 # Act III — The estimate package
 
 ## Three documents a principal can actually use
@@ -881,6 +975,8 @@ fallback that is just a file on the laptop.
 ---
 
 # The bid memo
+
+![bg right:24% contain](img/memo.svg)
 
 - One page a principal reads before pricing. Written by the tool, from the run
 - **What it could not check comes first**, ahead of anything it found
@@ -931,6 +1027,8 @@ for this slide is opening the file on the laptop.
 ---
 
 # The flagged parcel table
+
+![bg right:24% contain](img/flagged.svg)
 
 - **8 of 524 tracts** cost time. Soonest phone call at the top
 - `unknown` is never written as `no`. One of those finds a locked gate
@@ -1002,6 +1100,8 @@ table and the run are on the laptop whatever the network does.
 
 # The crew-day build-up
 
+![bg right:24% contain](img/handles.svg)
+
 - The hours as arguable math, not one number to take or leave
 - Every rate has a **handle**, `A1` to `A12`. Argue with a row, not a total
 - **5 of the 12 inputs were never measured.** No total, not a zero
@@ -1052,6 +1152,8 @@ thing as the console prints it, in one screen.
 
 <!-- _class: divider -->
 
+![bg](img/divider.svg)
+
 # Review, seal — and the three failures
 
 ## An hour of it working. Now the part that matters.
@@ -1069,6 +1171,8 @@ three and the least about accountability. Beat 3 is never cut.
 ---
 
 # Where the work got sent back
+
+![bg right:24% contain](img/sent-back.svg)
 
 - Every change here began as a work order and ended in a human review
 - **Nothing was squashed.** The history is untidy because it is real
@@ -1106,6 +1210,8 @@ open them from the laptop and never open GitHub at all.
 
 # Beat 1 — the superseded manual
 
+![bg right:24% contain](img/beat1.svg)
+
 - Search still hands out a TxDOT address that TxDOT retired
 - The old host answers nothing. **A timeout reads as weather**
 - So it followed the link, read a real manual, cited **March 2025**
@@ -1140,6 +1246,8 @@ beat as plain text, for a podium where Python will not start.
 ---
 
 # Beat 2 — wrong, not missing
+
+![bg right:24% contain](img/beat2.svg)
 
 - One question, asked twice, one word apart. Same point on Bandera Rd
 - `units=Feet` → **866.87**. `units=US_Feet` → **264.22**
@@ -1181,6 +1289,8 @@ Fallback: corridor-screen/captures/silent-nodata/the-beat.txt.
 ---
 
 # Beat 3 — the error in our own work order
+
+![bg right:24% contain](img/beat3.svg)
 
 - Our own work order told the agent to publish a false statement of law
 - A licensed human wrote it. It was live on **four pages** of this repo
@@ -1224,6 +1334,8 @@ doing. This is the beat that must not be cut, so it never depends on GitHub.
 ---
 
 # You seal it. You own it.
+
+![bg right:24% contain](img/seal.svg)
 
 - TBPELS has spoken directly to AI, in writing, since 2024
 - **AI is a tool. No rule bans it directly.** You answer for what you seal
@@ -1273,6 +1385,8 @@ needs no network.
 
 <!-- _class: divider -->
 
+![bg](img/divider.svg)
+
 # Hermes
 
 ## The second letter that sends itself
@@ -1290,12 +1404,13 @@ Build it so it survives being reduced to a recorded teaser. See #34.
 
 # The letter nobody remembers to send
 
+![bg right:24% contain](img/day21.svg)
+
 - Right of entry is not a statutory right **in Texas**. You have to ask
 - A denied RPLS *may seek* a court order; an LSLS *is entitled to* one
 - TxDOT ships **two** templates. Non-response is the ordinary case
 
-**Day 21 is derived, not typed.** 45 calendar days in `lead_times.toml`, cited
-to Union Pacific — halved, 22 — rounded to whole weeks, **21**.
+**Day 21 is derived, not typed.** 45 calendar days in `lead_times.toml`, cited to Union Pacific — halved, 22 — rounded to whole weeks, **21**.
 
 Tex. Occ. Code §§ 1071.3585 and 1071.358 · nothing in it touches client data
 
@@ -1326,6 +1441,8 @@ Do not claim it mails anything. It writes a file. An RPLS signs and sends.
 
 <!-- _class: divider -->
 
+![bg](img/divider.svg)
+
 # Accountability · Monday morning · the live issue
 
 ## What to do when you get back to the office
@@ -1342,6 +1459,8 @@ instruments adoption, and picks the next worked example, all at once.
 ---
 
 # The pattern, said out loud
+
+![bg right:24% contain](img/pattern.svg)
 
 - **Corridor → public data → flagged list → lead times**. Four steps
 - A ranch boundary and an ALTA fit that shape as well as a highway does
@@ -1380,6 +1499,8 @@ steps in its own words, on the laptop, with no network.
 ---
 
 # Monday morning
+
+![bg right:24% contain](img/monday.svg)
 
 - **Point one person at the repo. Not the office.** Somebody fussy about sources
 - **Write the firm's AI-use policy before anybody needs it**, not after
@@ -1425,6 +1546,8 @@ fallback is opening a file.
 ---
 
 # Introduce yourself
+
+![bg right:24% contain](img/form.svg)
 
 - One work order, opened live, on this screen. An **issue** is a work order
 - Who you are, and the one job you would hand to an agent tomorrow

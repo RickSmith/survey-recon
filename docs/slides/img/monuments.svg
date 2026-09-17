@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 1000" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">
+<path d="M180,145 L235,255 L125,255 Z" fill="#15803d" stroke="#ffffff" stroke-width="6"/>
+<path d="M250,145 L305,255 L195,255 Z" fill="#15803d" stroke="#ffffff" stroke-width="6"/>
+<path d="M350,145 L405,255 L295,255 Z" fill="#15803d" stroke="#ffffff" stroke-width="6"/>
+<path d="M420,145 L475,255 L365,255 Z" fill="#15803d" stroke="#ffffff" stroke-width="6"/>
+<text x="300" y="340" font-size="60" fill="#14281d" font-weight="700" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">4 records</text>
+<line x1="300" y1="380" x2="300" y2="450" stroke="#0b3d2e" stroke-width="8" stroke-linecap="round"/><path d="M274,440 L300,480 L326,440 Z" fill="#0b3d2e"/>
+<path d="M210,520 L280,660 L140,660 Z" fill="#15803d" stroke="#ffffff" stroke-width="6"/>
+<path d="M390,520 L460,660 L320,660 Z" fill="#15803d" stroke="#ffffff" stroke-width="6"/>
+<text x="300" y="740" font-size="60" fill="#15803d" font-weight="700" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">2 monuments</text>
+<text x="300" y="860" font-size="56" fill="#7a8a80" font-weight="400" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">a crew drives to</text>
+<text x="300" y="920" font-size="56" fill="#7a8a80" font-weight="400" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">the monument</text>
+</svg>

@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 1000" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">
+<rect x="80" y="60" width="200" height="100" rx="12" fill="#ffffff" stroke="#0b3d2e" stroke-width="6"/>
+<text x="180" y="128" font-size="56" fill="#14281d" font-weight="700" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">A1</text>
+<rect x="310" y="60" width="200" height="100" rx="12" fill="#ffffff" stroke="#0b3d2e" stroke-width="6"/>
+<text x="410" y="128" font-size="56" fill="#14281d" font-weight="700" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">A2</text>
+<rect x="80" y="190" width="200" height="100" rx="12" fill="#ffffff" stroke="#0b3d2e" stroke-width="6"/>
+<text x="180" y="258" font-size="56" fill="#14281d" font-weight="700" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">A3</text>
+<rect x="310" y="190" width="200" height="100" rx="12" fill="#fde68a" stroke="#b45309" stroke-width="6"/>
+<text x="410" y="258" font-size="56" fill="#b45309" font-weight="700" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">A4</text>
+<rect x="80" y="320" width="200" height="100" rx="12" fill="#ffffff" stroke="#0b3d2e" stroke-width="6"/>
+<text x="180" y="388" font-size="56" fill="#14281d" font-weight="700" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">A5</text>
+<rect x="310" y="320" width="200" height="100" rx="12" fill="#ffffff" stroke="#0b3d2e" stroke-width="6"/>
+<text x="410" y="388" font-size="56" fill="#14281d" font-weight="700" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">A6</text>
+<rect x="80" y="450" width="200" height="100" rx="12" fill="#ffffff" stroke="#0b3d2e" stroke-width="6"/>
+<text x="180" y="518" font-size="56" fill="#14281d" font-weight="700" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">A7</text>
+<rect x="310" y="450" width="200" height="100" rx="12" fill="#ffffff" stroke="#0b3d2e" stroke-width="6"/>
+<text x="410" y="518" font-size="56" fill="#14281d" font-weight="700" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">A8</text>
+<rect x="80" y="580" width="200" height="100" rx="12" fill="#ffffff" stroke="#0b3d2e" stroke-width="6"/>
+<text x="180" y="648" font-size="56" fill="#14281d" font-weight="700" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">A9</text>
+<rect x="310" y="580" width="200" height="100" rx="12" fill="#ffffff" stroke="#0b3d2e" stroke-width="6"/>
+<text x="410" y="648" font-size="56" fill="#14281d" font-weight="700" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">A10</text>
+<rect x="80" y="710" width="200" height="100" rx="12" fill="#ffffff" stroke="#0b3d2e" stroke-width="6"/>
+<text x="180" y="778" font-size="56" fill="#14281d" font-weight="700" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">A11</text>
+<rect x="310" y="710" width="200" height="100" rx="12" fill="#ffffff" stroke="#0b3d2e" stroke-width="6"/>
+<text x="410" y="778" font-size="56" fill="#14281d" font-weight="700" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">A12</text>
+<text x="300" y="900" font-size="56" fill="#14281d" font-weight="700" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">argue with a row</text>
+<text x="300" y="965" font-size="56" fill="#7a8a80" font-weight="400" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">not with the total</text>
+</svg>

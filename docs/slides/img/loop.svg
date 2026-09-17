@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 1000" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">
+<rect x="150" y="60" width="400" height="150" rx="16" fill="#ffffff" stroke="#0b3d2e" stroke-width="6"/>
+<text x="350" y="158" font-size="60" fill="#14281d" font-weight="700" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">Goal</text>
+<line x1="350" y1="210" x2="350" y2="270" stroke="#0b3d2e" stroke-width="8" stroke-linecap="round"/><path d="M324,260 L350,300 L376,260 Z" fill="#0b3d2e"/>
+<rect x="150" y="300" width="400" height="150" rx="16" fill="#bfe3d1" stroke="#0b3d2e" stroke-width="6"/>
+<text x="350" y="398" font-size="60" fill="#14281d" font-weight="700" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">Reason</text>
+<line x1="350" y1="450" x2="350" y2="510" stroke="#0b3d2e" stroke-width="8" stroke-linecap="round"/><path d="M324,500 L350,540 L376,500 Z" fill="#0b3d2e"/>
+<rect x="150" y="540" width="400" height="150" rx="16" fill="#ffffff" stroke="#0b3d2e" stroke-width="6"/>
+<text x="350" y="638" font-size="60" fill="#14281d" font-weight="700" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">Act</text>
+<line x1="350" y1="690" x2="350" y2="750" stroke="#0b3d2e" stroke-width="8" stroke-linecap="round"/><path d="M324,740 L350,780 L376,740 Z" fill="#0b3d2e"/>
+<rect x="150" y="780" width="400" height="150" rx="16" fill="#bfe3d1" stroke="#0b3d2e" stroke-width="6"/>
+<text x="350" y="878" font-size="60" fill="#14281d" font-weight="700" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">Observe</text>
+<path d="M150,855 C40,855 40,135 110,135" fill="none" stroke="#0b3d2e" stroke-width="8" stroke-linecap="round"/>
+<path d="M150,135 L106,108 L106,162 Z" fill="#0b3d2e"/>
+<text x="350" y="990" font-size="56" fill="#7a8a80" font-weight="400" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">and round again</text>
+</svg>

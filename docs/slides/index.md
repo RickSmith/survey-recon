@@ -21,7 +21,7 @@ page is what was on the screen in the room.
 </p>
 
 !!! note "It is a frame, not a talk"
-    The deck is **46 slides** — one section break for every block of the two
+    The deck is **48 slides** — one section break for every block of the two
     hours, and outline slides under each. **0 of them are still placeholders**.
     A placeholder says so on its own face and names the work order that will
     fill it, so that number is how many slides a reader should not trust yet.
@@ -76,6 +76,8 @@ page is what was on the screen in the room.
 |---|---|
 | `docs/slides/beyond-the-prompt.md` | The deck itself. Plain markdown. `---` starts a new slide |
 | `docs/slides/themes/tsps.css` | Type sizes and colors. The canvas is 1920 x 1080 and nothing is smaller than 28pt |
+| `docs/slides/img/` | The pictures beside the bullets, and the green motif behind every section break. Plain SVG, nothing on them under 56 px on a 600-wide panel, which is 29pt once Marp fits the panel into a quarter of the slide |
+| `docs/scenarios/sh16/img/*-slide.svg` | The three maps that fill a whole slide. Drawn from the SH16 run by the same command as the page maps, with bigger type and no side panel |
 | `.github/workflows/slides.yml` | Renders the deck to HTML and PDF every time the repo is pushed |
 | `corridor-screen/tests/test_deck.py` | Holds the deck to the run of show. See below |
 | `corridor-screen/tests/test_cold_open.py` | Holds the cold-open slide to the SH16 run — and stops it announcing a figure the terminal has not reached yet |
