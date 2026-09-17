@@ -118,6 +118,11 @@ class TheFiguresAreTheBuildUpsFigures(unittest.TestCase):
             for line in slide.content_lines():
                 if A_SOURCE in line:
                     continue
+                # A picture's markup is not a figure the room reads. The line
+                # `![bg right:24% contain](img/crew-days.svg)` puts a drawing
+                # beside the bullets; the room sees the drawing, not the 24.
+                if line.lstrip().startswith("!["):
+                    continue
                 for number in quantities_on(line):
                     with self.subTest(slide=slide.number, number=number):
                         self.assertIn(
