@@ -5,7 +5,7 @@ import tomllib
 import unittest
 from pathlib import Path
 
-from corridor_screen.cache import Cache, render_toml
+from corridor_screen.cache import Cache, render_toml, write_text
 
 URL = "https://example.invalid/arcgis/rest/services/Thing/FeatureServer/0/query"
 PARAMS = {"where": "1=1", "outFields": "*", "f": "json"}
@@ -164,6 +164,104 @@ class TestTomlWriter(unittest.TestCase):
         self.assertEqual(data["count"], 3)
         self.assertEqual(data["ratio"], 0.5)
         self.assertTrue(data["ok"])
+
+
+
+class TestTheIndexHeadingSurvivesACallerWithNothingToSay(unittest.TestCase):
+    """A caller with no label, and a cache with no corridor, are not the same.
+
+    ``INDEX.md`` carries the corridor in its heading, and specification section
+    14 calls it "the file you point at when you say the captures are from a
+    particular date." Two commands write it. The screening run knows the
+    corridor; the live NGS check does not, and passed nothing.
+
+    Nothing distinguished passing nothing from saying there is no corridor, so
+    the live check blanked the heading. That really happened: the label went
+    missing on 2026-09-13 and main carried a plain heading until 2026-09-19,
+    six days and several reviews later, and it only came back because a
+    screening run happened to rewrite it.
+
+    **This is the same defect this repo has found three times.** A county road
+    with no published right-of-way width is not a road with no right of way. A
+    sheet with no drawing is not a sheet nobody can reach. Absent and unstated
+    are different, and a default argument that conflates them is that bug in
+    the cache writer. Fixed under
+    [#186](https://github.com/RickSmith/survey-recon/issues/186).
+    """
+
+    CORRIDOR = "SH0016-KG DFO 347.7 to 356.367"
+
+    def heading_of(self, index):
+        return index.read_text(encoding="utf-8").splitlines()[0]
+
+    def with_one_response(self, tmp):
+        cache = Cache(Path(tmp))
+        entry = cache.entry("NGS_Data_Explorer", "live-check-radial", URL, PARAMS)
+        cache.write(entry, b"[]", 200, record_count=0)
+        return cache
+
+    def test_a_caller_with_no_label_keeps_the_heading_that_is_there(self):
+        """The live check. It knows nothing about the corridor and asserts nothing."""
+        with tempfile.TemporaryDirectory() as tmp:
+            cache = self.with_one_response(tmp)
+            cache.write_index(self.CORRIDOR)
+            self.assertEqual(self.heading_of(cache.write_index()), f"# Cached responses -- {self.CORRIDOR}")
+
+    def test_a_label_still_sets_the_heading(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            cache = self.with_one_response(tmp)
+            index = cache.write_index(self.CORRIDOR)
+            self.assertEqual(self.heading_of(index), f"# Cached responses -- {self.CORRIDOR}")
+
+    def test_a_label_overwrites_a_different_one(self):
+        """A cache folder rerun on another corridor is renamed, not appended to."""
+        with tempfile.TemporaryDirectory() as tmp:
+            cache = self.with_one_response(tmp)
+            cache.write_index("US0281-KG DFO 1 to 2")
+            self.assertEqual(self.heading_of(cache.write_index(self.CORRIDOR)), f"# Cached responses -- {self.CORRIDOR}")
+
+    def test_an_empty_label_means_there_is_no_corridor(self):
+        """Said deliberately, which is a different thing from saying nothing."""
+        with tempfile.TemporaryDirectory() as tmp:
+            cache = self.with_one_response(tmp)
+            cache.write_index(self.CORRIDOR)
+            self.assertEqual(self.heading_of(cache.write_index("")), "# Cached responses")
+
+    def test_a_cache_with_no_index_yet_gets_a_plain_heading(self):
+        """Nothing to preserve, and this must not fail."""
+        with tempfile.TemporaryDirectory() as tmp:
+            cache = self.with_one_response(tmp)
+            self.assertEqual(self.heading_of(cache.write_index()), "# Cached responses")
+
+    def test_an_index_whose_first_line_is_not_a_heading_is_not_carried_forward(self):
+        """Junk in the file is not a corridor, and copying it on would spread it."""
+        with tempfile.TemporaryDirectory() as tmp:
+            cache = self.with_one_response(tmp)
+            cache.write_index(self.CORRIDOR)
+            write_text(cache.root / "INDEX.md", "something else entirely\n\nrows\n")
+            self.assertEqual(self.heading_of(cache.write_index()), "# Cached responses")
+
+    def test_an_empty_index_file_is_not_carried_forward(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            cache = self.with_one_response(tmp)
+            cache.write_index(self.CORRIDOR)
+            write_text(cache.root / "INDEX.md", "")
+            self.assertEqual(self.heading_of(cache.write_index()), "# Cached responses")
+
+    def test_preserving_a_heading_still_rewrites_the_rows(self):
+        """Keeping the heading must not mean keeping a stale file.
+
+        The whole reason the live check regenerates this at all is that writing
+        a response without regenerating leaves the index wrong about it.
+        """
+        with tempfile.TemporaryDirectory() as tmp:
+            cache = self.with_one_response(tmp)
+            cache.write_index(self.CORRIDOR)
+            second = cache.entry("BCAD_Parcels", "parcels", URL, dict(PARAMS, resultOffset="2000"))
+            cache.write(second, b"{}", 200, layer_id=0, record_count=2000)
+            text = cache.write_index().read_text(encoding="utf-8")
+            self.assertIn(self.CORRIDOR, text.splitlines()[0])
+            self.assertIn("| BCAD_Parcels |", text)
 
 
 if __name__ == "__main__":

@@ -30,6 +30,11 @@ from pathlib import Path
 
 INDEX_NAME = "INDEX.md"
 
+# The heading of that file, without a corridor on it. Named once because
+# `write_index` both writes it and reads it back to see whether the line
+# already there is this file's heading or somebody else's text.
+PLAIN_INDEX_HEADING = "# Cached responses"
+
 # Windows refuses to open a path longer than 260 characters unless it is asked
 # in the extended form. A surveyor working under
 # "OneDrive - Some Long Firm Name\Documents\Projects\..." reaches that
@@ -225,9 +230,56 @@ class Cache:
         """Every provenance record in the cache, oldest name first."""
         return sorted(self.root.glob("*/*.meta.toml"))
 
-    def write_index(self, corridor_label=""):
+    def _heading_on_disk(self):
+        """The heading the index already carries, or ``None`` if there is none.
+
+        ``None`` covers three cases that are all the same answer: no index yet,
+        an empty one, and one whose first line is not this file's heading.
+        Junk in the file is not a corridor, and carrying it forward would
+        spread it rather than contain it.
+        """
+        path = self.root / INDEX_NAME
+        if not os.path.exists(long_path(path)):
+            return None
+        lines = read_text(path).splitlines()
+        first = lines[0].strip() if lines else ""
+        return first if first.startswith(PLAIN_INDEX_HEADING) else None
+
+    def write_index(self, corridor_label=None):
         """Regenerate INDEX.md -- the file you point at when you say the
-        captures are from a particular date."""
+        captures are from a particular date.
+
+        **A caller with no label to give, and a cache with no corridor, are not
+        the same claim.** They used to be: the label defaulted to the empty
+        string and was tested for truth, so both blanked the heading.
+
+        Two commands write this file. The screening run knows the corridor. The
+        live NGS check does not, passed nothing, and so asserted that there was
+        none. The corridor went missing from the heading on 2026-09-13 and
+        stayed missing on ``main`` until 2026-09-19 -- six days, through several
+        reviews -- and came back only because a screening run happened to
+        rewrite it. Every rehearsal runs the live check, so the wrong version
+        won whenever it went last. [#186](https://github.com/RickSmith/survey-recon/issues/186).
+
+        So the three are now three:
+
+        * ``None`` -- nothing to say about the corridor. Keep the heading that
+          is there. This is the live check
+        * a label -- use it, and overwrite whatever was there. This is the
+          screening run, including on a folder rerun for a different corridor
+        * ``""`` -- there is no corridor, said deliberately. Plain heading
+
+        **This is the same distinction three other parts of this tool draw**,
+        and it is worth knowing them together. A county road with no published
+        ``ROW_MIN`` is not a road with no right of way. A ROW sheet with no
+        drawing is not a sheet nobody can reach. A field a layer stopped
+        publishing is not a field with no values. Absent and unstated are
+        different, and a default that conflates them is this bug.
+
+        The rows are always rebuilt, whatever happens to the heading. That is
+        the whole reason the live check regenerates this at all: writing a
+        response without regenerating leaves the index quietly wrong about it.
+        """
         rows = []
         for meta_path in self.entries():
             data = tomllib.loads(read_text(meta_path))
@@ -240,9 +292,12 @@ class Cache:
                     key=data.get("cache_key", meta_path.stem),
                 )
             )
-        heading = "# Cached responses"
-        if corridor_label:
-            heading += f" -- {corridor_label}"
+        if corridor_label is None:
+            heading = self._heading_on_disk() or PLAIN_INDEX_HEADING
+        elif corridor_label:
+            heading = f"{PLAIN_INDEX_HEADING} -- {corridor_label}"
+        else:
+            heading = PLAIN_INDEX_HEADING
         text = "\n".join(
             [
                 heading,
