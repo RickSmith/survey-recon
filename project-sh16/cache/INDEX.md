@@ -1,4 +1,4 @@
-# Cached responses
+# Cached responses -- SH0016-KG DFO 347.7 to 356.367
 
 Every response this tool received, saved exactly as the server sent it.
 The `.meta.toml` file beside each one carries the full request.

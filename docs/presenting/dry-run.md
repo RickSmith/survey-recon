@@ -412,14 +412,26 @@ Five is what it found last time, not a promise. It is a live call.
 
 **Two. It answers with nothing.**
 
+**Read the first line before you speak.** This outcome opens with the same
+sentence as the good one, because the call really was live. What changed is the
+number after it.
+
 ```
-  NGS Data Explorer returned 0 marks within 2 miles of the corridor midpoint.
-  no cross-check -- the live call and the capture have no mark in common, so
-  there was nothing to compare.
+  This call was live, just now.
+
+    NGS Data Explorer returned 0 marks within 2 miles of the corridor midpoint.
+    The screening run beside it was captured 2026-09-13T07:06:55-05:00 and found 11 marks in the 300 ft corridor.
+
+    These are two different NGS endpoints asking two different
+    questions -- an API with a point and a radius, against a feature
+    service with a corridor. So a mark in one and not the other is
+    ordinary, and only the marks in both are compared.
+
+    no cross-check -- the live call and the capture have no mark in common, so there was nothing to compare.
 ```
 
-**This is not an error.** NGS returned `HTTP 200` and an empty list. The command
-exits normally and the room sees a calm explanation.
+**This is not an error.** NGS answered `HTTP 200` and sent back an empty list.
+The command prints this and exits `0`, the same as a good run.
 
 **Say:** "NGS answered and sent back nothing. That is their end, not ours, and
 the screening run is unaffected." Then move on.
@@ -436,19 +448,27 @@ the midpoint, which is a different question from the 300-foot ribbon.
 
     The screening run is unaffected. It replays a committed capture
     and makes no network calls, which is the whole reason it is
-    captured.
+    captured. This step is the proof that the wires are real, and
+    proving that needs wires.
 ```
 
 **Say:** what the screen already says. "The one live call did not go through.
 Everything else you have seen was captured, and this step was the proof that
 the wires are real."
 
+**This is the only outcome that exits non-zero.** The command returns `1`, which
+matters to a script and not to you. It still prints and still explains itself.
+
+**The first line names what failed, and read it before you blame anybody.** A
+403 is NGS refusing. A timeout or a name-resolution error in that same line is
+the room's network, which is the thing the fallback card exists for.
+
 **What it has actually done.**
 
 | When | What happened |
 |---|---|
 | 2026-09-13 | Answered, 13 marks |
-| 2026-09-14 | `HTTP 200`, empty body, **0 marks** |
+| 2026-09-14 | `HTTP 200`, an empty list, **0 marks** |
 | 2026-09-14, an hour later | **403 Forbidden**, after three attempts |
 | 2026-09-15 | Answered, 13 marks |
 | 2026-09-19 | Answered, 13 marks |

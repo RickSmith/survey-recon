@@ -276,15 +276,24 @@ class TestThePresenterKnowsAllThreeOutcomes(unittest.TestCase):
     [#128](https://github.com/RickSmith/survey-recon/issues/128).
 
     **The command is not what needs fixing.** It already prints a calm
-    explanation for both failures and exits normally. What was missing was the
-    page telling a person what to say out loud.
+    explanation for both failures. The empty answer exits ``0``, the same as a
+    good run, because NGS answering with nothing is not an error. The 403 exits
+    ``1``, which matters to a script and not to a presenter. What was missing
+    was the page telling a person what to say out loud.
     """
 
     PAGE = Path(__file__).resolve().parents[2] / "docs" / "presenting" / "dry-run.md"
 
     def setUp(self):
         self.assertTrue(self.PAGE.is_file(), f"{self.PAGE} is missing")
-        self.page = markdown_docs.text_of(self.PAGE)
+        raw = markdown_docs.text_of(self.PAGE)
+        # Two readings of the same page, and the prose checks use the flat one.
+        # These pages are hard-wrapped at about eighty characters, so half the
+        # phrases worth checking have a line break in the middle of them. A
+        # break is where the wrapping fell rather than something the page says,
+        # and a check that fails when a sentence is re-wrapped punishes editing.
+        self.page = raw
+        self.said = markdown_docs.flat(raw)
 
     def test_the_page_shows_the_outcome_where_ngs_answers(self):
         self.assertIn("This call was live, just now", self.page)
@@ -300,10 +309,29 @@ class TestThePresenterKnowsAllThreeOutcomes(unittest.TestCase):
 
     def test_the_page_says_an_empty_answer_is_not_an_error(self):
         """A presenter who reads `0 marks` as a crash will say the wrong thing."""
-        self.assertIn("200", self.page)
+        self.assertIn("This is not an error", self.said)
+        self.assertIn("HTTP 200", self.page)
+
+    def test_the_page_warns_that_the_empty_answer_looks_like_a_good_one(self):
+        """Both outcomes open on the same sentence, and that is the trap.
+
+        ``report`` prints "This call was live, just now." whenever the call
+        went out, whatever came back. A presenter who reads that line and
+        starts talking has already said the wrong thing.
+        """
+        self.assertIn("opens with the same sentence as the good one", self.said)
+
+    def test_the_page_does_not_tell_a_presenter_to_blame_ngs_for_the_room(self):
+        """``unreachable`` catches every failure, including a dead venue network.
+
+        A 403 is NGS refusing. A timeout on the same line is the room, which is
+        the thing the fallback card exists for, and saying "that is their end"
+        about it would be wrong in front of people.
+        """
+        self.assertIn("timeout", self.said.lower())
 
     def test_the_page_says_the_screening_run_survives_all_three(self):
-        self.assertIn("screening run is unaffected", self.page)
+        self.assertIn("screening run is unaffected", self.said)
 
     def test_the_page_records_that_this_call_has_really_failed(self):
         """Dates, so a reader can tell a real outage from a defensive maybe."""
