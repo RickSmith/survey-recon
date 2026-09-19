@@ -171,20 +171,114 @@ where=CNTY_NM='BEXAR' AND RTE_NM='SH0016'
 
 ---
 
-## No field gives you the drawing
+## No field gives you the drawing. An address built from the name does
 
-There is no PDF link anywhere in this layer. What you get is the sheet count,
-the dates, the control sections and the sheet names.
+There is no PDF link anywhere in this layer, and there is no field to add to
+the query that would produce one. That much has not changed.
 
-The drawings come through **RPAM**, TxDOT's Real Property Asset Map. In
-TxDOT's own words, it is "an online application populated with geo-referenced
-features that represent all real property assets comprising the highway right
-of way and is the replacement for paper right-of-way maps." A map not available
-there is obtained by **Open Records Request**, quoting the `MAP_NM` values.
+What changed is the conclusion. TxDOT serves the drawings as static PDFs, and
+the address is the sheet's own `MAP_NM` with `.pdf` on the end:
+
+```
+https://maps.dot.state.tx.us/ROW_PDF/SAT-029110-SH0016-19591201.pdf
+```
+
+**The tool builds that address rather than reading it.** Nothing published by
+this service hands it over, and the folder itself answers `403` to a listing,
+so there is no index to check a name against. This is the one address in the
+output that the service did not give us.
+
+So the sheet name has to survive into it untouched, including the `-1` suffix.
+`SAT-029110-SH0016-19971212` and `SAT-029110-SH0016-19971212-1` are two
+different drawings. Building one sheet's address for the other would hand a
+surveyor the wrong map while looking like an answer.
+
+### What was checked, and what was not
+
+Every request below was made on **2026-09-19**, and each returned HTTP 200 with
+`Content-Type: application/pdf`.
+
+| Asked | Sheets | Answered with a PDF |
+|---|---|---|
+| Every SH16 sheet in Bexar County | 27 | **27** |
+| One sheet from each district in that sample: ABL, AMA, BWD, PHR, SAT, YKM | 6 | **6** |
+| Drawn at random from the first 5,000 records the service returns | 30 | **30** |
+| **Total** | **63** | **63** |
+
+**The 30 are not a statewide random sample, and the difference matters.** The
+service holds 20,276 records and returns at most 5,000 in one answer. The 30
+were drawn from that first page, so they are random within it and say nothing
+about the other 15,276.
+
+Then the same question was asked of the run itself. **Every one of the 69
+`pdf_url` values in the committed `project-sh16/screening.json` was requested,
+and all 69 answered with a PDF.** That set includes the `1900-01-01` sheets,
+whose dates this page doubts elsewhere. A doubtful date still has a real
+drawing behind it.
+
+Two sheet names that cannot exist were asked for as well:
+`SAT-029110-SH0016-99991231` and `NOT-A-REAL-SHEET`. Both answered **HTTP 404**
+with `text/html`. That control is what makes the 63 mean something, because it
+shows this host does not answer 200 to everything.
+
+One drawing was fetched in full, `SAT-029109-SH0016-19370901`, at 522,232 bytes
+and beginning `%PDF-1.4`. Sizes across the sample ran from about 40 KB to 13 MB
+and were all different, so these are distinct drawings rather than one
+placeholder served under many names.
+
+!!! warning "This evidence is not in the cache, and that is a real difference from the three traps above"
+    Each of the traps on this page names a saved response you can open, such as
+    `txdot-row-maps/sh16-bexar-county-wide-cross-check`, with the exact request
+    in the `.meta.toml` beside it. **These 134 requests left nothing behind.**
+
+    They were headers-only requests to a file server rather than answers from a
+    data service, and the run does not make them: they were made once, by hand,
+    to establish the rule. Saving them would have meant inventing a shape for a
+    response that has no body.
+
+    So this is the one claim on this page a reader cannot check offline from
+    this repo. It is reproducible instead, with one line per sheet name:
+
+    ```
+    curl -sS -I https://maps.dot.state.tx.us/ROW_PDF/SAT-029109-SH0016-19370901.pdf
+    ```
+
+    Every `pdf_url` in `project-sh16/screening.json` can be run through that,
+    which is how the 69 were checked.
+
+**63 of 20,276 records is a sample, not a census, and the tool does not re-check
+the address on each run.** A drawing TxDOT has since withdrawn will answer 404
+rather than open. That is a link a reader finds broken in one click, which is
+why the run does not spend 69 requests per corridor confirming what a click
+confirms for free — a judgment recorded on
+[work order #179](https://github.com/RickSmith/survey-recon/issues/179).
+
+### A sheet with no PDF
+
+The route that was the only route before this address was known is now the
+fallback. The drawings also come through **RPAM**, TxDOT's Real Property Asset
+Map. In TxDOT's own words, it is "an online application populated with
+geo-referenced features that represent all real property assets comprising the
+highway right of way and is the replacement for paper right-of-way maps." A map
+not available there is obtained by **Open Records Request**, quoting the
+`MAP_NM` values.
 ([TxDOT, Real Property Asset Map](https://www.txdot.gov/data-maps/right-of-way-maps/real-property-asset-map.html))
 
-The output says so in its own `notes` block rather than leaving a blank, which
-is what [spec section 10](../corridor-screen/spec.md) asks for.
+All of this is in the output's own `notes` block and not only on this page,
+which is what [spec section 10](../corridor-screen/spec.md) asks for. The
+address of each drawing is on the sheet it belongs to, in `pdf_url`.
+
+!!! note "Amended 2026-09-19, under [work order #179](https://github.com/RickSmith/survey-recon/issues/179)"
+    Until then this section was headed **"No field gives you the drawing"** and
+    sent the reader to RPAM or an Open Records Request as the only routes.
+
+    The first half of that was true and still is. The second half was wrong,
+    and wrong in the direction that costs a reader the most. Somebody following
+    it would have filed a records request for a file already being served to
+    anybody who asked for it by name.
+
+    Nobody had tried the address. The conclusion was drawn from the field list,
+    which is a reasonable place to look and is not the only place to look.
 
 ---
 
@@ -193,6 +287,7 @@ is what [spec section 10](../corridor-screen/spec.md) asks for.
 | Output field | Service field | Notes |
 |---|---|---|
 | `map_name` | `MAP_NM` | One per drawing. `District-ControlSection-Route-MapDate` |
+| `pdf_url` | *none* | The drawing itself. Built from `MAP_NM`, not published by the service. `null` on a sheet with no name. See the section above |
 | `row_map_id` | `ROW_MAP_ID` | **Not unique.** See trap two |
 | `control_section` | `CTRL_SECT_NBR` | Six digits, so `029110` is control section 0291-10 |
 | `csj` | `CSJ_NBR` | Empty on every SH16 sheet. Reported as it came |

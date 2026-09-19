@@ -1,5 +1,5 @@
   Crew-day build-up  SH0016-KG DFO 347.7 to 356.367
-  Run live, finished 2026-09-19T12:36:53-05:00
+  Run live, finished 2026-09-19T13:10:03-05:00
 
   FIELD
     Look for the published NGS marks       11 marks x 0.75 hours per mark = 8.25 hours

@@ -65,6 +65,8 @@ Counted on 2026-09-12, on the cross-check response cached at
 ``txdot-row-maps/sh16-bexar-county-wide-cross-check``.
 """
 
+from urllib.parse import quote
+
 from .arcgis import attribute, from_epoch_ms
 from .geometry import FEET_PER_MILE, shape_of, shape_to_paths_miles
 from .output import not_screened
@@ -94,12 +96,31 @@ SUSPECT_DATE_RECORDS = 368
 SERVICE_RECORDS = 20276
 EARLY_DATED_RECORDS = 501
 
+# Where TxDOT serves the drawings themselves. The folder is not browsable --
+# it answers 403 -- so this is a rule the tool applies, not a list it reads.
+ROW_PDF_BASE = "https://maps.dot.state.tx.us/ROW_PDF/"
+
+# What the rule was checked against, and when. Named here rather than written
+# into the sentence, so the note and this repo's documentation cannot drift
+# apart -- the same reason `SUSPECT_DATE_RECORDS` exists above.
+PDF_SHEETS_CHECKED = 63
+PDF_CHECKED_ON = "2026-09-19"
+
 DRAWINGS_DETAIL = (
-    "No field in this service gives a direct link to a PDF. What you get here is "
-    "the sheet count, the dates and the sheet names. The drawings come through "
-    "RPAM, TxDOT's Real Property Asset Map -- the online application that "
-    "replaced the paper right-of-way maps -- and TxDOT says a map not available "
-    "there is obtained by Open Records Request, quoting the MAP_NM values below. "
+    "The drawing itself is a PDF at " + ROW_PDF_BASE + "<MAP_NM>.pdf, which is "
+    "what pdf_url holds on each sheet below. No field in this service publishes "
+    "that address and the folder cannot be listed, so the tool builds it from "
+    "the sheet name rather than being handed it: the rule was checked on "
+    f"{PDF_SHEETS_CHECKED} sheets on {PDF_CHECKED_ON} -- every SH16 sheet in "
+    "Bexar County, one sheet from each of six districts, and thirty drawn at "
+    "random from the first five thousand records this service returns -- and "
+    "every one answered with a PDF, while two sheet names that cannot exist "
+    "answered 404. That is a sample and not a census. It is also not checked "
+    "again on each run, so a drawing TxDOT has since withdrawn will answer 404 "
+    "rather than open. A sheet with no PDF is obtained the way every sheet was "
+    "before this address was known: through RPAM, TxDOT's Real Property Asset "
+    "Map -- the online application that replaced the paper right-of-way maps -- "
+    "or, TxDOT says, by Open Records Request quoting the MAP_NM values below. "
     "https://www.txdot.gov/data-maps/right-of-way-maps/real-property-asset-map.html"
 )
 
@@ -129,6 +150,56 @@ EARLIEST_DATE_DETAIL = (
 )
 
 
+def drawing_url(map_name):
+    """Where this sheet's own drawing is served, or ``None``.
+
+    **The only address in this output the service did not hand over.** A
+    control point's sheet comes from an attachments endpoint that publishes it;
+    this one is assembled from the sheet's own name, because nothing here
+    publishes it and the folder answers 403 to a listing.
+
+    So the name has to arrive intact. ``SAT-029110-SH0016-19971212-1`` and
+    ``SAT-029110-SH0016-19971212`` are two different drawings of the same date,
+    and trimming the suffix would build one sheet's address for the other --
+    handing a surveyor the wrong drawing, which is worse than handing them none
+    because it looks like an answer.
+
+    ----
+
+    How this stands against the rule ``control.to_txdot_point`` states
+    =================================================================
+
+    That rule is "``None`` rather than a **guessed** address," on the ground
+    that a broken link in a document a surveyor seals is worse than an absent
+    one. It is worth being straight about which half of this function it
+    governs, because it is easy to cite for more than it covers.
+
+    **It governs the empty branch exactly.** A sheet with no name gets ``None``
+    rather than an address built around a hole.
+
+    **It does not govern the other branch, and the difference was ruled on
+    rather than argued away.** Every named sheet gets a constructed address that
+    the run does not re-check, so a drawing TxDOT has withdrawn since
+    ``PDF_CHECKED_ON`` will 404. Rick weighed that on
+    [#179](https://github.com/RickSmith/survey-recon/issues/179) on 2026-09-19:
+    checking would cost a request per sheet, 69 on this corridor, and each one
+    saved or the offline demo shows no links at all -- 138 files against one
+    click that finds a dead link for free. A dead link also tells on itself
+    immediately, which is not the harm that rule was written for. The harm it
+    was written for is a wrong number nobody can see is wrong.
+
+    So the output says in three places that the address is built and not
+    re-checked, rather than leaning on a rule it only half satisfies.
+    """
+    if not map_name:
+        return None
+    # Quoted rather than interpolated raw. Every name seen so far is letters,
+    # digits and hyphens, so this changes nothing today. A name with a space in
+    # it would otherwise emit a malformed address, which is the failure this
+    # function's own docstring argues against.
+    return f"{ROW_PDF_BASE}{quote(str(map_name), safe='')}.pdf"
+
+
 def to_sheet(feature, distance_ft, source_name=None):
     """One ROW map sheet, in the shape the output file uses.
 
@@ -142,10 +213,14 @@ def to_sheet(feature, distance_ft, source_name=None):
         """One output field, from whichever service field ``sources.py`` names."""
         return attribute(attributes, ROW_MAP_FIELDS[key])
 
+    map_name = read("map_name")
+
     return {
         # One per drawing, and the only field here that is. See the
         # ``ROW_MAP_ID`` note in this file's docstring.
-        "map_name": read("map_name"),
+        "map_name": map_name,
+        # The drawing itself, built from the name beside it. See ``pdf_url``.
+        "pdf_url": drawing_url(map_name),
         "row_map_id": read("row_map_id"),
         "control_section": read("control_section"),
         "csj": read("csj"),

@@ -15,8 +15,11 @@ estimate.
 """
 
 import unittest
+from pathlib import Path
 
 from corridor_screen import row_maps
+
+from . import markdown_docs
 from corridor_screen.arcgis import from_epoch_ms
 from corridor_screen.geometry import LocalPlane
 
@@ -168,6 +171,54 @@ class TestTheFieldsOnASheet(unittest.TestCase):
         self.assertEqual(sheets[0]["route"], "SH0016")
 
 
+class TestTheAddressOfTheDrawing(unittest.TestCase):
+    """Where the drawing itself lives, which no field in this service gives.
+
+    TxDOT serves the drawings as static PDFs under a folder named for the
+    sheet. The folder is not browsable -- it answers 403 -- and no field in the
+    layer publishes the address, so the tool builds it from ``MAP_NM``.
+
+    That makes it the one address in this output the service did not hand over,
+    which is why the sheet name it is built from has to survive intact.
+    """
+
+    def test_a_sheet_carries_the_address_of_its_own_drawing(self):
+        sheets, _ = select([sheet_feature(MAP_NM="SAT-029110-SH0016-19980306")])
+        self.assertEqual(
+            sheets[0]["pdf_url"],
+            "https://maps.dot.state.tx.us/ROW_PDF/SAT-029110-SH0016-19980306.pdf",
+        )
+
+    def test_the_duplicate_date_suffix_survives_into_the_address(self):
+        """``-1`` is part of the name TxDOT files the drawing under.
+
+        Two sheets can carry the same date, and TxDOT separates them with a
+        suffix. Trimming it would build one sheet's address for the other and
+        hand a surveyor the wrong drawing -- which is worse than no drawing,
+        because it looks like an answer.
+        """
+        sheets, _ = select([sheet_feature(MAP_NM="SAT-029110-SH0016-19971212-1")])
+        self.assertTrue(sheets[0]["pdf_url"].endswith("SAT-029110-SH0016-19971212-1.pdf"))
+
+    def test_a_sheet_with_no_name_carries_no_address(self):
+        """``None`` rather than an address built around a hole.
+
+        The same rule ``control.to_txdot_point`` states for a control sheet: a
+        broken link in a document a surveyor seals is worse than an absent one.
+        """
+        sheets, _ = select([sheet_feature(MAP_NM=None)])
+        self.assertIsNone(sheets[0]["pdf_url"])
+
+    def test_the_address_is_built_for_every_sheet_that_has_a_name(self):
+        sheets, _ = select(
+            [
+                sheet_feature(MAP_NM="SAT-029110-SH0016-19440101"),
+                sheet_feature(MAP_NM="SAT-029110-SH0016-19980306"),
+            ]
+        )
+        self.assertTrue(all(s["pdf_url"] for s in sheets))
+
+
 class TestTheDateRange(unittest.TestCase):
     """How far back the records go. Half of the answer this ticket asks for."""
 
@@ -301,7 +352,7 @@ class TestTheBlock(unittest.TestCase):
         block = row_maps.block([], without_shape=2)
         self.assertEqual(block["sheets_without_a_shape"], 2)
 
-    def test_the_block_says_the_service_gives_no_link_to_the_drawing(self):
+    def test_the_block_says_how_to_reach_the_drawings(self):
         """Spec section 10: the output says so rather than leaving a blank."""
         block = row_maps.block([])
         topics = [note["topic"] for note in block["notes"]]
@@ -332,6 +383,114 @@ class TestTheBlock(unittest.TestCase):
         self.assertIn("txdot.gov", note["detail"])
         self.assertNotIn("onlinemanuals", note["detail"])
 
+    def test_the_drawings_note_says_the_address_is_built_and_not_checked(self):
+        """The one address here the service did not hand over, declared as one.
+
+        Every other link in this output was published by the service that owns
+        it. This one the tool assembles, and it does not re-check it on each
+        run. A reader deciding whether to trust a link needs both of those
+        facts at the moment they read it, not in a documentation page.
+        """
+        note = next(
+            n for n in row_maps.block([])["notes"] if n["topic"] == row_maps.NOTE_DRAWINGS
+        )
+        self.assertIn("builds it from the sheet name", note["detail"])
+        self.assertIn("not checked again", note["detail"])
+        self.assertIn("404", note["detail"])
+
+    def test_the_drawings_note_keeps_the_open_records_request_as_the_fallback(self):
+        """A sheet with no PDF still has a way to be obtained.
+
+        The route that was the only route before this feature existed is now
+        the fallback. Dropping it would leave the reader of a 404 with nothing.
+        """
+        note = next(
+            n for n in row_maps.block([])["notes"] if n["topic"] == row_maps.NOTE_DRAWINGS
+        )
+        self.assertIn("Open Records Request", note["detail"])
+        self.assertIn("RPAM", note["detail"])
+
+    def test_the_drawings_note_says_how_the_address_rule_was_checked(self):
+        """A claim with a number on it carries the count and the date.
+
+        ``CLAUDE.md``: a number with consequence gets its source beside it. The
+        consequence here is a surveyor deciding whether to click.
+        """
+        note = next(
+            n for n in row_maps.block([])["notes"] if n["topic"] == row_maps.NOTE_DRAWINGS
+        )
+        self.assertIn(str(row_maps.PDF_SHEETS_CHECKED), note["detail"])
+        self.assertIn(row_maps.PDF_CHECKED_ON, note["detail"])
+
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestTheAddressIsBuiltSafely(unittest.TestCase):
+    """A sheet name goes into an address, so it is escaped on the way in.
+
+    Every ``MAP_NM`` seen so far is letters, digits and hyphens, so this changes
+    nothing today. It is here because the thing this address is built from comes
+    from a service rather than from us, and a name carrying a space would
+    otherwise emit an address that is not an address.
+
+    That is the same failure ``drawing_url`` exists to argue against: a link
+    that looks like an answer and is not one.
+    """
+
+    def test_an_ordinary_sheet_name_is_untouched(self):
+        self.assertEqual(
+            row_maps.drawing_url("SAT-029110-SH0016-19971212-1"),
+            "https://maps.dot.state.tx.us/ROW_PDF/SAT-029110-SH0016-19971212-1.pdf",
+        )
+
+    def test_a_name_with_a_space_does_not_produce_a_broken_address(self):
+        built = row_maps.drawing_url("SAT 029110 X")
+        self.assertNotIn(" ", built)
+        self.assertTrue(built.startswith(row_maps.ROW_PDF_BASE))
+
+    def test_a_name_that_is_not_text_is_still_handled(self):
+        """The service sends what it sends. This one must not raise."""
+        self.assertTrue(row_maps.drawing_url(12345).endswith("12345.pdf"))
+
+
+class TestTheDocumentationAgreesWithTheCode(unittest.TestCase):
+    """The page and the note quote the same two numbers, so they are bound.
+
+    ``PDF_SHEETS_CHECKED`` and ``PDF_CHECKED_ON`` exist so the output's own note
+    and this repo's documentation cannot drift apart. That only works if
+    something reads both. Without this test the constants bind the note to
+    itself and the page is free to wander, which is the drift they were created
+    to prevent.
+    """
+
+    PAGE = Path(__file__).resolve().parents[2] / "docs" / "data-sources" / "row-map-sheets.md"
+
+    def setUp(self):
+        self.assertTrue(self.PAGE.is_file(), f"{self.PAGE} is missing")
+        self.page = markdown_docs.text_of(self.PAGE)
+
+    def test_the_page_quotes_the_number_of_sheets_the_code_says_were_checked(self):
+        self.assertIn(str(row_maps.PDF_SHEETS_CHECKED), self.page)
+
+    def test_the_page_quotes_the_date_the_code_says_they_were_checked_on(self):
+        self.assertIn(row_maps.PDF_CHECKED_ON, self.page)
+
+    def test_the_page_names_the_address_the_code_builds(self):
+        self.assertIn(row_maps.ROW_PDF_BASE, self.page)
+
+    def test_the_sample_adds_up_to_the_number_the_code_states(self):
+        """27 SH16 sheets, 6 districts and 30 at random. The page shows all four."""
+        for part in ("27", "6", "30", str(row_maps.PDF_SHEETS_CHECKED)):
+            self.assertIn(part, self.page)
+        self.assertEqual(27 + 6 + 30, row_maps.PDF_SHEETS_CHECKED)
+
+    def test_the_page_says_the_sample_is_not_a_census(self):
+        """A reader who takes 63 of 20,276 for coverage has been misled."""
+        self.assertIn("sample, not a census", self.page)
+
+    def test_the_page_says_the_evidence_is_not_in_the_cache(self):
+        """The other three traps on that page cite a cached response. This one
+        cannot, so the page has to say so rather than let a reader assume."""
+        self.assertIn("not in the cache", self.page)
