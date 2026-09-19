@@ -68,6 +68,28 @@ ROADWAY_FIELDS = {
     "end_dfo": "TO_DFO",
 }
 
+# What the `roadway` block reports, from the same records. Specification
+# section 5 step 5 names three things -- the width, the lanes and the traffic --
+# and this layer publishes all three, so they cost no request. Only a longer
+# `outFields`.
+#
+# **Deliberately not in `required_fields`, and that is the whole reason this is
+# a second mapping.** The three above are the alignment: without them there is
+# no corridor and the run must stop, which is what the field list check is for.
+# These four are facts about the road. A layer that stopped publishing them
+# should cost the `roadway` block and nothing else, so a run is never stopped
+# over a number nothing else depends on.
+#
+# The traffic year is here because a traffic count without its year is not a
+# number anybody can quote. Section 5 asks for "traffic"; a count nobody can
+# date is not one.
+ROADWAY_FACT_FIELDS = {
+    "row_width": "ROW_MIN",
+    "lanes": "NUM_LANES",
+    "traffic": "ADT_CUR",
+    "traffic_year": "ADT_YEAR",
+}
+
 ROADWAYS = Source(
     name="TxDOT_Roadway_Inventory",
     base_url=f"{TXDOT_AGOL}/TxDOT_Roadway_Inventory/FeatureServer",

@@ -21,7 +21,7 @@ An **RPLS** reads this and decides. The tool decides nothing.
 | Culverts to locate | **not measured** | no service in this run publishes a culvert inventory |
 | Times traffic control has to be set | **not measured** | derived from the manhole and culvert counts, which are unmeasured |
 | Miles worked on the centerline | **not measured** | nothing in this run says where the retracement falls |
-| Existing ROW width, lane count and traffic | **not measured** | roadway |
+| Whether the roadway is divided, and over how much of it | **not measured** | roadway |
 
 **5 of these 12 inputs were never measured**, and they are not zero. Each one below is a question somebody still has to answer, and the arithmetic that needs it is left without a total rather than given a convenient one.
 
@@ -29,7 +29,7 @@ An **RPLS** reads this and decides. The tool decides nothing.
 - **Culverts to locate** — Same: not screened. TxDOT holds drainage inventories that this pass does not call.
 - **Times traffic control has to be set** — This is what the two counts above are for. Each manhole or culvert in or beside the travel way is an occupation needing signing and devices. With neither count, this number does not exist and the traffic-control line below has no total.
 - **Miles worked on the centerline** — Whether a crew works from the shoulder or down the centerline is a methodology choice nobody has made yet, and no map service publishes it. It decides which TCP sheet applies, and the two sheets are not close in cost.
-- **Existing ROW width, lane count and traffic** — existing right-of-way width, lane count and traffic come from Roadway_Inventory_2023, which this pass does not call
+- **Whether the roadway is divided, and over how much of it** — TxDOT's right-of-way width, lane count and traffic are reported in the roadway block. Which TCP sheet applies turns on whether the road is divided, and that is a field this run does not read.
 
 ## Field hours
 
@@ -174,7 +174,7 @@ One at each end of the work space, 30 ft minimum clearance to each, because traf
 
 The **drawing** shows a plain work vehicle with no TMA chevron. The **notes** are written about "*the* Shadow Vehicle with TMA," wording carried over verbatim from S-3, where one is actually drawn. Two readings, two day rates, and this build-up **does not pick one** — see [#72](https://github.com/RickSmith/survey-recon/issues/72), which asks the Engineer. Price it as a range: the low reading is the ordinary work truck already in the crew, the high reading adds a shadow vehicle with TMA and an operator for every day spent on a divided shoulder.
 
-**Not measured:** Whether this corridor is divided at all, and over how much of its length. The roadway block of this run was never screened, so lane count and configuration are unknown.
+**Not measured:** Whether this corridor is divided at all, and over how much of its length. The roadway block now reports TxDOT's lane count, but a lane count is not a median: a six-lane road may be divided or not, and the field that would say is one this run does not read. So the quantity this line item turns on is still unmeasured, and this build-up still does not put a number on it.
 
 ## Every rate, with its handle
 
@@ -209,4 +209,4 @@ It is a first pass, with the arithmetic left open so somebody who knows the work
 
 ---
 
-Run `live`, finished 2026-09-19T13:10:03-05:00. Built by corridor-screen 0.1.0 from `screening.json` and `crew_rates.toml`. Nothing here was typed by hand.
+Run `live`, finished 2026-09-19T13:40:57-05:00. Built by corridor-screen 0.1.0 from `screening.json` and `crew_rates.toml`. Nothing here was typed by hand.

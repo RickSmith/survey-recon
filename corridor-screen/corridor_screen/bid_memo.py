@@ -258,12 +258,30 @@ def _uncertain(document):
             "",
         ]
 
+    # **This caveat appears either way, and that is the point of it.** It used
+    # to print only when the roadway block was never screened, so filling that
+    # block in deleted the sentence from a client-facing memo -- at the exact
+    # moment a real TxDOT width appeared in the file and became something a
+    # reader could mistake for the corridor. Caught on the review of
+    # [#183](https://github.com/RickSmith/survey-recon/issues/183).
     roadway = document.get("roadway") or {}
     if roadway.get("status") == "not-screened":
         lines += [
             "**The existing right-of-way width was not read**, nor the lane count "
             "or the traffic. So the corridor width used here is the one stated "
             "above — a number somebody chose — and not the width TxDOT holds.",
+            "",
+        ]
+    else:
+        width = (roadway.get("row_width_ft") or {}).get("low")
+        held = f"{width:,} ft" if width is not None else "no width at all"
+        lines += [
+            f"**TxDOT publishes {held} of right of way over this corridor, and "
+            "that is not the corridor used here.** The width above is the one "
+            "stated for this run — a number somebody chose — and the two are "
+            "different things. Neither is a boundary: where the right of way "
+            "actually runs is drawn on the ROW map sheets, and nothing in this "
+            "memo has been measured against them.",
             "",
         ]
 

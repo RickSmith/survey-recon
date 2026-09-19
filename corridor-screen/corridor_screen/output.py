@@ -153,7 +153,7 @@ def build(run_id, started_at, mode, half_width_ft, adjacent_distance_ft, sanity_
           alignment, corridor, services, parcel_rows, warnings,
           status="complete", stopped_at_service=None, corridor_flags=(),
           screened_for=(), lead_time_table=None, control=None, row_maps=None,
-          crew_safety=None, safety_search_miles=None):
+          crew_safety=None, safety_search_miles=None, roadway=None):
     """Assemble the whole output file."""
     return {
         "schema_version": SCHEMA_VERSION,
@@ -188,9 +188,17 @@ def build(run_id, started_at, mode, half_width_ft, adjacent_distance_ft, sanity_
         },
         "alignment": alignment.describe() if alignment else None,
         "corridor": corridor.describe() if corridor else None,
-        "roadway": not_screened(
-            "existing right-of-way width, lane count and traffic come from "
-            "Roadway_Inventory_2023, which this pass does not call"
+        # What TxDOT publishes about the road itself, from ``roadway.block``.
+        # It was a constant here until 2026-09-19, saying the facts came from a
+        # service this tool did not call. They come from the records the
+        # alignment step already fetched, so this block costs no request.
+        # [#183](https://github.com/RickSmith/survey-recon/issues/183).
+        # The wording is ``roadway.block``'s own default, repeated rather than
+        # imported: that module reads ``not_screened`` from this one, so this
+        # one cannot read from it. The command line always passes a block, so
+        # this branch is a net under callers that do not.
+        "roadway": roadway if roadway is not None else not_screened(
+            "the run did not reach the route service"
         ),
         "services": services,
         # NGS marks and their condition, from ``control.block``. A run that

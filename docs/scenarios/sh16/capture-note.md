@@ -71,14 +71,32 @@ And what it found:
 
 ### What was not run
 
-Three things the specification names are not built yet. The output file says so
+Two things the specification names are not built yet. The output file says so
 itself rather than leaving a reader to notice:
 
 | Not run | What it would have added | How the output says so |
 |---|---|---|
-| **Roadway facts** — spec §5 step 5 | `ROW_MIN`, lane count, traffic, from `Roadway_Inventory_2023` | the `roadway` block reads `not-screened` and names the service |
 | **Historic sites** — USGS `structures` layer 11 | a fifth flag type | `screened_for` lists four types, so no parcel reads as clear of a fifth |
 | **TxDOT-owned land** — `2025_Land_Parcels` layer 328 | `txdot_owned` on each parcel row | the field is absent rather than false |
+
+!!! note "Roadway facts came off this list on 2026-09-19"
+    Specification section 5 step 5 asks for `ROW_MIN`, lane count and traffic.
+    It sat on this list until
+    [work order #183](https://github.com/RickSmith/survey-recon/issues/183), and
+    the row said those facts came from a service the tool did not call.
+
+    They come from the records the alignment step already fetches, so the step
+    costs no request. The `roadway` block now reports a right-of-way width of
+    **180 ft**, **4 to 6 lanes**, and **24,473 to 53,406** vehicles a day
+    counted in 2024, over the corridor's 40 inventory segments.
+
+    **That width is not this corridor, and it is not a boundary.** It is
+    TxDOT's inventory attribute, in feet per item 5.10 of
+    [their file format specification](https://gis-txdot.opendata.arcgis.com/documents/5592b6569dd54884b9de9e9341435bf9).
+    The corridor here is still the stated 300 feet either side of the
+    centerline, and where the right of way actually runs is drawn on the ROW
+    map sheets. See
+    [the route centerline page](../../data-sources/txdot-roadways.md).
 
 That is the `unknown` against `no` rule turned on the tool's own coverage. A
 parcel this run never checked for a historic site is not a parcel reported as

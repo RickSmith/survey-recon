@@ -36,6 +36,7 @@ from . import (
     lead_times as lead_times_mod,
     output,
     parcels,
+    roadway as roadway_mod,
     row_maps as row_maps_mod,
     safety as safety_mod,
 )
@@ -50,6 +51,7 @@ from .sources import (
     NGS_MARK_FIELDS,
     NGS_MARKS,
     PARCELS,
+    ROADWAY_FACT_FIELDS,
     ROADWAY_FIELDS,
     ROADWAYS,
     ROW_MAP_FIELDS,
@@ -153,7 +155,14 @@ def route_query(route, begin_dfo, end_dfo):
             f"AND {ROADWAY_FIELDS['begin_dfo']}<={hi:g} "
             f"AND {ROADWAY_FIELDS['end_dfo']}>={lo:g}"
         ),
-        "outFields": ",".join(ROADWAY_FIELDS.values()),
+        # The alignment's three, plus the four the `roadway` block reports.
+        # Asking for seven fields costs exactly what asking for three cost, and
+        # it is why step 5 needs no service of its own. `ROADWAY_FACT_FIELDS`
+        # is separate from `ROADWAY_FIELDS` on purpose: only the first three
+        # are required, because only the first three are the corridor.
+        "outFields": ",".join(
+            list(ROADWAY_FIELDS.values()) + list(ROADWAY_FACT_FIELDS.values())
+        ),
         "returnGeometry": "true",
         "returnM": "true",
         "outSR": 4326,
@@ -270,6 +279,42 @@ def _report_wrong_file_check(alignment):
     _say(f"    ends at           {alignment.end[1]:.6f}, {alignment.end[0]:.6f}")
     _say(f"    separate runs     {len(alignment.paths)}")
     _say(f"    check the map     {output.map_link(alignment.bbox)}")
+    _say()
+
+
+def _report_roadway(block):
+    """What TxDOT publishes about the road, printed while somebody is watching.
+
+    Both ends of every number, never one. The corridor is many inventory
+    segments and they disagree -- SH16 is four, five and six lanes over its own
+    length -- so a single figure here would be a choice nobody made on purpose.
+
+    The width carries its units on the same line. A bare number beside the
+    words "right of way" is the one thing this block must never print.
+    """
+    if block.get("status") == "not-screened":
+        return
+
+    def spread(value, suffix=""):
+        low, high = value["low"], value["high"]
+        if low is None:
+            return f"not published on any of the {block['segment_count']} segments"
+        said = f"{low:,}{suffix}" if not value["varies"] else f"{low:,} to {high:,}{suffix}"
+        if value["segments_without_a_value"]:
+            said += f"  ({value['segments_without_a_value']} segments without one)"
+        return said
+
+    _say("  The road itself")
+    _say(f"    segments          {block['segment_count']}")
+    _say(f"    ROW width         {spread(block['row_width_ft'], ' ft')}")
+    _say(f"    lanes             {spread(block['lanes'])}")
+    traffic = block["traffic_aadt"]
+    year = traffic.get("year")
+    _say(f"    traffic (AADT)    {spread(traffic)}{f'  in {year}' if year else ''}")
+    # Said here and not only in the output file, because this is the line
+    # somebody reads off a screen a moment before they quote the width.
+    _say("    TxDOT's inventory, not a measurement. The corridor is still the")
+    _say("    stated half-width, and the right of way is on the map sheets")
     _say()
 
 
@@ -1083,6 +1128,17 @@ def run(args):
     rows = []
     alignment = None
     corridor = None
+    # The inventory segments the route service answered with. The `roadway`
+    # block is built from these same records rather than from a service of
+    # its own, so a run that never reached the route step has no roadway
+    # facts either, and says so rather than reporting nothing.
+    route_features = None
+    # The route layer's own field list, as `confirm_fields` read it. The
+    # `roadway` block reports fields that are asked for but not required, so
+    # it needs to know whether a column it found empty is empty or gone.
+    route_layer_fields = None
+    roadway_detail = "the run stopped before the route service was asked"
+    roadway_block = None
     corridor_flags = []
     screened_for = []
     status = "complete"
@@ -1160,7 +1216,9 @@ def run(args):
                 metadata, _ = _run_stage(
                     "field list", lambda s=source: fetcher.layer_metadata(s), args.yes
                 )
-                checks.confirm_fields(source, metadata)
+                published = checks.confirm_fields(source, metadata)
+                if source is ROADWAYS:
+                    route_layer_fields = published
             _say("  field lists confirmed on every layer")
 
             # 3 -- the alignment, and the wrong-file check before anything wider
@@ -1169,11 +1227,16 @@ def run(args):
                 route_query(args.route, args.begin_dfo, args.end_dfo),
                 readable=f"route-{slug(args.route)}",
             ), args.yes)
+            route_features = features
             alignment = from_route_features(features, args.route, args.begin_dfo, args.end_dfo)
             services.append(
                 output.service_entry(ROADWAYS, pings[ROADWAYS.name], road_records, len(features))
             )
             _report_wrong_file_check(alignment)
+            roadway_block = roadway_mod.block(
+                route_features, published_fields=route_layer_fields
+            )
+            _report_roadway(roadway_block)
 
             # 4 -- the corridor polygon, fetched once and cached
             corridor, buffer_record = _run_stage(
@@ -1380,6 +1443,8 @@ def run(args):
             txdot_detail=txdot_detail,
             txdot_without_position=txdot_without_position,
         ),
+        roadway=roadway_block if roadway_block is not None
+        else roadway_mod.block(None, detail=roadway_detail),
         row_maps=row_maps_mod.block(
             row_map_sheets, detail=row_maps_detail, without_shape=row_maps_without_shape
         ),

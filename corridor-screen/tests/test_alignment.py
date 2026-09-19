@@ -122,9 +122,6 @@ class TestBuildingAnAlignment(unittest.TestCase):
         self.assertEqual(described["source_kind"], "route-dfo")
 
 
-if __name__ == "__main__":
-    unittest.main()
-
 
 class TestTheQueryAsksForWhatTheSourceDeclares(unittest.TestCase):
     """The alignment query and the source's field list must not drift apart.
@@ -142,12 +139,22 @@ class TestTheQueryAsksForWhatTheSourceDeclares(unittest.TestCase):
     """
 
     def test_the_query_names_every_field_the_source_requires(self):
+        """Every required field is asked for. More than that is allowed.
+
+        It used to be an exact match, because the query asked for exactly the
+        three the alignment needs. Under
+        [#183](https://github.com/RickSmith/survey-recon/issues/183) it also
+        asks for the four the ``roadway`` block reports, which cost nothing on
+        a query already being made. Those four are deliberately not required:
+        a layer that stopped publishing them should cost that block and never
+        stop a run.
+        """
         from corridor_screen.cli import route_query
         from corridor_screen.sources import ROADWAYS
 
         asked = route_query("SH0016-KG", 347.7, 356.367)
         wanted = set(ROADWAYS.required_fields)
-        self.assertEqual(set(asked["outFields"].split(",")), wanted)
+        self.assertLessEqual(wanted, set(asked["outFields"].split(",")))
         for field in wanted:
             self.assertIn(field, asked["where"])
 
@@ -310,3 +317,46 @@ class TestTheTwoLimitsMayArriveEitherWayRound(unittest.TestCase):
         where = route_query("SH0016-KG", 356.367, 347.7)["where"]
         self.assertIn(f"{ROADWAY_FIELDS['begin_dfo']}<=356.367", where)
         self.assertIn(f"{ROADWAY_FIELDS['end_dfo']}>=347.7", where)
+
+
+class TestTheRoadwayFactsRideAlongOnTheSameQuery(unittest.TestCase):
+    """Step 5 costs no request, and that is the whole design of it.
+
+    Specification section 5 names "Roadway facts -- ROW_MIN, lanes, traffic" as
+    a step of its own, and it used to name a service of its own too. The layer
+    the run already asks for the alignment publishes all three, so the facts
+    ride along on a query that was being made anyway.
+
+    Under [#183](https://github.com/RickSmith/survey-recon/issues/183).
+    """
+
+    def test_the_fact_fields_are_asked_for(self):
+        from corridor_screen.cli import route_query
+        from corridor_screen.sources import ROADWAY_FACT_FIELDS
+
+        asked = set(route_query("SH0016-KG", 347.7, 356.367)["outFields"].split(","))
+        self.assertLessEqual(set(ROADWAY_FACT_FIELDS.values()), asked)
+
+    def test_the_fact_fields_are_not_required(self):
+        """A layer that stopped publishing them costs the block, not the run.
+
+        The three alignment fields are the corridor: without them there is
+        nothing to screen and the field list check must stop the run. A lane
+        count is a fact about the road, and nothing else depends on it.
+        """
+        from corridor_screen.sources import ROADWAY_FACT_FIELDS, ROADWAYS
+
+        required = set(ROADWAYS.required_fields)
+        for field in ROADWAY_FACT_FIELDS.values():
+            self.assertNotIn(field, required)
+
+    def test_the_two_mappings_do_not_overlap(self):
+        """One field in both lists would be required by accident."""
+        from corridor_screen.sources import ROADWAY_FACT_FIELDS, ROADWAY_FIELDS
+
+        self.assertEqual(
+            set(ROADWAY_FIELDS.values()) & set(ROADWAY_FACT_FIELDS.values()), set()
+        )
+
+if __name__ == "__main__":
+    unittest.main()

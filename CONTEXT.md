@@ -132,11 +132,21 @@ The name it has now was checked twice against public sources, both on
 The south end answers `Northwest Loop 410, Leon Valley`, which is what it was
 always called.
 
-**TxDOT's own roadway inventory was not consulted**, because the SH16 run does
-not call it — `Roadway_Inventory_2023` is recorded as `not-screened`. So this
-name rests on OpenStreetMap rather than on the department's data. That is a
-weaker source than most things in this repo cite, and it is written down here
-rather than left for somebody to discover.
+**No name for this road was found in TxDOT's own roadway inventory.** The run
+reads that inventory now, under
+[#183](https://github.com/RickSmith/survey-recon/issues/183). Its `STE_NAM`
+field was empty on all 40 of the corridor's segments, asked live on 2026-09-19.
+That field is not one the run fetches, so it is not in the committed capture and
+the check is reproducible rather than saved. We looked at that one field and did
+not ask TxDOT.
+
+So this name still rests on OpenStreetMap rather than on the department's data.
+That is a weaker source than most things in this repo cite, and it is written
+down here rather than left for somebody to discover.
+
+Until 2026-09-19 this paragraph said the inventory "was not consulted," which
+was true then and is not now. The conclusion did not change; the reason for it
+did, and checking rather than assuming is what found that out.
 
 ## Corridor-screening vocabulary
 
