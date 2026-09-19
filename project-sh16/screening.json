@@ -1,9 +1,9 @@
 {
   "schema_version": "0.1.0",
   "run": {
-    "run_id": "texas-bexar-sh0016-kg-20260913T070646",
-    "started_at": "2026-09-13T07:06:46-05:00",
-    "finished_at": "2026-09-13T07:07:07-05:00",
+    "run_id": "texas-bexar-sh0016-kg-20260919T123636",
+    "started_at": "2026-09-19T12:36:36-05:00",
+    "finished_at": "2026-09-19T12:36:53-05:00",
     "status": "complete",
     "stopped_at_service": null,
     "mode": "live",
@@ -85,7 +85,7 @@
   "alignment": {
     "source_kind": "route-dfo",
     "source_path": "SH0016-KG DFO 347.7 to 356.367",
-    "feature_count": 1,
+    "feature_count": 40,
     "run_count": 1,
     "length_mi": 8.691,
     "start": [
@@ -116,7 +116,7 @@
       29.575341
     ],
     "ring_count": 1,
-    "polygon_cache_key": "arcgis-geometry/corridor-buffer-300ft__411deacfd794"
+    "polygon_cache_key": "arcgis-geometry/corridor-buffer-300ft__79280bf54c33"
   },
   "roadway": {
     "status": "not-screened",
@@ -124,19 +124,19 @@
   },
   "services": [
     {
-      "name": "TxDOT_Roadways",
-      "url": "https://services.arcgis.com/KTcxiTD9dsQw4r7Z/arcgis/rest/services/TxDOT_Roadways/FeatureServer/0",
+      "name": "TxDOT_Roadway_Inventory",
+      "url": "https://services.arcgis.com/KTcxiTD9dsQw4r7Z/arcgis/rest/services/TxDOT_Roadway_Inventory/FeatureServer/0",
       "layer_id": 0,
       "purpose": "alignment",
       "ping": "ok",
-      "ping_ms": 218,
+      "ping_ms": 329,
       "ping_detail": "",
       "status": "ok",
       "attempts": 1,
-      "record_count": 1,
-      "captured_at": "2026-09-13T07:06:55-05:00",
+      "record_count": 40,
+      "captured_at": "2026-09-19T12:36:41-05:00",
       "cache_files": [
-        "txdot-roadways/route-sh0016-kg-offset-0__8b09a7137241"
+        "txdot-roadway-inventory/route-sh0016-kg-offset-0__d7c26f868693"
       ],
       "warnings": [],
       "records_used": null
@@ -147,14 +147,14 @@
       "layer_id": null,
       "purpose": "buffer",
       "ping": "ok",
-      "ping_ms": 266,
+      "ping_ms": 280,
       "ping_detail": "",
       "status": "ok",
       "attempts": 1,
       "record_count": 1,
-      "captured_at": "2026-09-13T07:06:56-05:00",
+      "captured_at": "2026-09-19T12:36:42-05:00",
       "cache_files": [
-        "arcgis-geometry/corridor-buffer-300ft__411deacfd794"
+        "arcgis-geometry/corridor-buffer-300ft__79280bf54c33"
       ],
       "warnings": [],
       "records_used": null
@@ -165,14 +165,14 @@
       "layer_id": 0,
       "purpose": "parcels",
       "ping": "ok",
-      "ping_ms": 311,
+      "ping_ms": 235,
       "ping_detail": "",
       "status": "ok",
       "attempts": 1,
       "record_count": 530,
-      "captured_at": "2026-09-13T07:06:56-05:00",
+      "captured_at": "2026-09-19T12:36:42-05:00",
       "cache_files": [
-        "bcad-parcels/parcels-offset-0__6ba49c286d84"
+        "bcad-parcels/parcels-offset-0__ee870dfc593f"
       ],
       "warnings": [],
       "records_used": null
@@ -183,12 +183,12 @@
       "layer_id": 23,
       "purpose": "flag:school",
       "ping": "ok",
-      "ping_ms": 546,
+      "ping_ms": 547,
       "ping_detail": "",
       "status": "ok",
       "attempts": 1,
       "record_count": 39,
-      "captured_at": "2026-09-13T07:06:58-05:00",
+      "captured_at": "2026-09-19T12:36:43-05:00",
       "cache_files": [
         "usgs-structures-schools/flag-school-offset-0__48ba8dc13de5"
       ],
@@ -206,12 +206,12 @@
       "layer_id": 2,
       "purpose": "flag:cemetery",
       "ping": "ok",
-      "ping_ms": 421,
+      "ping_ms": 422,
       "ping_detail": "",
       "status": "ok",
       "attempts": 1,
       "record_count": 6,
-      "captured_at": "2026-09-13T07:06:58-05:00",
+      "captured_at": "2026-09-19T12:36:44-05:00",
       "cache_files": [
         "usgs-structures-cemeteries/flag-cemetery-offset-0__2e07a8e3c809"
       ],
@@ -229,12 +229,12 @@
       "layer_id": 38,
       "purpose": "flag:railroad",
       "ping": "ok",
-      "ping_ms": 469,
+      "ping_ms": 405,
       "ping_detail": "",
       "status": "ok",
       "attempts": 1,
       "record_count": 0,
-      "captured_at": "2026-09-13T07:06:59-05:00",
+      "captured_at": "2026-09-19T12:36:45-05:00",
       "cache_files": [
         "usgs-transportation-railroads/flag-railroad-offset-0__8218960c572c"
       ],
@@ -252,12 +252,12 @@
       "layer_id": 0,
       "purpose": "flag:pipeline",
       "ping": "ok",
-      "ping_ms": 186,
+      "ping_ms": 360,
       "ping_detail": "",
       "status": "ok",
       "attempts": 1,
       "record_count": 0,
-      "captured_at": "2026-09-13T07:06:59-05:00",
+      "captured_at": "2026-09-19T12:36:45-05:00",
       "cache_files": [
         "rrc-tpms-pipelines/flag-pipeline-offset-0__b0a8a869ab57"
       ],
@@ -275,14 +275,14 @@
       "layer_id": 1,
       "purpose": "control:ngs",
       "ping": "ok",
-      "ping_ms": 235,
+      "ping_ms": 233,
       "ping_detail": "",
       "status": "ok",
       "attempts": 1,
       "record_count": 31,
-      "captured_at": "2026-09-13T07:07:00-05:00",
+      "captured_at": "2026-09-19T12:36:45-05:00",
       "cache_files": [
-        "ngs-datasheets/ngs-marks-offset-0__30b895696892"
+        "ngs-datasheets/ngs-marks-offset-0__236787e930b1"
       ],
       "warnings": [],
       "records_used": {
@@ -298,14 +298,14 @@
       "layer_id": 67,
       "purpose": "control:txdot",
       "ping": "ok",
-      "ping_ms": 311,
+      "ping_ms": 219,
       "ping_detail": "",
       "status": "ok",
       "attempts": 2,
       "record_count": 8,
-      "captured_at": "2026-09-13T07:07:00-05:00",
+      "captured_at": "2026-09-19T12:36:46-05:00",
       "cache_files": [
-        "txdot-primary-control-points/txdot-control-offset-0__b994285d5935",
+        "txdot-primary-control-points/txdot-control-offset-0__5b365f65a42a",
         "txdot-primary-control-points/txdot-control-attachments__f04e379578c8"
       ],
       "warnings": [],
@@ -322,14 +322,14 @@
       "layer_id": 0,
       "purpose": "row-maps",
       "ping": "ok",
-      "ping_ms": 141,
+      "ping_ms": 172,
       "ping_detail": "",
       "status": "ok",
       "attempts": 1,
       "record_count": 69,
-      "captured_at": "2026-09-13T07:07:02-05:00",
+      "captured_at": "2026-09-19T12:36:47-05:00",
       "cache_files": [
-        "txdot-row-maps/row-map-sheets-offset-0__da3f2c441bf2"
+        "txdot-row-maps/row-map-sheets-offset-0__e49094ab44a9"
       ],
       "warnings": [],
       "records_used": {
@@ -345,14 +345,14 @@
       "layer_id": 14,
       "purpose": "safety:hospital",
       "ping": "ok",
-      "ping_ms": 358,
+      "ping_ms": 297,
       "ping_detail": "",
       "status": "ok",
       "attempts": 1,
       "record_count": 33,
-      "captured_at": "2026-09-13T07:07:04-05:00",
+      "captured_at": "2026-09-19T12:36:50-05:00",
       "cache_files": [
-        "usgs-structures-hospitals/safety-hospital-offset-0__9313006ef86e"
+        "usgs-structures-hospitals/safety-hospital-offset-0__b6d45e03299f"
       ],
       "warnings": [],
       "records_used": {
@@ -368,14 +368,14 @@
       "layer_id": 15,
       "purpose": "safety:ambulance",
       "ping": "ok",
-      "ping_ms": 328,
+      "ping_ms": 342,
       "ping_detail": "",
       "status": "ok",
       "attempts": 1,
       "record_count": 33,
-      "captured_at": "2026-09-13T07:07:05-05:00",
+      "captured_at": "2026-09-19T12:36:51-05:00",
       "cache_files": [
-        "usgs-structures-ambulance/safety-ambulance-offset-0__a9fa7068d02e"
+        "usgs-structures-ambulance/safety-ambulance-offset-0__dfba847304da"
       ],
       "warnings": [],
       "records_used": {
@@ -391,14 +391,14 @@
       "layer_id": 16,
       "purpose": "safety:fire_ems",
       "ping": "ok",
-      "ping_ms": 344,
+      "ping_ms": 313,
       "ping_detail": "",
       "status": "ok",
       "attempts": 1,
       "record_count": 140,
-      "captured_at": "2026-09-13T07:07:06-05:00",
+      "captured_at": "2026-09-19T12:36:52-05:00",
       "cache_files": [
-        "usgs-structures-fire-ems/safety-fire-ems-offset-0__5806afb64dbb"
+        "usgs-structures-fire-ems/safety-fire-ems-offset-0__e8a2d407fead"
       ],
       "warnings": [],
       "records_used": {
@@ -414,14 +414,14 @@
       "layer_id": 18,
       "purpose": "safety:police",
       "ping": "ok",
-      "ping_ms": 358,
+      "ping_ms": 297,
       "ping_detail": "",
       "status": "ok",
       "attempts": 1,
       "record_count": 57,
-      "captured_at": "2026-09-13T07:07:07-05:00",
+      "captured_at": "2026-09-19T12:36:53-05:00",
       "cache_files": [
-        "usgs-structures-police/safety-police-offset-0__ae2e7e14254c"
+        "usgs-structures-police/safety-police-offset-0__17f7e792350d"
       ],
       "warnings": [],
       "records_used": {
@@ -7820,7 +7820,7 @@
     {
       "id": "04446-007-0390",
       "id_source": "Geo_id",
-      "owner": "CANEM INVESTMENTS LLC",
+      "owner": "GTY QSR LLC",
       "situs": "7249 BANDERA RD, LEON VALLEY, TX 78238",
       "legal_description": "CB 4446A BLK B LOT 39 (LINKWOOD ADDN-DICKEYS BAR-B-QUE SUBD)",
       "legal_acres": 1.17,
@@ -11670,7 +11670,7 @@
     {
       "id": "05784-000-0370",
       "id_source": "Geo_id",
-      "owner": "CALVEY JOSEPH J",
+      "owner": "CALVEY JOSEPH FAMILY TRUST",
       "situs": "6710 BANDERA RD, LEON VALLEY, TX 78238",
       "legal_description": "CB 5784 BLK  LOT 37",
       "legal_acres": 0.484,
@@ -13068,7 +13068,7 @@
     {
       "id": "04525-010-0014",
       "id_source": "Geo_id",
-      "owner": "MILAM HELOTES PLAZA LLC",
+      "owner": "HELOTES RETAIL PARTNERS LTD",
       "situs": "12902 BANDERA RD, HELOTES, TX 78023",
       "legal_description": "CB 4525A BLK  1 LOT  SE IRR 125.75 OF SW IRR 125.75 FT OF TR F",
       "legal_acres": 0.362,
@@ -13118,7 +13118,7 @@
     {
       "id": "04525-101-0010",
       "id_source": "Geo_id",
-      "owner": "MILAM HELOTES PLAZA LLC",
+      "owner": "HELOTES RETAIL PARTNERS LTD",
       "situs": "12904 BANDERA RD, HELOTES, TX 78023",
       "legal_description": "CB 4525A BLK  1 LOT  1 (HELOTES PARK COMMERCIAL SUBD)",
       "legal_acres": 2.69,
@@ -13193,7 +13193,7 @@
     {
       "id": "04525-010-0013",
       "id_source": "Geo_id",
-      "owner": "MILAM HELOTES PLAZA LLC",
+      "owner": "HELOTES RETAIL PARTNERS LTD",
       "situs": "12940 BANDERA RD, HELOTES, TX 78023",
       "legal_description": "CB 4525A  BLK 1  LOT NW IRR 317.56 FT OF TR F",
       "legal_acres": 1.953,

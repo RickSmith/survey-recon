@@ -1,0 +1,26 @@
+# Provenance record. The response file beside this one is exactly what the
+# server sent and is never edited. Every parameter of the request is listed
+# under [request_params], so the call can be repeated and checked.
+service = "TxDOT_Primary_Control_Points"
+cache_key = "txdot-primary-control-points/txdot-control-offset-0__5b365f65a42a"
+request_method = "POST"
+request_url = "https://services.arcgis.com/KTcxiTD9dsQw4r7Z/arcgis/rest/services/Primary_Control_Points/FeatureServer/67/query"
+captured_at = 2026-09-19T12:36:46-05:00
+http_status = 200
+response_bytes = 14725
+layer_id = 67
+record_count = 8
+warnings = []
+
+[request_params]
+geometry = "{\"xmin\": -98.69052414012181, \"ymin\": 29.48163708530382, \"xmax\": -98.59874634868089, \"ymax\": 29.575338551807004, \"spatialReference\": {\"wkid\": 4326}}"
+geometryType = "esriGeometryEnvelope"
+inSR = 4326
+outSR = 4326
+spatialRel = "esriSpatialRelIntersects"
+where = "1=1"
+outFields = "OBJECTID,STATN_NM,MONUMENT_COND_DSCR,MONUMENT_STAMPING_TXT,MONUMENT_STBL_CD,MONUMENT_LOGO_TYPE_NM,MRKR_DSCR,NGS_PERM_ID,LAST_RCOV_DT,INTERVSBL_STATN_NM,INTERVSBL_DSTNCE_MS,TXDOT_QLTY_LEVEL_CD,HRZNTL_DATUM_NM,VERT_DATUM_NM,STATE_PLN_ZN_NM,GEOID_NM,STATN_LAT,STATN_LON,STATN_EL,STATN_NORTHING_MS,STATN_EASTING_MS,STATN_GRID_SCL_FCTR_MS,STATN_EL_FCTR_MS,STATN_COMBN_SCL_FCTR_MS,UOM_NM,STATN_LOCN_DSCR,RTE_NM,CNTY_NM,TXDOT_DIST_NBR,PDF_Filename"
+returnGeometry = "true"
+f = "json"
+resultOffset = 0
+resultRecordCount = 2000

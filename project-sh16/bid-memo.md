@@ -2,7 +2,7 @@
 
 **Corridor.** SH0016-KG DFO 347.7 to 356.367, 8.69 miles, screened 300 feet either side of the centerline.
 
-**Screened on** 2026-09-13. **Reference** `texas-bexar-sh0016-kg-20260913T070646`.
+**Screened on** 2026-09-19. **Reference** `texas-bexar-sh0016-kg-20260919T123636`.
 
 [Confirm the location on a map](https://www.openstreetmap.org/?mlat=29.528488&mlon=-98.644636#map=13/29.528488/-98.644636) before reading further. A corridor drawn from the wrong route looks exactly like this one.
 
@@ -10,7 +10,7 @@
 
 Public map services were read for the corridor above — 1.00 square miles of ground — and every answer they gave was saved with the date it was obtained and the exact request that produced it.
 
-The answers in this memo were obtained on **2026-09-13**. Nothing here is live, and nothing here is older than that date.
+The answers in this memo were obtained on **2026-09-19**. Nothing here is live, and nothing here is older than that date.
 
 This is desktop work. No one has walked the corridor.
 
@@ -83,4 +83,4 @@ It is desktop reconnaissance: a first pass, from public data, to price a job aga
 
 ---
 
-*Built from `texas-bexar-sh0016-kg-20260913T070646` by corridor-screen 0.1.0. Every figure above is read from that run, and every answer that run received is saved with the date it was obtained — the screening file beside this memo says which.*
+*Built from `texas-bexar-sh0016-kg-20260919T123636` by corridor-screen 0.1.0. Every figure above is read from that run, and every answer that run received is saved with the date it was obtained — the screening file beside this memo says which.*

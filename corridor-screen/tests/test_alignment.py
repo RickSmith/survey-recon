@@ -124,3 +124,189 @@ class TestBuildingAnAlignment(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestTheQueryAsksForWhatTheSourceDeclares(unittest.TestCase):
+    """The alignment query and the source's field list must not drift apart.
+
+    Written under [#180](https://github.com/RickSmith/survey-recon/issues/180),
+    where TxDOT withdrew ``TxDOT_Roadways`` without notice and the replacement
+    publishes the same three things under different names. The failure that
+    would follow a half-finished swap is not a crash. ``confirm_fields`` passes,
+    because it reads the source's own list, and then the query asks for columns
+    the layer does not have and the service answers with nothing -- which reads
+    as a route that does not reach the corridor.
+
+    So the query is built from the same mapping the field check reads, and this
+    is the test that says the two are the same mapping.
+    """
+
+    def test_the_query_names_every_field_the_source_requires(self):
+        from corridor_screen.cli import route_query
+        from corridor_screen.sources import ROADWAYS
+
+        asked = route_query("SH0016-KG", 347.7, 356.367)
+        wanted = set(ROADWAYS.required_fields)
+        self.assertEqual(set(asked["outFields"].split(",")), wanted)
+        for field in wanted:
+            self.assertIn(field, asked["where"])
+
+    def test_the_window_is_the_two_limits_whichever_way_round_they_come(self):
+        """``BEGIN_DFO <= the larger`` and ``END_DFO >= the smaller``.
+
+        Swap those two and the query asks for the segments that miss the
+        corridor rather than the ones that reach it.
+        """
+        from corridor_screen.cli import route_query
+        from corridor_screen.sources import ROADWAY_FIELDS
+
+        where = route_query("SH0016-KG", 347.7, 356.367)["where"]
+        self.assertIn(f"{ROADWAY_FIELDS['begin_dfo']}<=356.367", where)
+        self.assertIn(f"{ROADWAY_FIELDS['end_dfo']}>=347.7", where)
+
+    def test_the_route_name_goes_in_as_given(self):
+        from corridor_screen.cli import route_query
+        from corridor_screen.sources import ROADWAY_FIELDS
+
+        where = route_query("SH0016-KG", 347.7, 356.367)["where"]
+        self.assertIn(f"{ROADWAY_FIELDS['route']}='SH0016-KG'", where)
+
+    def test_the_measures_are_asked_for_because_the_cut_needs_them(self):
+        """Without M there is no DFO on the vertices and nothing can be cut."""
+        from corridor_screen.cli import route_query
+
+        self.assertEqual(route_query("SH0016-KG", 347.7, 356.367)["returnM"], "true")
+
+
+class TestASegmentedRouteIsStillOneAlignment(unittest.TestCase):
+    """The replacement layer returns the corridor in pieces, not in one record.
+
+    ``TxDOT_Roadways`` answered SH0016-KG with a single 1,800-vertex record.
+    ``TxDOT_Roadway_Inventory`` answers the same corridor with forty, each a
+    short inventory segment. Both describe the same centerline -- measured on
+    2026-09-19, the largest gap between the two was 0.00 ft.
+
+    So a run that treats many records as many corridors, or that keeps them in
+    the order the service happened to send, would be wrong on the replacement
+    and right on the original.
+    """
+
+    def test_segments_returned_out_of_order_come_back_in_dfo_order(self):
+        later = route_feature([[-98.6, 29.2, 102.0], [-98.6, 29.3, 103.0]])
+        earlier = route_feature([[-98.6, 29.0, 100.0], [-98.6, 29.1, 101.0]])
+        middle = route_feature([[-98.6, 29.1, 101.0], [-98.6, 29.2, 102.0]])
+        alignment = from_route_features([later, earlier, middle], "SH0016-KG", 100.0, 103.0)
+        starts = [run[0][2] for run in alignment.paths]
+        self.assertEqual(starts, sorted(starts))
+        self.assertAlmostEqual(starts[0], 100.0)
+
+    def test_every_segment_that_reaches_the_window_is_counted(self):
+        features = [
+            route_feature([[-98.6, 29.0, 100.0], [-98.6, 29.1, 101.0]]),
+            route_feature([[-98.6, 29.1, 101.0], [-98.6, 29.2, 102.0]]),
+            route_feature([[-98.6, 29.2, 102.0], [-98.6, 29.3, 103.0]]),
+        ]
+        alignment = from_route_features(features, "SH0016-KG", 100.0, 103.0)
+        self.assertEqual(alignment.feature_count, 3)
+
+    def test_a_segment_outside_the_window_is_left_out_rather_than_counted(self):
+        inside = route_feature([[-98.6, 29.0, 100.0], [-98.6, 29.1, 101.0]])
+        outside = route_feature([[-98.6, 29.8, 200.0], [-98.6, 29.9, 201.0]])
+        alignment = from_route_features([inside, outside], "SH0016-KG", 100.0, 101.0)
+        self.assertEqual(alignment.feature_count, 1)
+
+
+class TestRunCountMeansBreaksInTheRoad(unittest.TestCase):
+    """``run_count`` counts breaks in the centerline, not records in a response.
+
+    This is the trap [#180](https://github.com/RickSmith/survey-recon/issues/180)
+    left behind. ``TxDOT_Roadways`` answered a corridor with one record, so
+    counting records and counting continuous stretches gave the same number and
+    nobody had to choose. The layer that replaced it cuts the same road into
+    forty inventory segments that touch end to end.
+
+    Counted as records, the SH16 corridor reads as forty separate runs of road.
+    It is one. The wrong-file check prints that number on the first screen a
+    presenter reads aloud, and a corridor in forty pieces is a different claim
+    about the ground from a corridor in one.
+
+    A real gap is still a real gap. TxDOT publishes `SH0016-KG` with seven
+    stretches that do not join, because a route can leave the state highway
+    system and come back, and closing one would invent centerline TxDOT never
+    published.
+    """
+
+    def test_segments_that_touch_end_to_end_are_one_run(self):
+        features = [
+            route_feature([[-98.6, 29.0, 100.0], [-98.6, 29.1, 101.0]]),
+            route_feature([[-98.6, 29.1, 101.0], [-98.6, 29.2, 102.0]]),
+            route_feature([[-98.6, 29.2, 102.0], [-98.6, 29.3, 103.0]]),
+        ]
+        alignment = from_route_features(features, "SH0016-KG", 100.0, 103.0)
+        self.assertEqual(len(alignment.paths), 1)
+
+    def test_every_segment_is_still_counted_as_a_feature(self):
+        """``feature_count`` is how many records answered. That is a different number."""
+        features = [
+            route_feature([[-98.6, 29.0, 100.0], [-98.6, 29.1, 101.0]]),
+            route_feature([[-98.6, 29.1, 101.0], [-98.6, 29.2, 102.0]]),
+        ]
+        alignment = from_route_features(features, "SH0016-KG", 100.0, 102.0)
+        self.assertEqual(alignment.feature_count, 2)
+        self.assertEqual(len(alignment.paths), 1)
+
+    def test_a_real_gap_is_never_closed(self):
+        """Joining across this one would invent centerline TxDOT never published."""
+        features = [
+            route_feature([[-98.6, 29.0, 100.0], [-98.6, 29.1, 101.0]]),
+            route_feature([[-98.6, 29.4, 105.0], [-98.6, 29.5, 106.0]]),
+        ]
+        alignment = from_route_features(features, "SH0016-KG", 100.0, 106.0)
+        self.assertEqual(len(alignment.paths), 2)
+
+    def test_joining_does_not_repeat_the_shared_vertex(self):
+        """The end of one segment and the start of the next are the same point."""
+        features = [
+            route_feature([[-98.6, 29.0, 100.0], [-98.6, 29.1, 101.0]]),
+            route_feature([[-98.6, 29.1, 101.0], [-98.6, 29.2, 102.0]]),
+        ]
+        run = from_route_features(features, "SH0016-KG", 100.0, 102.0).paths[0]
+        self.assertEqual([round(p[2], 3) for p in run], [100.0, 101.0, 102.0])
+
+    def test_the_length_is_the_same_however_the_road_was_cut_up(self):
+        """Forty segments of one road are as long as one record of it."""
+        whole = [route_feature([[-98.6, 29.0, 100.0], [-98.6, 29.1, 101.0], [-98.6, 29.2, 102.0]])]
+        pieces = [
+            route_feature([[-98.6, 29.0, 100.0], [-98.6, 29.1, 101.0]]),
+            route_feature([[-98.6, 29.1, 101.0], [-98.6, 29.2, 102.0]]),
+        ]
+        one = from_route_features(whole, "SH0016-KG", 100.0, 102.0)
+        many = from_route_features(pieces, "SH0016-KG", 100.0, 102.0)
+        self.assertAlmostEqual(one.length_mi, many.length_mi, places=9)
+        self.assertEqual(len(one.paths), len(many.paths))
+
+
+class TestTheTwoLimitsMayArriveEitherWayRound(unittest.TestCase):
+    """``--begin-dfo`` and ``--end-dfo`` in either order, as the README promises.
+
+    ``from_route_features`` has always sorted them. The query did not, so a
+    reversed pair asked for segments starting before the lower limit and ending
+    after the higher one. Nothing matches that, and no service errors on it: the
+    run reports a route that does not reach the corridor.
+    """
+
+    def test_reversed_limits_ask_the_same_question_as_ordered_ones(self):
+        from corridor_screen.cli import route_query
+
+        self.assertEqual(
+            route_query("SH0016-KG", 356.367, 347.7)["where"],
+            route_query("SH0016-KG", 347.7, 356.367)["where"],
+        )
+
+    def test_the_window_opens_at_the_lower_limit_and_closes_at_the_higher(self):
+        from corridor_screen.cli import route_query
+        from corridor_screen.sources import ROADWAY_FIELDS
+
+        where = route_query("SH0016-KG", 356.367, 347.7)["where"]
+        self.assertIn(f"{ROADWAY_FIELDS['begin_dfo']}<=356.367", where)
+        self.assertIn(f"{ROADWAY_FIELDS['end_dfo']}>=347.7", where)

@@ -18,7 +18,7 @@ Every answer a run receives is saved in
 with its capture date and the exact request beside it. Two kinds of finding on
 these pages are **not** in that cache, and each page says so where it matters.
 Some came from questions a run never asks, like the roadbed table on the
-[TxDOT Roadways](txdot-roadways.md) page, which carries the query to reproduce
+[TxDOT route centerline](txdot-roadways.md) page, which carries the query to reproduce
 it. And two flood-map rows on
 [sources we did not use](not-used.md) were carried over from older notes and
 never tested by us at all.
@@ -30,7 +30,7 @@ where it looked.
 
 | Step | Source | What it is for | Page |
 |---|---|---|---|
-| 1 | **TxDOT Roadways** | The centerline, by route name and mile marker | [txdot-roadways.md](txdot-roadways.md) |
+| 1 | **TxDOT route centerline** | The centerline, by route name and mile marker | [txdot-roadways.md](txdot-roadways.md) |
 | 2 | **Esri geometry service** | Widens the centerline into the ribbon | [arcgis-geometry-service.md](arcgis-geometry-service.md) |
 | 3 | **BCAD parcels** | Every tract the ribbon touches. Everything else joins to this | [bcad-parcels.md](bcad-parcels.md) |
 | 4 | **The flag services** | Schools, cemeteries, railroads, pipelines | [flag-services.md](flag-services.md) |
@@ -73,7 +73,7 @@ The most expensive kind. No error, no delay, no clue.
   [TxDOT control points](txdot-control-points.md).
 - **`SH16` is not a route name, and neither is `SH0016`.** Both return nothing.
   The name is `SH0016-KG`, and the suffix names the roadbed.
-  [TxDOT Roadways](txdot-roadways.md).
+  [TxDOT route centerline](txdot-roadways.md).
 - **A unit code that is accepted and answered differently.** `9003` is the
   code for the US survey foot. The parcel query takes it and hands back a
   different corridor. [The geometry service](arcgis-geometry-service.md).
@@ -102,8 +102,15 @@ The most expensive kind. No error, no delay, no clue.
 - **A date that may not be a date.** `1900-01-01` appears 368 times in 20,276
   records, and the service never publishes an empty date. Whether it is a
   stand-in could not be confirmed. [ROW map sheets](row-map-sheets.md).
-- **A field that exists and is empty.** `COUNTY` is a single `_` character on
-  every roadway segment read. [TxDOT Roadways](txdot-roadways.md).
+- **A layer that declares measures and holds none.** `TxDOT_Roadbed_Base` and
+  `TxDOT_Roadway_Status` publish `hasM: true` and return `null` for every
+  measure. Both would have passed a field list check and then produced a
+  corridor that could not be cut.
+  [TxDOT route centerline](txdot-roadways.md).
+- **County fields that are numbers rather than names.** `CO` is `15` and
+  `MSA_CNTY` is `1` on every corridor segment, and no field on the layer spells
+  a county. Which list they index could not be confirmed.
+  [TxDOT route centerline](txdot-roadways.md).
 - **Every layer published twice.** Hospitals are table 14 and table 49. Both
   copies returned the same records, so it does not bite. That is known only
   because somebody checked. [The crew safety services](crew-safety.md).

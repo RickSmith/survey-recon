@@ -9,10 +9,12 @@ if nobody had read the answers closely.
 County. 8.69 miles, with a ribbon 300 feet either side of the centerline.
 Every step the tool knows how to do, against the live services.
 
-**When.** Most of it on 13 September 2026. Nine of the thirty-nine responses
-were captured the day before, while the services were being worked out, and
-were checked again rather than fetched again because nothing about them had
-changed. Every response is saved in
+**When.** 19 September 2026. The capture was first made on 13 September. On the
+19th TxDOT withdrew the service the whole run starts from, so every service was
+asked again against the replacement, under
+[work order #180](https://github.com/RickSmith/survey-recon/issues/180). The
+corridor came out the same to within 0.00 ft and the parcel count did not move.
+Every response is saved in
 [`project-sh16/cache/`](https://github.com/RickSmith/survey-recon/tree/main/project-sh16/cache),
 each with a small record beside it carrying its own capture time, the exact
 request, and every parameter. Those per-file records are the authority. This
@@ -32,20 +34,27 @@ finished `complete`.
 
 | Service | Returned | Ping |
 |---|---:|---:|
-| `TxDOT_Roadways` | 1 | 218 ms |
-| `ArcGIS_Geometry` | 1 | 266 ms |
-| `BCAD_Parcels` | 530 | 311 ms |
-| `USGS_Structures_Schools` | 39 | 546 ms |
-| `USGS_Structures_Cemeteries` | 6 | 421 ms |
-| `USGS_Transportation_Railroads` | **0** | 469 ms |
-| `RRC_TPMS_Pipelines` | **0** | 186 ms |
-| `NGS_Datasheets` | 31 | 235 ms |
-| `TxDOT_Primary_Control_Points` | 8 | 311 ms |
-| `TxDOT_ROW_Maps` | 69 | 141 ms |
-| `USGS_Structures_Hospitals` | 33 | 358 ms |
-| `USGS_Structures_Ambulance` | 33 | 328 ms |
-| `USGS_Structures_Fire_EMS` | 140 | 344 ms |
-| `USGS_Structures_Police` | 57 | 358 ms |
+| `TxDOT_Roadway_Inventory` | 40 | 360 ms |
+| `ArcGIS_Geometry` | 1 | 297 ms |
+| `BCAD_Parcels` | 530 | 297 ms |
+| `USGS_Structures_Schools` | 39 | 500 ms |
+| `USGS_Structures_Cemeteries` | 6 | 391 ms |
+| `USGS_Transportation_Railroads` | **0** | 327 ms |
+| `RRC_TPMS_Pipelines` | **0** | 219 ms |
+| `NGS_Datasheets` | 31 | 327 ms |
+| `TxDOT_Primary_Control_Points` | 8 | 266 ms |
+| `TxDOT_ROW_Maps` | 69 | 172 ms |
+| `USGS_Structures_Hospitals` | 33 | 311 ms |
+| `USGS_Structures_Ambulance` | 33 | 313 ms |
+| `USGS_Structures_Fire_EMS` | 140 | 297 ms |
+| `USGS_Structures_Police` | 57 | 297 ms |
+
+**Every count in that table is what the 13 September capture found, except the
+first.** The alignment service returned one record then and returns forty now,
+because the layer that replaced it holds a route in short inventory segments.
+Those forty touch end to end, so the corridor is still one unbroken run of road
+and the output still says `run_count 1`. The road is the same road. Only the
+ping times moved, which is what ping times do.
 
 And what it found:
 

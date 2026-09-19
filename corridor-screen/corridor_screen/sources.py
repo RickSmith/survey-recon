@@ -59,14 +59,58 @@ class Source:
 TXDOT_AGOL = "https://services.arcgis.com/KTcxiTD9dsQw4r7Z/arcgis/rest/services"
 COSA_AGOL = "https://services.arcgis.com/g1fRTDLeMgspWrYp/arcgis/rest/services"
 
+# The three things the alignment step needs from a route layer, and what this
+# one calls them. Named rather than spelled inline because the names changed
+# once already and the query has to move with them -- see the account below.
+ROADWAY_FIELDS = {
+    "route": "RIA_RTE_ID",
+    "begin_dfo": "FRM_DFO",
+    "end_dfo": "TO_DFO",
+}
+
 ROADWAYS = Source(
-    name="TxDOT_Roadways",
-    base_url=f"{TXDOT_AGOL}/TxDOT_Roadways/FeatureServer",
+    name="TxDOT_Roadway_Inventory",
+    base_url=f"{TXDOT_AGOL}/TxDOT_Roadway_Inventory/FeatureServer",
     layer_id=0,
     purpose="alignment",
-    required_fields=("RTE_NM", "BEGIN_DFO", "END_DFO"),
+    required_fields=tuple(ROADWAY_FIELDS.values()),
     note="Linear referencing. The geometry carries M values, which are DFO.",
 )
+
+# ----------------------------------------------------------------------------
+# Why this is not `TxDOT_Roadways` any more
+# ----------------------------------------------------------------------------
+#
+# It was, until 2026-09-19. On that day `TxDOT_Roadways` began answering
+# `HTTP 200` carrying `error 499: Token Required`, and it is no longer in the
+# organization's public service list at all. The other 763 services there still
+# answer without a token, so one service was withdrawn rather than the account
+# being locked. Worked out under
+# [#180](https://github.com/RickSmith/survey-recon/issues/180).
+#
+# **A token is not an option.** `CLAUDE.md`: anything that needs an API key does
+# not belong in the attendee path.
+#
+# Three replacements were measured before this one was taken, and the two that
+# failed are worth recording, because both look right until you use them:
+#
+# * `TxDOT_Roadways_Unsegmented` publishes `RTE_NM`, `BEGIN_DFO` and `END_DFO`,
+#   which is the whole field list this step used to ask for -- and it is
+#   `hasM: False`. No measures on the vertices means no DFO to cut at.
+# * `TxDOT_Roadbed_Base` and `TxDOT_Roadway_Status` publish the same three
+#   fields, declare `hasM: True`, and carry the same linework to within
+#   5.2e-10 degrees. Every M value comes back `null` regardless of what the
+#   query asks for. A layer can declare measures and hold none.
+#
+# `TxDOT_Roadway_Inventory` names the same three things differently and has the
+# measures populated. It answers the SH16 corridor in forty inventory segments
+# where the old layer answered in one record of 1,800 vertices, which is why
+# `from_route_features` sorting runs by DFO is load-bearing rather than tidy.
+#
+# **The two centerlines are the same line.** Cut to DFO 347.7 to 356.367 and
+# measured against the capture committed on 2026-09-13, the largest gap between
+# them is **0.00 ft** in both directions, and the lengths differ by 0.0001 ft
+# on 8.691209 miles.
 
 PARCELS = Source(
     name="BCAD_Parcels",

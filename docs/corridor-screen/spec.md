@@ -36,7 +36,20 @@ The centerline. Five ways to give it:
 | KML | standard library | KML is always WGS 84 by its own specification |
 | KMZ | standard library | a zipped KML; unzipped, then read as KML |
 | Shapefile | **our own reader** | see 3.2 |
-| Route name + two DFO numbers | one request to TxDOT | `TxDOT_Roadways`, fields `RTE_NM`, `BEGIN_DFO`, `END_DFO` |
+| Route name + two DFO numbers | one request to TxDOT | `TxDOT_Roadway_Inventory`, fields `RIA_RTE_ID`, `FRM_DFO`, `TO_DFO` |
+
+!!! note "Amended 2026-09-19, on [PR #181](https://github.com/RickSmith/survey-recon/pull/181)"
+    Until then this row read "`TxDOT_Roadways`, fields `RTE_NM`, `BEGIN_DFO`, `END_DFO`."
+
+    **TxDOT withdrew that service on 2026-09-19.** It answers `HTTP 200` carrying `error 499: Token Required` and is no longer in the organization's public service list, while the other 763 services there still answer without a token. A token is not an option: `CLAUDE.md` says anything needing an API key does not belong in the attendee path.
+
+    **The input has not changed.** A route name and two DFO numbers still go in, and `SH0016-KG` is still spelled exactly that way. Only the names of the three fields that carry them have changed, and the tool reads those from one mapping, `sources.ROADWAY_FIELDS`, rather than writing them into the query.
+
+    **It is the same road, measured rather than assumed.** Cut to DFO 347.7 and 356.367, the largest gap between the new centerline and the capture committed on 2026-09-13 is 0.00 ft in both directions, the lengths agree to 0.0001 ft on 8.691209 miles, the seven continuous runs of `SH0016-KG` agree to two decimals, and the whole run still finds 524 parcels with no warning.
+
+    Two layers publishing the old three field names were measured and rejected first. `TxDOT_Roadways_Unsegmented` carries no measures. `TxDOT_Roadbed_Base` and `TxDOT_Roadway_Status` declare measures and return `null` for every one. Both would have passed the field list check. [Work order #180](https://github.com/RickSmith/survey-recon/issues/180), and the whole account is in [the data source page](../data-sources/txdot-roadways.md).
+
+    Raised on the pull request rather than patched over. Rick ruled on 2026-09-19.
 
 **A bounding box is never an input.** A box around SH16 returns roughly 55,000 parcels. A corridor is a ribbon, not a square.
 
@@ -181,7 +194,7 @@ Every endpoint below was queried live on 2026-09-12 and returned real results. F
 | Parcels | `BCAD_Parcels` via CoSA, on `services.arcgis.com/g1fRTDLeMgspWrYp` | 0 |
 | TxDOT-owned land | `2025_Land_Parcels` | **328** |
 | Roadway facts | `Roadway_Inventory_2023` | 0 |
-| Route geometry | `TxDOT_Roadways` | 0 |
+| Route geometry | `TxDOT_Roadway_Inventory` | 0 |
 | Control | `Primary_Control_Points` — **the San Antonio district's**, see below | **67** |
 | Control | NGS Data Explorer `/radial`, and the NGS datasheets feature service | 1 |
 | ROW sheets | `ROW_Maps_CL_2017` on `maps.dot.state.tx.us` | 0 |
@@ -200,6 +213,15 @@ Every endpoint below was queried live on 2026-09-12 and returned real results. F
     **Two findings about this server, from reading it rather than the docs.** Every layer on it exists twice, once under a `Labels` group and once under `Features`, so hospitals are layer 14 *and* layer 49. Queried live on the tool's own 25-mile envelope, both copies of all four returned identical counts and identical identifier sets. And USGS splits EMS across **two** layers that return genuinely different places here, so both are asked; answering "nearest EMS" from one of them would have been half the question.
 
     Written up on [the crew safety services](../data-sources/crew-safety.md). Raised on the pull request rather than patched over. Rick ruled on 2026-09-13.
+
+!!! note "Amended 2026-09-19, on [PR #181](https://github.com/RickSmith/survey-recon/pull/181)"
+    Until then the route geometry row read `TxDOT_Roadways`. TxDOT withdrew that service on 2026-09-19 and it now answers `error 499: Token Required`.
+
+    The account is in the section 3.1 note above, and in full on [the data source page](../data-sources/txdot-roadways.md). The short version: the replacement is the same road to within 0.00 ft, still layer 0, and the run still finds 524 parcels.
+
+    **One number in the output moved, and it is named here because a reader will meet it.** The new layer holds a route in short inventory segments, so `alignment.feature_count` reads 40 on this corridor where it read 1. `alignment.run_count` counts unbroken stretches of centerline rather than records, and still reads 1. Section 10 named `feature_count` and not `run_count` until this same pull request, which is a gap that only became visible once the two numbers stopped being equal. Both are defined there now.
+
+    [Work order #180](https://github.com/RickSmith/survey-recon/issues/180). Raised on the pull request rather than patched over. Rick ruled on 2026-09-19.
 
 **Layer numbers are load-bearing.** Control is layer 67. TxDOT land parcels is layer 328. Section 8 checks this at startup, before any query is sent.
 
@@ -399,11 +421,23 @@ services   control   row_maps   crew_safety   parcels   corridor_flags   warning
 | `source_kind` | `geojson`, `kml`, `kmz`, `shapefile`, `route-dfo` |
 | `source_path` | the file given, or the route and its two DFO values |
 | `feature_count` | how many line features were merged |
+| `run_count` | how many **unbroken stretches of centerline** those features describe |
 | `length_mi` | the wrong-file check, recorded |
 | `start`, `end` | latitude and longitude of both ends |
 | `bbox` | the corner coordinates |
 | `crs_in` | what the file said its coordinate system was |
 | `dropped_z`, `dropped_m` | true if height or measure values were discarded |
+
+!!! note "Amended 2026-09-19, on [PR #181](https://github.com/RickSmith/survey-recon/pull/181)"
+    Until then this table named `feature_count` and not `run_count`. The output has always carried both, and the wrong-file check has always printed `run_count` as "separate runs". Only the specification was missing it.
+
+    **The gap was invisible while one service answered with one record.** `TxDOT_Roadways` returned a corridor as a single feature, so the two numbers were always equal and nothing made anybody choose a definition. `TxDOT_Roadway_Inventory`, which replaced it on 2026-09-19 under [#180](https://github.com/RickSmith/survey-recon/issues/180), holds a route in short inventory segments: 40 of them on the SH16 corridor, touching end to end.
+
+    So on this corridor `feature_count` is **40** and `run_count` is **1**, and a reader now has to be told which is which. They answer different questions. How many records a service sent is a fact about the service. How many separate stretches of road they describe is a fact about the ground, and it is the one a reader acts on, because a corridor in forty pieces would mean something very different from a corridor in one.
+
+    **A real break is still reported as one.** TxDOT publishes `SH0016-KG` in seven stretches that genuinely do not join, and runs are never joined across a gap, because closing one would invent centerline TxDOT never published.
+
+    Raised on the pull request rather than patched over. Rick ruled on 2026-09-19.
 
 ### `corridor`
 

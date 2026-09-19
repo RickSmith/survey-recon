@@ -56,7 +56,7 @@ python -m corridor_screen --route SH0016-KG --begin-dfo 347.7 --end-dfo 356.367 
 
 | Option | What it does |
 |---|---|
-| `--route` | The TxDOT route name, exactly as `TxDOT_Roadways` publishes it |
+| `--route` | The TxDOT route name, exactly as `TxDOT_Roadway_Inventory` publishes it |
 | `--begin-dfo`, `--end-dfo` | The two limits, as Distance From Origin in miles. Either order |
 | `--half-width` | How far each side of the centerline counts as inside. Default 300 feet |
 | `--sanity-margin-ft` | How far outside the ribbon any part of a parcel may sit before the run doubts it. Default 500 |
@@ -412,7 +412,7 @@ with the field list each one is expected to publish.
 
 | Purpose | Service | Layer |
 |---|---|---|
-| Alignment | `TxDOT_Roadways` on TxDOT's ArcGIS Online org | 0 |
+| Alignment | `TxDOT_Roadway_Inventory` on TxDOT's ArcGIS Online org | 0 |
 | Corridor buffer | Esri's public geometry service | — |
 | Parcels | `BCAD_Parcels` via the City of San Antonio | 0 |
 | Schools | USGS `structures` on `carto.nationalmap.gov` | **23** |

@@ -2,7 +2,7 @@
 
 **Parcel `15664-003-0040`** · EPISCOPAL CHURCH CORP IN WEST TEXAS
 
-**Written 2026-09-13** — day 0 of the follow-up clock.
+**Written 2026-09-19** — day 0 of the follow-up clock.
 
 > **Specimen. Not mailed, not signed, not sent.** This letter was written by the corridor-screening tool from public records, for the TSPS 2026 session. It carries no address and it went nowhere. An **RPLS** signs a real one and remains accountable for it — 22 Tex. Admin. Code § 131.2(38).
 
@@ -33,7 +33,7 @@ TxDOT's own procedure requires every request to be documented by written letter 
 
 ## How this letter was produced
 
-- Read from `screening.json`, screening run `texas-bexar-sh0016-kg-20260913T070646`, finished 2026-09-13T07:07:07-05:00
+- Read from `screening.json`, screening run `texas-bexar-sh0016-kg-20260919T123636`, finished 2026-09-19T12:36:53-05:00
 - Stands in for TxDOT template `020-10-tem`
 - Every value above is public record. **No client data was used.**
 

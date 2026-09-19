@@ -209,4 +209,4 @@ It is a first pass, with the arithmetic left open so somebody who knows the work
 
 ---
 
-Run `live`, finished 2026-09-13T07:07:07-05:00. Built by corridor-screen 0.1.0 from `screening.json` and `crew_rates.toml`. Nothing here was typed by hand.
+Run `live`, finished 2026-09-19T12:36:53-05:00. Built by corridor-screen 0.1.0 from `screening.json` and `crew_rates.toml`. Nothing here was typed by hand.
