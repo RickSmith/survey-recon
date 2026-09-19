@@ -33,7 +33,7 @@ TxDOT's own procedure requires every request to be documented by written letter 
 
 ## How this letter was produced
 
-- Read from `screening.json`, screening run `texas-bexar-sh0016-kg-20260919T133346`, finished 2026-09-19T13:34:02-05:00
+- Read from `screening.json`, screening run `texas-bexar-sh0016-kg-20260919T134040`, finished 2026-09-19T13:40:57-05:00
 - Stands in for TxDOT template `020-10-tem`
 - Every value above is public record. **No client data was used.**
 

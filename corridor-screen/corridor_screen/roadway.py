@@ -58,6 +58,18 @@ from .sources import ROADWAY_FACT_FIELDS
 NOTE_WIDTH_UNITS = "what the width is measured in"
 NOTE_COVERAGE = "where this width is published and where it is not"
 NOTE_NOT_A_BOUNDARY = "these are not measurements, and none of them set the corridor"
+NOTE_FIELD_GONE = "this layer no longer publishes a field this block reports"
+
+FIELD_GONE_DETAIL = (
+    "The route layer's own field list no longer includes {fields}, so this run "
+    "asked for a column that is not there. Every segment therefore came back "
+    "with no value, which is the same thing a corridor with nothing published "
+    "looks like, and the two are nothing alike. Treat any figure above that "
+    "reads as not published as unknown rather than as absent, and read the "
+    "field list before quoting this block. These fields are asked for but not "
+    "required, so the run continued rather than stopping -- nothing else in it "
+    "depends on them."
+)
 
 # TxDOT's own item number for the width, so a reader can find the line rather
 # than take this page's word for it.
@@ -120,20 +132,31 @@ def _values(features, key):
     return found, missing
 
 
-def _spread(features, key):
+def _spread(features, key, published_fields=None):
     """One fact across the corridor, as a low, a high and what was missing.
 
     Both ends rather than one number, because the corridor is many segments and
     they disagree. ``varies`` is said rather than left to be worked out -- two
     numbers that differ are easy to miss in a file this size, and the reader
     who misses it quotes one end as though it were the road.
+
+    ``published_by_the_layer`` is the difference between a county road and a
+    renamed column. Both make every segment come back empty, and they are
+    nothing alike: one is TxDOT publishing no width for that road, the other is
+    this tool asking for something that no longer exists and reporting the
+    silence as an answer. ``None`` when no field list was read, because a
+    caller who did not look should not be given a claim either way.
     """
     found, missing = _values(features, key)
+    published = None
+    if published_fields is not None:
+        published = ROADWAY_FACT_FIELDS[key] in set(published_fields)
     return {
         "low": min(found) if found else None,
         "high": max(found) if found else None,
         "varies": len(set(found)) > 1,
         "segments_without_a_value": missing,
+        "published_by_the_layer": published,
     }
 
 
@@ -153,7 +176,15 @@ def _traffic_year(features):
     return f"{years[0]} to {years[-1]}"
 
 
-def block(features, detail=None):
+def _fields_gone(published_fields):
+    """Fact fields the layer no longer publishes, in the output's own order."""
+    if published_fields is None:
+        return []
+    have = set(published_fields)
+    return [name for name in ROADWAY_FACT_FIELDS.values() if name not in have]
+
+
+def block(features, detail=None, published_fields=None):
     """The ``roadway`` block of the output file.
 
     ``features`` is the inventory segments the alignment step already fetched,
@@ -167,18 +198,26 @@ def block(features, detail=None):
     """
     if features is None:
         return not_screened(detail or "the run did not reach the route service")
-    traffic = _spread(features, "traffic")
+    traffic = _spread(features, "traffic", published_fields)
     traffic["year"] = _traffic_year(features)
+    notes = [
+        {"topic": NOTE_WIDTH_UNITS, "detail": WIDTH_UNITS_DETAIL},
+        {"topic": NOTE_COVERAGE, "detail": COVERAGE_DETAIL},
+        {"topic": NOTE_NOT_A_BOUNDARY, "detail": NOT_A_BOUNDARY_DETAIL},
+    ]
+    gone = _fields_gone(published_fields)
+    if gone:
+        # Said at the top, because every number below it is affected and a
+        # reader who meets this note last has already read the wrong thing.
+        notes.insert(0, {"topic": NOTE_FIELD_GONE, "detail": FIELD_GONE_DETAIL.format(
+            fields=", ".join(gone)
+        )})
     return {
         "segment_count": len(features),
         # The half of this block a surveyor reads first, and the one that most
         # needs its units and its caveats travelling with it.
-        "row_width_ft": _spread(features, "row_width"),
-        "lanes": _spread(features, "lanes"),
+        "row_width_ft": _spread(features, "row_width", published_fields),
+        "lanes": _spread(features, "lanes", published_fields),
         "traffic_aadt": traffic,
-        "notes": [
-            {"topic": NOTE_WIDTH_UNITS, "detail": WIDTH_UNITS_DETAIL},
-            {"topic": NOTE_COVERAGE, "detail": COVERAGE_DETAIL},
-            {"topic": NOTE_NOT_A_BOUNDARY, "detail": NOT_A_BOUNDARY_DETAIL},
-        ],
+        "notes": notes,
     }

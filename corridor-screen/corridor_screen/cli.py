@@ -1133,6 +1133,12 @@ def run(args):
     # its own, so a run that never reached the route step has no roadway
     # facts either, and says so rather than reporting nothing.
     route_features = None
+    # The route layer's own field list, as `confirm_fields` read it. The
+    # `roadway` block reports fields that are asked for but not required, so
+    # it needs to know whether a column it found empty is empty or gone.
+    route_layer_fields = None
+    roadway_detail = "the run stopped before the route service was asked"
+    roadway_block = None
     corridor_flags = []
     screened_for = []
     status = "complete"
@@ -1210,7 +1216,9 @@ def run(args):
                 metadata, _ = _run_stage(
                     "field list", lambda s=source: fetcher.layer_metadata(s), args.yes
                 )
-                checks.confirm_fields(source, metadata)
+                published = checks.confirm_fields(source, metadata)
+                if source is ROADWAYS:
+                    route_layer_fields = published
             _say("  field lists confirmed on every layer")
 
             # 3 -- the alignment, and the wrong-file check before anything wider
@@ -1225,7 +1233,10 @@ def run(args):
                 output.service_entry(ROADWAYS, pings[ROADWAYS.name], road_records, len(features))
             )
             _report_wrong_file_check(alignment)
-            _report_roadway(roadway_mod.block(route_features))
+            roadway_block = roadway_mod.block(
+                route_features, published_fields=route_layer_fields
+            )
+            _report_roadway(roadway_block)
 
             # 4 -- the corridor polygon, fetched once and cached
             corridor, buffer_record = _run_stage(
@@ -1432,7 +1443,8 @@ def run(args):
             txdot_detail=txdot_detail,
             txdot_without_position=txdot_without_position,
         ),
-        roadway=roadway_mod.block(route_features),
+        roadway=roadway_block if roadway_block is not None
+        else roadway_mod.block(None, detail=roadway_detail),
         row_maps=row_maps_mod.block(
             row_map_sheets, detail=row_maps_detail, without_shape=row_maps_without_shape
         ),

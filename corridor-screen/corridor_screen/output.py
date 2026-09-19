@@ -193,9 +193,12 @@ def build(run_id, started_at, mode, half_width_ft, adjacent_distance_ft, sanity_
         # service this tool did not call. They come from the records the
         # alignment step already fetched, so this block costs no request.
         # [#183](https://github.com/RickSmith/survey-recon/issues/183).
+        # The wording is ``roadway.block``'s own default, repeated rather than
+        # imported: that module reads ``not_screened`` from this one, so this
+        # one cannot read from it. The command line always passes a block, so
+        # this branch is a net under callers that do not.
         "roadway": roadway if roadway is not None else not_screened(
-            "the run did not reach the route service, so nothing is known about "
-            "the road itself"
+            "the run did not reach the route service"
         ),
         "services": services,
         # NGS marks and their condition, from ``control.block``. A run that

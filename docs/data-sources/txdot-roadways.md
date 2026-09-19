@@ -298,14 +298,28 @@ stopped publishing it should cost the `roadway` block and never a run.
     roadbed table, and the reason is that caching the whole state to prove a
     footnote is a poor trade.
 
-**The field names are not written in the query.** They come from
-`sources.ROADWAY_FIELDS`, which is the same mapping the field list check reads.
-That is deliberate, and trap one is why.
+**The field names are not written in the query.** The alignment's three come
+from `sources.ROADWAY_FIELDS`, which is the same mapping the field list check
+reads. That is deliberate, and trap one is why.
 
-A half-finished rename would not crash. The field check would pass, because it
-reads the source's own list. The query would then ask for columns the layer does
-not have, the service would answer with no records, and the run would report a
-route that does not reach the corridor.
+A half-finished rename of one of those three would not crash. The field check
+would pass, because it reads the source's own list. The query would then ask for
+columns the layer does not have, the service would answer with no records, and
+the run would report a route that does not reach the corridor.
+
+**The other four are a different case, and it is quieter.** They come from
+`ROADWAY_FACT_FIELDS`, which the field check deliberately does not read, because
+losing them should cost the `roadway` block rather than a whole run. So a
+renamed `ROW_MIN` does not stop anything. Every segment comes back with no
+value, and a corridor whose width TxDOT never published looks exactly the same.
+
+Those two are nothing alike. One is a county road. The other is this tool asking
+for a column that no longer exists and reporting the silence as an answer.
+
+So the block is handed the layer's own field list, which `confirm_fields` has
+already read two steps earlier and used to return anyway. Each fact says whether
+the layer still publishes it, and a field that has gone gets a note at the top
+of the block naming it.
 
 ---
 
@@ -348,7 +362,7 @@ Counted live on 2026-09-19, the data does exactly that:
 | Interstate | 55,939 | 94.3% |
 | US highway | 67,484 | 98.8% |
 | State highway | 59,281 | 98.6% |
-| Farm to Market | 75,267 | 100.0% |
+| Farm to Market | 75,267 | 99.98% |
 | **County road** | **302,900** | **0.0%** |
 
 Statewide it is empty on 743,679 of 1,027,891 records. **It is not patchy. It is

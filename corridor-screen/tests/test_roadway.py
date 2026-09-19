@@ -190,5 +190,65 @@ class TestTheBlock(unittest.TestCase):
         self.assertIn("half-width", note["detail"])
 
 
+
+class TestAColumnTheLayerStoppedPublishing(unittest.TestCase):
+    """A renamed field and a county road must not look the same.
+
+    The four fact fields are asked for but deliberately not required, so a
+    layer that renames ``ROW_MIN`` does not stop the run. Without this, every
+    segment would come back with no value and the block would report "not
+    published on any of the 40 segments" -- which is exactly what a county road
+    reports, and the two are nothing alike.
+
+    One is TxDOT publishing no width for that road. The other is this tool
+    asking for a column that no longer exists, and every number in the block
+    being wrong in a way nobody can see. Found on the review of
+    [#183](https://github.com/RickSmith/survey-recon/issues/183).
+
+    ``confirm_fields`` already reads the layer's own field list two steps
+    earlier and returns it. It was being thrown away.
+    """
+
+    LAYER_WITHOUT_THE_WIDTH = ["RIA_RTE_ID", "FRM_DFO", "TO_DFO", "NUM_LANES", "ADT_CUR"]
+
+    def test_a_field_the_layer_does_not_publish_is_named_as_such(self):
+        block = roadway.block(
+            [segment(NUM_LANES=4)], published_fields=self.LAYER_WITHOUT_THE_WIDTH
+        )
+        self.assertFalse(block["row_width_ft"]["published_by_the_layer"])
+
+    def test_a_field_the_layer_does_publish_says_so(self):
+        block = roadway.block(
+            [segment(NUM_LANES=4)], published_fields=self.LAYER_WITHOUT_THE_WIDTH
+        )
+        self.assertTrue(block["lanes"]["published_by_the_layer"])
+
+    def test_the_block_warns_rather_than_reporting_a_quiet_absence(self):
+        block = roadway.block(
+            [segment(NUM_LANES=4)], published_fields=self.LAYER_WITHOUT_THE_WIDTH
+        )
+        note = next(
+            (n for n in block["notes"] if n["topic"] == roadway.NOTE_FIELD_GONE), None
+        )
+        self.assertIsNotNone(note, "a missing column must be said out loud")
+        self.assertIn("ROW_MIN", note["detail"])
+
+    def test_nothing_is_claimed_when_the_field_list_was_not_read(self):
+        """A caller with no field list gets no claim either way, not a false one."""
+        block = roadway.block([segment(ROW_MIN=180)])
+        self.assertIsNone(block["row_width_ft"]["published_by_the_layer"])
+        self.assertFalse(any(n["topic"] == roadway.NOTE_FIELD_GONE for n in block["notes"]))
+
+    def test_a_published_field_with_no_values_is_still_an_empty_field(self):
+        """The county road case, with the field list confirming the column exists."""
+        block = roadway.block(
+            [segment(ROW_MIN=None)],
+            published_fields=["RIA_RTE_ID", "FRM_DFO", "TO_DFO", "ROW_MIN"],
+        )
+        self.assertTrue(block["row_width_ft"]["published_by_the_layer"])
+        self.assertIsNone(block["row_width_ft"]["low"])
+        self.assertEqual(block["row_width_ft"]["segments_without_a_value"], 1)
+
+
 if __name__ == "__main__":
     unittest.main()

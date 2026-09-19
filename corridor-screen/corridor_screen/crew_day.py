@@ -568,11 +568,20 @@ def counts(document):
                        "centerline is a methodology choice nobody has made yet, "
                        "and no map service publishes it. It decides which TCP "
                        "sheet applies, and the two sheets are not close in cost."),
-        _count("roadway", "Existing ROW width, lane count and traffic", None,
+        # **Relabeled on 2026-09-19, because the old label stopped being true.**
+        # It read "Existing ROW width, lane count and traffic" and said those
+        # were never called. The roadway block reports all three now, under
+        # [#183](https://github.com/RickSmith/survey-recon/issues/183). What is
+        # still unmeasured is narrower and is the thing this line item actually
+        # turns on: a lane count is not a median, and a six-lane road may be
+        # divided or not.
+        _count("roadway", "Whether the roadway is divided, and over how much of it", None,
                "not screened", "roadway",
                why_not=roadway.get("detail") or
-                       "Roadway_Inventory_2023 was not called by this pass. "
-                       "Which TCP sheet applies depends on it.",
+                       "TxDOT's right-of-way width, lane count and traffic are "
+                       "reported in the roadway block. Which TCP sheet applies "
+                       "turns on whether the road is divided, and that is a "
+                       "field this run does not read.",
                context=True),
     ]
 

@@ -29,4 +29,4 @@ was opened and read on the date the run records.
 
 ---
 
-Run `live`, finished 2026-09-19T13:34:02-05:00. Corridor half-width 300 ft, adjacent within 100 ft. Nothing here was typed by hand; every value is read from `screening.json`.
+Run `live`, finished 2026-09-19T13:40:57-05:00. Corridor half-width 300 ft, adjacent within 100 ft. Nothing here was typed by hand; every value is read from `screening.json`.
