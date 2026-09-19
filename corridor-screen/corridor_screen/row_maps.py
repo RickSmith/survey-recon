@@ -65,6 +65,8 @@ Counted on 2026-09-12, on the cross-check response cached at
 ``txdot-row-maps/sh16-bexar-county-wide-cross-check``.
 """
 
+from urllib.parse import quote
+
 from .arcgis import attribute, from_epoch_ms
 from .geometry import FEET_PER_MILE, shape_of, shape_to_paths_miles
 from .output import not_screened
@@ -111,13 +113,14 @@ DRAWINGS_DETAIL = (
     "the sheet name rather than being handed it: the rule was checked on "
     f"{PDF_SHEETS_CHECKED} sheets on {PDF_CHECKED_ON} -- every SH16 sheet in "
     "Bexar County, one sheet from each of six districts, and thirty drawn at "
-    "random from across the state -- and every one answered with a PDF, while "
-    "two sheet names that cannot exist answered 404. It is not checked again on "
-    "each run, so a drawing TxDOT has since withdrawn will answer 404 rather "
-    "than open. A sheet with no PDF is obtained the way every sheet was before "
-    "this address was known: through RPAM, TxDOT's Real Property Asset Map -- "
-    "the online application that replaced the paper right-of-way maps -- or, "
-    "TxDOT says, by Open Records Request quoting the MAP_NM values below. "
+    "random from the first five thousand records this service returns -- and "
+    "every one answered with a PDF, while two sheet names that cannot exist "
+    "answered 404. That is a sample and not a census. It is also not checked "
+    "again on each run, so a drawing TxDOT has since withdrawn will answer 404 "
+    "rather than open. A sheet with no PDF is obtained the way every sheet was "
+    "before this address was known: through RPAM, TxDOT's Real Property Asset "
+    "Map -- the online application that replaced the paper right-of-way maps -- "
+    "or, TxDOT says, by Open Records Request quoting the MAP_NM values below. "
     "https://www.txdot.gov/data-maps/right-of-way-maps/real-property-asset-map.html"
 )
 
@@ -147,7 +150,7 @@ EARLIEST_DATE_DETAIL = (
 )
 
 
-def pdf_url(map_name):
+def drawing_url(map_name):
     """Where this sheet's own drawing is served, or ``None``.
 
     **The only address in this output the service did not hand over.** A
@@ -161,13 +164,40 @@ def pdf_url(map_name):
     handing a surveyor the wrong drawing, which is worse than handing them none
     because it looks like an answer.
 
-    A sheet with no name gets ``None``, on the rule ``control.to_txdot_point``
-    states for its own sheet link: a broken link in a document a surveyor seals
-    is worse than an absent one.
+    ----
+
+    How this stands against the rule ``control.to_txdot_point`` states
+    =================================================================
+
+    That rule is "``None`` rather than a **guessed** address," on the ground
+    that a broken link in a document a surveyor seals is worse than an absent
+    one. It is worth being straight about which half of this function it
+    governs, because it is easy to cite for more than it covers.
+
+    **It governs the empty branch exactly.** A sheet with no name gets ``None``
+    rather than an address built around a hole.
+
+    **It does not govern the other branch, and the difference was ruled on
+    rather than argued away.** Every named sheet gets a constructed address that
+    the run does not re-check, so a drawing TxDOT has withdrawn since
+    ``PDF_CHECKED_ON`` will 404. Rick weighed that on
+    [#179](https://github.com/RickSmith/survey-recon/issues/179) on 2026-09-19:
+    checking would cost a request per sheet, 69 on this corridor, and each one
+    saved or the offline demo shows no links at all -- 138 files against one
+    click that finds a dead link for free. A dead link also tells on itself
+    immediately, which is not the harm that rule was written for. The harm it
+    was written for is a wrong number nobody can see is wrong.
+
+    So the output says in three places that the address is built and not
+    re-checked, rather than leaning on a rule it only half satisfies.
     """
     if not map_name:
         return None
-    return f"{ROW_PDF_BASE}{map_name}.pdf"
+    # Quoted rather than interpolated raw. Every name seen so far is letters,
+    # digits and hyphens, so this changes nothing today. A name with a space in
+    # it would otherwise emit a malformed address, which is the failure this
+    # function's own docstring argues against.
+    return f"{ROW_PDF_BASE}{quote(str(map_name), safe='')}.pdf"
 
 
 def to_sheet(feature, distance_ft, source_name=None):
@@ -190,7 +220,7 @@ def to_sheet(feature, distance_ft, source_name=None):
         # ``ROW_MAP_ID`` note in this file's docstring.
         "map_name": map_name,
         # The drawing itself, built from the name beside it. See ``pdf_url``.
-        "pdf_url": pdf_url(map_name),
+        "pdf_url": drawing_url(map_name),
         "row_map_id": read("row_map_id"),
         "control_section": read("control_section"),
         "csj": read("csj"),

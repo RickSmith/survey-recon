@@ -15,8 +15,11 @@ estimate.
 """
 
 import unittest
+from pathlib import Path
 
 from corridor_screen import row_maps
+
+from . import markdown_docs
 from corridor_screen.arcgis import from_epoch_ms
 from corridor_screen.geometry import LocalPlane
 
@@ -422,3 +425,72 @@ class TestTheBlock(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestTheAddressIsBuiltSafely(unittest.TestCase):
+    """A sheet name goes into an address, so it is escaped on the way in.
+
+    Every ``MAP_NM`` seen so far is letters, digits and hyphens, so this changes
+    nothing today. It is here because the thing this address is built from comes
+    from a service rather than from us, and a name carrying a space would
+    otherwise emit an address that is not an address.
+
+    That is the same failure ``drawing_url`` exists to argue against: a link
+    that looks like an answer and is not one.
+    """
+
+    def test_an_ordinary_sheet_name_is_untouched(self):
+        self.assertEqual(
+            row_maps.drawing_url("SAT-029110-SH0016-19971212-1"),
+            "https://maps.dot.state.tx.us/ROW_PDF/SAT-029110-SH0016-19971212-1.pdf",
+        )
+
+    def test_a_name_with_a_space_does_not_produce_a_broken_address(self):
+        built = row_maps.drawing_url("SAT 029110 X")
+        self.assertNotIn(" ", built)
+        self.assertTrue(built.startswith(row_maps.ROW_PDF_BASE))
+
+    def test_a_name_that_is_not_text_is_still_handled(self):
+        """The service sends what it sends. This one must not raise."""
+        self.assertTrue(row_maps.drawing_url(12345).endswith("12345.pdf"))
+
+
+class TestTheDocumentationAgreesWithTheCode(unittest.TestCase):
+    """The page and the note quote the same two numbers, so they are bound.
+
+    ``PDF_SHEETS_CHECKED`` and ``PDF_CHECKED_ON`` exist so the output's own note
+    and this repo's documentation cannot drift apart. That only works if
+    something reads both. Without this test the constants bind the note to
+    itself and the page is free to wander, which is the drift they were created
+    to prevent.
+    """
+
+    PAGE = Path(__file__).resolve().parents[2] / "docs" / "data-sources" / "row-map-sheets.md"
+
+    def setUp(self):
+        self.assertTrue(self.PAGE.is_file(), f"{self.PAGE} is missing")
+        self.page = markdown_docs.text_of(self.PAGE)
+
+    def test_the_page_quotes_the_number_of_sheets_the_code_says_were_checked(self):
+        self.assertIn(str(row_maps.PDF_SHEETS_CHECKED), self.page)
+
+    def test_the_page_quotes_the_date_the_code_says_they_were_checked_on(self):
+        self.assertIn(row_maps.PDF_CHECKED_ON, self.page)
+
+    def test_the_page_names_the_address_the_code_builds(self):
+        self.assertIn(row_maps.ROW_PDF_BASE, self.page)
+
+    def test_the_sample_adds_up_to_the_number_the_code_states(self):
+        """27 SH16 sheets, 6 districts and 30 at random. The page shows all four."""
+        for part in ("27", "6", "30", str(row_maps.PDF_SHEETS_CHECKED)):
+            self.assertIn(part, self.page)
+        self.assertEqual(27 + 6 + 30, row_maps.PDF_SHEETS_CHECKED)
+
+    def test_the_page_says_the_sample_is_not_a_census(self):
+        """A reader who takes 63 of 20,276 for coverage has been misled."""
+        self.assertIn("sample, not a census", self.page)
+
+    def test_the_page_says_the_evidence_is_not_in_the_cache(self):
+        """The other three traps on that page cite a cached response. This one
+        cannot, so the page has to say so rather than let a reader assume."""
+        self.assertIn("not in the cache", self.page)

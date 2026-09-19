@@ -201,9 +201,14 @@ Every request below was made on **2026-09-19**, and each returned HTTP 200 with
 | Asked | Sheets | Answered with a PDF |
 |---|---|---|
 | Every SH16 sheet in Bexar County | 27 | **27** |
-| One sheet from each district in a statewide sample: ABL, AMA, BWD, PHR, SAT, YKM | 6 | **6** |
-| Drawn at random from 5,000 statewide records | 30 | **30** |
+| One sheet from each district in that sample: ABL, AMA, BWD, PHR, SAT, YKM | 6 | **6** |
+| Drawn at random from the first 5,000 records the service returns | 30 | **30** |
 | **Total** | **63** | **63** |
+
+**The 30 are not a statewide random sample, and the difference matters.** The
+service holds 20,276 records and returns at most 5,000 in one answer. The 30
+were drawn from that first page, so they are random within it and say nothing
+about the other 15,276.
 
 Then the same question was asked of the run itself. **Every one of the 69
 `pdf_url` values in the committed `project-sh16/screening.json` was requested,
@@ -220,6 +225,26 @@ One drawing was fetched in full, `SAT-029109-SH0016-19370901`, at 522,232 bytes
 and beginning `%PDF-1.4`. Sizes across the sample ran from about 40 KB to 13 MB
 and were all different, so these are distinct drawings rather than one
 placeholder served under many names.
+
+!!! warning "This evidence is not in the cache, and that is a real difference from the three traps above"
+    Each of the traps on this page names a saved response you can open, such as
+    `txdot-row-maps/sh16-bexar-county-wide-cross-check`, with the exact request
+    in the `.meta.toml` beside it. **These 134 requests left nothing behind.**
+
+    They were headers-only requests to a file server rather than answers from a
+    data service, and the run does not make them: they were made once, by hand,
+    to establish the rule. Saving them would have meant inventing a shape for a
+    response that has no body.
+
+    So this is the one claim on this page a reader cannot check offline from
+    this repo. It is reproducible instead, with one line per sheet name:
+
+    ```
+    curl -sS -I https://maps.dot.state.tx.us/ROW_PDF/SAT-029109-SH0016-19370901.pdf
+    ```
+
+    Every `pdf_url` in `project-sh16/screening.json` can be run through that,
+    which is how the 69 were checked.
 
 **63 of 20,276 records is a sample, not a census, and the tool does not re-check
 the address on each run.** A drawing TxDOT has since withdrawn will answer 404
