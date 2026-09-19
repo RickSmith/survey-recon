@@ -1,9 +1,9 @@
 {
   "schema_version": "0.1.0",
   "run": {
-    "run_id": "texas-bexar-sh0016-kg-20260919T130945",
-    "started_at": "2026-09-19T13:09:45-05:00",
-    "finished_at": "2026-09-19T13:10:03-05:00",
+    "run_id": "texas-bexar-sh0016-kg-20260919T133346",
+    "started_at": "2026-09-19T13:33:46-05:00",
+    "finished_at": "2026-09-19T13:34:02-05:00",
     "status": "complete",
     "stopped_at_service": null,
     "mode": "live",
@@ -119,8 +119,40 @@
     "polygon_cache_key": "arcgis-geometry/corridor-buffer-300ft__79280bf54c33"
   },
   "roadway": {
-    "status": "not-screened",
-    "detail": "existing right-of-way width, lane count and traffic come from Roadway_Inventory_2023, which this pass does not call"
+    "segment_count": 40,
+    "row_width_ft": {
+      "low": 180,
+      "high": 180,
+      "varies": false,
+      "segments_without_a_value": 0
+    },
+    "lanes": {
+      "low": 4,
+      "high": 6,
+      "varies": true,
+      "segments_without_a_value": 0
+    },
+    "traffic_aadt": {
+      "low": 24473,
+      "high": 53406,
+      "varies": true,
+      "segments_without_a_value": 0,
+      "year": 2024
+    },
+    "notes": [
+      {
+        "topic": "what the width is measured in",
+        "detail": "In feet. The service publishes no units, no alias and no description for ROW_MIN, so the number arrives bare. TxDOT's file format specification gives item 5.10, RIGHT-OF-WAY-WIDTH-MINIMUM, format N4, as '0001 - 9999 [in feet]'. TxDOT Roadway Inventory Specifications 2023, page 11, revised 09/03/2024, https://gis-txdot.opendata.arcgis.com/documents/5592b6569dd54884b9de9e9341435bf9"
+      },
+      {
+        "topic": "where this width is published and where it is not",
+        "detail": "TxDOT publishes this width on on-system highways only. It is empty on 743,679 of the service's 1,027,891 records, and on 0 of 302,900 county road records -- not patchy, but on-system or nothing. The specification marks the field 'On-System only beginning YE2021'. So a corridor with no width here is a corridor TxDOT publishes no width for, and never a corridor with no right of way. Counted live on 2026-09-19."
+      },
+      {
+        "topic": "these are not measurements, and none of them set the corridor",
+        "detail": "Every number in this block is an attribute TxDOT records about the road, not a measurement anybody made of it. None of them set the corridor: that is the stated half-width either side of the centerline, which the run was given and never derives. Where the right of way actually runs is drawn on the ROW map sheets, and this width is not a substitute for reading them."
+      }
+    ]
   },
   "services": [
     {
@@ -129,14 +161,14 @@
       "layer_id": 0,
       "purpose": "alignment",
       "ping": "ok",
-      "ping_ms": 438,
+      "ping_ms": 282,
       "ping_detail": "",
       "status": "ok",
       "attempts": 1,
       "record_count": 40,
-      "captured_at": "2026-09-19T13:09:51-05:00",
+      "captured_at": "2026-09-19T13:33:51-05:00",
       "cache_files": [
-        "txdot-roadway-inventory/route-sh0016-kg-offset-0__d7c26f868693"
+        "txdot-roadway-inventory/route-sh0016-kg-offset-0__fed5cd9e96dc"
       ],
       "warnings": [],
       "records_used": null
@@ -147,12 +179,12 @@
       "layer_id": null,
       "purpose": "buffer",
       "ping": "ok",
-      "ping_ms": 265,
+      "ping_ms": 266,
       "ping_detail": "",
       "status": "ok",
       "attempts": 1,
       "record_count": 1,
-      "captured_at": "2026-09-19T13:09:52-05:00",
+      "captured_at": "2026-09-19T13:33:51-05:00",
       "cache_files": [
         "arcgis-geometry/corridor-buffer-300ft__79280bf54c33"
       ],
@@ -165,12 +197,12 @@
       "layer_id": 0,
       "purpose": "parcels",
       "ping": "ok",
-      "ping_ms": 375,
+      "ping_ms": 186,
       "ping_detail": "",
       "status": "ok",
       "attempts": 1,
       "record_count": 530,
-      "captured_at": "2026-09-19T13:09:52-05:00",
+      "captured_at": "2026-09-19T13:33:52-05:00",
       "cache_files": [
         "bcad-parcels/parcels-offset-0__ee870dfc593f"
       ],
@@ -183,12 +215,12 @@
       "layer_id": 23,
       "purpose": "flag:school",
       "ping": "ok",
-      "ping_ms": 453,
+      "ping_ms": 436,
       "ping_detail": "",
       "status": "ok",
       "attempts": 1,
       "record_count": 39,
-      "captured_at": "2026-09-19T13:09:53-05:00",
+      "captured_at": "2026-09-19T13:33:53-05:00",
       "cache_files": [
         "usgs-structures-schools/flag-school-offset-0__48ba8dc13de5"
       ],
@@ -206,12 +238,12 @@
       "layer_id": 2,
       "purpose": "flag:cemetery",
       "ping": "ok",
-      "ping_ms": 358,
+      "ping_ms": 327,
       "ping_detail": "",
       "status": "ok",
       "attempts": 1,
       "record_count": 6,
-      "captured_at": "2026-09-19T13:09:54-05:00",
+      "captured_at": "2026-09-19T13:33:54-05:00",
       "cache_files": [
         "usgs-structures-cemeteries/flag-cemetery-offset-0__2e07a8e3c809"
       ],
@@ -234,7 +266,7 @@
       "status": "ok",
       "attempts": 1,
       "record_count": 0,
-      "captured_at": "2026-09-19T13:09:55-05:00",
+      "captured_at": "2026-09-19T13:33:54-05:00",
       "cache_files": [
         "usgs-transportation-railroads/flag-railroad-offset-0__8218960c572c"
       ],
@@ -252,12 +284,12 @@
       "layer_id": 0,
       "purpose": "flag:pipeline",
       "ping": "ok",
-      "ping_ms": 390,
+      "ping_ms": 296,
       "ping_detail": "",
       "status": "ok",
       "attempts": 1,
       "record_count": 0,
-      "captured_at": "2026-09-19T13:09:55-05:00",
+      "captured_at": "2026-09-19T13:33:55-05:00",
       "cache_files": [
         "rrc-tpms-pipelines/flag-pipeline-offset-0__b0a8a869ab57"
       ],
@@ -275,12 +307,12 @@
       "layer_id": 1,
       "purpose": "control:ngs",
       "ping": "ok",
-      "ping_ms": 327,
+      "ping_ms": 265,
       "ping_detail": "",
       "status": "ok",
       "attempts": 1,
       "record_count": 31,
-      "captured_at": "2026-09-19T13:09:56-05:00",
+      "captured_at": "2026-09-19T13:33:55-05:00",
       "cache_files": [
         "ngs-datasheets/ngs-marks-offset-0__236787e930b1"
       ],
@@ -298,12 +330,12 @@
       "layer_id": 67,
       "purpose": "control:txdot",
       "ping": "ok",
-      "ping_ms": 375,
+      "ping_ms": 282,
       "ping_detail": "",
       "status": "ok",
       "attempts": 2,
       "record_count": 8,
-      "captured_at": "2026-09-19T13:09:57-05:00",
+      "captured_at": "2026-09-19T13:33:56-05:00",
       "cache_files": [
         "txdot-primary-control-points/txdot-control-offset-0__5b365f65a42a",
         "txdot-primary-control-points/txdot-control-attachments__f04e379578c8"
@@ -327,7 +359,7 @@
       "status": "ok",
       "attempts": 1,
       "record_count": 69,
-      "captured_at": "2026-09-19T13:09:58-05:00",
+      "captured_at": "2026-09-19T13:33:57-05:00",
       "cache_files": [
         "txdot-row-maps/row-map-sheets-offset-0__e49094ab44a9"
       ],
@@ -345,12 +377,12 @@
       "layer_id": 14,
       "purpose": "safety:hospital",
       "ping": "ok",
-      "ping_ms": 327,
+      "ping_ms": 436,
       "ping_detail": "",
       "status": "ok",
       "attempts": 1,
       "record_count": 33,
-      "captured_at": "2026-09-19T13:10:01-05:00",
+      "captured_at": "2026-09-19T13:34:00-05:00",
       "cache_files": [
         "usgs-structures-hospitals/safety-hospital-offset-0__b6d45e03299f"
       ],
@@ -373,7 +405,7 @@
       "status": "ok",
       "attempts": 1,
       "record_count": 33,
-      "captured_at": "2026-09-19T13:10:01-05:00",
+      "captured_at": "2026-09-19T13:34:01-05:00",
       "cache_files": [
         "usgs-structures-ambulance/safety-ambulance-offset-0__dfba847304da"
       ],
@@ -391,12 +423,12 @@
       "layer_id": 16,
       "purpose": "safety:fire_ems",
       "ping": "ok",
-      "ping_ms": 328,
+      "ping_ms": 344,
       "ping_detail": "",
       "status": "ok",
       "attempts": 1,
       "record_count": 140,
-      "captured_at": "2026-09-19T13:10:02-05:00",
+      "captured_at": "2026-09-19T13:34:01-05:00",
       "cache_files": [
         "usgs-structures-fire-ems/safety-fire-ems-offset-0__e8a2d407fead"
       ],
@@ -414,12 +446,12 @@
       "layer_id": 18,
       "purpose": "safety:police",
       "ping": "ok",
-      "ping_ms": 359,
+      "ping_ms": 296,
       "ping_detail": "",
       "status": "ok",
       "attempts": 1,
       "record_count": 57,
-      "captured_at": "2026-09-19T13:10:03-05:00",
+      "captured_at": "2026-09-19T13:34:02-05:00",
       "cache_files": [
         "usgs-structures-police/safety-police-offset-0__17f7e792350d"
       ],

@@ -76,9 +76,19 @@ itself rather than leaving a reader to notice:
 
 | Not run | What it would have added | How the output says so |
 |---|---|---|
-| **Roadway facts** — spec §5 step 5 | `ROW_MIN`, lane count, traffic, from `Roadway_Inventory_2023` | the `roadway` block reads `not-screened` and names the service |
 | **Historic sites** — USGS `structures` layer 11 | a fifth flag type | `screened_for` lists four types, so no parcel reads as clear of a fifth |
 | **TxDOT-owned land** — `2025_Land_Parcels` layer 328 | `txdot_owned` on each parcel row | the field is absent rather than false |
+
+!!! note "Roadway facts came off this list on 2026-09-19"
+    Specification section 5 step 5 asks for `ROW_MIN`, lane count and traffic.
+    It sat on this list until
+    [work order #183](https://github.com/RickSmith/survey-recon/issues/183), and
+    the row said those facts came from a service the tool did not call.
+
+    They come from the records the alignment step already fetches, so the step
+    costs no request. The `roadway` block now reports a right-of-way width of
+    **180 ft**, **4 to 6 lanes**, and **24,473 to 53,406** vehicles a day
+    counted in 2024, over the corridor's 40 inventory segments.
 
 That is the `unknown` against `no` rule turned on the tool's own coverage. A
 parcel this run never checked for a historic site is not a parcel reported as

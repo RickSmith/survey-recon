@@ -250,11 +250,13 @@ legitimate, and `run_count` in the output says how many runs there are.
 | `FRM_DFO`, `TO_DFO` | The segment's limits on TxDOT's linear measure, in miles |
 | `RDBD_ID` | The roadbed code: `KG`, `LG`, `RG`, `XG`, `AG` |
 | `CO`, `MSA_CNTY`, `DI` | Numbers, not names. See trap three |
-| `ROW_MIN` | The existing right-of-way width. See below |
-| `NUM_LANES`, `SPD_MAX`, `ADT_CUR`, `SUR_W` | Inventory attributes this tool does not read |
+| `ROW_MIN` | The existing right-of-way width, **in feet**. See below |
+| `NUM_LANES` | Lanes. On the SH16 corridor this is 4, 5 **and** 6 |
+| `ADT_CUR`, `ADT_YEAR` | Average daily traffic, and the year it was counted |
+| `SPD_MAX`, `SUR_W` | Inventory attributes this tool does not read |
 
-The other 120 are inventory detail: traffic counts, pavement, shoulders, tolls,
-bridges and housekeeping.
+The other 117 are inventory detail: pavement, shoulders, tolls, bridges and
+housekeeping.
 
 ---
 
@@ -262,7 +264,7 @@ bridges and housekeeping.
 
 ```
 WHERE RIA_RTE_ID='SH0016-KG' AND FRM_DFO<=356.367 AND TO_DFO>=347.7
-outFields  RIA_RTE_ID,FRM_DFO,TO_DFO
+outFields  RIA_RTE_ID,FRM_DFO,TO_DFO,ROW_MIN,NUM_LANES,ADT_CUR,ADT_YEAR
 returnGeometry  true      returnM  true      outSR  4326
 ```
 
@@ -271,17 +273,30 @@ surviving runs put in DFO order and joined where they touch. The captured
 response is committed at `txdot-roadway-inventory/route-sh0016-kg-offset-0`,
 with its capture date and the exact request in the `.meta.toml` beside it.
 
+**Seven fields where three would do, and the four extra cost nothing.** The
+first three are the alignment. The other four are the `roadway` block, which is
+specification section 5's step 5 and used to name a service of its own. Asking
+for seven columns costs exactly what asking for three cost, so that step makes
+no request at all.
+
+Only the first three are in the source's `required_fields`, and that separation
+is deliberate. Without them there is no corridor and the run must stop. A lane
+count is a fact about the road that nothing else depends on, so a layer that
+stopped publishing it should cost the `roadway` block and never a run.
+
 !!! note "Which numbers on this page you can check from the committed capture, and which you cannot"
-    The tool asks for one route, three fields and the geometry. So the capture
-    holds the 40 records, the 243 vertices, the M values and the centerline, and
-    every claim about those can be checked offline from this repo.
+    The tool asks for one route, seven fields and the geometry. So the capture
+    holds the 40 records, the 243 vertices, the M values, the centerline, and
+    **the corridor's own `ROW_MIN`, lane counts and traffic counts**. Every
+    claim about those can be checked offline from this repo.
 
     These were read live and are **not** in the capture: the 1,450 segments of
     the whole route, the seven continuous runs, the five roadbeds, `CO`,
-    `MSA_CNTY` and `ROW_MIN`. Each one is shown above with the query that
-    produces it, so they are reproducible rather than saved. That is the same
-    choice this page has always made for the roadbed table, and the reason is
-    that caching the whole state to prove a footnote is a poor trade.
+    `MSA_CNTY`, and the statewide coverage counts in the table further down.
+    Each one is shown with the query that produces it, so they are reproducible
+    rather than saved. That is the same choice this page has always made for the
+    roadbed table, and the reason is that caching the whole state to prove a
+    footnote is a poor trade.
 
 **The field names are not written in the query.** They come from
 `sources.ROADWAY_FIELDS`, which is the same mapping the field list check reads.
@@ -301,27 +316,73 @@ is drawn on the [ROW map sheets](row-map-sheets.md), and the corridor this tool
 builds is a **stated** half-width either side of the centerline, never a
 measured one.
 
-### One thing it now does tell you, and the tool does not yet read
+### What it does tell you: `ROW_MIN`, and it is in feet
 
-`ROW_MIN` is on this layer. It holds `180` on all 40 SH16 corridor segments,
-read live on 2026-09-19.
+`ROW_MIN` holds `180` on all 40 SH16 corridor segments, read live on
+2026-09-19. The `roadway` block reports it, under
+[work order #183](https://github.com/RickSmith/survey-recon/issues/183).
 
-**Read that number carefully, and do not quote it as a right-of-way width.**
+**The service publishes no units for it.** No alias, no description. Its alias
+is the field name, so the number arrives bare, which is exactly the shape of
+thing this repo will not print next to the words "right of way" without a
+source.
 
-The service publishes no units for the field and no description of it. Its alias
-is the field name. So `180` is a bare number on an inventory record, and this
-page is not going to tell you it is 180 feet.
+TxDOT publishes the source. Its file format specification gives item **5.10**:
 
-It is also an inventory attribute rather than a boundary determination. The
-right of way is drawn on the [ROW map sheets](row-map-sheets.md), and whether
-this number agrees with those sheets along this corridor has not been checked.
+> `RIGHT-OF-WAY-WIDTH-MINIMUM` · format `N4` · **`0001 - 9999 [in feet]`**
 
-The `roadway` block of the output still says `not-screened` and names a
-different service, because that was true of the service this one replaced. It is
-no longer true of this one. Reading it properly means answering the units
-question first, so it is not done here. See
-[the capture note](../scenarios/sh16/capture-note.md) for what that block says
-today.
+[TxDOT Roadway Inventory Specifications 2023](https://gis-txdot.opendata.arcgis.com/documents/5592b6569dd54884b9de9e9341435bf9),
+page 11 of 35, revised 09/03/2024, prepared by TPP-DM-RIB. That citation
+travels in the output's own `notes`, not only on this page.
+
+#### It is on-system or nothing
+
+The same specification marks the field **"(On-System only beginning YE2021)"**,
+and a later change note records it as "Update both to On-system only but NULL if
+Off-system."
+
+Counted live on 2026-09-19, the data does exactly that:
+
+| Highway system | Records | With a width |
+|---|---:|---:|
+| Interstate | 55,939 | 94.3% |
+| US highway | 67,484 | 98.8% |
+| State highway | 59,281 | 98.6% |
+| Farm to Market | 75,267 | 100.0% |
+| **County road** | **302,900** | **0.0%** |
+
+Statewide it is empty on 743,679 of 1,027,891 records. **It is not patchy. It is
+on-system or nothing.**
+
+So a corridor on a county road gets no width at all, and the block says the
+width is not published rather than reporting a zero. "TxDOT publishes no width
+for this road" and "this road has no right of way" are different claims, and
+only one of them is true.
+
+#### It is still not a boundary
+
+It is an inventory attribute, not a determination. The right of way is drawn on
+the [ROW map sheets](row-map-sheets.md), and whether this number agrees with
+those sheets along this corridor has not been checked.
+
+**It does not set the corridor.** Specification section 3 is explicit that the
+width is reported as a fact about the road and does not set the buffer. The
+corridor stays the stated half-width the run was given.
+
+#### A corridor is many segments, and they disagree
+
+The `roadway` block reports both ends of every number, never one, and says
+whether they differ. That is not defensive: the SH16 corridor is 40 inventory
+segments carrying **three different lane counts**.
+
+| Fact | SH16, Loop 410 to Old Bandera Rd |
+|---|---|
+| Right-of-way width | `180` ft on every segment |
+| Lanes | **4 to 6** |
+| Traffic, average daily | **24,473 to 53,406**, counted 2024 |
+
+A block that reported the first segment would have called this a four-lane road.
+It is six lanes in places.
 
 ---
 

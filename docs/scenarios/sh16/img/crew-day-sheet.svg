@@ -69,5 +69,5 @@
 <text x="860.0" y="936.0" font-size="19" fill="#4b5563" font-weight="400" text-anchor="start">The two are never added together. They are bought from different people.</text>
 <text x="860.0" y="970.0" font-size="19" fill="#b45309" font-weight="600" text-anchor="start" class="floor">Both are floors. 2 lines above have no total, and those hours are missing from</text>
 <text x="860.0" y="996.0" font-size="19" fill="#b45309" font-weight="600" text-anchor="start">the figure rather than zero in it.</text>
-<text x="60.0" y="1050.0" font-size="18" fill="#9ca3af" font-weight="400" text-anchor="start">Run texas-bexar-sh0016-kg-20260919T130945, finished 2026-09-19T13:10:03-05:00. Drawn from crew_day.lines() and crew_rates.toml. Nothing here was drawn by hand.</text>
+<text x="60.0" y="1050.0" font-size="18" fill="#9ca3af" font-weight="400" text-anchor="start">Run texas-bexar-sh0016-kg-20260919T133346, finished 2026-09-19T13:34:02-05:00. Drawn from crew_day.lines() and crew_rates.toml. Nothing here was drawn by hand.</text>
 </svg>

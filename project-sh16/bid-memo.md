@@ -2,7 +2,7 @@
 
 **Corridor.** SH0016-KG DFO 347.7 to 356.367, 8.69 miles, screened 300 feet either side of the centerline.
 
-**Screened on** 2026-09-19. **Reference** `texas-bexar-sh0016-kg-20260919T130945`.
+**Screened on** 2026-09-19. **Reference** `texas-bexar-sh0016-kg-20260919T133346`.
 
 [Confirm the location on a map](https://www.openstreetmap.org/?mlat=29.528488&mlon=-98.644636#map=13/29.528488/-98.644636) before reading further. A corridor drawn from the wrong route looks exactly like this one.
 
@@ -24,8 +24,6 @@ Read this before the findings. Every item here is a gap this screening cannot cl
 - **Livestock** — no public source publishes livestock presence.
 
 A corridor is not clear of either of these because this memo does not mention them. Somebody has to look.
-
-**The existing right-of-way width was not read**, nor the lane count or the traffic. So the corridor width used here is the one stated above — a number somebody chose — and not the width TxDOT holds.
 
 **How much of each tract the corridor takes was not measured.** The tracts were counted and identified; the area of the take was not calculated. A count of tracts is not an acreage, and this memo does not offer one.
 
@@ -83,4 +81,4 @@ It is desktop reconnaissance: a first pass, from public data, to price a job aga
 
 ---
 
-*Built from `texas-bexar-sh0016-kg-20260919T130945` by corridor-screen 0.1.0. Every figure above is read from that run, and every answer that run received is saved with the date it was obtained — the screening file beside this memo says which.*
+*Built from `texas-bexar-sh0016-kg-20260919T133346` by corridor-screen 0.1.0. Every figure above is read from that run, and every answer that run received is saved with the date it was obtained — the screening file beside this memo says which.*

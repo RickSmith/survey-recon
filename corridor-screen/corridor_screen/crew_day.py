@@ -330,8 +330,11 @@ CREW_CHANGES = (
         ),
         "unmeasured": (
             "Whether this corridor is divided at all, and over how much of its "
-            "length. The roadway block of this run was never screened, so lane "
-            "count and configuration are unknown."
+            "length. The roadway block now reports TxDOT's lane count, but a "
+            "lane count is not a median: a six-lane road may be divided or not, "
+            "and the field that would say is one this run does not read. So the "
+            "quantity this line item turns on is still unmeasured, and this "
+            "build-up still does not put a number on it."
         ),
     },
 )
