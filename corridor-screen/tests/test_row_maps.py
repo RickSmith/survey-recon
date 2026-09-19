@@ -168,6 +168,54 @@ class TestTheFieldsOnASheet(unittest.TestCase):
         self.assertEqual(sheets[0]["route"], "SH0016")
 
 
+class TestTheAddressOfTheDrawing(unittest.TestCase):
+    """Where the drawing itself lives, which no field in this service gives.
+
+    TxDOT serves the drawings as static PDFs under a folder named for the
+    sheet. The folder is not browsable -- it answers 403 -- and no field in the
+    layer publishes the address, so the tool builds it from ``MAP_NM``.
+
+    That makes it the one address in this output the service did not hand over,
+    which is why the sheet name it is built from has to survive intact.
+    """
+
+    def test_a_sheet_carries_the_address_of_its_own_drawing(self):
+        sheets, _ = select([sheet_feature(MAP_NM="SAT-029110-SH0016-19980306")])
+        self.assertEqual(
+            sheets[0]["pdf_url"],
+            "https://maps.dot.state.tx.us/ROW_PDF/SAT-029110-SH0016-19980306.pdf",
+        )
+
+    def test_the_duplicate_date_suffix_survives_into_the_address(self):
+        """``-1`` is part of the name TxDOT files the drawing under.
+
+        Two sheets can carry the same date, and TxDOT separates them with a
+        suffix. Trimming it would build one sheet's address for the other and
+        hand a surveyor the wrong drawing -- which is worse than no drawing,
+        because it looks like an answer.
+        """
+        sheets, _ = select([sheet_feature(MAP_NM="SAT-029110-SH0016-19971212-1")])
+        self.assertTrue(sheets[0]["pdf_url"].endswith("SAT-029110-SH0016-19971212-1.pdf"))
+
+    def test_a_sheet_with_no_name_carries_no_address(self):
+        """``None`` rather than an address built around a hole.
+
+        The same rule ``control.to_txdot_point`` states for a control sheet: a
+        broken link in a document a surveyor seals is worse than an absent one.
+        """
+        sheets, _ = select([sheet_feature(MAP_NM=None)])
+        self.assertIsNone(sheets[0]["pdf_url"])
+
+    def test_the_address_is_built_for_every_sheet_that_has_a_name(self):
+        sheets, _ = select(
+            [
+                sheet_feature(MAP_NM="SAT-029110-SH0016-19440101"),
+                sheet_feature(MAP_NM="SAT-029110-SH0016-19980306"),
+            ]
+        )
+        self.assertTrue(all(s["pdf_url"] for s in sheets))
+
+
 class TestTheDateRange(unittest.TestCase):
     """How far back the records go. Half of the answer this ticket asks for."""
 
@@ -301,7 +349,7 @@ class TestTheBlock(unittest.TestCase):
         block = row_maps.block([], without_shape=2)
         self.assertEqual(block["sheets_without_a_shape"], 2)
 
-    def test_the_block_says_the_service_gives_no_link_to_the_drawing(self):
+    def test_the_block_says_how_to_reach_the_drawings(self):
         """Spec section 10: the output says so rather than leaving a blank."""
         block = row_maps.block([])
         topics = [note["topic"] for note in block["notes"]]
@@ -331,6 +379,45 @@ class TestTheBlock(unittest.TestCase):
         note = next(n for n in block["notes"] if n["topic"] == row_maps.NOTE_DRAWINGS)
         self.assertIn("txdot.gov", note["detail"])
         self.assertNotIn("onlinemanuals", note["detail"])
+
+    def test_the_drawings_note_says_the_address_is_built_and_not_checked(self):
+        """The one address here the service did not hand over, declared as one.
+
+        Every other link in this output was published by the service that owns
+        it. This one the tool assembles, and it does not re-check it on each
+        run. A reader deciding whether to trust a link needs both of those
+        facts at the moment they read it, not in a documentation page.
+        """
+        note = next(
+            n for n in row_maps.block([])["notes"] if n["topic"] == row_maps.NOTE_DRAWINGS
+        )
+        self.assertIn("builds it from the sheet name", note["detail"])
+        self.assertIn("not checked again", note["detail"])
+        self.assertIn("404", note["detail"])
+
+    def test_the_drawings_note_keeps_the_open_records_request_as_the_fallback(self):
+        """A sheet with no PDF still has a way to be obtained.
+
+        The route that was the only route before this feature existed is now
+        the fallback. Dropping it would leave the reader of a 404 with nothing.
+        """
+        note = next(
+            n for n in row_maps.block([])["notes"] if n["topic"] == row_maps.NOTE_DRAWINGS
+        )
+        self.assertIn("Open Records Request", note["detail"])
+        self.assertIn("RPAM", note["detail"])
+
+    def test_the_drawings_note_says_how_the_address_rule_was_checked(self):
+        """A claim with a number on it carries the count and the date.
+
+        ``CLAUDE.md``: a number with consequence gets its source beside it. The
+        consequence here is a surveyor deciding whether to click.
+        """
+        note = next(
+            n for n in row_maps.block([])["notes"] if n["topic"] == row_maps.NOTE_DRAWINGS
+        )
+        self.assertIn(str(row_maps.PDF_SHEETS_CHECKED), note["detail"])
+        self.assertIn(row_maps.PDF_CHECKED_ON, note["detail"])
 
 
 if __name__ == "__main__":

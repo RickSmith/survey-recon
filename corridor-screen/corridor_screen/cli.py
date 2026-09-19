@@ -918,8 +918,13 @@ def _report_row_maps(sheets, without_shape, returned):
         years = summary["date_range"]
         span = f"{years['from']} to {years['to']}" if years["from"] else "no dated sheet"
         _say(f"      {route:<10} {summary['sheet_count']:>4}  {span}")
-    _say("    drawings          no direct link published -- RPAM, TxDOT's Real Property")
-    _say("                      Asset Map, or an Open Records Request. See the notes")
+    # The address is built from each sheet's own name rather than published by
+    # the service, and it is not re-checked on this run. Both facts are said
+    # here as well as in the notes, because this is the line somebody reads off
+    # a screen a moment before they click one.
+    _say(f"    drawings          {row_maps_mod.ROW_PDF_BASE}<sheet name>.pdf")
+    _say("                      built from the name, not published by the service and")
+    _say("                      not checked on this run. A withdrawn drawing gives a 404")
     _say()
 
 

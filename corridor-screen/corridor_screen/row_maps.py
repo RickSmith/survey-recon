@@ -94,12 +94,30 @@ SUSPECT_DATE_RECORDS = 368
 SERVICE_RECORDS = 20276
 EARLY_DATED_RECORDS = 501
 
+# Where TxDOT serves the drawings themselves. The folder is not browsable --
+# it answers 403 -- so this is a rule the tool applies, not a list it reads.
+ROW_PDF_BASE = "https://maps.dot.state.tx.us/ROW_PDF/"
+
+# What the rule was checked against, and when. Named here rather than written
+# into the sentence, so the note and this repo's documentation cannot drift
+# apart -- the same reason `SUSPECT_DATE_RECORDS` exists above.
+PDF_SHEETS_CHECKED = 63
+PDF_CHECKED_ON = "2026-09-19"
+
 DRAWINGS_DETAIL = (
-    "No field in this service gives a direct link to a PDF. What you get here is "
-    "the sheet count, the dates and the sheet names. The drawings come through "
-    "RPAM, TxDOT's Real Property Asset Map -- the online application that "
-    "replaced the paper right-of-way maps -- and TxDOT says a map not available "
-    "there is obtained by Open Records Request, quoting the MAP_NM values below. "
+    "The drawing itself is a PDF at " + ROW_PDF_BASE + "<MAP_NM>.pdf, which is "
+    "what pdf_url holds on each sheet below. No field in this service publishes "
+    "that address and the folder cannot be listed, so the tool builds it from "
+    "the sheet name rather than being handed it: the rule was checked on "
+    f"{PDF_SHEETS_CHECKED} sheets on {PDF_CHECKED_ON} -- every SH16 sheet in "
+    "Bexar County, one sheet from each of six districts, and thirty drawn at "
+    "random from across the state -- and every one answered with a PDF, while "
+    "two sheet names that cannot exist answered 404. It is not checked again on "
+    "each run, so a drawing TxDOT has since withdrawn will answer 404 rather "
+    "than open. A sheet with no PDF is obtained the way every sheet was before "
+    "this address was known: through RPAM, TxDOT's Real Property Asset Map -- "
+    "the online application that replaced the paper right-of-way maps -- or, "
+    "TxDOT says, by Open Records Request quoting the MAP_NM values below. "
     "https://www.txdot.gov/data-maps/right-of-way-maps/real-property-asset-map.html"
 )
 
@@ -129,6 +147,29 @@ EARLIEST_DATE_DETAIL = (
 )
 
 
+def pdf_url(map_name):
+    """Where this sheet's own drawing is served, or ``None``.
+
+    **The only address in this output the service did not hand over.** A
+    control point's sheet comes from an attachments endpoint that publishes it;
+    this one is assembled from the sheet's own name, because nothing here
+    publishes it and the folder answers 403 to a listing.
+
+    So the name has to arrive intact. ``SAT-029110-SH0016-19971212-1`` and
+    ``SAT-029110-SH0016-19971212`` are two different drawings of the same date,
+    and trimming the suffix would build one sheet's address for the other --
+    handing a surveyor the wrong drawing, which is worse than handing them none
+    because it looks like an answer.
+
+    A sheet with no name gets ``None``, on the rule ``control.to_txdot_point``
+    states for its own sheet link: a broken link in a document a surveyor seals
+    is worse than an absent one.
+    """
+    if not map_name:
+        return None
+    return f"{ROW_PDF_BASE}{map_name}.pdf"
+
+
 def to_sheet(feature, distance_ft, source_name=None):
     """One ROW map sheet, in the shape the output file uses.
 
@@ -142,10 +183,14 @@ def to_sheet(feature, distance_ft, source_name=None):
         """One output field, from whichever service field ``sources.py`` names."""
         return attribute(attributes, ROW_MAP_FIELDS[key])
 
+    map_name = read("map_name")
+
     return {
         # One per drawing, and the only field here that is. See the
         # ``ROW_MAP_ID`` note in this file's docstring.
-        "map_name": read("map_name"),
+        "map_name": map_name,
+        # The drawing itself, built from the name beside it. See ``pdf_url``.
+        "pdf_url": pdf_url(map_name),
         "row_map_id": read("row_map_id"),
         "control_section": read("control_section"),
         "csj": read("csj"),
