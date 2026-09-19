@@ -166,26 +166,17 @@ class TestTomlWriter(unittest.TestCase):
         self.assertTrue(data["ok"])
 
 
-
 class TestTheIndexHeadingSurvivesACallerWithNothingToSay(unittest.TestCase):
     """A caller with no label, and a cache with no corridor, are not the same.
 
-    ``INDEX.md`` carries the corridor in its heading, and specification section
-    14 calls it "the file you point at when you say the captures are from a
-    particular date." Two commands write it. The screening run knows the
-    corridor; the live NGS check does not, and passed nothing.
+    ``Cache.write_index`` carries the account of why, including the six days
+    this really went wrong for. It is not repeated here: a second copy of it
+    would drift the first time somebody edited one of them, which is the rule
+    ``row_maps`` states about its own constants and
+    ``test_plain_language`` states about the banned-word list.
 
-    Nothing distinguished passing nothing from saying there is no corridor, so
-    the live check blanked the heading. That really happened: the label went
-    missing on 2026-09-13 and main carried a plain heading until 2026-09-19,
-    six days and several reviews later, and it only came back because a
-    screening run happened to rewrite it.
-
-    **This is the same defect this repo has found three times.** A county road
-    with no published right-of-way width is not a road with no right of way. A
-    sheet with no drawing is not a sheet nobody can reach. Absent and unstated
-    are different, and a default argument that conflates them is that bug in
-    the cache writer. Fixed under
+    What is here is the four cases, one test each, and the one that matters is
+    the first. Fixed under
     [#186](https://github.com/RickSmith/survey-recon/issues/186).
     """
 
@@ -205,7 +196,10 @@ class TestTheIndexHeadingSurvivesACallerWithNothingToSay(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             cache = self.with_one_response(tmp)
             cache.write_index(self.CORRIDOR)
-            self.assertEqual(self.heading_of(cache.write_index()), f"# Cached responses -- {self.CORRIDOR}")
+            self.assertEqual(
+                self.heading_of(cache.write_index()),
+                f"# Cached responses -- {self.CORRIDOR}",
+            )
 
     def test_a_label_still_sets_the_heading(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -218,7 +212,10 @@ class TestTheIndexHeadingSurvivesACallerWithNothingToSay(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             cache = self.with_one_response(tmp)
             cache.write_index("US0281-KG DFO 1 to 2")
-            self.assertEqual(self.heading_of(cache.write_index(self.CORRIDOR)), f"# Cached responses -- {self.CORRIDOR}")
+            self.assertEqual(
+                self.heading_of(cache.write_index(self.CORRIDOR)),
+                f"# Cached responses -- {self.CORRIDOR}",
+            )
 
     def test_an_empty_label_means_there_is_no_corridor(self):
         """Said deliberately, which is a different thing from saying nothing."""
@@ -239,6 +236,21 @@ class TestTheIndexHeadingSurvivesACallerWithNothingToSay(unittest.TestCase):
             cache = self.with_one_response(tmp)
             cache.write_index(self.CORRIDOR)
             write_text(cache.root / "INDEX.md", "something else entirely\n\nrows\n")
+            self.assertEqual(self.heading_of(cache.write_index()), "# Cached responses")
+
+    def test_an_index_that_cannot_be_read_costs_the_heading_and_not_the_write(self):
+        """The file this is regenerating must never stop it regenerating.
+
+        The index is written only by this tool, but it sits in a folder a
+        person can open. Bytes that are not UTF-8 are what a half-saved file
+        looks like, and the cost of one has to be the corridor name rather than
+        an exception out of the write.
+        """
+        with tempfile.TemporaryDirectory() as tmp:
+            cache = self.with_one_response(tmp)
+            cache.write_index(self.CORRIDOR)
+            with open(cache.root / "INDEX.md", "wb") as handle:
+                handle.write(b"\xff\xfe not utf-8 at all\n")
             self.assertEqual(self.heading_of(cache.write_index()), "# Cached responses")
 
     def test_an_empty_index_file_is_not_carried_forward(self):

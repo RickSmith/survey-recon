@@ -233,15 +233,26 @@ class Cache:
     def _heading_on_disk(self):
         """The heading the index already carries, or ``None`` if there is none.
 
-        ``None`` covers three cases that are all the same answer: no index yet,
-        an empty one, and one whose first line is not this file's heading.
-        Junk in the file is not a corridor, and carrying it forward would
-        spread it rather than contain it.
+        ``None`` covers four cases that are all the same answer: no index yet,
+        an empty one, one whose first line is not this file's heading, and one
+        this cannot be read at all. Junk in the file is not a corridor, and
+        carrying it forward would spread it rather than contain it.
+
+        **Nothing about the old file may stop the new one being written.** This
+        runs inside the function whose whole job is to regenerate the index, so
+        an unreadable index has to mean "no heading to keep" rather than an
+        exception out of a write. A file with bytes that are not UTF-8 is the
+        real case: the index is only ever written by this tool, but it sits in
+        a folder a person can edit, and a half-saved file should cost the
+        corridor name rather than the run.
         """
         path = self.root / INDEX_NAME
         if not os.path.exists(long_path(path)):
             return None
-        lines = read_text(path).splitlines()
+        try:
+            lines = read_text(path).splitlines()
+        except (OSError, UnicodeDecodeError):
+            return None
         first = lines[0].strip() if lines else ""
         return first if first.startswith(PLAIN_INDEX_HEADING) else None
 
@@ -256,8 +267,8 @@ class Cache:
         Two commands write this file. The screening run knows the corridor. The
         live NGS check does not, passed nothing, and so asserted that there was
         none. The corridor went missing from the heading on 2026-09-13 and
-        stayed missing on ``main`` until 2026-09-19 -- six days, through several
-        reviews -- and came back only because a screening run happened to
+        stayed missing on ``main`` until 2026-09-19. Six days, through several
+        reviews, and it came back only because a screening run happened to
         rewrite it. Every rehearsal runs the live check, so the wrong version
         won whenever it went last. [#186](https://github.com/RickSmith/survey-recon/issues/186).
 
@@ -269,12 +280,20 @@ class Cache:
           screening run, including on a folder rerun for a different corridor
         * ``""`` -- there is no corridor, said deliberately. Plain heading
 
-        **This is the same distinction three other parts of this tool draw**,
-        and it is worth knowing them together. A county road with no published
-        ``ROW_MIN`` is not a road with no right of way. A ROW sheet with no
-        drawing is not a sheet nobody can reach. A field a layer stopped
-        publishing is not a field with no values. Absent and unstated are
-        different, and a default that conflates them is this bug.
+        **No caller passes ``""`` today, and it is not there in case one does.**
+        It is there because it is what ``None`` means by contrast. Drop it and
+        the default goes back to carrying two meanings in one value, which is
+        the bug. A state that exists to give another state an edge is not the
+        same thing as a hook for a need nobody has.
+
+        **The same distinction runs through this tool**, and the four are worth
+        knowing together. ``row_maps.block`` is the closest: a run that never
+        asked is not a run that found no sheets. Then the ones about absence
+        against zero -- a county road with no published ``ROW_MIN`` is not a
+        road with no right of way, a ROW sheet with no drawing is not a sheet
+        nobody can reach, and a field a layer stopped publishing is not a field
+        with no values. Absent and unstated are different, and a default that
+        conflates them is this bug.
 
         The rows are always rebuilt, whatever happens to the heading. That is
         the whole reason the live check regenerates this at all: writing a
