@@ -223,9 +223,13 @@ and ending:
     it is left as it was recorded.
 
     On 2026-09-19 TxDOT withdrew `TxDOT_Roadways`, so the first line you will
-    see today names `TxDOT_Roadway_Inventory` instead. Nothing else in the run
-    changed: still fourteen services, still 8.69 miles, still 524 parcels. The
-    account is [work order #180](https://github.com/RickSmith/survey-recon/issues/180).
+    see today names `TxDOT_Roadway_Inventory` instead.
+
+    Every number a presenter reads aloud is unchanged: still fourteen services,
+    still 8.69 miles, the same two end points, `separate runs 1`, and still 524
+    parcels. One number inside the output did move. The new layer holds a route
+    in short segments, so `alignment.feature_count` reads 40 where it read 1.
+    The account is [work order #180](https://github.com/RickSmith/survey-recon/issues/180).
 
 **Read the mode word in that first line.** The command carries no `--mode`, so
 the run is `cache-first` — it calls every service for real and falls back to the

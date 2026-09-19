@@ -9,10 +9,9 @@ if nobody had read the answers closely.
 County. 8.69 miles, with a ribbon 300 feet either side of the centerline.
 Every step the tool knows how to do, against the live services.
 
-**When.** 19 September 2026, and the reason for that date is worth a sentence.
-The capture was first made on 13 September. On the 19th TxDOT withdrew the
-service the whole run starts from, so every service was asked again against the
-replacement, under
+**When.** 19 September 2026. The capture was first made on 13 September. On the
+19th TxDOT withdrew the service the whole run starts from, so every service was
+asked again against the replacement, under
 [work order #180](https://github.com/RickSmith/survey-recon/issues/180). The
 corridor came out the same to within 0.00 ft and the parcel count did not move.
 Every response is saved in
@@ -52,8 +51,10 @@ finished `complete`.
 
 **Every count in that table is what the 13 September capture found, except the
 first.** The alignment service returned one record then and returns forty now,
-because the layer that replaced it cuts a route into inventory segments. The
-road is the same road. Only the ping times moved, which is what ping times do.
+because the layer that replaced it holds a route in short inventory segments.
+Those forty touch end to end, so the corridor is still one unbroken run of road
+and the output still says `run_count 1`. The road is the same road. Only the
+ping times moved, which is what ping times do.
 
 And what it found:
 

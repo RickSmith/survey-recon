@@ -138,12 +138,20 @@ def route_query(route, begin_dfo, end_dfo):
 
     ``returnM`` is not decoration. The measure on each vertex is the DFO, and
     it is the only thing ``alignment.clip_path_by_measure`` can cut at.
+
+    **The two limits are sorted here, because the README promises either
+    order.** ``from_route_features`` has always sorted them, so a reversed pair
+    was cut correctly and asked for wrongly: the window opened at the lower
+    number and closed at the higher one, which no segment satisfies. No service
+    errors on that. It answers with nothing, and the run reports a route that
+    does not reach the corridor.
     """
+    lo, hi = sorted((float(begin_dfo), float(end_dfo)))
     return {
         "where": (
             f"{ROADWAY_FIELDS['route']}='{route}' "
-            f"AND {ROADWAY_FIELDS['begin_dfo']}<={end_dfo} "
-            f"AND {ROADWAY_FIELDS['end_dfo']}>={begin_dfo}"
+            f"AND {ROADWAY_FIELDS['begin_dfo']}<={hi:g} "
+            f"AND {ROADWAY_FIELDS['end_dfo']}>={lo:g}"
         ),
         "outFields": ",".join(ROADWAY_FIELDS.values()),
         "returnGeometry": "true",

@@ -58,7 +58,7 @@ nav:
       - The right-of-entry letters: corridor-screen/roe-letters.md
   - Data sources:
       - data-sources/index.md
-      - TxDOT Roadways - the centerline: data-sources/txdot-roadways.md
+      - TxDOT route centerline: data-sources/txdot-roadways.md
       - ArcGIS geometry service: data-sources/arcgis-geometry-service.md
       - BCAD parcels: data-sources/bcad-parcels.md
       - The flag services: data-sources/flag-services.md

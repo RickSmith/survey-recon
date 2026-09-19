@@ -80,11 +80,18 @@ This was measured rather than assumed. The corridor was cut to DFO 347.7 and
 | Largest gap between the two centerlines | **0.00 ft**, both directions |
 | Parcels found by the whole run, before and after | **524**, unchanged |
 
-The run's own comparison command reports 35 differences between the two runs.
-Two are this swap showing in the output, `alignment.feature_count` and
-`alignment.run_count`, which move from 1 to 40. Five are Bexar County parcel
-owners that really changed in those six days. The other 28 are capture dates and
-cache keys.
+The run's own comparison command reports 34 differences between the two runs:
+
+| How many | What |
+|---:|---|
+| 1 | `alignment.feature_count`, which moves from 1 to 40 |
+| 3 | the alignment service's own `name`, `url` and `record_count` |
+| 5 | Bexar County parcel owners that really changed in those six days |
+| 25 | capture dates and cache keys |
+
+**`alignment.run_count` is not in that list, and it is the one worth checking.**
+It counts breaks in the centerline, and it reads `1` before and after. See
+[forty records where there used to be one](#forty-records-where-there-used-to-be-one).
 
 ---
 
@@ -111,12 +118,14 @@ changed.
 
 !!! note "One difference from the withdrawn service"
     `TxDOT_Roadways` also published `SH0016-CN`, `SH0016-RP` and `SH0016-TA`:
-    the connectors, ramps and turnarounds. This layer is a roadway inventory and
-    does not carry them.
+    the connectors, ramps and turnarounds. **Those three were not found on this
+    layer** by the distinct-values query below, run on 2026-09-19. That is where
+    we looked. We did not ask TxDOT whether the layer excludes them by design.
 
     Nothing in this tool ever asked for them, and the main lanes are what a
-    corridor is screened along. A corridor that needed a ramp would need a
-    different service, and this page is where somebody should find that out.
+    corridor is screened along. A corridor that needed a ramp would need to
+    establish where those roadbeds live now, and this page is where somebody
+    should find out that the question exists.
 
 **Check it yourself.** This table is not in the committed capture, because the
 tool only ever asks for the one route it was given. So it is reproduced with a
@@ -180,12 +189,29 @@ position from coordinates. Ask for it with `returnM=true`.
 ### Forty records where there used to be one
 
 The withdrawn service answered the SH16 corridor with a single record of 1,800
-vertices. This one answers with 40 inventory segments. Both describe the same
-line, and the output says which it read: `alignment.feature_count` and
-`alignment.run_count` both read 40 where they used to read 1.
+vertices. This one answers with 40 **inventory segments**: short pieces of route
+that TxDOT holds separately because something it inventories changes there, such
+as the lane count or the speed limit. Both services describe the same line.
 
-That is why the alignment reader sorting its runs by DFO is load-bearing rather
-than tidy. A service is free to return its records in any order, and on a single
+Two numbers in the output tell those two facts apart, and mixing them up was the
+trap this swap left behind:
+
+| Field | What it counts | SH16, before | SH16, after |
+|---|---|---:|---:|
+| `alignment.feature_count` | records the service sent | 1 | **40** |
+| `alignment.run_count` | **separate stretches of centerline** | 1 | **1** |
+
+The forty segments touch end to end, so they are one run of road. Counted as
+records, a corridor with no break in it would report forty of them, and that
+number is printed on the wrong-file check, which is the first screen anybody
+reads. A corridor in forty pieces is a different claim about the ground from a
+corridor in one.
+
+A real gap is still never closed. See the next section.
+
+That split is also why the alignment reader sorting its runs by DFO is
+load-bearing rather than tidy. A service is free to return its records in any
+order, and nothing can be judged to touch until they are in order. On a single
 record you would never find out.
 
 ### The route has gaps in it, and they are real
@@ -241,9 +267,21 @@ returnGeometry  true      returnM  true      outSR  4326
 ```
 
 Every segment that overlaps the window, cut to it on the M values, with the
-surviving runs put in DFO order. The captured response is committed at
-`txdot-roadway-inventory/route-sh0016-kg-offset-0`, with its capture date and
-the exact request in the `.meta.toml` beside it.
+surviving runs put in DFO order and joined where they touch. The captured
+response is committed at `txdot-roadway-inventory/route-sh0016-kg-offset-0`,
+with its capture date and the exact request in the `.meta.toml` beside it.
+
+!!! note "Which numbers on this page you can check from the committed capture, and which you cannot"
+    The tool asks for one route, three fields and the geometry. So the capture
+    holds the 40 records, the 243 vertices, the M values and the centerline, and
+    every claim about those can be checked offline from this repo.
+
+    These were read live and are **not** in the capture: the 1,450 segments of
+    the whole route, the seven continuous runs, the five roadbeds, `CO`,
+    `MSA_CNTY` and `ROW_MIN`. Each one is shown above with the query that
+    produces it, so they are reproducible rather than saved. That is the same
+    choice this page has always made for the roadbed table, and the reason is
+    that caching the whole state to prove a footnote is a poor trade.
 
 **The field names are not written in the query.** They come from
 `sources.ROADWAY_FIELDS`, which is the same mapping the field list check reads.
@@ -268,11 +306,22 @@ measured one.
 `ROW_MIN` is on this layer. It holds `180` on all 40 SH16 corridor segments,
 read live on 2026-09-19.
 
+**Read that number carefully, and do not quote it as a right-of-way width.**
+
+The service publishes no units for the field and no description of it. Its alias
+is the field name. So `180` is a bare number on an inventory record, and this
+page is not going to tell you it is 180 feet.
+
+It is also an inventory attribute rather than a boundary determination. The
+right of way is drawn on the [ROW map sheets](row-map-sheets.md), and whether
+this number agrees with those sheets along this corridor has not been checked.
+
 The `roadway` block of the output still says `not-screened` and names a
 different service, because that was true of the service this one replaced. It is
-no longer true of this one. Reading it is a change with its own consequences and
-is not made here. See [the capture note](../scenarios/sh16/capture-note.md) for
-what that block says today.
+no longer true of this one. Reading it properly means answering the units
+question first, so it is not done here. See
+[the capture note](../scenarios/sh16/capture-note.md) for what that block says
+today.
 
 ---
 

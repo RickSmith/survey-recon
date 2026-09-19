@@ -33,6 +33,50 @@ def _same_point(a, b):
     return abs(a[0] - b[0]) < JOIN_TOLERANCE_DEG and abs(a[1] - b[1]) < JOIN_TOLERANCE_DEG
 
 
+# How close two measures must be, in miles, to count as the same point on the
+# route. 1e-6 miles is about six thousandths of a foot -- far tighter than
+# anything TxDOT publishes a DFO to, and far looser than float noise.
+JOIN_TOLERANCE_MI = 1e-6
+
+
+def _join_touching(runs):
+    """Runs that meet end to end are one run. Runs with a gap are not.
+
+    **This is the difference between counting records and counting road.**
+    ``TxDOT_Roadways`` answered a corridor with a single record, so the two
+    numbers were the same and nothing had to choose between them. The layer that
+    replaced it under
+    [#180](https://github.com/RickSmith/survey-recon/issues/180) cuts the same
+    road into inventory segments -- forty of them on SH16 -- that touch end to
+    end. Counted as records, one continuous corridor reads as forty breaks in
+    the road, and that number is printed on the wrong-file check, which is the
+    first screen anybody reads.
+
+    ``feature_count`` still says how many records answered. ``run_count`` says
+    how many separate stretches of centerline they describe. They are different
+    questions and now they have different answers.
+
+    **A real gap is never closed.** TxDOT publishes ``SH0016-KG`` in seven
+    stretches that do not join, because a route can leave the state highway
+    system and come back. Joining across one of those would invent centerline
+    TxDOT never published, which is the rule ``clip_path_by_measure`` already
+    states and this function keeps.
+
+    ``runs`` must already be ascending and sorted by starting measure.
+    """
+    joined = []
+    for run in runs:
+        previous = joined[-1] if joined else None
+        if previous is not None and abs(run[0][2] - previous[-1][2]) <= JOIN_TOLERANCE_MI:
+            # The last vertex of one segment and the first of the next are the
+            # same point on the ground. Keeping both would put a zero-length
+            # step in the middle of a run.
+            previous.extend(run[1:] if _same_point(previous[-1], run[0]) else run)
+        else:
+            joined.append(list(run))
+    return joined
+
+
 def clip_path_by_measure(path, lo, hi):
     """Cut one run of vertices down to the measures between lo and hi.
 
@@ -169,6 +213,7 @@ def from_route_features(features, route, begin_dfo, end_dfo):
 
     runs = [_ascending(run) for run in runs]
     runs.sort(key=lambda run: run[0][2])
+    runs = _join_touching(runs)
     return Alignment(
         paths=runs,
         source_kind="route-dfo",
