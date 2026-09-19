@@ -26,8 +26,11 @@ nothing else. The screening run is already on disk.
 """
 
 import unittest
+from pathlib import Path
 
 from corridor_screen import live_check
+
+from . import markdown_docs
 
 
 def a_live_record(pid, condition="MARK NOT FOUND", **extra):
@@ -256,6 +259,56 @@ class TestWhenThereIsNoNetwork(unittest.TestCase):
     def test_the_message_carries_what_actually_went_wrong(self):
         printed = live_check.unreachable("Errno 11001 getaddrinfo failed")
         self.assertIn("11001", printed)
+
+
+
+class TestThePresenterKnowsAllThreeOutcomes(unittest.TestCase):
+    """The dry-run page used to show only the outcome where NGS answers.
+
+    This one call has now failed twice, in two different ways, and both were
+    NGS rather than the network: an empty body with `HTTP 200` on 2026-09-14,
+    and `403 Forbidden` about an hour later. It answered normally on 09-13,
+    09-15 and 09-19, with the saved response byte-identical every good time.
+
+    A presenter reading a page that shows only the good block has no way to
+    know a 403 is on the table, and the worst moment to work out what to say is
+    while a room watches. Under
+    [#128](https://github.com/RickSmith/survey-recon/issues/128).
+
+    **The command is not what needs fixing.** It already prints a calm
+    explanation for both failures and exits normally. What was missing was the
+    page telling a person what to say out loud.
+    """
+
+    PAGE = Path(__file__).resolve().parents[2] / "docs" / "presenting" / "dry-run.md"
+
+    def setUp(self):
+        self.assertTrue(self.PAGE.is_file(), f"{self.PAGE} is missing")
+        self.page = markdown_docs.text_of(self.PAGE)
+
+    def test_the_page_shows_the_outcome_where_ngs_answers(self):
+        self.assertIn("This call was live, just now", self.page)
+
+    def test_the_page_shows_the_outcome_where_the_call_cannot_be_made(self):
+        """The 403. It prints through ``unreachable``."""
+        self.assertIn("The live call could not be made", self.page)
+
+    def test_the_page_shows_the_outcome_where_ngs_answers_with_nothing(self):
+        """The empty body. `HTTP 200`, and not an error."""
+        self.assertIn(live_check.NO_OVERLAP.split(" -- ")[0], self.page)
+        self.assertIn("0 marks", self.page)
+
+    def test_the_page_says_an_empty_answer_is_not_an_error(self):
+        """A presenter who reads `0 marks` as a crash will say the wrong thing."""
+        self.assertIn("200", self.page)
+
+    def test_the_page_says_the_screening_run_survives_all_three(self):
+        self.assertIn("screening run is unaffected", self.page)
+
+    def test_the_page_records_that_this_call_has_really_failed(self):
+        """Dates, so a reader can tell a real outage from a defensive maybe."""
+        for day in ("2026-09-14", "2026-09-15"):
+            self.assertIn(day, self.page)
 
 
 if __name__ == "__main__":

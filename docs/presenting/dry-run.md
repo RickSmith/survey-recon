@@ -390,7 +390,11 @@ which reads the findings out in the order you need them, and
 python -m corridor_screen.live_check --out ../project-sh16
 ```
 
-**You should see** a live answer compared against the committed capture:
+**There are three things you might see, and you should know all three before
+you type it.** This call has really failed, twice, in two different ways, and
+both times it was NGS rather than the network.
+
+**One. It answers.**
 
 ```
   Live check -- NGS Data Explorer, 29.528488, -98.644635
@@ -401,10 +405,71 @@ python -m corridor_screen.live_check --out ../project-sh16
     conditions agreeing  5
 ```
 
-**Wrong rather than slow.** Five is what it found last time, not a promise —
-it is a live call. If NGS does not answer, say so and move on. Losing it costs
-the live moment and nothing else; the screening run is unaffected either way,
-and the command says so itself when there is no network.
+**Say:** "Five marks in both, and all five say the same thing live as they did
+in the capture."
+
+Five is what it found last time, not a promise. It is a live call.
+
+**Two. It answers with nothing.**
+
+```
+  NGS Data Explorer returned 0 marks within 2 miles of the corridor midpoint.
+  no cross-check -- the live call and the capture have no mark in common, so
+  there was nothing to compare.
+```
+
+**This is not an error.** NGS returned `HTTP 200` and an empty list. The command
+exits normally and the room sees a calm explanation.
+
+**Say:** "NGS answered and sent back nothing. That is their end, not ours, and
+the screening run is unaffected." Then move on.
+
+The zero is not a count of marks on the ground. That radius is two miles around
+the midpoint, which is a different question from the 300-foot ribbon.
+
+**Three. The call cannot be made at all.**
+
+```
+  The live call could not be made.
+
+    HTTPError: HTTP Error 403: Forbidden (after 3 attempts)
+
+    The screening run is unaffected. It replays a committed capture
+    and makes no network calls, which is the whole reason it is
+    captured.
+```
+
+**Say:** what the screen already says. "The one live call did not go through.
+Everything else you have seen was captured, and this step was the proof that
+the wires are real."
+
+**What it has actually done.**
+
+| When | What happened |
+|---|---|
+| 2026-09-13 | Answered, 13 marks |
+| 2026-09-14 | `HTTP 200`, empty body, **0 marks** |
+| 2026-09-14, an hour later | **403 Forbidden**, after three attempts |
+| 2026-09-15 | Answered, 13 marks |
+| 2026-09-19 | Answered, 13 marks |
+
+**The saved response is byte-identical on every good day.** NGS did not lose
+thirteen marks and find them again. The record behind that endpoint has not
+changed since 2026-09-13, so both failures were the endpoint and not the data.
+
+!!! warning "Do not check it twice to be sure"
+    Three calls went out inside about ninety minutes on 2026-09-14, and the
+    403 followed. That is a guess and not a finding, and we cannot tell a rate
+    limiter from an outage at this end.
+
+    So a second call to reassure yourself is the one thing that might cause the
+    failure you are worried about. Check it once, the day before, and leave it
+    alone. The account is on
+    [work order #128](https://github.com/RickSmith/survey-recon/issues/128).
+
+**Losing it costs the live moment and nothing else.** The screening run replays
+a committed capture and makes no network calls at all, which is the whole reason
+it is captured.
 
 **Remember this one writes to the cache.** In the rehearsal, point `--out` at
 your scratch folder, or expect two modified files in `git status` afterward.

@@ -1,4 +1,4 @@
-# Cached responses -- SH0016-KG DFO 347.7 to 356.367
+# Cached responses
 
 Every response this tool received, saved exactly as the server sent it.
 The `.meta.toml` file beside each one carries the full request.
@@ -14,7 +14,7 @@ The `.meta.toml` file beside each one carries the full request.
 | BCAD_Parcels | 0 | 2026-09-13 07:06:56-05:00 | 530 | `bcad-parcels/parcels-offset-0__6ba49c286d84` |
 | BCAD_Parcels | 0 | 2026-09-19 13:40:47-05:00 | 530 | `bcad-parcels/parcels-offset-0__ee870dfc593f` |
 | NGS_Data_Explorer | - | 2026-09-12 22:43:24-05:00 | - | `ngs-data-explorer/field-definitions-meta__5c0d663f6993` |
-| NGS_Data_Explorer | - | 2026-09-15 18:16:56-05:00 | 13 | `ngs-data-explorer/live-check-radial__bac175832b05` |
+| NGS_Data_Explorer | - | 2026-09-19 14:07:37-05:00 | 13 | `ngs-data-explorer/live-check-radial__bac175832b05` |
 | NGS_Data_Explorer | - | 2026-09-12 22:41:18-05:00 | 3 | `ngs-data-explorer/pid-cross-check-ay0713-ay0710-ay1102__f27e07f1bc4e` |
 | NGS_Datasheet_Page | - | 2026-09-12 22:41:55-05:00 | - | `ngs-datasheet-page/ds-mark-plain-get-ay0713__e04f92526ca0` |
 | NGS_Datasheets | 1 | 2026-09-12 22:41:19-05:00 | 910 | `ngs-datasheets/bexar-box-condition-tally__905a7f64a751` |
