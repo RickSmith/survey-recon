@@ -218,6 +218,15 @@ and ending:
   warnings    0
 ```
 
+!!! note "That first ping line reads differently now"
+    The transcript above is the dry run as it was recorded on 2026-09-13, and
+    it is left as it was recorded.
+
+    On 2026-09-19 TxDOT withdrew `TxDOT_Roadways`, so the first line you will
+    see today names `TxDOT_Roadway_Inventory` instead. Nothing else in the run
+    changed: still fourteen services, still 8.69 miles, still 524 parcels. The
+    account is [work order #180](https://github.com/RickSmith/survey-recon/issues/180).
+
 **Read the mode word in that first line.** The command carries no `--mode`, so
 the run is `cache-first` — it calls every service for real and falls back to the
 cache only where one will not answer. That is why the `ping` lines below it read

@@ -1,0 +1,26 @@
+# Provenance record. The response file beside this one is exactly what the
+# server sent and is never edited. Every parameter of the request is listed
+# under [request_params], so the call can be repeated and checked.
+service = "USGS_Structures_Hospitals"
+cache_key = "usgs-structures-hospitals/safety-hospital-offset-0__b6d45e03299f"
+request_method = "POST"
+request_url = "https://carto.nationalmap.gov/arcgis/rest/services/structures/MapServer/14/query"
+captured_at = 2026-09-19T12:26:47-05:00
+http_status = 200
+response_bytes = 10642
+layer_id = 14
+record_count = 33
+warnings = []
+
+[request_params]
+geometry = "{\"xmin\": -99.10495013067059, \"ymin\": 29.120429615632084, \"xmax\": -98.18432035813211, \"ymax\": 29.93654602147874, \"spatialReference\": {\"wkid\": 4326}}"
+geometryType = "esriGeometryEnvelope"
+inSR = 4326
+outSR = 4326
+spatialRel = "esriSpatialRelIntersects"
+where = "1=1"
+outFields = "PERMANENT_IDENTIFIER,NAME,ADDRESS,CITY,STATE,ZIPCODE,LOADDATE"
+returnGeometry = "true"
+f = "json"
+resultOffset = 0
+resultRecordCount = 2000

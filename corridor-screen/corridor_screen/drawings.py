@@ -87,6 +87,7 @@ from . import crew_day
 from .alignment import from_route_features
 from .cache import long_path, write_text
 from .geometry import haversine_miles
+from .sources import ROADWAYS
 
 WIDTH = 1920
 HEIGHT = 1080
@@ -208,9 +209,15 @@ def centerline(document, capture):
             "the alignment does not name a route and a DFO pair, so the "
             f"centerline cannot be clipped: {alignment.get('source_path')!r}"
         )
-    features = capture.features("TxDOT_Roadways")
+    # Named from ``sources.ROADWAYS`` rather than spelled here. The service
+    # this reads was withdrawn by TxDOT on 2026-09-19 and the replacement has a
+    # different name, so a second copy of that name in this file is a second
+    # place to forget -- and it forgets quietly. A drawing that cannot find the
+    # centerline does not draw a wrong map; it stops, which is right, but it
+    # stops long after the run that could have said so.
+    features = capture.features(ROADWAYS.name)
     if not features:
-        raise DrawingError("the run has no cached TxDOT_Roadways response")
+        raise DrawingError(f"the run has no cached {ROADWAYS.name} response")
     clipped = from_route_features(
         features,
         found.group("route"),

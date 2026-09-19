@@ -367,3 +367,46 @@ class TestNothingIsInstalled(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestTheCenterlineIsReadFromTheNamedSource(unittest.TestCase):
+    """The drawing asks the capture for the service ``sources`` names.
+
+    This file used to spell `TxDOT_Roadways` itself. TxDOT withdrew that
+    service on 2026-09-19 and the run moved to a differently named layer under
+    [#180](https://github.com/RickSmith/survey-recon/issues/180). The run then
+    worked and the drawings did not, because a second copy of a service name is
+    a second place to forget.
+
+    It forgets quietly, too. Nothing is drawn wrong: the command stops with
+    "the run has no cached response", long after the run that could have said
+    so and in a different command than the one anybody was watching.
+    """
+
+    class AskedCapture:
+        """A capture that records which service it was asked for."""
+
+        def __init__(self):
+            self.asked = []
+
+        def features(self, name):
+            self.asked.append(name)
+            return []
+
+    def test_it_asks_for_the_service_the_sources_module_names(self):
+        from corridor_screen.sources import ROADWAYS
+
+        capture = self.AskedCapture()
+        document = {"alignment": {"source_path": "SH0016-KG DFO 347.7 to 356.367"}}
+        with self.assertRaises(drawings.DrawingError):
+            drawings.centerline(document, capture)
+        self.assertEqual(capture.asked, [ROADWAYS.name])
+
+    def test_the_error_names_the_service_it_actually_looked_for(self):
+        """A message naming a service the run never called sends the reader nowhere."""
+        from corridor_screen.sources import ROADWAYS
+
+        document = {"alignment": {"source_path": "SH0016-KG DFO 347.7 to 356.367"}}
+        with self.assertRaises(drawings.DrawingError) as caught:
+            drawings.centerline(document, self.AskedCapture())
+        self.assertIn(ROADWAYS.name, str(caught.exception))

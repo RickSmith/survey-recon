@@ -29,18 +29,18 @@
     comes from the longest wait the firm plans against anywhere.
 
   The clock, with nobody watching it
-    2026-09-13   day 0   request 1 of 2 written
-    2026-10-03   day 20  nothing due
-    2026-10-04   day 21  request 2 of 2 written -- no human action
+    2026-09-19   day 0   request 1 of 2 written
+    2026-10-09   day 20  nothing due
+    2026-10-10   day 21  request 2 of 2 written -- no human action
 
   21 days is 3 whole weeks, so letter two falls on the same weekday as letter one. Both
-  land on a Sunday. The clock counts calendar days and knows nothing about weekends or
+  land on a Saturday. The clock counts calendar days and knows nothing about weekends or
   holidays. It writes the letter; a person still sends it.
 
   Nobody has to run this
     .github/workflows/roe-followup.yml reads the same clock every day
     on a schedule. It commits nothing, mails nothing and needs no
-    secret. If request 2 of 2 turns up in its summary on 2026-10-04
+    secret. If request 2 of 2 turns up in its summary on 2026-10-10
     and nobody started it, that is the claim above, evidenced.
 
   What this does not do

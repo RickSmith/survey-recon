@@ -50,6 +50,7 @@ from .sources import (
     NGS_MARK_FIELDS,
     NGS_MARKS,
     PARCELS,
+    ROADWAY_FIELDS,
     ROADWAYS,
     ROW_MAP_FIELDS,
     ROW_MAPS,
@@ -117,6 +118,39 @@ EXPECTED_FAILURES = (
     corridor_mod.CorridorError,
     checks.FieldListError,
 )
+
+
+def route_query(route, begin_dfo, end_dfo):
+    """What to ask the route layer for, to get the stretch between two DFOs.
+
+    **Every field name comes from ``sources.ROADWAY_FIELDS``, and that is the
+    point of this function existing.** The field list check two steps earlier
+    reads the same mapping, so the two cannot drift apart. They did not drift
+    on their own -- TxDOT withdrew ``TxDOT_Roadways`` on 2026-09-19 and the
+    layer that replaced it names the same three things differently, under
+    [#180](https://github.com/RickSmith/survey-recon/issues/180).
+
+    A half-finished swap of those names would not crash. ``confirm_fields``
+    would pass, because it reads the source's own list; then this query would
+    ask for columns the layer does not have, the service would answer with no
+    records, and the run would report that the route does not reach the
+    corridor. A wrong answer that looks like a real one.
+
+    ``returnM`` is not decoration. The measure on each vertex is the DFO, and
+    it is the only thing ``alignment.clip_path_by_measure`` can cut at.
+    """
+    return {
+        "where": (
+            f"{ROADWAY_FIELDS['route']}='{route}' "
+            f"AND {ROADWAY_FIELDS['begin_dfo']}<={end_dfo} "
+            f"AND {ROADWAY_FIELDS['end_dfo']}>={begin_dfo}"
+        ),
+        "outFields": ",".join(ROADWAY_FIELDS.values()),
+        "returnGeometry": "true",
+        "returnM": "true",
+        "outSR": 4326,
+        "f": "json",
+    }
 
 
 def parse_args(argv=None):
@@ -1119,14 +1153,7 @@ def run(args):
             # 3 -- the alignment, and the wrong-file check before anything wider
             features, road_records = _run_stage("route", lambda: fetcher.query_all(
                 ROADWAYS,
-                {
-                    "where": f"RTE_NM='{args.route}' AND BEGIN_DFO<={args.end_dfo} AND END_DFO>={args.begin_dfo}",
-                    "outFields": "RTE_NM,BEGIN_DFO,END_DFO",
-                    "returnGeometry": "true",
-                    "returnM": "true",
-                    "outSR": 4326,
-                    "f": "json",
-                },
+                route_query(args.route, args.begin_dfo, args.end_dfo),
                 readable=f"route-{slug(args.route)}",
             ), args.yes)
             alignment = from_route_features(features, args.route, args.begin_dfo, args.end_dfo)
