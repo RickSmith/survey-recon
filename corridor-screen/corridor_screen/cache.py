@@ -30,6 +30,11 @@ from pathlib import Path
 
 INDEX_NAME = "INDEX.md"
 
+# The heading of that file, without a corridor on it. Named once because
+# `write_index` both writes it and reads it back to see whether the line
+# already there is this file's heading or somebody else's text.
+PLAIN_INDEX_HEADING = "# Cached responses"
+
 # Windows refuses to open a path longer than 260 characters unless it is asked
 # in the extended form. A surveyor working under
 # "OneDrive - Some Long Firm Name\Documents\Projects\..." reaches that
@@ -225,9 +230,75 @@ class Cache:
         """Every provenance record in the cache, oldest name first."""
         return sorted(self.root.glob("*/*.meta.toml"))
 
-    def write_index(self, corridor_label=""):
+    def _heading_on_disk(self):
+        """The heading the index already carries, or ``None`` if there is none.
+
+        ``None`` covers four cases that are all the same answer: no index yet,
+        an empty one, one whose first line is not this file's heading, and one
+        this cannot be read at all. Junk in the file is not a corridor, and
+        carrying it forward would spread it rather than contain it.
+
+        **Nothing about the old file may stop the new one being written.** This
+        runs inside the function whose whole job is to regenerate the index, so
+        an unreadable index has to mean "no heading to keep" rather than an
+        exception out of a write. A file with bytes that are not UTF-8 is the
+        real case: the index is only ever written by this tool, but it sits in
+        a folder a person can edit, and a half-saved file should cost the
+        corridor name rather than the run.
+        """
+        path = self.root / INDEX_NAME
+        if not os.path.exists(long_path(path)):
+            return None
+        try:
+            lines = read_text(path).splitlines()
+        except (OSError, UnicodeDecodeError):
+            return None
+        first = lines[0].strip() if lines else ""
+        return first if first.startswith(PLAIN_INDEX_HEADING) else None
+
+    def write_index(self, corridor_label=None):
         """Regenerate INDEX.md -- the file you point at when you say the
-        captures are from a particular date."""
+        captures are from a particular date.
+
+        **A caller with no label to give, and a cache with no corridor, are not
+        the same claim.** They used to be: the label defaulted to the empty
+        string and was tested for truth, so both blanked the heading.
+
+        Two commands write this file. The screening run knows the corridor. The
+        live NGS check does not, passed nothing, and so asserted that there was
+        none. The corridor went missing from the heading on 2026-09-13 and
+        stayed missing on ``main`` until 2026-09-19. Six days, through several
+        reviews, and it came back only because a screening run happened to
+        rewrite it. Every rehearsal runs the live check, so the wrong version
+        won whenever it went last. [#186](https://github.com/RickSmith/survey-recon/issues/186).
+
+        So the three are now three:
+
+        * ``None`` -- nothing to say about the corridor. Keep the heading that
+          is there. This is the live check
+        * a label -- use it, and overwrite whatever was there. This is the
+          screening run, including on a folder rerun for a different corridor
+        * ``""`` -- there is no corridor, said deliberately. Plain heading
+
+        **No caller passes ``""`` today, and it is not there in case one does.**
+        It is there because it is what ``None`` means by contrast. Drop it and
+        the default goes back to carrying two meanings in one value, which is
+        the bug. A state that exists to give another state an edge is not the
+        same thing as a hook for a need nobody has.
+
+        **The same distinction runs through this tool**, and the four are worth
+        knowing together. ``row_maps.block`` is the closest: a run that never
+        asked is not a run that found no sheets. Then the ones about absence
+        against zero -- a county road with no published ``ROW_MIN`` is not a
+        road with no right of way, a ROW sheet with no drawing is not a sheet
+        nobody can reach, and a field a layer stopped publishing is not a field
+        with no values. Absent and unstated are different, and a default that
+        conflates them is this bug.
+
+        The rows are always rebuilt, whatever happens to the heading. That is
+        the whole reason the live check regenerates this at all: writing a
+        response without regenerating leaves the index quietly wrong about it.
+        """
         rows = []
         for meta_path in self.entries():
             data = tomllib.loads(read_text(meta_path))
@@ -240,9 +311,12 @@ class Cache:
                     key=data.get("cache_key", meta_path.stem),
                 )
             )
-        heading = "# Cached responses"
-        if corridor_label:
-            heading += f" -- {corridor_label}"
+        if corridor_label is None:
+            heading = self._heading_on_disk() or PLAIN_INDEX_HEADING
+        elif corridor_label:
+            heading = f"{PLAIN_INDEX_HEADING} -- {corridor_label}"
+        else:
+            heading = PLAIN_INDEX_HEADING
         text = "\n".join(
             [
                 heading,
