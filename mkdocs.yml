@@ -80,6 +80,7 @@ nav:
   - How this repo was built:
       - Plan of record: plan-of-record.md
       - TxDOT research: txdot-research.md
+      - Testing a page with nothing installed: research/testing-a-page-with-nothing-installed.md
       - Decision 0001 - sanity checks warn: adr/0001-sanity-checks-warn-dead-services-stop.md
       - Decision 0002 - Hermes runs on a schedule: adr/0002-the-hermes-segment-runs-on-a-schedule.md
       - Decision 0003 - produced artifacts stay as produced: adr/0003-produced-artifacts-stay-as-produced.md
