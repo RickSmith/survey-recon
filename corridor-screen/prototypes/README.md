@@ -52,11 +52,26 @@ differently, and the answers do not mix:
 
 | Question | A — the map is the page | B — the list is the page | C — the page is questions |
 |---|---|---|---|
-| What a principal sees first | The map, full width | Six numbers, then the eight tracts | A question, in words, with a one-line answer |
+| What a principal sees first | The map, full width | Seven numbers, then the eight tracts | A question, in words, with a one-line answer |
 | Clicking a flagged tract | Opens its card below the map and scrolls to it | Expands the row where it sits, and marks the small map | Opens a panel over the page, one tract at a time |
 | Toggling a layer | The map only | The whole page — switch off control and the control section goes with it | Neither. There are no switches |
 | The bid memo | All of it, at the bottom | None of it. Links out instead | All of it — the page is the memo with the map in it |
-| Crew safety | Its own section, low down | One line in the number strip, which opens | Its own question, asked last |
+| Crew safety | Its own section, low down | One number in the strip, which opens | Its own question, asked last |
+
+### Why this is a page of its own
+
+`/prototype` says to prefer hosting variants inside a real page, because a
+throwaway page on its own is a vacuum where every variant looks fine. The
+nearest real page here is the SH16 scenario page, and it was considered and
+turned down: it is a site page built by mkdocs for somebody browsing the repo,
+and [#188](https://github.com/RickSmith/survey-recon/issues/188) is blunt that
+the job page is a single file emailed to a principal who runs nothing. Hosting
+the variants in the scenario page would put them inside the one frame the real
+thing never has.
+
+The vacuum is answered a different way instead. The page carries the whole SH16
+run at full density — every tract on the map, all eight flagged tracts told in
+full, the memo entire — so no variant gets to look good by being empty.
 
 ### Where the numbers come from
 
@@ -73,10 +88,10 @@ Written down here as well as on the ticket, because the ticket is where the
 decision goes and this is where the evidence is.
 
 1. **The eight tracts are not eight decisions.** Seven of the eight are
-   flagged for a school and five belong to Northside ISD. Seven of the eight
-   rows read *no published wait — school*. A list that says the same thing
-   eight times is one phone call, not eight, and variant B spends its best
-   space saying it.
+   flagged for a school, and four of the eight belong to Northside ISD. Seven
+   of the eight rows read *no published wait — school*. A list that says the
+   same thing seven times in a row is one phone call, not eight, and variant B
+   spends its best space saying it.
 2. **Four of the eight sit on top of each other.** Over 8.691 miles in a
    browser-shaped frame, four flagged tracts land within about 38 pixels of
    each other. The first draft drew three of the numbers underneath the
@@ -91,15 +106,21 @@ decision goes and this is where the evidence is.
    northwest to southeast, so a landscape frame leaves wide empty margins on
    both sides. Whether the browser frame should be landscape at all is a
    question this prototype raised and did not settle.
-5. **The memo is cheap.** Printed, variant A is 13 pages and the memo is 4 of
-   them. Variant B carries no memo at all and still prints 11. So the reason to
-   link the memo out is not its size, and any argument that puts it on a link
-   has to be made on some other ground.
-6. **The whole file is 372 KB**, with the map present once and moved into the
+5. **The memo is cheap.** Printed, variant A is 13 pages and the memo — all
+   four of its sections — is 4 of them. Variant B carries no memo at all and
+   still prints 11. So the reason to link the memo out is not its size, and any
+   argument for a link has to be made on some other ground.
+6. **A link out has nowhere to point.** Variant B is the one that links the
+   memo instead of carrying it, and the link is the part that does not work.
+   A path relative to the repo dies the moment the file is emailed. The only
+   address that survives is this public repo on the open internet, which is
+   both the wrong thing for a real client's memo and dead with the Wi-Fi off.
+   The variant is built with those links so the cost is visible rather than
+   argued about.
+7. **The whole file is 374 KB**, with the map present once and moved into the
    active variant by JavaScript rather than copied three times. The real page
-   carries one variant, so this is an over-estimate of the real page and it is
-   already inside the half a megabyte [#188](https://github.com/RickSmith/survey-recon/issues/188)
-   guessed at.
+   carries one variant, so this over-states the real page and it is already
+   inside the half a megabyte #188 guessed at.
 
 ### How it was checked
 
@@ -116,5 +137,6 @@ msedge --headless=new --disable-gpu --print-to-pdf=out.pdf --no-pdf-header-foote
 ```
 
 The printing check is the one that matters most, because the page's PDF is its
-own print stylesheet and nothing else. All three variants now print all eight
-tracts. One of them did not until it was made to.
+own print stylesheet and nothing else. Printed, A is 13 pages, B is 11 and C is
+14, and **all three print all eight tracts**. One of them did not until it was
+made to.

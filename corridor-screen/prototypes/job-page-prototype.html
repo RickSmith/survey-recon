@@ -107,7 +107,7 @@ section { border-top:1px solid var(--rule); padding-top:.6em; }
 #jobmap .hot:hover .flagged, #jobmap .hot:focus .flagged { fill:#fbbf24; }
 #jobmap .hot.picked .flagged { fill:#f59e0b; stroke:#7c2d12; stroke-width:4; }
 #jobmap g[data-layer].off { display:none; }
-section.off { display:none; }
+.off { display:none !important; }
 /* The floating switcher. Obviously not part of the design being judged. */
 #switcher { position:fixed; left:50%; bottom:18px; transform:translateX(-50%);
             z-index:90; display:flex; align-items:center; gap:4px;
@@ -1022,7 +1022,11 @@ section.off { display:none; }
 </section>
 <section class="memo">
   <h2>The memo, in full</h2>
-  <h3>What is not known, and why</h3>
+  <h3>What was done</h3>
+<p>Public map services were read for the corridor above — 1.00 square miles of ground — and every answer they gave was saved with the date it was obtained and the exact request that produced it.</p>
+<p>The answers in this memo were obtained on <strong>2026-09-19</strong>. Nothing here is live, and nothing here is older than that date.</p>
+<p>This is desktop work. No one has walked the corridor.</p>
+<h3>What is not known, and why</h3>
 <p>Read this before the findings. Every item here is a gap this screening cannot close, and each one is a question somebody still has to answer.</p>
 <p><strong>No public source publishes these at all.</strong></p>
 <ul><li><strong>Gated access</strong> — no public source publishes gate locations or access restrictions.</li><li><strong>Livestock</strong> — no public source publishes livestock presence.</li></ul>
@@ -1087,7 +1091,11 @@ section.off { display:none; }
 <div class="stat"><span class="big">8</span><span class="small">carry something that costs time</span></div>
 <div class="stat"><span class="big">11 of 11</span><span class="small">NGS marks recorded MARK NOT FOUND</span></div>
 <div class="stat"><span class="big">69</span><span class="small">ROW map sheets, 1900-01-01 to 2005-04-30</span></div>
-<div class="stat"><span class="big">14 days</span><span class="small">longest measured wait on one tract</span></div></section>
+<div class="stat"><span class="big">14 calendar days</span><span class="small">longest measured wait on one tract</span></div>
+<div class="stat" data-section="safety"><span class="big">2.05 mi</span><span class="small">to the nearest hospital, Audie L Murphy Veterans Affairs Hospital</span><details><summary>The other three kinds</summary><table class="grid"><tr><th>Hospital</th><td>Audie L Murphy Veterans Affairs Hospital<br><span class="muted">7400 Merton Minter Boulevard, San Antonio</span></td><td class="num">2.05 mi<br><span class="muted">from the centerline</span></td></tr>
+<tr><th>Ambulance</th><td>Alamo Area Ambulance<br><span class="muted">5706 Mobud Drive, San Antonio</span></td><td class="num">0.08 mi<br><span class="muted">from the centerline</span></td></tr>
+<tr><th>Fire / EMS</th><td>Helotes Fire Department<br><span class="muted">12951 Bandera Road, Helotes</span></td><td class="num">0.08 mi<br><span class="muted">from the centerline</span></td></tr>
+<tr><th>Police</th><td>Leon Valley Police Department<br><span class="muted">6400 El Verde Road, Leon Valley</span></td><td class="num">0.06 mi<br><span class="muted">from the centerline</span></td></tr></table></details></div></section>
 <section data-section="flags">
   <h2>The eight tracts that cost time</h2>
   <p class="muted">Open one to see why it is flagged and what is still unknown about it.</p>
@@ -1398,22 +1406,17 @@ section.off { display:none; }
      something that costs time. The other 516 are listed in the
      screening file rather than on this page.</p>
 </section>
-<section data-section="safety">
-  <h2>Nearest help</h2>
-  <p>Nearest hospital: <strong>Audie L Murphy Veterans Affairs Hospital</strong>,
-     2.05 miles from the centerline.</p>
-  <details><summary>The other three kinds</summary>
-    <table class="grid"><tr><th>Hospital</th><td>Audie L Murphy Veterans Affairs Hospital<br><span class="muted">7400 Merton Minter Boulevard, San Antonio</span></td><td class="num">2.05 mi<br><span class="muted">from the centerline</span></td></tr>
-<tr><th>Ambulance</th><td>Alamo Area Ambulance<br><span class="muted">5706 Mobud Drive, San Antonio</span></td><td class="num">0.08 mi<br><span class="muted">from the centerline</span></td></tr>
-<tr><th>Fire / EMS</th><td>Helotes Fire Department<br><span class="muted">12951 Bandera Road, Helotes</span></td><td class="num">0.08 mi<br><span class="muted">from the centerline</span></td></tr>
-<tr><th>Police</th><td>Leon Valley Police Department<br><span class="muted">6400 El Verde Road, Leon Valley</span></td><td class="num">0.06 mi<br><span class="muted">from the centerline</span></td></tr></table></details>
-</section>
 <section>
   <h2>The memo</h2>
   <p>It is not on this page. It is its own document, and it is the one that gets
      read line by line.</p>
-  <p><a class="bigcta" href="../../project-sh16/bid-memo.md">Open the bid memo</a>
-     <a class="bigcta" href="../../project-sh16/crew-day.md">Open the crew-day build-up</a></p>
+  <p><a class="bigcta" href="https://github.com/RickSmith/survey-recon/blob/main/project-sh16/bid-memo.md" rel="noreferrer">Open the bid memo</a>
+     <a class="bigcta" href="https://github.com/RickSmith/survey-recon/blob/main/project-sh16/crew-day.md" rel="noreferrer">Open the crew-day
+     build-up</a></p>
+  <p class="hint">Both links point at this public repo, which is the only address
+     that survives being emailed. A real job's memo is not public, so neither link
+     is the one a firm would send &mdash; and neither opens with the Wi-Fi off.
+     That is the cost of answering this question with a link.</p>
 </section>
 
 <footer class="signature">
@@ -1449,9 +1452,10 @@ section.off { display:none; }
 <section class="q">
   <h2>What will slow it down?</h2>
   <p class="answer">8 of 524 tracts carry something that costs time.
-     The longest measured wait is 14 calendar days on one
-     tract. The school tracts carry no published number of days at all,
-     which is not the same as none.</p>
+     The longest measured wait is 14
+     calendar days on one tract. The other
+     7 carry no published number of days at all &mdash; every one of them
+     flagged for a school &mdash; and no number is not the same as none.</p>
   <p class="muted">Pick one to read it in full.</p>
   <div class="chips"><button class="chip" data-open-drawer="04480-201-0011"><span class="num">1</span> NORTHSIDE I S D</button>
 <button class="chip" data-open-drawer="04524-401-0020"><span class="num">2</span> NORTHSIDE I S D</button>
@@ -1465,8 +1469,13 @@ section.off { display:none; }
 <section class="q">
   <h2>Can we get on the land?</h2>
   <p class="answer">Unknown on every tract, and deliberately so. Texas has no
-     self-executing right of entry for a surveyor. Nothing in this screening should be
-     read as permission to enter.</p>
+     self-executing right of entry for a surveyor: an RPLS refused permission
+     <strong>may seek</strong> a court order, while an LSLS acting officially
+     <strong>is entitled to</strong> one. Nothing in this screening should be read as
+     permission to enter.</p>
+  <p class="source">Authority:
+     <a href="https://statutes.capitol.texas.gov/Docs/OC/htm/OC.1071.htm"
+        rel="noreferrer">Tex. Occ. Code &sect; 1071.3585 and &sect; 1071.358</a></p>
 </section>
 <section class="q">
   <h2>What control do we have?</h2>
@@ -1491,7 +1500,11 @@ section.off { display:none; }
 </section>
 <section class="q memo">
   <h2>The memo is the rest of this page</h2>
-  <h3>What is not known, and why</h3>
+  <h3>What was done</h3>
+<p>Public map services were read for the corridor above — 1.00 square miles of ground — and every answer they gave was saved with the date it was obtained and the exact request that produced it.</p>
+<p>The answers in this memo were obtained on <strong>2026-09-19</strong>. Nothing here is live, and nothing here is older than that date.</p>
+<p>This is desktop work. No one has walked the corridor.</p>
+<h3>What is not known, and why</h3>
 <p>Read this before the findings. Every item here is a gap this screening cannot close, and each one is a question somebody still has to answer.</p>
 <p><strong>No public source publishes these at all.</strong></p>
 <ul><li><strong>Gated access</strong> — no public source publishes gate locations or access restrictions.</li><li><strong>Livestock</strong> — no public source publishes livestock presence.</li></ul>
@@ -1781,7 +1794,7 @@ section.off { display:none; }
   function go(step) {
     var i = VARIANTS.findIndex(function (v) { return v[0] === current; });
     var next = VARIANTS[(i + step + VARIANTS.length) % VARIANTS.length][0];
-    location.search = "?variant=" + next;
+    location.replace("?variant=" + next);
   }
   var bar = document.getElementById("switcher");
   bar.querySelector("[data-prev]").addEventListener("click", function () { go(-1); });
@@ -1887,8 +1900,8 @@ section.off { display:none; }
     var layer = document.querySelector("#jobmap g[data-layer='" + key + "']");
     if (layer) layer.classList.toggle("off", !box.checked);
     if (scope === "page") {
-      var section = document.querySelector("section[data-section='" + key + "']");
-      if (section) section.classList.toggle("off", !box.checked);
+      document.querySelectorAll("[data-section='" + key + "']").forEach(
+        function (part) { part.classList.toggle("off", !box.checked); });
     }
   });
 

@@ -26,18 +26,35 @@ five open questions, and the answers are incompatible on purpose:
 ===========================  =========================  =========================  =========================
 Question                     A -- The map is the page   B -- The list is the page  C -- The page is questions
 ===========================  =========================  =========================  =========================
-What a principal sees first  The map, full width        Five numbers, then the     A question, in words, with
+What a principal sees first  The map, full width        Seven numbers, then the    A question, in words, with
                                                         eight tracts               a one-line answer
-Clicking a flagged tract     Opens its card below the   Expands the row in place   Opens a drawer over the
+Clicking a flagged tract     Opens its card below the   Expands the row in place   Opens a panel over the
                              map and scrolls to it      and marks the small map    page, one tract at a time
-Toggling a layer             The map only               The whole page -- turning  Neither. Sections collapse
-                                                        off control removes the    instead, and the map has
-                                                        control section            no toggles
+Toggling a layer             The map only               The whole page -- turning  Neither. There are no
+                                                        off control removes the    switches at all
+                                                        control section
 The bid memo                 All of it, at the bottom   None of it. Links out      All of it -- the page IS
                                                         instead                    the memo, with the map in it
-Crew safety                  Its own section, low       One line in the number      Its own question, last
-                             down                       strip, which expands
+Crew safety                  Its own section, low       One number in the strip,   Its own question, asked
+                             down                       which opens                last
 ===========================  =========================  =========================  =========================
+
+----
+
+Why this is a page of its own rather than a section of an existing one
+======================================================================
+
+``/prototype`` says to prefer hosting variants inside a real page, because a
+throwaway route on its own is a vacuum where every variant looks fine. The
+nearest real page here is the SH16 scenario page, and it was considered and
+turned down: it is a site page built by mkdocs for a reader browsing the
+repo, and #188 is blunt that the job page is a single file emailed to a
+principal who runs nothing. Hosting the variants in the scenario page would
+put them inside the one frame the real thing never has.
+
+The vacuum problem is answered a different way instead. The page carries the
+whole SH16 run at full density -- 524 tracts on the map, all eight tracts told
+in full, the memo entire -- so no variant gets to look good by being empty.
 
 ----
 
@@ -75,13 +92,21 @@ from corridor_screen import drawings  # noqa: E402
 PROJECT = REPO / "project-sh16"
 OUT = HERE / "job-page-prototype.html"
 
+# Where variant B sends a reader who wants the memo. A relative path dies the
+# moment the file is emailed, so these are the only addresses that survive --
+# and they are public, and they need a network. Both of those are findings
+# rather than conveniences. See the README.
+BLOB = "https://github.com/RickSmith/survey-recon/blob/main/project-sh16"
+MEMO_URL = f"{BLOB}/bid-memo.md"
+CREW_DAY_URL = f"{BLOB}/crew-day.md"
+
 # The map box. Wider than tall, because the corridor is nine miles of road and
 # a browser window is wider than it is tall.
 BOX = (0, 0, 1200, 760)
 
 
 # ---------------------------------------------------------------- the facts
-def facts(document, capture):
+def facts(document):
     """Every number the page shows, read out of the run once."""
     run = document["run"]
     alignment = document["alignment"]
@@ -484,18 +509,36 @@ def number_strip(f):
         (f"{f['sheets']}", f"ROW map sheets, {f['sheet_from']} to {f['sheet_to']}"),
     ]
     if longest:
-        cells.append((f"{longest['max_lead_time_days']} days",
+        cells.append((f"{longest['max_lead_time_days']} "
+                      f"{longest.get('max_lead_time_basis') or 'days'}",
                       "longest measured wait on one tract"))
-    return "\n".join(
-        f'<div class="stat"><span class="big">{escape(big)}</span>'
-        f'<span class="small">{escape(small)}</span></div>'
-        for big, small in cells)
+    out = [f'<div class="stat"><span class="big">{escape(big)}</span>'
+           f'<span class="small">{escape(small)}</span></div>'
+           for big, small in cells]
+    # Crew safety, as one number among the others rather than as a section of
+    # its own. This is variant B's whole answer to where it sits on the page,
+    # and it is the only one of the three that does not give it a heading.
+    near = (f["safety"]["by_type"].get("hospital") or {}).get("nearest")
+    if near:
+        out.append(
+            f'<div class="stat" data-section="safety">'
+            f'<span class="big">{near["distance_from_centerline_mi"]:.2f} mi</span>'
+            f'<span class="small">to the nearest hospital, '
+            f'{escape(near["name"])}</span>'
+            f'<details><summary>The other three kinds</summary>'
+            f'<table class="grid">{safety_rows(f)}</table></details></div>')
+    return "\n".join(out)
 
 
-def layer_controls(scope):
-    """The four layers a reader can switch off. ``scope`` is what it means."""
-    layers = [("tracts", "All 524 tracts", "on"),
-              ("flags", "The 8 flagged tracts", "on"),
+def layer_controls(scope, f):
+    """The four layers a reader can switch off.
+
+    ``scope`` says what a switch reaches, and it is the thing the variants
+    disagree about: ``"map"`` changes the drawing only, ``"page"`` takes the
+    matching section of the page with it.
+    """
+    layers = [("tracts", f"All {f['tracts']} tracts", "on"),
+              ("flags", f"The {len(f['flagged'])} flagged tracts", "on"),
               ("control", "Published control marks", "off"),
               ("safety", "Nearest help", "off")]
     out = [f'<div class="layers" data-scope="{scope}">',
@@ -537,7 +580,7 @@ def signature():
 
 
 # --------------------------------------------------------------- variant A
-def variant_a(f, map_markup, memo):
+def variant_a(f, memo):
     """The map is the page. Click a tract, its card opens below the map."""
     total = len(f["flagged"])
     cards = "\n".join(
@@ -548,8 +591,8 @@ def variant_a(f, map_markup, memo):
     return f"""
 {header(f, "Variant A &mdash; the map is the page. Everything hangs off it.")}
 <section class="mapwrap wide">
-  {layer_controls("map")}
-  <div class="map">{map_markup}</div>
+  {layer_controls("map", f)}
+  <div class="map"></div>
   <p class="hint">Click any amber tract, or its number, to open it.
      <span class="print-only">In print, every tract is open below.</span></p>
 </section>
@@ -588,7 +631,7 @@ def variant_a(f, map_markup, memo):
 
 
 # --------------------------------------------------------------- variant B
-def variant_b(f, map_markup, memo):
+def variant_b(f):
     """The list is the page. The map follows it, small. Layers filter the page."""
     total = len(f["flagged"])
     rows = []
@@ -605,7 +648,6 @@ def variant_b(f, map_markup, memo):
   </button>
   <div class="rowbody" hidden>{tract_detail(p, i, total)}</div>
 </div>""")
-    safety = (f["safety"]["by_type"].get("hospital") or {}).get("nearest") or {}
     return f"""
 {header(f, "Variant B &mdash; the list is the page. No map until you have read the eight.")}
 <section class="strip">{number_strip(f)}</section>
@@ -616,10 +658,10 @@ def variant_b(f, map_markup, memo):
 </section>
 <section class="mapwrap narrow" data-section="map">
   <h2>Where they are</h2>
-  {layer_controls("page")}
+  {layer_controls("page", f)}
   <p class="hint">These switches change the whole page, not only the map.
      Switch off control and the control section goes with it.</p>
-  <div class="map">{map_markup}</div>
+  <div class="map"></div>
 </section>
 <section data-section="control">
   <h2>Control</h2>
@@ -633,30 +675,29 @@ def variant_b(f, map_markup, memo):
      something that costs time. The other {f['tracts'] - total} are listed in the
      screening file rather than on this page.</p>
 </section>
-<section data-section="safety">
-  <h2>Nearest help</h2>
-  <p>Nearest hospital: <strong>{escape(safety.get('name', 'not found'))}</strong>,
-     {safety.get('distance_from_centerline_mi', 0):.2f} miles from the centerline.</p>
-  <details><summary>The other three kinds</summary>
-    <table class="grid">{safety_rows(f)}</table></details>
-</section>
 <section>
   <h2>The memo</h2>
   <p>It is not on this page. It is its own document, and it is the one that gets
      read line by line.</p>
-  <p><a class="bigcta" href="../../project-sh16/bid-memo.md">Open the bid memo</a>
-     <a class="bigcta" href="../../project-sh16/crew-day.md">Open the crew-day build-up</a></p>
+  <p><a class="bigcta" href="{MEMO_URL}" rel="noreferrer">Open the bid memo</a>
+     <a class="bigcta" href="{CREW_DAY_URL}" rel="noreferrer">Open the crew-day
+     build-up</a></p>
+  <p class="hint">Both links point at this public repo, which is the only address
+     that survives being emailed. A real job's memo is not public, so neither link
+     is the one a firm would send &mdash; and neither opens with the Wi-Fi off.
+     That is the cost of answering this question with a link.</p>
 </section>
 {signature()}
 """
 
 
 # --------------------------------------------------------------- variant C
-def variant_c(f, map_markup, memo):
-    """The page is the questions a principal asks, in order. Detail is a drawer."""
+def variant_c(f, memo):
+    """The page is the questions a principal asks, in order. Detail is a panel."""
     total = len(f["flagged"])
-    unknown = ", ".join(unmeasured_waits(f["flagged"]))
     longest = longest_wait(f["flagged"])
+    no_number = sum(1 for p in f["flagged"] if p.get("max_lead_time_days") is None)
+    kinds = ", ".join(unmeasured_waits(f["flagged"]))
     chips = "\n".join(
         f'<button class="chip" data-open-drawer="{escape(p["id"])}">'
         f'<span class="num">{i}</span> {escape(p["owner"])}</button>'
@@ -673,22 +714,28 @@ def variant_c(f, map_markup, memo):
   <p class="answer">{escape(f['corridor'])}. {f['length_mi']} miles of SH16 through
      Bexar County, screened {f['half_width_ft']} feet either side &mdash;
      {f['area_sq_mi']} square miles of ground.</p>
-  <div class="map">{map_markup}</div>
+  <div class="map"></div>
 </section>
 <section class="q">
   <h2>What will slow it down?</h2>
   <p class="answer">{total} of {f['tracts']} tracts carry something that costs time.
-     The longest measured wait is {longest['max_lead_time_days']} calendar days on one
-     tract. The {escape(unknown)} tracts carry no published number of days at all,
-     which is not the same as none.</p>
+     The longest measured wait is {longest['max_lead_time_days']}
+     {escape(longest.get('max_lead_time_basis') or 'days')} on one tract. The other
+     {no_number} carry no published number of days at all &mdash; every one of them
+     flagged for a {escape(kinds)} &mdash; and no number is not the same as none.</p>
   <p class="muted">Pick one to read it in full.</p>
   <div class="chips">{chips}</div>
 </section>
 <section class="q">
   <h2>Can we get on the land?</h2>
   <p class="answer">Unknown on every tract, and deliberately so. Texas has no
-     self-executing right of entry for a surveyor. Nothing in this screening should be
-     read as permission to enter.</p>
+     self-executing right of entry for a surveyor: an RPLS refused permission
+     <strong>may seek</strong> a court order, while an LSLS acting officially
+     <strong>is entitled to</strong> one. Nothing in this screening should be read as
+     permission to enter.</p>
+  <p class="source">Authority:
+     <a href="https://statutes.capitol.texas.gov/Docs/OC/htm/OC.1071.htm"
+        rel="noreferrer">Tex. Occ. Code &sect; 1071.3585 and &sect; 1071.358</a></p>
 </section>
 <section class="q">
   <h2>What control do we have?</h2>
@@ -826,7 +873,7 @@ section { border-top:1px solid var(--rule); padding-top:.6em; }
 #jobmap .hot:hover .flagged, #jobmap .hot:focus .flagged { fill:#fbbf24; }
 #jobmap .hot.picked .flagged { fill:#f59e0b; stroke:#7c2d12; stroke-width:4; }
 #jobmap g[data-layer].off { display:none; }
-section.off { display:none; }
+.off { display:none !important; }
 /* The floating switcher. Obviously not part of the design being judged. */
 #switcher { position:fixed; left:50%; bottom:18px; transform:translateX(-50%);
             z-index:90; display:flex; align-items:center; gap:4px;
@@ -884,7 +931,7 @@ JS = """
   function go(step) {
     var i = VARIANTS.findIndex(function (v) { return v[0] === current; });
     var next = VARIANTS[(i + step + VARIANTS.length) % VARIANTS.length][0];
-    location.search = "?variant=" + next;
+    location.replace("?variant=" + next);
   }
   var bar = document.getElementById("switcher");
   bar.querySelector("[data-prev]").addEventListener("click", function () { go(-1); });
@@ -990,8 +1037,8 @@ JS = """
     var layer = document.querySelector("#jobmap g[data-layer='" + key + "']");
     if (layer) layer.classList.toggle("off", !box.checked);
     if (scope === "page") {
-      var section = document.querySelector("section[data-section='" + key + "']");
-      if (section) section.classList.toggle("off", !box.checked);
+      document.querySelectorAll("[data-section='" + key + "']").forEach(
+        function (part) { part.classList.toggle("off", !box.checked); });
     }
   });
 
@@ -1007,7 +1054,7 @@ JS = """
 """
 
 
-def page(f, variants, map_markup):
+def page(variants, map_markup):
     bodies = "\n".join(
         f'<div data-variant="{key}" hidden>{markup}</div>'
         for key, markup in variants)
@@ -1035,20 +1082,25 @@ def page(f, variants, map_markup):
 
 def main():
     document, capture = drawings.load(PROJECT)
-    f = facts(document, capture)
+    f = facts(document)
     markup = map_svg(document, capture, f)
     memo_markdown = (PROJECT / "bid-memo.md").read_text(encoding="utf-8")
-    memo = "\n".join([
-        memo_section(memo_markdown, "What is not known, and why"),
-        memo_section(memo_markdown, "What was found"),
-        memo_section(memo_markdown, "What this memo is not"),
-    ])
+    # Every ``##`` section of the memo, in the memo's own order. Its preamble
+    # -- corridor, date, run reference, and the link that confirms the location
+    # -- is left out because the page header already carries all four, and
+    # printing them twice would read as two documents stapled together.
+    memo = "\n".join(memo_section(memo_markdown, heading) for heading in (
+        "What was done",
+        "What is not known, and why",
+        "What was found",
+        "What this memo is not",
+    ))
     variants = [
-        ("A", variant_a(f, "", memo)),
-        ("B", variant_b(f, "", memo)),
-        ("C", variant_c(f, "", memo)),
+        ("A", variant_a(f, memo)),
+        ("B", variant_b(f)),
+        ("C", variant_c(f, memo)),
     ]
-    OUT.write_text(page(f, variants, markup), encoding="utf-8")
+    OUT.write_text(page(variants, markup), encoding="utf-8")
     size = OUT.stat().st_size
     print(f"wrote {OUT} ({size / 1024:.0f} KB)")
     print("open it, then use the bar at the bottom or the left and right arrow keys")
