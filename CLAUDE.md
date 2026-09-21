@@ -30,12 +30,25 @@ Readers are expert surveyors with little programming background. So:
 
 ## Dependency discipline
 
-Attendees must be able to run this. Prerequisites are **git, a GitHub account, and the Claude desktop app** — nothing else.
+Attendees must be able to run this. Prerequisites are **git, a GitHub account, and the Claude desktop app** — nothing else, and nothing gets added to that list.
+
+**The test, before adding anything: would a surveyor have to install this in order to run the tool on Monday?** If yes, the list above binds and the answer is no. If no, it is maintainer tooling, and the tiers below say what is allowed.
+
+Three tiers, told apart by who does the installing.
+
+**What an attendee installs.** The three above. Nothing else reaches their machine.
 
 - **Do not add a Node dependency to anything attendees run.** The mattpocock skills are vendored as markdown into `toolkit/.claude/skills/` precisely so `npx` is not required
-- Python is acceptable for the corridor tool, standard library plus `requests` where possible
-- Every new dependency needs a justification in the pull request
-- Anything that needs an API key does not belong in the attendee path
+- Anything that needs an API key does not belong here
+
+**What CI and maintainers install.** CI — continuous integration — is the set of checks GitHub runs on the repo itself after a push. Nobody at the session runs it, and nothing it installs ever lands on a surveyor's machine. So tools are allowed here that are banned one tier up, and two already are:
+
+- `docs.yml` installs MkDocs, through `requirements-docs.txt`, to build the documentation site. Attendees read the published site in a browser and install nothing
+- `slides.yml` runs Marp, **which is a Node tool** — the exact thing banned above. It runs inside a container that GitHub throws away afterward, so it is never installed anywhere
+
+**What the corridor tool installs: nothing so far.** Python is acceptable for the tool, standard library plus `requests` where possible. In practice it has needed nothing beyond the standard library — `urllib` does the network work. Two workflows are built on that and have no install step at all, on purpose: `tests.yml` and `roe-followup.yml`. Giving the tool a dependency means giving both of them an install step, and that is part of the cost of asking.
+
+**Every new dependency needs a justification in the pull request**, whichever tier it lands in.
 
 ## Data rules
 
