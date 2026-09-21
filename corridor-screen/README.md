@@ -209,8 +209,10 @@ It draws the run:
 python -m corridor_screen.drawings --out ../project-sh16 --copy-to ../docs/scenarios/sh16/img
 ```
 
-It writes five SVG files into `project-sh16/drawings/`, and the same five again
-wherever `--copy-to` points, which is where the site can show them.
+It writes seven SVG files into `project-sh16/drawings/`, and the same seven
+again wherever `--copy-to` points, which is where the site can show them. The
+count is in the table below rather than only here, because this sentence has
+said `five` since #177 made it eight.
 
 | Drawing | What it shows |
 |---|---|
@@ -225,10 +227,10 @@ wherever `--copy-to` points, which is where the site can show them.
 drawn under [#177](https://github.com/RickSmith/survey-recon/issues/177) and
 placed nowhere: the run of show has no crew safety block to put it in, and Act
 III's tests do not allow a slide to be added. It was removed under
-[#201](https://github.com/RickSmith/survey-recon/issues/201) rather than left
-being redrawn on every run for nobody. `crew-safety-map.svg` above is the frame
-with a reader — a person reviewing an estimate reads at fourteen inches, not
-from the back of a room.
+[#201](https://github.com/RickSmith/survey-recon/issues/201) rather than left to
+be redrawn on every run for nobody. `crew-safety-map.svg` above is the frame
+with a reader. A person reviewing an estimate reads at fourteen inches, not from
+the back of a room.
 
 **Nothing on a drawing is drawn by hand.** Every shape comes from the cached
 service responses the run names, and every number is read from
