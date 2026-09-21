@@ -67,7 +67,15 @@ class TestTheDrawingsAreDrawings(unittest.TestCase):
         cls.document, cls.capture = demo()
         cls.drawn = drawings.draw_all(cls.document, cls.capture)
 
-    def test_there_are_five_and_they_are_named(self):
+    def test_every_drawing_is_named_and_every_name_is_drawn(self):
+        """The count is not in the name, because the count has changed twice.
+
+        This read `five` from #154 until #177 made it eight and #201 made it
+        seven, and it was wrong for both of those. The assertion was always
+        right -- it reads `NAMES` -- so only the label lied. A name that states
+        a number has to be edited every time the number moves, and nothing
+        fails when somebody forgets.
+        """
         self.assertEqual(set(self.drawn), set(drawings.NAMES.values()))
 
     def test_every_drawing_is_well_formed_svg_with_a_viewbox(self):
