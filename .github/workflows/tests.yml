@@ -64,11 +64,14 @@ jobs:
           python-version: '3.11'
 
       # No install step, and that is deliberate rather than missing. The tool
-      # has no dependencies - standard library only - and CLAUDE.md is blunt
-      # about keeping it that way: attendees need git, a GitHub account and the
-      # Claude desktop app, and nothing else. A workflow that installed a test
-      # runner would put a dependency in front of the one thing in this repo
-      # that proves the rest of it works.
+      # has no dependencies - standard library only - and CLAUDE.md's rule for
+      # the corridor tool is about keeping it that way.
+      #
+      # Note which rule that is. It is not the attendee prerequisite list: CI
+      # is allowed to install things, and in docs.yml and slides.yml it does.
+      # This job installs nothing because the tool itself needs nothing, and a
+      # workflow that installed a test runner would put a dependency in front
+      # of the one thing in this repo that proves the rest of it works.
       #
       # The suite needs no network either. Only tests/test_offline.py touches
       # the socket layer at all, and it does so to take the network away. So
