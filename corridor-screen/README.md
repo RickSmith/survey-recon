@@ -209,8 +209,10 @@ It draws the run:
 python -m corridor_screen.drawings --out ../project-sh16 --copy-to ../docs/scenarios/sh16/img
 ```
 
-It writes five SVG files into `project-sh16/drawings/`, and the same five again
-wherever `--copy-to` points, which is where the site can show them.
+It writes seven SVG files into `project-sh16/drawings/`, and the same seven
+again wherever `--copy-to` points, which is where the site can show them. The
+count is in the table below rather than only here, because this sentence has
+said `five` since #177 made it eight.
 
 | Drawing | What it shows |
 |---|---|
@@ -219,7 +221,16 @@ wherever `--copy-to` points, which is where the site can show them.
 | `crew-safety-map.svg` | The nearest hospital, ambulance, fire and police, with a straight line to the nearer end of the corridor |
 | `how-it-works.svg` | The tool in one picture: a line in, fourteen services asked, one file out, three documents, one surveyor |
 | `crew-day-sheet.svg` | The build-up laid out as a sheet, with the two lines that have no total shown as having no total |
-| `corridor-slide.svg`, `control-slide.svg`, `safety-slide.svg` | The three maps again, for a projector. Same data and same frame, no side panel, and nothing on them under 32 px of type, because a room reads a slide from forty feet and a page from fourteen inches. The deck uses the first two as whole slides |
+| `corridor-slide.svg`, `control-slide.svg` | The corridor and control maps again, for a projector. Same data and same frame, no side panel, and nothing on them under 32 px of type, because a room reads a slide from forty feet and a page from fourteen inches. Both are whole slides in Act II of the deck |
+
+**There is no slide-sized crew safety map, and that is deliberate.** One was
+drawn under [#177](https://github.com/RickSmith/survey-recon/issues/177) and
+placed nowhere: the run of show has no crew safety block to put it in, and Act
+III's tests do not allow a slide to be added. It was removed under
+[#201](https://github.com/RickSmith/survey-recon/issues/201) rather than left to
+be redrawn on every run for nobody. `crew-safety-map.svg` above is the frame
+with a reader. A person reviewing an estimate reads at fourteen inches, not from
+the back of a room.
 
 **Nothing on a drawing is drawn by hand.** Every shape comes from the cached
 service responses the run names, and every number is read from

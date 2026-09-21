@@ -99,12 +99,18 @@ NAMES = {
     "safety": "crew-safety-map.svg",
     "how": "how-it-works.svg",
     "sheet": "crew-day-sheet.svg",
-    # The same three maps again, for a projector. Same data, same frame, no
-    # side panel, and nothing on them under 32 pixels of type, because a room
-    # reads a slide from forty feet and a page from fourteen inches.
+    # Two of the maps again, for a projector. Same data, same frame, no side
+    # panel, and nothing on them under 32 pixels of type, because a room reads
+    # a slide from forty feet and a page from fourteen inches.
+    #
+    # The crew safety map is not among them. It was drawn at slide size under
+    # #177 and placed nowhere, because the run of show has no crew safety block
+    # to place it in. Issue #201 removed it rather than leave a drawing nobody
+    # reads being redrawn on every run. Its page frame above is the one with a
+    # reader, on the SH16 scenario page, and that is the frame a person
+    # reviewing an estimate wants anyway.
     "corridor_slide": "corridor-slide.svg",
     "control_slide": "control-slide.svg",
-    "safety_slide": "safety-slide.svg",
 }
 
 # The smallest type on a slide map. 32 px on a 1920-wide canvas is what the
@@ -1260,93 +1266,6 @@ def control_slide(document, capture):
     return svg(body)
 
 
-def safety_slide(document, capture):
-    """The crew safety map for a projector: four places, four straight lines."""
-    places = nearest_places(document)
-    points = [(p["place"]["longitude"], p["place"]["latitude"]) for p in places]
-    bbox = document["corridor"]["bbox"]
-    if points:
-        bbox = union(bbox, bbox_of_points(points))
-    # A narrower box than the other two slide maps: the labels on this one
-    # stick out past the dots they name, and the panel on the right needs
-    # its room.
-    left, top, width, height = SLIDE_BOX
-    frame = Frame(grow(bbox, 0.06), (left, top, width - 120, height), pad=70)
-    body = slide_header(
-        "How far help is",
-        "Straight lines to the nearer end of the corridor. A straight line is not a drive.",
-    )
-    body += base_map(frame, document, capture, faint=True)
-    colors = {"hospital": VIOLET, "ambulance": RED, "fire_ems": AMBER, "police": TEAL}
-    # Where each label sits relative to its dot. Three of the four nearest
-    # places on SH16 are within a mile of the same end of the corridor, so
-    # labels all set to the right of their dots overprint each other. Each
-    # kind takes its own side, and a line too short to carry a distance box
-    # in its middle carries the distance on the label instead.
-    sides = {"hospital": "right", "police": "left", "ambulance": "below", "fire_ems": "right"}
-    for place in places:
-        x, y = frame.xy(place["place"]["longitude"], place["place"]["latitude"])
-        color = colors.get(place["kind"], INK)
-        distance = f"{place['end_miles']:.2f} mi"
-        label = place["label"]
-        if place["end_point"]:
-            ex, ey = frame.xy(*place["end_point"])
-            body.append(f'<line x1="{_n(x)}" y1="{_n(y)}" x2="{_n(ex)}" y2="{_n(ey)}" '
-                        f'stroke="{color}" stroke-width="5" stroke-dasharray="14 10" class="help-line"/>')
-            if math.hypot(ex - x, ey - y) >= 220:
-                mx, my = (x + ex) / 2, (y + ey) / 2
-                body.append(f'<rect x="{_n(mx - 80)}" y="{_n(my - 26)}" width="160" height="46" '
-                            f'rx="8" fill="{PAPER}" stroke="{color}" stroke-width="3"/>')
-                body.append(text(mx, my + 9, distance, size=SLIDE_TYPE, fill=color, weight="700",
-                                 anchor="middle", extra=' class="help-distance"'))
-            else:
-                label = f"{label} · {distance}"
-        body.append(f'<circle cx="{_n(x)}" cy="{_n(y)}" r="18" fill="{color}" '
-                    f'stroke="{PAPER}" stroke-width="4" class="help-place"/>')
-        side = sides.get(place["kind"], "right")
-        if side == "left":
-            body.append(text(x - 28, y + 11, label, size=SLIDE_TYPE, fill=color, weight="700",
-                             anchor="end"))
-        elif side == "below":
-            body.append(text(x, y + 60, label, size=SLIDE_TYPE, fill=color, weight="700",
-                             anchor="middle"))
-        else:
-            body.append(text(x + 28, y + 11, label, size=SLIDE_TYPE, fill=color, weight="700"))
-    # The end labels sit to the right of their dots on this map rather than
-    # above and below, because the places cluster at the Loop 410 end and a
-    # label under that dot lands on top of the ambulance.
-    box = frame.box
-    for i, end in enumerate(ends(document)):
-        if end["point"]:
-            x, y = frame.xy(*end["point"])
-            if i == 0:
-                body.append(text(x + 40, y + 12, end["label"], size=SLIDE_TYPE + 2, weight="600",
-                                 extra=' class="end-label"'))
-            else:
-                body.append(text(x - 40, y + 12, end["label"], size=SLIDE_TYPE + 2, weight="600",
-                                 anchor="end", extra=' class="end-label"'))
-    body += scale_bar(frame, box[0] + 40, box[1] + box[3] - 40, size=SLIDE_TYPE)
-    body += north_arrow(box[0] + box[2] - 50, box[1] + 70, size=SLIDE_TYPE + 4)
-
-    x, y = SLIDE_PANEL, 250
-    for place in places:
-        color = colors.get(place["kind"], INK)
-        p = place["place"]
-        body.append(f'<circle cx="{x + 16}" cy="{y - 12}" r="16" fill="{color}"/>')
-        for i, line in enumerate(wrap(f"{place['label']}: {p.get('name', '?')}", 36)):
-            body.append(text(x + 48, y, line, size=SLIDE_TYPE + 2, weight="700",
-                             extra=' class="help-row"' if i == 0 else ""))
-            y += 44
-        body.append(text(x + 48, y, f"{place['end_miles']:.2f} mi to {place['end_name']}",
-                         size=SLIDE_TYPE, fill=INK))
-        y += 42
-        body.append(text(x + 48, y, f"{place['other_miles']:.2f} mi to {place['other_name']}",
-                         size=SLIDE_TYPE, fill=MUTED))
-        y += 76
-    body += slide_footer(document, "the crew_safety block of screening.json")
-    return svg(body)
-
-
 DRAWINGS = (
     ("corridor", corridor_map),
     ("control", control_map),
@@ -1355,7 +1274,6 @@ DRAWINGS = (
     ("sheet", crew_day_sheet),
     ("corridor_slide", corridor_slide),
     ("control_slide", control_slide),
-    ("safety_slide", safety_slide),
 )
 
 
