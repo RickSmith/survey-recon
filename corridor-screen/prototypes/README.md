@@ -203,6 +203,34 @@ on disk, at triple the size.
 So #193 settled on the page reading **`screening.json` plus the cache**, which
 is the shape `drawings.load()` already uses.
 
+### `audit_print_contrast.py` — does the map survive a mono printer?
+
+```
+python corridor-screen/prototypes/audit_print_contrast.py
+```
+
+Written for [#195](https://github.com/RickSmith/survey-recon/issues/195), which
+asked what a reader on paper loses. A principal is as likely to print the page
+as to click it, and an office printer is as likely to be monochrome as not.
+
+**The rule it holds:** two things a reader has to tell apart must not differ
+only by fill color. It is about *pairs* — the flagged tract against the
+ordinary one, the inside of the corridor against the outside. It does not
+forbid fills: the four markers are an x, a triangle, a square and a cross, and
+a shape is a shape whatever the ink.
+
+On 2026-09-22 both pairs pass, and both pass **by their outline**:
+
+| Pair | By fill | By outline |
+|---|---|---|
+| Flagged tract vs ordinary tract | 1.13:1 | **3.41:1** |
+| Inside the corridor vs outside | 1.02:1 | **3.71:1** |
+
+Below about 1.5:1 two colors are the same gray. So on paper the fills are
+decoration and the strokes carry everything — **which holds by luck, because
+nobody chose those strokes for a printer.** The rule is what stops somebody
+later drawing a flag as a fill alone and never finding out.
+
 ### How it was checked
 
 Rendered and printed with headless Edge, which
