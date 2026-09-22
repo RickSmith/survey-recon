@@ -23,6 +23,26 @@ principal clicks one of the eight flagged tracts?
 **The plan**, in one line: three variants of the job page, switchable via
 `?variant=`, in one self-contained HTML file built from the committed SH16 run.
 
+### The answer, settled by Rick on 2026-09-22
+
+**B wins, except for what B does with the memo.**
+
+| | What the job page does |
+|---|---|
+| What a principal sees first | The numbers, then the eight flagged tracts. Not the map |
+| Clicking a flagged tract | The row expands where it sits |
+| Toggling a layer | The whole page. Switch off control and the control section goes with it |
+| Crew safety | One number among the others, with no heading of its own |
+| The bid memo | **On the page.** This is the one place the answer is not B's |
+
+The memo is the exception because of finding 6 below: B links the memo out,
+and a link is the part of B that does not survive. Finding 5 measured what
+carrying it costs instead — 4 printed pages.
+
+**Nothing is built from this.** [#188](https://github.com/RickSmith/survey-recon/issues/188)
+freezes the repo before the session on 8 October 2026 and says the map is
+planning only. The decision is recorded; the code stays on this branch.
+
 ### How to run it
 
 ```
