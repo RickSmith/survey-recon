@@ -231,6 +231,31 @@ decoration and the strokes carry everything — **which holds by luck, because
 nobody chose those strokes for a printer.** The rule is what stops somebody
 later drawing a flag as a fill alone and never finding out.
 
+### `read_the_floor.py` — proof the markup floor can be stood on
+
+```
+python corridor-screen/prototypes/read_the_floor.py
+```
+
+Written for [#196](https://github.com/RickSmith/survey-recon/issues/196), which
+took three layers of checking for the job page. Two need a browser in a
+container. The third — the floor — is meant to run on a bare Python with
+nothing installed, reading the page back with `html.parser`.
+
+That was the one claim in #196's answer nobody had run.
+[#190](https://github.com/RickSmith/survey-recon/issues/190) had already found
+that `xml.etree` **cannot** parse the page, so "just parse it" was not a safe
+assumption to leave lying around. This parses it — 380,875 characters, standard
+library only.
+
+It checks facts about the file and only those: eight flagged tracts each
+carrying an id so something can click them, all eight told in full in every
+variant, every row with a detail behind it, the run reference present.
+
+**What it deliberately cannot see is anything a stylesheet decides.** All three
+defects #195 found were CSS, and this file passes every one of them. That is
+not a gap in the floor — it is the reason the other two layers exist.
+
 ### How it was checked
 
 Rendered and printed with headless Edge, which
