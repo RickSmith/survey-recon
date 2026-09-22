@@ -142,6 +142,36 @@ decision goes and this is where the evidence is.
    carries one variant, so this over-states the real page and it is already
    inside the half a megabyte #188 guessed at.
 
+### `measure_churn.py` — what the page costs git
+
+```
+python corridor-screen/prototypes/measure_churn.py
+```
+
+Written for [#192](https://github.com/RickSmith/survey-recon/issues/192), which
+asked whether half a megabyte per run belongs in git and argued against on the
+grounds that "each regeneration is a large diff nobody reads." That is a claim
+about a number and nobody had the number.
+
+It builds the page carrying one variant — which is what a real run writes —
+then builds it again with one thing changed, and counts the lines between them.
+On 2026-09-22:
+
+| Change | Lines the page moves |
+|---|---|
+| A re-run, same data | **4** |
+| A tract loses its flag | **91** |
+
+The page is 1,270 lines and 318 KB, of which the map is 280 KB — 88% of it.
+
+Four, because the generators here write one element per line, so a re-run only
+moves the footer stamp. Ninety-one when a tract changes, which is the artifact
+doing its job. The second number is the control: a measurement that only ever
+shows small diffs has not proved anything until it also shows a big one.
+
+So #192's case against was not true of this repo, and the ticket settled on
+**commit it**.
+
 ### How it was checked
 
 Rendered and printed with headless Edge, which
