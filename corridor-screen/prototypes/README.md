@@ -172,6 +172,37 @@ shows small diffs has not proved anything until it also shows a big one.
 So #192's case against was not true of this repo, and the ticket settled on
 **commit it**.
 
+### `measure_geometry_cost.py` — what one fat file would cost
+
+```
+python corridor-screen/prototypes/measure_geometry_cost.py
+```
+
+Written for [#193](https://github.com/RickSmith/survey-recon/issues/193), which
+asked where the job page reads its data from. One live answer was that
+`screening.json` should grow to carry everything the page needs, so the page
+reads one file rather than two. Nobody had the size.
+
+On 2026-09-22:
+
+| | Bytes |
+|---|---|
+| `screening.json` today | 473,838 |
+| The geometry, written the way the file is written | 1,020,433 |
+| **`screening.json` if it carried the geometry** | **1,494,271 — 3.2x** |
+| The cache, which stays either way | 4,129,838 |
+
+`screening.json` carries no geometry today. A parcel record has no geometry
+field, and the corridor names a cache key instead of holding its own ring.
+
+The last row is what decided it. `CLAUDE.md` requires every API response to be
+cached, so the cache folder stays whatever this ticket says. Growing
+`screening.json` does not replace it — it commits a second copy of data already
+on disk, at triple the size.
+
+So #193 settled on the page reading **`screening.json` plus the cache**, which
+is the shape `drawings.load()` already uses.
+
 ### How it was checked
 
 Rendered and printed with headless Edge, which
